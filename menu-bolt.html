@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8CVWBJESV"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-F8CVWBJESV', { send_page_view: false });</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Order delicious food from Crave Restaurant">
+    <title>Menu - Crave Restaurant</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/util.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <header id="siteHeader" class="navbar-header">
+        <nav class="navbar">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <a href="index.html" class="logo-link">
+                        <img src="images/logo.png" alt="Crave Restaurant" class="logo-img">
+                    </a>
+                </div>
+
+                <div class="navbar-menu" id="navbarMenu" aria-label="Primary navigation">
+                    <ul class="navbar-menu-list">
+                        <li class="navbar-menu-item"><a href="index.html" class="navbar-link" data-page="home">Home</a></li>
+                        <li class="navbar-menu-item"><a href="menu.html" class="navbar-link" data-page="menu">Menu</a></li>
+                        <li class="navbar-menu-item"><a href="about.html" class="navbar-link" data-page="about">About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Bolt Menu Container -->
+    <div class="bolt-menu-container">
+        <!-- Sticky Category Navigation -->
+        <nav class="bolt-category-nav">
+            <div class="bolt-category-nav-list">
+                <a href="#most-popular" class="bolt-category-nav-item active">Most Popular</a>
+                <a href="#texas-chicken" class="bolt-category-nav-item">Texas Crispy Fried Chicken</a>
+                <a href="#mexican-food" class="bolt-category-nav-item">Mexican Food & Dish</a>
+                <a href="#cupcakes" class="bolt-category-nav-item">Cupcakes</a>
+                <a href="#breakfast" class="bolt-category-nav-item">Breakfast</a>
+                <a href="#smoothies" class="bolt-category-nav-item">Smoothies</a>
+            </div>
+        </nav>
+
+        <!-- Most Popular Section -->
+        <section id="most-popular" class="bolt-menu-section">
+            <h2 class="bolt-section-title">Most Popular</h2>
+            <div class="bolt-food-list" id="most-popular-items">
+                <!-- Items will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Texas Crispy Fried Chicken Section -->
+        <section id="texas-chicken" class="bolt-menu-section">
+            <h2 class="bolt-section-title">Texas Crispy Fried Chicken</h2>
+            <div class="bolt-food-list" id="texas-chicken-items">
+                <!-- Items will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Mexican Food & Dish Section -->
+        <section id="mexican-food" class="bolt-menu-section">
+            <h2 class="bolt-section-title">Mexican Food & Dish</h2>
+            <div class="bolt-food-list" id="mexican-food-items">
+                <!-- Items will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Cupcakes Section -->
+        <section id="cupcakes" class="bolt-menu-section">
+            <h2 class="bolt-section-title">Cupcakes</h2>
+            <div class="bolt-food-list" id="cupcakes-items">
+                <!-- Items will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Breakfast Section -->
+        <section id="breakfast" class="bolt-menu-section">
+            <h2 class="bolt-section-title">Breakfast</h2>
+            <div class="bolt-food-list" id="breakfast-items">
+                <!-- Items will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Smoothies Section -->
+        <section id="smoothies" class="bolt-menu-section">
+            <h2 class="bolt-section-title">Smoothies</h2>
+            <div class="bolt-food-list" id="smoothies-items">
+                <!-- Items will be populated by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <a href="cart.html" class="bolt-floating-cart" id="floatingCartBtn">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="bolt-cart-badge" id="cartBadge">0</span>
+    </a>
+
+    <!-- Footer (Same as Homepage) -->
+    <footer class="bg1">
+        <div class="container-fluid px-3 p-t-40 p-b-70">
+            <div class="row">
+                <div class="col-sm-6 col-md-4 p-t-50 m-b-30">
+                    <h4 class="txt13 m-b-33">Contact Us</h4>
+                    <ul class="m-b-70">
+                        <li class="txt14 m-b-14">
+                            <i class="fa-solid fa-location-dot fs-16 dis-inline-block size19"></i>
+                            8th floor, 379 Hudson St, New York, NY 10018
+                        </li>
+                        <li class="txt14 m-b-14">
+                            <i class="fa-solid fa-phone fs-16 dis-inline-block size19"></i>
+                            <a href="tel:+19671668879">(+1) 96 716 6879</a>
+                        </li>
+                        <li class="txt14 m-b-14">
+                            <i class="fa-solid fa-envelope fs-13 dis-inline-block size19"></i>
+                            <a href="mailto:contact@crave-restaurant.com">contact@crave-restaurant.com</a>
+                        </li>
+                    </ul>
+
+                    <h4 class="txt13 m-b-32">Opening Times</h4>
+                    <ul>
+                        <li class="txt14">11:00 AM " 10:00 PM</li>
+                        <li class="txt14">Every Day</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="end-footer bg2">
+            <div class="container-fluid px-3">
+                <div class="flex-sb-m flex-w p-t-22 p-b-22">
+                    <div class="p-t-5 p-b-5">
+                        <a href="#" class="fs-15 c-white"><i class="fa-brands fa-yelp"></i></a>
+                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-google"></i></a>
+                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-x-twitter"></i></a>
+                    </div>
+                    <div class="txt17 p-r-20 p-t-5 p-b-5">
+                        &copy; <span id="copyright-year">2025</span> Crave Restaurant. All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/233550020788?text=Hi%20Crave%2C%20I%E2%80%99d%20like%20to%20place%20an%20order" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    
+    <!-- Bolt Menu JavaScript -->
+    <script>
+        // Menu Data Structure (Scalable)
+        const menuData = {
+            'most-popular': {
+                title: 'Most Popular',
+                items: [
+                    { name: 'Loaded Fries', price: 12.99, description: 'Crispy fries topped with cheese, bacon, and special sauce' },
+                    { name: 'Cheese Beef Loaded Fries', price: 15.99, description: 'Loaded fries with seasoned beef and melted cheese' },
+                    { name: 'Jerk Chicken Shawarma', price: 18.99, description: 'Traditional jerk chicken wrapped in warm pita' },
+                    { name: 'Chocolate Rich Buttercream Frosting Jar Cake', price: 8.99, description: 'Decadent chocolate cake with rich buttercream' },
+                    { name: 'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries', price: 16.99, description: 'Extremely spicy fried chicken - not for the faint of heart!' },
+                    { name: 'Loaded BBQ Chicken Cheddar Cheese Fries', price: 14.99, description: 'BBQ chicken, cheddar cheese, and crispy fries' },
+                    { name: 'Biscoff Jar Cake', price: 8.99, description: 'Speculoos cookie butter cake in a jar' },
+                    { name: 'Lemon Buttercream Jar Cake', price: 8.99, description: 'Fresh lemon cake with zesty buttercream frosting' }
+                ]
+            },
+            'texas-chicken': {
+                title: 'Texas Crispy Fried Chicken',
+                items: [
+                    { name: 'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries', price: 16.99, description: 'Extremely spicy fried chicken - not for the faint of heart!' },
+                    { name: 'Honey BBQ Wings (6) and Fries', price: 14.99, description: 'Sweet and tangy BBQ wings with crispy fries' },
+                    { name: 'Siracha Mayo Hot Wings (6) and Fries', price: 14.99, description: 'Spicy sriracha mayo wings with fries' },
+                    { name: '2 Piece Glazed Crispy Chicken and Fries', price: 12.99, description: 'Classic crispy chicken with sweet glaze' },
+                    { name: 'Loaded Fries', price: 12.99, description: 'Crispy fries topped with cheese, bacon, and special sauce' },
+                    { name: 'Loaded BBQ Chicken Cheddar Cheese Fries', price: 14.99, description: 'BBQ chicken, cheddar cheese, and crispy fries' },
+                    { name: 'Grilled Cheese Sandwich', price: 8.99, description: 'Classic grilled cheese with melted cheddar' },
+                    { name: 'Tuna Fish Sandwich', price: 9.99, description: 'Fresh tuna salad sandwich on toasted bread' },
+                    { name: 'American BLT (Bacon Lettuce Tomato)', price: 8.99, description: 'Classic BLT with crispy bacon' },
+                    { name: 'Bacon Cheddar Fries', price: 11.99, description: 'Crispy fries with bacon and cheddar cheese' },
+                    { name: 'Ultimate Bacon Cheddar Burger', price: 14.99, description: 'Double bacon patty with extra cheddar' },
+                    { name: 'Melted Cheddar Burger', price: 12.99, description: 'Juicy burger with melted cheddar cheese' }
+                ]
+            },
+            'mexican-food': {
+                title: 'Mexican Food & Dish',
+                items: [
+                    { name: 'Chicken Burrito', price: 13.99, description: 'Grilled chicken, rice, beans, and salsa wrapped in tortilla' },
+                    { name: '2 Chicken Crispy Tacos', price: 11.99, description: 'Two crispy tacos with seasoned chicken' },
+                    { name: '2 Beef Crispy Tacos', price: 11.99, description: 'Two crispy tacos with seasoned ground beef' }
+                ]
+            },
+            'cupcakes': {
+                title: 'Cupcakes',
+                items: [
+                    { name: 'Chocolate Rich Buttercream Frosting Jar Cake', price: 8.99, description: 'Decadent chocolate cake with rich buttercream' },
+                    { name: 'Vanilla Buttercream Cake Slice', price: 7.99, description: 'Classic vanilla cake with buttercream frosting' },
+                    { name: 'Lemon Buttercream Jar Cake', price: 8.99, description: 'Fresh lemon cake with zesty buttercream frosting' },
+                    { name: 'Biscoff Jar Cake', price: 8.99, description: 'Speculoos cookie butter cake in a jar' },
+                    { name: 'Bailey\'s Irish Cream Jar Cake', price: 9.99, description: 'Adult cake with Irish cream flavor' },
+                    { name: 'Salted Caramel Cake', price: 8.99, description: 'Sweet and salty caramel cake' },
+                    { name: 'Pistachio Dream Jar Cake', price: 9.99, description: 'Nutty pistachio cake in a jar' },
+                    { name: 'Coffee Latte Jar Cake', price: 8.99, description: 'Coffee-flavored cake with latte frosting' },
+                    { name: 'Pink Guava Buttercream Jar Cake', price: 9.99, description: 'Tropical guava cake with buttercream' }
+                ]
+            },
+            'breakfast': {
+                title: 'Breakfast',
+                items: [
+                    { name: 'Chicken and Waffles', price: 12.99, description: 'Crispy fried chicken on fluffy waffles with syrup' },
+                    { name: 'Loaded Omelette', price: 10.99, description: 'Three-egg omelette with cheese, vegetables, and your choice of meat' }
+                ]
+            },
+            'smoothies': {
+                title: 'Smoothies',
+                items: [
+                    { name: 'Strawberry Colada', price: 6.99, description: 'Strawberry and pineapple smoothie with coconut' },
+                    { name: 'Pina Colada', price: 6.99, description: 'Classic pineapple and coconut smoothie' },
+                    { name: 'Watermelon Mint Ice', price: 5.99, description: 'Refreshing watermelon with mint' },
+                    { name: 'Green Glow', price: 7.99, description: 'Spinach, kale, banana, and green apple' },
+                    { name: 'Tropical Fruit Blend', price: 7.99, description: 'Mango, pineapple, and passion fruit' },
+                    { name: 'Pineapple Strawberry', price: 6.99, description: 'Sweet pineapple and strawberry blend' },
+                    { name: 'Strawberries and Cream', price: 6.99, description: 'Strawberry smoothie with creamy vanilla' },
+                    { name: 'Lemonade Ice', price: 5.99, description: 'Refreshing lemonade ice smoothie' },
+                    { name: 'Banana Peanut Butter Chocolate', price: 7.99, description: 'Banana, peanut butter, and chocolate protein' }
+                ]
+            }
+        };
+
+        // Cart functionality
+        let cartItems = [];
+        let cartCount = 0;
+
+        // Initialize menu
+        function initializeMenu() {
+            Object.keys(menuData).forEach(categoryId => {
+                const category = menuData[categoryId];
+                const container = document.getElementById(`${categoryId}-items`);
+                
+                if (container) {
+                    category.items.forEach(item => {
+                        const foodItem = createFoodItem(item, categoryId);
+                        container.appendChild(foodItem);
+                    });
+                }
+            });
+        }
+
+        // Create food item element
+        function createFoodItem(item, categoryId) {
+            const div = document.createElement('div');
+            div.className = 'bolt-food-item';
+            
+            div.innerHTML = `
+                <div class="bolt-food-content">
+                    <div class="bolt-food-name">${item.name}</div>
+                    <div class="bolt-food-description">${item.description}</div>
+                    <div class="bolt-food-price">$${item.price.toFixed(2)}</div>
+                </div>
+                <div class="bolt-food-right">
+                    <img src="images/${getFoodImage(item.name)}" alt="${item.name}" class="bolt-food-image" onerror="this.src='images/placeholder.jpg'">
+                    <button class="bolt-food-add-btn" onclick="addToCart('${item.name}', ${item.price})">+</button>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        <!-- Premium Footer (copied from homepage) -->
+        <footer class="premium-footer crave-reveal" role="contentinfo">
+            <div class="premium-footer__inner container-fluid px-3 p-t-48 p-b-56">
+                <div class="premium-footer__grid row gx-4 gy-4 align-items-start">
+                    <div class="col-12 col-md-4">
+                        <div class="footer-brand">
+                            <img src="images/logo.png" alt="Crave" class="footer-brand__logo" width="160" height="44">
+                            <p class="footer-brand__tag">Crave — Elevating everyday comfort into curated experiences.</p>
+                            <p class="footer-brand__sub">Hospitality, elevated — open doors, warm service.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-6 col-md-4">
+                        <nav class="footer-nav" aria-label="Footer Navigation">
+                            <h4 class="footer-heading">Explore</h4>
+                            <ul class="footer-links">
+                                <li><a href="menu.html">Menu</a></li>
+                                <li><a href="reservation.html">Reservations</a></li>
+                                <li><a href="about.html">About</a></li>
+                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="delivery.html">Delivery Info</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="col-6 col-md-4">
+                        <div class="footer-contact">
+                            <h4 class="footer-heading">Contact</h4>
+                            <address class="footer-address">
+                                <div class="footer-address__line">8th floor, 379 Hudson St, New York, NY</div>
+                                <a href="tel:+19671668879" class="footer-link">(+1) 96 716 6879</a>
+                                <a href="mailto:contact@crave-restaurant.com" class="footer-link">contact@crave-restaurant.com</a>
+                            </address>
+                            <div class="footer-hours">Open: <span>11:00 AM – 10:00 PM</span></div>
+                            <div class="footer-social">
+                                <a class="social-btn" href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                                <a class="social-btn" href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                                <a class="social-btn" href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="premium-footer__cta mt-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+                    <div class="cta-copy">
+                        <h3 class="cta-title">Ready for another Crave experience?</h3>
+                        <p class="cta-sub">Order now or join our VIP list for exclusive offers.</p>
+                    </div>
+                    <div class="cta-actions d-flex gap-2 align-items-center">
+                        <a href="menu.html" class="btn btn-premium-ghost">View Menu</a>
+                        <a href="menu.html" class="btn btn-premium">Order Now</a>
+                        <form class="vip-form" action="#" onsubmit="event.preventDefault(); alert('Thanks — VIP registered (demo)');">
+                            <input type="email" name="vip_email" placeholder="Join VIP — email" aria-label="VIP email" required>
+                            <button class="vip-cta" type="submit">Join VIP</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="premium-footer__bottom">
+                <div class="container-fluid px-3">
+                    <div class="premium-footer__bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 p-3">
+                        <div class="footer-copyright">© <span id="copyright-year">2025</span> Crave Restaurant. All rights reserved.</div>
+                        <div class="footer-powered">Powered by Crave • Crafted with care</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+            
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(feedback)) {
+                        document.body.removeChild(feedback);
+                    }
+                }, 300);
+            }, 2000);
+        }
+
+        // Category navigation
+        function initializeCategoryNav() {
+            const navItems = document.querySelectorAll('.bolt-category-nav-item');
+            const sections = document.querySelectorAll('.bolt-menu-section');
+            
+            // Update active category on scroll
+            function updateActiveCategory() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (window.pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('href') === `#${current}`) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', updateActiveCategory);
+            updateActiveCategory();
+        }
+
+        // Initialize everything on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMenu();
+            initializeCategoryNav();
+            updateCartBadge();
+            
+            // Copyright year
+            const yearSpan = document.getElementById('copyright-year');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+    <script src="js/analytics.js" defer></script>
+</body>
+</html>

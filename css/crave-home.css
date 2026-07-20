@@ -1,0 +1,892 @@
+/**
+ * Crave homepage — unified luxury glass system (scoped to body.crave-home only)
+ */
+
+body.crave-home {
+  --ch-glass-bg: rgba(18, 18, 18, 0.72);
+  --ch-glass-blur: 18px;
+  --ch-glass-border: 1px solid rgba(212, 175, 55, 0.12);
+  --ch-glass-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  --ch-radius: 24px;
+  --ch-gold: #c9a962;
+  --ch-gold-line: rgba(212, 175, 55, 0.12);
+  --ch-gold-glow: rgba(212, 175, 55, 0.22);
+  --ch-text-muted: rgba(255, 255, 255, 0.68);
+  --ch-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ch-lift: translate3d(0, -6px, 0);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(212, 175, 55, 0.09) 0%, transparent 55%),
+    radial-gradient(90% 60% at 100% 20%, rgba(120, 80, 40, 0.12) 0%, transparent 50%),
+    radial-gradient(80% 50% at 0% 80%, rgba(40, 60, 90, 0.08) 0%, transparent 45%),
+    linear-gradient(180deg, #0b0b0b 0%, #050505 40%, #080808 100%);
+  color: #f4f4f4;
+  overflow-x: clip;
+}
+
+body.crave-home > section,
+body.crave-home > .crave-home-ticker-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Ambient atmosphere (fixed, non-interactive) ---- */
+.crave-home-atmos {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.crave-home-atmos__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 100%, rgba(212, 175, 55, 0.04) 0%, transparent 55%);
+  opacity: 0.9;
+}
+
+.crave-home-atmos__vignette {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.55);
+}
+
+.crave-home-atmos__streak {
+  position: absolute;
+  width: 140%;
+  height: 2px;
+  left: -20%;
+  opacity: 0.35;
+  filter: blur(1px);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.08) 35%,
+    rgba(255, 230, 170, 0.2) 50%,
+    rgba(212, 175, 55, 0.08) 65%,
+    transparent 100%
+  );
+  animation: chStreakDrift 14s var(--ch-ease) infinite;
+}
+
+.crave-home-atmos__streak--a {
+  top: 18%;
+  transform: rotate(-8deg);
+  animation-duration: 18s;
+}
+
+.crave-home-atmos__streak--b {
+  top: 62%;
+  transform: rotate(5deg);
+  animation-duration: 22s;
+  animation-delay: -6s;
+}
+
+@keyframes chStreakDrift {
+  0%,
+  100% {
+    transform: translate3d(-12%, 0, 0) rotate(-8deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate3d(12%, 0, 0) rotate(-8deg);
+    opacity: 0.45;
+  }
+}
+
+.crave-home-atmos__streak--b {
+  animation-name: chStreakDriftB;
+}
+
+@keyframes chStreakDriftB {
+  0%,
+  100% {
+    transform: translate3d(10%, 0, 0) rotate(5deg);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translate3d(-14%, 0, 0) rotate(5deg);
+    opacity: 0.38;
+  }
+}
+
+.crave-home-atmos__particles {
+  position: absolute;
+  inset: 0;
+}
+
+.crave-home-atmos__particles span {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.35);
+  opacity: 0.12;
+  animation: chParticleFloat 28s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+}
+
+.crave-home-atmos__particles span:nth-child(1) {
+  left: 8%;
+  top: 22%;
+  animation-delay: 0s;
+}
+.crave-home-atmos__particles span:nth-child(2) {
+  left: 18%;
+  top: 68%;
+  animation-delay: -4s;
+}
+.crave-home-atmos__particles span:nth-child(3) {
+  left: 32%;
+  top: 14%;
+  animation-delay: -9s;
+}
+.crave-home-atmos__particles span:nth-child(4) {
+  left: 44%;
+  top: 52%;
+  animation-delay: -2s;
+}
+.crave-home-atmos__particles span:nth-child(5) {
+  left: 58%;
+  top: 30%;
+  animation-delay: -11s;
+}
+.crave-home-atmos__particles span:nth-child(6) {
+  left: 72%;
+  top: 76%;
+  animation-delay: -6s;
+}
+.crave-home-atmos__particles span:nth-child(7) {
+  left: 86%;
+  top: 18%;
+  animation-delay: -14s;
+}
+.crave-home-atmos__particles span:nth-child(8) {
+  left: 92%;
+  top: 48%;
+  animation-delay: -3s;
+}
+.crave-home-atmos__particles span:nth-child(9) {
+  left: 12%;
+  top: 88%;
+  animation-delay: -8s;
+}
+.crave-home-atmos__particles span:nth-child(10) {
+  left: 64%;
+  top: 12%;
+  animation-delay: -16s;
+}
+.crave-home-atmos__particles span:nth-child(11) {
+  left: 38%;
+  top: 82%;
+  animation-delay: -5s;
+}
+.crave-home-atmos__particles span:nth-child(12) {
+  left: 76%;
+  top: 40%;
+  animation-delay: -12s;
+}
+
+@keyframes chParticleFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.08;
+  }
+  50% {
+    transform: translate3d(10px, -18px, 0);
+    opacity: 0.18;
+  }
+}
+
+/* ---- Section rhythm & luxury dividers ---- */
+body.crave-home section:not(.clean-hero) {
+  padding-top: clamp(3.25rem, 7vw, 5.5rem) !important;
+  padding-bottom: clamp(3.25rem, 7vw, 5.5rem) !important;
+}
+
+body.crave-home section:not(.clean-hero)::before {
+  content: "";
+  display: block;
+  width: min(88%, 840px);
+  height: 1px;
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+  background: linear-gradient(90deg, transparent, var(--ch-gold-line), transparent);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.08);
+}
+
+body.crave-home section.social-proof::before,
+body.crave-home .crave-home-ticker-wrap + section::before {
+  display: none;
+}
+
+body.crave-home .crave-home-ticker-wrap {
+  padding: 0.5rem 0 0.25rem;
+}
+
+/* ---- Scroll reveals ---- */
+body.crave-home .crave-reveal:not(.crave-reveal--static) {
+  opacity: 0;
+  transform: translate3d(0, 32px, 0) scale(0.985);
+  filter: blur(10px);
+  transition:
+    opacity 0.75s var(--ch-ease),
+    transform 0.75s var(--ch-ease),
+    filter 0.65s ease;
+  will-change: transform, opacity;
+}
+
+body.crave-home .crave-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
+
+body.crave-home .crave-reveal--static {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* ---- Live ticker ---- */
+.crave-home-ticker {
+  max-width: min(920px, 94vw);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 22px;
+  border-radius: var(--ch-radius);
+  background: var(--ch-glass-bg);
+  backdrop-filter: blur(var(--ch-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ch-glass-blur));
+  border: var(--ch-glass-border);
+  box-shadow: var(--ch-glass-shadow);
+}
+
+.crave-home-ticker__pulse {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff6d0, var(--ch-gold));
+  box-shadow: 0 0 14px var(--ch-gold-glow);
+  animation: chTickerPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes chTickerPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+.crave-home-ticker__text {
+  margin: 0;
+  font-family: "Poppins", system-ui, sans-serif;
+  font-size: clamp(0.82rem, 2.4vw, 0.95rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--ch-text-muted);
+  line-height: 1.45;
+  transition: opacity 0.2s ease;
+}
+
+.crave-home-ticker__text--tick {
+  opacity: 0.35;
+}
+
+/* ---- Glass card mixin pattern (explicit per component) ---- */
+body.crave-home #siteHeader.navbar-header {
+  background: rgba(10, 10, 10, 0.55) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+
+body.crave-home #siteHeader.navbar-header.scrolled {
+  background: rgba(12, 12, 12, 0.82) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* ---- Hero ---- */
+body.crave-home .clean-hero {
+  isolation: isolate;
+}
+
+body.crave-home .clean-hero__cinematic-streak {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.03) 42%,
+    rgba(255, 245, 210, 0.06) 50%,
+    rgba(212, 175, 55, 0.03) 58%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: chHeroShimmer 16s var(--ch-ease) infinite;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+}
+
+@keyframes chHeroShimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+body.crave-home .hero-background {
+  will-change: transform;
+}
+
+body.crave-home .hero-gradient-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.55) 45%,
+    rgba(0, 0, 0, 0.82) 100%
+  ) !important;
+}
+
+body.crave-home .hero-headline {
+  letter-spacing: 0.04em;
+  text-shadow: 0 4px 48px rgba(0, 0, 0, 0.65);
+}
+
+body.crave-home .hero-subheading {
+  color: var(--ch-text-muted) !important;
+  line-height: 1.65;
+  max-width: 36em;
+}
+
+body.crave-home .hero-trust-section {
+  background: var(--ch-glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: var(--ch-glass-border);
+  border-radius: 999px;
+  padding: 10px 22px !important;
+  box-shadow: var(--ch-glass-shadow);
+}
+
+body.crave-home .cta-button.cta-primary {
+  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.18);
+}
+
+body.crave-home .cta-button:hover {
+  transform: translate3d(0, -3px, 0);
+  transition: transform 0.28s var(--ch-ease), box-shadow 0.28s ease;
+}
+
+/* Spotlight cards */
+body.crave-home .crave-spotlight {
+  position: relative;
+  border-radius: var(--ch-radius) !important;
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.14),
+    0 20px 60px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.crave-home .crave-spotlight::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), transparent 40%, transparent 60%, rgba(212, 175, 55, 0.06));
+  opacity: 0.85;
+}
+
+body.crave-home .crave-spotlight--secondary::after {
+  opacity: 0.45;
+}
+
+body.crave-home .featured-food-card.crave-spotlight {
+  background: var(--ch-glass-bg) !important;
+  backdrop-filter: blur(var(--ch-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ch-glass-blur));
+  border: var(--ch-glass-border) !important;
+  border-radius: var(--ch-radius) !important;
+  box-shadow: var(--ch-glass-shadow) !important;
+  transition: transform 0.4s var(--ch-ease), box-shadow 0.4s ease;
+}
+
+body.crave-home .featured-food-card:hover {
+  transform: var(--ch-lift) !important;
+}
+
+body.crave-home .featured-food-btn {
+  border-radius: 999px !important;
+  transition: transform 0.25s var(--ch-ease), box-shadow 0.25s ease !important;
+}
+
+body.crave-home .featured-food-btn:hover {
+  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.25) !important;
+  transform: translate3d(0, -2px, 0);
+}
+
+/* ---- Social proof (testimonial-style) ---- */
+body.crave-home .social-proof {
+  background: transparent !important;
+}
+
+body.crave-home .social-proof-title {
+  font-family: "Playfair Display", Georgia, serif;
+  letter-spacing: 0.03em;
+}
+
+body.crave-home .social-proof-subtitle {
+  color: var(--ch-text-muted) !important;
+}
+
+body.crave-home .social-proof-item {
+  background: var(--ch-glass-bg) !important;
+  backdrop-filter: blur(var(--ch-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ch-glass-blur));
+  border: var(--ch-glass-border) !important;
+  border-radius: var(--ch-radius) !important;
+  box-shadow: var(--ch-glass-shadow) !important;
+  overflow: hidden;
+  transition: transform 0.45s var(--ch-ease), box-shadow 0.45s ease !important;
+}
+
+body.crave-home .social-proof-item:hover {
+  transform: var(--ch-lift) !important;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.45),
+    0 0 40px rgba(212, 175, 55, 0.08) !important;
+}
+
+body.crave-home .social-proof-image img {
+  transition: transform 0.55s var(--ch-ease);
+}
+
+body.crave-home .social-proof-item:hover .social-proof-image img {
+  transform: scale(1.06);
+}
+
+body.crave-home .social-proof-text {
+  color: var(--ch-text-muted) !important;
+  line-height: 1.55;
+}
+
+body.crave-home .social-proof-tag {
+  background: rgba(18, 18, 18, 0.75) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* ---- Welcome ---- */
+body.crave-home .crave-home-welcome {
+  background: transparent;
+}
+
+body.crave-home .crave-home-welcome .wrap-text-welcome {
+  background: var(--ch-glass-bg);
+  backdrop-filter: blur(var(--ch-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ch-glass-blur));
+  border: var(--ch-glass-border);
+  border-radius: var(--ch-radius);
+  box-shadow: var(--ch-glass-shadow);
+  padding: clamp(1.75rem, 4vw, 2.75rem) clamp(1.25rem, 3vw, 2rem);
+}
+
+body.crave-home .crave-home-welcome .size3 {
+  color: var(--ch-text-muted) !important;
+  line-height: 1.65;
+}
+
+body.crave-home .crave-home-welcome .wrap-pic-welcome {
+  border-radius: var(--ch-radius) !important;
+  overflow: hidden;
+  border: var(--ch-glass-border);
+  box-shadow: var(--ch-glass-shadow);
+}
+
+/* ---- Visual food grid ---- */
+body.crave-home .visual-food {
+  background: transparent !important;
+}
+
+body.crave-home .visual-food-title {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+body.crave-home .visual-food-subtitle {
+  color: var(--ch-text-muted) !important;
+}
+
+body.crave-home .visual-food-item {
+  border-radius: var(--ch-radius) !important;
+  border: var(--ch-glass-border) !important;
+  box-shadow: var(--ch-glass-shadow) !important;
+  overflow: hidden;
+  transition: transform 0.45s var(--ch-ease), box-shadow 0.45s ease !important;
+}
+
+body.crave-home .visual-food-item:hover {
+  transform: var(--ch-lift) !important;
+}
+
+body.crave-home .visual-food-overlay {
+  background: linear-gradient(180deg, transparent 0%, rgba(8, 8, 8, 0.88) 100%) !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+body.crave-home .visual-food-item img {
+  transition: transform 0.6s var(--ch-ease);
+}
+
+body.crave-home .visual-food-item:hover img {
+  transform: scale(1.07);
+}
+
+/* ---- Homepage CTA banner ---- */
+body.crave-home .homepage-cta {
+  position: relative;
+  background: transparent !important;
+  margin-left: max(12px, env(safe-area-inset-left, 0px));
+  margin-right: max(12px, env(safe-area-inset-right, 0px));
+}
+
+body.crave-home .homepage-cta .homepage-cta-content {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--ch-radius);
+  background: var(--ch-glass-bg);
+  backdrop-filter: blur(var(--ch-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ch-glass-blur));
+  border: var(--ch-glass-border);
+  box-shadow: var(--ch-glass-shadow);
+  padding: clamp(2rem, 5vw, 3.25rem) clamp(1rem, 3vw, 2rem) !important;
+  overflow: hidden;
+}
+
+body.crave-home .homepage-cta .homepage-cta-content::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(212, 175, 55, 0.06) 50%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  animation: chHeroShimmer 12s linear infinite;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.crave-home .homepage-cta .homepage-cta-content > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.crave-home .homepage-cta-title {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+body.crave-home .homepage-cta-subtitle {
+  color: var(--ch-text-muted) !important;
+}
+
+body.crave-home .homepage-cta .btn-cta-primary,
+body.crave-home .homepage-cta .btn-cta-secondary {
+  border-radius: 999px !important;
+  transition: transform 0.28s var(--ch-ease), box-shadow 0.28s ease !important;
+}
+
+body.crave-home .homepage-cta .btn-cta-primary:hover,
+body.crave-home .homepage-cta .btn-cta-secondary:hover {
+  transform: translate3d(0, -3px, 0);
+}
+
+body.crave-home .cta-microcopy {
+  color: var(--ch-text-muted) !important;
+}
+
+/* ---- Menu section ---- */
+body.crave-home .section-menu.bg1 {
+  background: transparent !important;
+}
+
+body.crave-home .section-menu .tit5,
+body.crave-home .section-menu .tit2 {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+body.crave-home .category-tabs {
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+}
+
+body.crave-home .section-menu .filter-btn {
+  background: rgba(18, 18, 18, 0.55) !important;
+  border: 1px solid rgba(212, 175, 55, 0.1) !important;
+  border-radius: 999px !important;
+  color: var(--ch-text-muted) !important;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s var(--ch-ease), color 0.25s ease !important;
+}
+
+body.crave-home .section-menu .filter-btn:hover,
+body.crave-home .section-menu .filter-btn.active {
+  color: #fff !important;
+  border-color: rgba(212, 175, 55, 0.35) !important;
+  background: rgba(28, 28, 28, 0.88) !important;
+  transform: translate3d(0, -2px, 0);
+}
+
+body.crave-home .section-menu .menu-card {
+  border-radius: var(--ch-radius) !important;
+  background: var(--ch-glass-bg) !important;
+  backdrop-filter: blur(var(--ch-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ch-glass-blur));
+  border: var(--ch-glass-border) !important;
+  box-shadow: var(--ch-glass-shadow) !important;
+  transition: transform 0.45s var(--ch-ease), box-shadow 0.45s ease !important;
+}
+
+body.crave-home .section-menu .menu-card:hover {
+  transform: var(--ch-lift) !important;
+}
+
+body.crave-home .section-menu .menu-description {
+  color: var(--ch-text-muted) !important;
+  line-height: 1.55;
+}
+
+body.crave-home .section-menu .btn1 {
+  border-radius: 999px !important;
+}
+
+/* ---- Events swiper ---- */
+body.crave-home .section-event {
+  background: transparent !important;
+}
+
+body.crave-home .section-event .blo2 {
+  border-radius: var(--ch-radius);
+  overflow: hidden;
+  border: var(--ch-glass-border);
+  box-shadow: var(--ch-glass-shadow);
+}
+
+body.crave-home .section-event .wrap-text-blo2 {
+  background: var(--ch-glass-bg) !important;
+  backdrop-filter: blur(var(--ch-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ch-glass-blur));
+}
+
+body.crave-home .section-event .tit7 {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+body.crave-home .section-event .wrap-text-blo2 p {
+  color: var(--ch-text-muted) !important;
+  line-height: 1.6;
+}
+
+body.crave-home .section-event .arrow-slick2 {
+  border-radius: 50%;
+  background: rgba(18, 18, 18, 0.65);
+  border: var(--ch-glass-border);
+  transition: transform 0.25s var(--ch-ease), box-shadow 0.25s ease;
+}
+
+body.crave-home .section-event .arrow-slick2:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.15);
+}
+
+/* ---- Reservation ---- */
+body.crave-home .reservation-section {
+  background: transparent !important;
+}
+
+body.crave-home .reservation-section::before,
+body.crave-home .reservation-section::after {
+  opacity: 0.35 !important;
+}
+
+body.crave-home .reservation-section .booking-title {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+body.crave-home .reservation-section .booking-trust {
+  color: var(--ch-text-muted) !important;
+}
+
+body.crave-home .reservation-section .wrap-form-booking {
+  background: var(--ch-glass-bg) !important;
+  backdrop-filter: blur(var(--ch-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ch-glass-blur));
+  border: var(--ch-glass-border) !important;
+  border-radius: var(--ch-radius) !important;
+  box-shadow: var(--ch-glass-shadow) !important;
+  padding: clamp(1.5rem, 4vw, 2.5rem) !important;
+}
+
+body.crave-home .reservation-section .wrap-inputdate input,
+body.crave-home .reservation-section .wrap-inputtime select,
+body.crave-home .reservation-section .wrap-inputpeople select,
+body.crave-home .reservation-section .wrap-inputname input,
+body.crave-home .reservation-section .wrap-inputphone input,
+body.crave-home .reservation-section .wrap-inputemail input {
+  border-radius: 16px !important;
+  background: rgba(12, 12, 12, 0.65) !important;
+  border: 1px solid rgba(212, 175, 55, 0.12) !important;
+  color: #fff !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+body.crave-home .reservation-section .wrap-inputdate input:focus,
+body.crave-home .reservation-section .wrap-inputtime select:focus,
+body.crave-home .reservation-section .wrap-inputpeople select:focus,
+body.crave-home .reservation-section .wrap-inputname input:focus,
+body.crave-home .reservation-section .wrap-inputphone input:focus,
+body.crave-home .reservation-section .wrap-inputemail input:focus {
+  border-color: rgba(212, 175, 55, 0.35) !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+  outline: none;
+}
+
+body.crave-home .reservation-section .btn-premium {
+  border-radius: 999px !important;
+  transition: transform 0.28s var(--ch-ease), box-shadow 0.28s ease !important;
+}
+
+body.crave-home .reservation-section .btn-premium:hover {
+  transform: translate3d(0, -2px, 0);
+}
+
+body.crave-home .reservation-success,
+body.crave-home .reservation-error {
+  border-radius: var(--ch-radius) !important;
+  border: var(--ch-glass-border) !important;
+}
+
+/* ---- Footer ---- */
+body.crave-home .crave-home-footer {
+  position: relative;
+  background: linear-gradient(180deg, rgba(14, 14, 14, 0.95) 0%, #030303 100%) !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+body.crave-home .crave-home-footer .txt14,
+body.crave-home .crave-home-footer .txt15 {
+  color: var(--ch-text-muted) !important;
+}
+
+body.crave-home .crave-home-footer a:hover {
+  color: var(--ch-gold) !important;
+}
+
+body.crave-home .crave-home-footer .item-gallery-footer {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  transition: transform 0.3s var(--ch-ease), box-shadow 0.3s ease;
+}
+
+body.crave-home .crave-home-footer .item-gallery-footer:hover {
+  transform: translate3d(0, -3px, 0);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+body.crave-home .end-footer.bg2 {
+  background: #020202 !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.08);
+}
+
+/* ---- Sticky cart (align with glass tokens) ---- */
+body.crave-home #stickyCartBar .sticky-cart-shell-inner {
+  background: var(--ch-glass-bg) !important;
+  border: var(--ch-glass-border) !important;
+  box-shadow: var(--ch-glass-shadow) !important;
+}
+
+/* ---- Premium skeleton utility (optional markup) ---- */
+@keyframes chShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+body.crave-home .crave-shimmer-skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgba(30, 30, 30, 0.9);
+  border: 1px solid rgba(212, 175, 55, 0.08);
+}
+
+body.crave-home .crave-shimmer-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.07) 45%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(212, 175, 55, 0.07) 55%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: chShimmer 1.8s ease-in-out infinite;
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  body.crave-home .crave-reveal:not(.crave-reveal--static) {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+
+  body.crave-home .crave-home-atmos__streak,
+  body.crave-home .crave-home-atmos__particles span,
+  body.crave-home .clean-hero__cinematic-streak,
+  body.crave-home .homepage-cta .homepage-cta-content::after {
+    animation: none !important;
+  }
+
+  body.crave-home .crave-shimmer-skeleton::after {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  body.crave-home section:not(.clean-hero)::before {
+    margin-bottom: clamp(1.25rem, 4vw, 2rem);
+  }
+
+  body.crave-home .category-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+}

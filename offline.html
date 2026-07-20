@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8CVWBJESV"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-F8CVWBJESV', { send_page_view: false });</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000000" />
+  <title>CRAVE Offline</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Poppins, Arial, sans-serif;
+      background: radial-gradient(circle at top, #1d160e 0%, #070707 55%, #000 100%);
+      color: #f8efe1;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(100%, 520px);
+      padding: 28px;
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      border-radius: 24px;
+      background: rgba(10, 10, 10, 0.8);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(18px);
+    }
+    .eyebrow { color: #d4a373; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.24em; margin-bottom: 10px; }
+    h1 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin: 0 0 10px; }
+    p { line-height: 1.6; color: rgba(248, 239, 225, 0.82); }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    a, button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 12px 16px;
+      text-decoration: none;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: #fff;
+      background: linear-gradient(135deg, #d4a373, #8f5a1b);
+      font-weight: 700;
+    }
+    a.secondary { background: transparent; color: #f8efe1; }
+  </style>
+</head>
+<body>
+  <main class="card" role="dialog" aria-label="CRAVE offline notice">
+    <div class="eyebrow">CRAVE is offline</div>
+    <h1>You’re still connected to your saved experience.</h1>
+    <p>Your last menu, cart, and contact details stay available so you can keep browsing while the connection returns.</p>
+    <div class="actions">
+      <a href="./menu.html">Browse menu</a>
+      <a class="secondary" href="./cart.html">View cart</a>
+      <a class="secondary" href="./index.html">Home</a>
+    </div>
+  </main>
+    <script src="js/analytics.js" defer></script>
+</body>
+</html>

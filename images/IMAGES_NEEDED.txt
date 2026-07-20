@@ -1,0 +1,38 @@
+Add these image files to this folder for the website to display correctly:
+
+LOGO & ICONS:
+- logo.png (restaurant logo)
+- icons/favicon.png (browser tab icon)
+- icons/video-16-9.jpg (video modal placeholder)
+
+HERO SLIDER:
+- slide1-01.jpg
+- master-slides-01.jpg
+- master-slides-02.jpg
+
+SECTIONS:
+- our-story-01.jpg
+- bg-intro-01.jpg
+- intro-01.jpg, intro-02.jpg, intro-04.jpg
+- booking-01.jpg
+- bg-cover-video-02.jpg
+
+MENU:
+- our-menu-01.jpg, our-menu-05.jpg, our-menu-08.jpg
+- our-menu-10.jpg, our-menu-13.jpg, our-menu-16.jpg
+
+EVENTS:
+- bg-event-01.jpg, bg-event-02.jpg
+- event-01.jpg, event-02.jpg, event-06.jpg
+
+GALLERY (full + thumbnails):
+- photo-gallery-01.jpg through photo-gallery-11.jpg
+- photo-gallery-thumb-01.jpg through photo-gallery-thumb-11.jpg
+
+REVIEWS:
+- avatar-01.jpg, avatar-04.jpg, avatar-05.jpg
+
+BLOG:
+- blog-01.jpg, blog-02.jpg, blog-03.jpg
+
+See CHECKLIST.md for more details.

@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Complete your order at Crave Restaurant">
+    <meta name="author" content="Crave Restaurant">
+    
+    <!-- Favicon - Comprehensive Solution -->
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="16x16">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="192x192">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="favicon.png" sizes="167x167">
+    <link rel="apple-touch-icon" href="favicon.png" sizes="180x180">
+    
+    <!-- Favicon Meta Tags -->
+    <meta name="msapplication-TileImage" content="favicon.png">
+    <meta name="msapplication-TileColor" content="#d4a373">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d4a373">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Checkout - Crave Restaurant</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8CVWBJESV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-F8CVWBJESV', { send_page_view: false });
+    </script>
+    <link rel="stylesheet" href="css/util.css">
+    
+    <!-- Paystack Payment Integration -->
+    <style>
+        .checkout-pay-now-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #00c896 0%, #00a878 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+    </style>
+
+    <!-- Premium Footer (copied from homepage) -->
+    <footer class="premium-footer crave-reveal" role="contentinfo">
+                <div class="premium-footer__inner container-fluid px-3 p-t-48 p-b-56">
+                    <div class="premium-footer__grid row gx-4 gy-4 align-items-start">
+                        <div class="col-12 col-md-4">
+                            <div class="footer-brand">
+                                <img src="images/logo.png" alt="Crave" class="footer-brand__logo" width="160" height="44">
+                                <p class="footer-brand__tag">Crave — Elevating everyday comfort into curated experiences.</p>
+                                <p class="footer-brand__sub">Hospitality, elevated — open doors, warm service.</p>
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                            <nav class="footer-nav" aria-label="Footer Navigation">
+                                <h4 class="footer-heading">Explore</h4>
+                                <ul class="footer-links">
+                                    <li><a href="menu.html">Menu</a></li>
+                                    <li><a href="reservation.html">Reservations</a></li>
+                                    <li><a href="about.html">About</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                    <li><a href="delivery.html">Delivery Info</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                            <div class="footer-contact">
+                                <h4 class="footer-heading">Contact</h4>
+                                <address class="footer-address">
+                                    <div class="footer-address__line">8th floor, 379 Hudson St, New York, NY</div>
+                                    <a href="tel:+19671668879" class="footer-link">(+1) 96 716 6879</a>
+                                    <a href="mailto:contact@crave-restaurant.com" class="footer-link">contact@crave-restaurant.com</a>
+                                </address>
+                                <div class="footer-hours">Open: <span>11:00 AM – 10:00 PM</span></div>
+                                <div class="footer-social">
+                                    <a class="social-btn" href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                                    <a class="social-btn" href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                                    <a class="social-btn" href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="premium-footer__cta mt-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+                        <div class="cta-copy">
+                            <h3 class="cta-title">Ready for another Crave experience?</h3>
+                            <p class="cta-sub">Order now or join our VIP list for exclusive offers.</p>
+                        </div>
+                        <div class="cta-actions d-flex gap-2 align-items-center">
+                            <a href="menu.html" class="btn btn-premium-ghost">View Menu</a>
+                            <a href="menu.html" class="btn btn-premium">Order Now</a>
+                            <form class="vip-form" action="#" onsubmit="event.preventDefault(); alert('Thanks — VIP registered (demo)');">
+                                <input type="email" name="vip_email" placeholder="Join VIP — email" aria-label="VIP email" required>
+                                <button class="vip-cta" type="submit">Join VIP</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="premium-footer__bottom">
+                    <div class="container-fluid px-3">
+                        <div class="premium-footer__bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 p-3">
+                            <div class="footer-copyright">© <span id="copyright-year">2025</span> Crave Restaurant. All rights reserved.</div>
+                            <div class="footer-powered">Powered by Crave • Crafted with care</div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid rgba(212, 165, 116, 0.2);
+        }
+        
+        .checkout-item-details {
+            flex: 1;
+        }
+        
+        .checkout-item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .checkout-item-quantity {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .checkout-item-price {
+            font-weight: 600;
+            color: #d4a373;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header id="siteHeader" class="navbar-header">
+        <nav class="navbar">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <a href="index.html" class="logo-link">
+                        <img src="images/logo.png" alt="Crave Restaurant" class="logo-img">
+                    </a>
+                </div>
+
+                <div class="navbar-menu" id="navbarMenu" aria-label="Primary navigation">
+                    <ul class="navbar-menu-list">
+                        <li class="navbar-menu-item"><a href="index.html" class="navbar-link" data-page="home">Home</a></li>
+                        <li class="navbar-menu-item"><a href="menu.html" class="navbar-link" data-page="menu">Menu</a></li>
+                        <li class="navbar-menu-item"><a href="rewards.html" class="navbar-link" data-page="rewards">Rewards</a></li>
+                        <li class="navbar-menu-item"><a href="vip.html" class="navbar-link" data-page="vip">VIP</a></li>
+                        <li class="navbar-menu-item"><a href="about.html" class="navbar-link" data-page="about">About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Checkout Container -->
+    <div class="checkout-container">
+        <div class="checkout-layout">
+            <!-- Customer Form Section -->
+            <div class="checkout-form-section">
+                <h1 class="checkout-title">Almost There — Confirm Your Order</h1>
+                <p class="checkout-subtitle">Enter a few details and we’ll deliver it hot.</p>
+
+                <!-- Error Message -->
+                <div class="checkout-error" id="checkoutError"></div>
+
+                <!-- Checkout Form -->
+                <form id="checkoutForm">
+                    <!-- Full Name -->
+                    <div class="checkout-form-group">
+                        <label for="fullName" class="checkout-label">
+                            Full Name <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            name="fullName" 
+                            class="checkout-input" 
+                            placeholder="Enter your full name"
+                            required
+                            autofocus
+                        >
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="checkout-form-group">
+                        <label for="phoneNumber" class="checkout-label">
+                            Phone Number <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="phoneNumber" 
+                            name="phoneNumber" 
+                            class="checkout-input" 
+                            placeholder="050 000 0000"
+                            required
+                        >
+                    </div>
+
+                    <!-- Delivery Address -->
+                    <div class="checkout-form-group">
+                        <label class="checkout-label">
+                            Delivery Location <span class="required">*</span>
+                        </label>
+                        
+                        <!-- Map Container -->
+                        <div class="map-container">
+                            <div id="deliveryMap" class="delivery-map"></div>
+                            
+                            <!-- Location Controls -->
+                            <div class="map-controls">
+                                <button type="button" id="useMyLocationBtn" class="location-btn">
+                                    <i class="fas fa-location-crosshairs"></i>
+                                    Use My Location
+                                </button>
+                            </div>
+                            
+                            <!-- Selected Location Display -->
+                            <div id="selectedLocation" class="selected-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span id="locationText">Location selected</span>
+                            </div>
+                            
+                            <!-- Helper Text -->
+                            <div class="map-helper-text">
+                                <i class="fas fa-info-circle"></i>
+                                Drag the pin to your exact delivery location
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden coordinates input -->
+                        <input type="hidden" id="deliveryCoordinates" name="deliveryCoordinates" required>
+                        <input type="hidden" id="deliveryAddress" name="deliveryAddress" required>
+                    </div>
+
+                    <!-- Order Type -->
+                    <div class="checkout-form-group">
+                        <label class="checkout-label">
+                            Order Type <span class="required">*</span>
+                        </label>
+                        <div class="order-type-group">
+                            <div class="order-type-option">
+                                <input type="radio" id="delivery" name="orderType" value="Delivery" class="order-type-radio" checked>
+                                <label for="delivery" class="order-type-label">
+                                    <i class="fas fa-truck"></i> Delivery
+                                </label>
+                            </div>
+                            <div class="order-type-option">
+                                <input type="radio" id="pickup" name="orderType" value="Pickup" class="order-type-radio">
+                                <label for="pickup" class="order-type-label">
+                                    <i class="fas fa-store"></i> Pickup
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes -->
+                    <div class="checkout-form-group">
+                        <label for="additionalNotes" class="checkout-label">
+                            Additional Notes (Optional)
+                        </label>
+                        <textarea 
+                            id="additionalNotes" 
+                            name="additionalNotes" 
+                            class="checkout-input checkout-textarea" 
+                            placeholder="Any special requests? (e.g., no onions, extra spicy)"
+                        ></textarea>
+                    </div>
+
+                    <!-- Order Summary Section -->
+                    <div class="checkout-summary-section checkout-summary-inline">
+                        <h2 class="checkout-summary-title">Order Summary</h2>
+                        
+                        <!-- Cart Items -->
+                        <div class="checkout-cart-items" id="checkoutCartItems">
+                            <!-- Items will be populated by JavaScript -->
+                        </div>
+
+                        <!-- Empty Cart State -->
+                        <div class="checkout-empty-cart" id="emptyCartState" style="display: none;">
+                            <div class="checkout-empty-cart-icon" aria-hidden="true">🍟</div>
+                            <div class="checkout-empty-cart-text">Your cravings are waiting…</div>
+                            <p class="checkout-empty-cart-sub">Add something delicious to continue.</p>
+                            <a href="menu.html" class="checkout-empty-cart-link">
+                                Browse Menu
+                            </a>
+                        </div>
+
+                        <!-- Order Totals -->
+                        <div class="checkout-summary-totals" id="orderTotals">
+                            <div class="checkout-summary-row">
+                                <span>Subtotal</span>
+                                <span id="subtotalAmount">GH¢ 0.00</span>
+                            </div>
+                            <div class="checkout-summary-row">
+                                <span>Delivery Fee</span>
+                                <span id="deliveryFee">GH¢ 15.00</span>
+                            </div>
+                            <div class="checkout-summary-row total">
+                                <span>Your Total</span>
+                                <span id="totalAmount">GH¢ 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Place Order Button -->
+                    <button type="submit" class="checkout-place-order-btn" id="placeOrderBtn">
+                        <i class="fas fa-shopping-cart"></i>
+                        Confirm & Pay
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Animation -->
+    <div class="checkout-success" id="checkoutSuccess">
+        <div class="checkout-success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="checkout-success-text">Order Placed!</div>
+        <div class="checkout-success-subtext">Redirecting to WhatsApp...</div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg1">
+        <div class="container-fluid px-3 p-t-40 p-b-70">
+            <div class="row">
+                <div class="col-sm-6 col-md-4 p-t-50 m-b-30">
+                    <h4 class="txt13 m-b-33">Contact Us</h4>
+                    <ul class="m-b-70">
+                        <li class="txt14 m-b-14">
+                            <i class="fa-solid fa-location-dot fs-16 dis-inline-block size19"></i>
+                            8th floor, 379 Hudson St, New York, NY 10018
+                        </li>
+                        <li class="txt14 m-b-14">
+                            <i class="fa-solid fa-phone fs-16 dis-inline-block size19"></i>
+                            <a href="tel:+19671668879">(+1) 96 716 6879</a>
+                        </li>
+                        <li class="txt14 m-b-14">
+                            <i class="fa-solid fa-envelope fs-13 dis-inline-block size19"></i>
+                            <a href="mailto:contact@crave-restaurant.com">contact@crave-restaurant.com</a>
+                        </li>
+                    </ul>
+
+                    <h4 class="txt13 m-b-32">Opening Times</h4>
+                    <ul>
+                        <li class="txt14">11:00 AM " 10:00 PM</li>
+                        <li class="txt14">Every Day</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="end-footer bg2">
+            <div class="container-fluid px-3">
+                <div class="flex-sb-m flex-w p-t-22 p-b-22">
+                    <div class="p-t-5 p-b-5">
+                        <a href="#" class="fs-15 c-white"><i class="fa-brands fa-yelp"></i></a>
+                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-google"></i></a>
+                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-x-twitter"></i></a>
+                    </div>
+                    <div class="txt17 p-r-20 p-t-5 p-b-5">
+                        &copy; <span id="copyright-year">2025</span> Crave Restaurant. All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/233550020788?text=Hi%20Crave%2C%20I%E2%80%99d%20like%20to%20place%20an%20order" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/analytics.js" defer></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <!-- Interactive Map JavaScript -->
+    <script>
+        // Map variables
+        let map;
+        let marker;
+        let selectedCoordinates = { lat: 5.6037, lng: -0.1870 }; // Accra, Ghana
+        let cartItems = [];
+        let deliveryFee = 15.00;
+        
+        // Initialize map on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit for the DOM to be fully ready
+            setTimeout(function() {
+                initializeCheckout();
+                if (typeof L !== 'undefined') {
+                    initializeMap();
+                    setupMapEventListeners();
+                } else {
+                    console.error('Leaflet library not loaded');
+                    // Fallback: show simple location input
+                    const mapContainer = document.getElementById('deliveryMap');
+                    if (mapContainer) {
+                        mapContainer.innerHTML = '<div style="padding: 40px; text-align: center; background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; color: #6c757d;"><i class="fas fa-map-marker-alt" style="font-size: 48px; margin-bottom: 16px; display: block;"></i><div style="font-weight: 600; margin-bottom: 8px;">Location Selection</div><div style="font-size: 14px;">Please use the "Use My Location" button below</div></div>';
+                    }
+                }
+            }, 200);
+        });
+
+        // Initialize checkout page
+        function initializeCheckout() {
+            loadCartFromStorage();
+            renderOrderSummary();
+            updateCopyrightYear();
+            validateFormReady(); // Initialize button state
+        }
+
+        // Get food image based on name
+        function getFoodImage(name) {
+            const imageMap = {
+                'Loaded Fries': 'loaded_fries_01.jpg',
+                'Cheese Beef Loaded Fries': 'beef_loaded.jpg',
+                'Jerk Chicken Shawarma': 'jerk_shawarma.jpeg',
+                'Chocolate Rich Buttercream Frosting Jar Cake': 'choco_jar.jpeg',
+                'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries': 'hot_chicken.jpeg',
+                'Loaded BBQ Chicken Cheddar Cheese Fries': 'bbq-fries.jpg',
+                'Biscoff Jar Cake': 'biscoff-cake.jpg',
+                'Lemon Buttercream Jar Cake': 'lemon-cake.jpg',
+                'Honey BBQ Wings (6) and Fries': 'bbq_wings.jpg',
+                'Siracha Mayo Hot Wings (6) and Fries': 'hot_wings.jpg',
+                '2 Piece Glazed Crispy Chicken and Fries': 'glazed-chicken.jpg',
+                'Grilled Cheese Sandwich': 'grilled_sandwich.jpg',
+                'Tuna Fish Sandwich': 'tuna_sandwich.jpg',
+                'American BLT (Bacon Lettuce Tomato)': 'blt_sandwich.jpg',
+                'Bacon Cheddar Fries': 'bacon_fries.jpg',
+                'Ultimate Bacon Cheddar Burger': 'bacon_burger.jpg',
+                'Melted Cheddar Burger': 'melted_cheddar.jpg',
+                'Chicken Burrito': 'burrito.jpg',
+                '2 Chicken Crispy Tacos': 'chicken-tacos.jpg',
+                '2 Beef Crispy Tacos': 'beef-tacos.jpg',
+                'Vanilla Buttercream Cake Slice': 'vanilla-cake.jpg',
+                'Bailey\'s Irish Cream Jar Cake': 'baileys-cake.jpg',
+                'Salted Caramel Cake': 'caramel-cake.jpg',
+                'Pistachio Dream Jar Cake': 'pistachio-cake.jpg',
+                'Coffee Latte Jar Cake': 'coffee-cake.jpg',
+                'Pink Guava Buttercream Jar Cake': 'guava-cake.jpg',
+                'Chicken and Waffles': 'chicken-waffles.jpg',
+                'Loaded Omelette': 'omelette.jpg',
+                'Strawberry Colada': 'strawberry-smoothie.jpg',
+                'Pina Colada': 'pina-colada.jpg',
+                'Watermelon Mint Ice': 'watermelon-smoothie.jpg',
+                'Green Glow': 'green-smoothie.jpg',
+                'Tropical Fruit Blend': 'tropical-smoothie.jpg',
+                'Pineapple Strawberry': 'pineapple-strawberry.jpg',
+                'Strawberries and Cream': 'strawberry-cream.jpg',
+                'Lemonade Ice': 'lemonade-smoothie.jpg',
+                'Banana Peanut Butter Chocolate': 'banana-smoothie.jpg'
+            };
+            
+            return imageMap[name] || 'placeholder.jpg';
+        }
+        
+        
+        // Render customizations for checkout display
+        function renderCustomizations(customizations) {
+            let html = '<div class="checkout-item-customizations">';
+            
+            Object.values(customizations).forEach(selections => {
+                if (Array.isArray(selections)) {
+                    selections.forEach(choice => {
+                        html += `<div class="checkout-customization">• ${choice.name}</div>`;
+                    });
+                } else if (selections && selections.name) {
+                    html += `<div class="checkout-customization">• ${selections.name}</div>`;
+                }
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        // Load cart from localStorage
+        function loadCartFromStorage() {
+            const storedCart = localStorage.getItem('craveCart');
+            if (storedCart) {
+                try {
+                    cartItems = JSON.parse(storedCart);
+                } catch (e) {
+                    cartItems = [];
+                    localStorage.removeItem('craveCart');
+                }
+            }
+        }
+
+        // Save cart to localStorage
+        function saveCartToStorage() {
+            localStorage.setItem('craveCart', JSON.stringify(cartItems));
+        }
+
+        // Render order summary
+        function renderOrderSummary() {
+            const cartContainer = document.getElementById('checkoutCartItems');
+            const emptyState = document.getElementById('emptyCartState');
+            const orderTotals = document.getElementById('orderTotals');
+
+            if (cartItems.length === 0) {
+                cartContainer.style.display = 'none';
+                emptyState.style.display = 'block';
+                orderTotals.style.display = 'none';
+                return;
+            }
+
+            cartContainer.style.display = 'block';
+            emptyState.style.display = 'none';
+            orderTotals.style.display = 'block';
+
+            // Group items by name and sum quantities
+            const groupedItems = {};
+            cartItems.forEach(item => {
+                if (groupedItems[item.name]) {
+                    groupedItems[item.name].quantity += 1;
+                } else {
+                    groupedItems[item.name] = {
+                        name: item.name,
+                        price: item.price,
+                        quantity: 1
+                    };
+                }
+            });
+
+            // Display individual cart items with customizations (don't group)
+            cartContainer.innerHTML = '';
+            let subtotal = 0;
+
+            cartItems.forEach((item, index) => {
+                // Use unitPrice which includes customizations and add-ons
+                const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
+                subtotal += itemTotal;
+
+                const itemElement = document.createElement('div');
+                itemElement.className = 'checkout-cart-item';
+                
+                // Build customizations HTML
+                let customizationsHtml = '';
+                if (item.customizations && Object.keys(item.customizations).length > 0) {
+                    customizationsHtml = renderCustomizations(item.customizations);
+                }
+                
+                // Build addons HTML
+                let addonsHtml = '';
+                if (item.addons && Array.isArray(item.addons) && item.addons.length > 0) {
+                    addonsHtml = '<div class="checkout-item-addons">';
+                    item.addons.forEach(addon => {
+                        if (addon && addon.name) {
+                            const addonPrice = addon.price > 0 ? ` (+GH₵${addon.price})` : '';
+                            addonsHtml += `<div class="checkout-addon">+ ${addon.name}${addonPrice}</div>`;
+                        }
+                    });
+                    addonsHtml += '</div>';
+                }
+                
+                // Add special requests if present
+                let specialRequestsHtml = '';
+                if (item.specialRequests) {
+                    specialRequestsHtml = `<div class="checkout-special-requests">📝 ${item.specialRequests}</div>`;
+                }
+                
+                itemElement.innerHTML = `
+                    <div class="checkout-item-info">
+                        <img src="images/${getFoodImage(item.name)}" alt="${item.name}" class="checkout-item-image" onerror="this.src='images/placeholder.jpg'">
+                        <div class="checkout-item-details">
+                            <div class="checkout-item-name">${item.name}</div>
+                            <div class="checkout-item-quantity">Quantity: ${item.quantity}</div>
+                            ${customizationsHtml}
+                            ${addonsHtml}
+                            ${specialRequestsHtml}
+                        </div>
+                    </div>
+                    <div class="checkout-item-price">GH¢ ${itemTotal.toFixed(2)}</div>
+                `;
+                cartContainer.appendChild(itemElement);
+            });
+
+            // Update totals
+            const orderType = document.querySelector('input[name="orderType"]:checked').value;
+            const deliveryFeeAmount = orderType === 'Delivery' ? deliveryFee : 0;
+            const total = subtotal + deliveryFeeAmount;
+
+            document.getElementById('subtotalAmount').textContent = `GH¢ ${subtotal.toFixed(2)}`;
+            document.getElementById('deliveryFee').textContent = `GH¢ ${deliveryFeeAmount.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `GH¢ ${total.toFixed(2)}`;
+        }
+
+        // Update copyright year
+        function updateCopyrightYear() {
+            const yearSpan = document.getElementById('copyright-year');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        }
+
+        // Initialize map
+        function initializeMap() {
+            try {
+                // Check if map container exists
+                const mapContainer = document.getElementById('deliveryMap');
+                if (!mapContainer) {
+                    console.error('Map container not found');
+                    return;
+                }
+                
+                // Clear any existing content
+                mapContainer.innerHTML = '';
+                
+                // Create map centered on Accra, Ghana with higher precision
+                map = L.map('deliveryMap', {
+                    center: [selectedCoordinates.lat, selectedCoordinates.lng],
+                    zoom: 16, // Higher zoom for better precision
+                    zoomControl: true
+                });
+                
+                // Add high-precision OpenStreetMap tiles
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19,
+                    tileSize: 256
+                }).addTo(map);
+                
+                // Add precise draggable marker with custom icon
+                const customIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: '<div style="background: #d4a373; border: 3px solid white; border-radius: 50%; width: 20px; height: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"><div style="background: white; border-radius: 50%; width: 8px; height: 8px; margin: 6px auto;"></div></div>',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                });
+                
+                marker = L.marker([selectedCoordinates.lat, selectedCoordinates.lng], {
+                    draggable: true,
+                    icon: customIcon
+                }).addTo(map);
+                
+                // Add precision circle around marker
+                const precisionCircle = L.circle([selectedCoordinates.lat, selectedCoordinates.lng], {
+                    color: '#d4a373',
+                    fillColor: '#d4a373',
+                    fillOpacity: 0.1,
+                    radius: 20 // 20 meter precision circle
+                }).addTo(map);
+                
+                // Marker drag event with precision update
+                marker.on('dragend', function(event) {
+                    const position = marker.getLatLng();
+                    precisionCircle.setLatLng(position);
+                    updateLocation(position.lat, position.lng);
+                });
+                
+                // Map click event with precision
+                map.on('click', function(event) {
+                    const position = event.latlng;
+                    marker.setLatLng(position);
+                    precisionCircle.setLatLng(position);
+                    updateLocation(position.lat, position.lng);
+                });
+                
+                // Add location accuracy indicator
+                map.on('locationfound', function(e) {
+                    const radius = e.accuracy / 2;
+                    precisionCircle.setRadius(radius);
+                    marker.setLatLng(e.latlng);
+                    precisionCircle.setLatLng(e.latlng);
+                    updateLocation(e.latlng.lat, e.latlng.lng);
+                });
+                
+                console.log('Map initialized with high precision');
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                // Fallback: show simple location input
+                const mapContainer = document.getElementById('deliveryMap');
+                if (mapContainer) {
+                    mapContainer.innerHTML = '<div style="padding: 40px; text-align: center; background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; color: #6c757d;"><i class="fas fa-map-marker-alt" style="font-size: 48px; margin-bottom: 16px; display: block;"></i><div style="font-weight: 600; margin-bottom: 8px;">Location Selection</div><div style="font-size: 14px;">Please use the "Use My Location" button below</div></div>';
+                }
+            }
+        }
+
+        // Update location when marker moves
+        function updateLocation(lat, lng) {
+            selectedCoordinates = { lat, lng };
+            
+            // Update hidden coordinates input only
+            document.getElementById('deliveryCoordinates').value = `${lat},${lng}`;
+            
+            // Update location text to simple "Location selected"
+            document.getElementById('locationText').textContent = 'Location selected';
+            
+            // Enable form validation
+            validateFormReady();
+        }
+
+        // Remove reverse geocoding function - we don't need it anymore
+
+        // Setup map event listeners
+        function setupMapEventListeners() {
+            // Use My Location button with high precision
+            document.getElementById('useMyLocationBtn').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    // Show loading state
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting Location...';
+                    this.disabled = true;
+                    
+                    // Get high precision location
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            const accuracy = position.coords.accuracy;
+                            
+                            // Move marker to user location with high precision
+                            if (marker && map) {
+                                marker.setLatLng([lat, lng]);
+                                map.setView([lat, lng], 18); // Maximum zoom for precision
+                                
+                                // Update precision circle
+                                const precisionCircle = map._layers[Object.keys(map._layers).find(key => map._layers[key] instanceof L.Circle)];
+                                if (precisionCircle) {
+                                    precisionCircle.setLatLng([lat, lng]);
+                                    precisionCircle.setRadius(accuracy / 2); // Use actual GPS accuracy
+                                }
+                                
+                                updateLocation(lat, lng);
+                                
+                                // Show success feedback
+                                const locationText = document.getElementById('locationText');
+                                locationText.textContent = `Precise location found (±${Math.round(accuracy)}m)`;
+                                locationText.style.color = '#28a745';
+                            }
+                            
+                            // Reset button
+                            document.getElementById('useMyLocationBtn').innerHTML = '<i class="fas fa-location-crosshairs"></i> Use My Location';
+                            document.getElementById('useMyLocationBtn').disabled = false;
+                        },
+                        function(error) {
+                            console.error('Geolocation error:', error);
+                            
+                            // Reset button
+                            document.getElementById('useMyLocationBtn').innerHTML = '<i class="fas fa-location-crosshairs"></i> Use My Location';
+                            document.getElementById('useMyLocationBtn').disabled = false;
+                            
+                            // Show error message
+                            const locationText = document.getElementById('locationText');
+                            locationText.textContent = 'Location unavailable - Please select manually';
+                            locationText.style.color = '#dc3545';
+                            
+                            alert('Unable to get your location. Please select your location on the map manually.');
+                        },
+                        {
+                            enableHighAccuracy: true, // High precision mode
+                            timeout: 10000, // 10 seconds timeout
+                            maximumAge: 0 // Don't use cached location
+                        }
+                    );
+                } else {
+                    alert('Geolocation is not supported by your browser. Please select your location on the map.');
+                }
+            });
+
+            // Order type change
+            const orderTypeRadios = document.querySelectorAll('input[name="orderType"]');
+            orderTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    renderOrderSummary();
+                    validateFormReady();
+                });
+            });
+
+            // Form field change listeners for real-time validation
+            const fullNameInput = document.getElementById('fullName');
+            const phoneInput = document.getElementById('phoneNumber');
+            
+            fullNameInput.addEventListener('input', validateFormReady);
+            phoneInput.addEventListener('input', validateFormReady);
+
+            // Form submission
+            const form = document.getElementById('checkoutForm');
+            form.addEventListener('submit', handleFormSubmit);
+        }
+
+        // Handle form submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            if (cartItems.length === 0) {
+                showError('Your cart is empty. Please add items before checkout.');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const orderData = {
+                fullName: formData.get('fullName').trim(),
+                phoneNumber: formData.get('phoneNumber').trim(),
+                deliveryCoordinates: formData.get('deliveryCoordinates').trim(),
+                orderType: formData.get('orderType'),
+                additionalNotes: formData.get('additionalNotes').trim()
+            };
+
+            // Validate required fields
+            if (!validateForm(orderData)) {
+                return;
+            }
+
+            // Process order
+            processOrder(orderData);
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorElement = document.getElementById('checkoutError');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+
+            setTimeout(() => {
+                errorElement.classList.remove('show');
+            }, 5000);
+        }
+
+        // Validate form readiness and update button state
+        function validateFormReady() {
+            const form = document.getElementById('checkoutForm');
+            const button = document.getElementById('placeOrderBtn');
+            const formData = new FormData(form);
+            
+            const isReady = 
+                cartItems.length > 0 &&
+                formData.get('fullName')?.trim() &&
+                formData.get('phoneNumber')?.trim() &&
+                formData.get('deliveryCoordinates')?.trim();
+            
+            button.disabled = !isReady;
+            
+            if (isReady) {
+                button.classList.remove('disabled');
+            } else {
+                button.classList.add('disabled');
+            }
+        }
+
+        // Update form validation to include map
+        function validateForm(data) {
+            const errors = [];
+
+            if (!data.fullName) {
+                errors.push('Full name is required');
+            }
+
+            if (!data.phoneNumber) {
+                errors.push('Phone number is required');
+            }
+
+            if (!data.deliveryCoordinates && data.orderType === 'Delivery') {
+                errors.push('Please select your delivery location on the map');
+            }
+
+            if (errors.length > 0) {
+                showError(errors.join('. '));
+                return false;
+            }
+
+            return true;
+        }
+
+        // Update processOrder with UX polish
+        function processOrder(orderData) {
+            const form = document.getElementById('checkoutForm');
+            const button = document.getElementById('placeOrderBtn');
+            const successModal = document.getElementById('checkoutSuccess');
+
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            // Generate WhatsApp message immediately
+            const message = generateWhatsAppMessage(orderData);
+
+            // Calculate order total
+            let total = 0;
+            cartItems.forEach((item) => {
+                const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
+                total += itemTotal;
+            });
+            const orderType = document.querySelector('input[name="orderType"]:checked')?.value || 'Pickup';
+            const deliveryFeeAmount = orderType === 'Delivery' ? deliveryFee : 0;
+            total += deliveryFeeAmount;
+
+            // Store order data for success screen
+            const orderCompletionData = {
+                total: total,
+                orderType: orderType,
+                items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
+                timestamp: Date.now()
+            };
+            sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
+
+            // Use official WhatsApp API endpoint for better Safari compatibility
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
+
+            // Show success feedback
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-check"></i> Opening WhatsApp...';
+                if (window.CraveSound) window.CraveSound.success();
+
+                // Open WhatsApp synchronously for Safari compatibility
+                // Use window.location.href instead of window.open to avoid popup blockers
+                try {
+                    window.location.href = whatsappUrl;
+
+                    // Set flag to detect return from WhatsApp
+                    sessionStorage.setItem('craveWhatsAppOpened', 'true');
+
+                    // Reset form and clear cart after a short delay
+                    setTimeout(() => {
+                        form.reset();
+                        cartItems = [];
+                        saveCartToStorage();
+                        localStorage.removeItem('craveCart');
+                        successModal.classList.remove('show');
+                    }, 500);
+                } catch (error) {
+                    // Fallback: Show modal if direct navigation fails
+                    showWhatsAppFallback(whatsappUrl);
+                }
+            }, 500);
+        }
+
+        // Show WhatsApp fallback modal
+        function showWhatsAppFallback(whatsappUrl) {
+            const modal = document.getElementById('whatsappFallbackModal');
+            const fallbackBtn = document.getElementById('whatsappFallbackBtn');
+
+            fallbackBtn.href = whatsappUrl;
+            modal.style.display = 'flex';
+        }
+
+        // Close WhatsApp fallback modal
+        function closeWhatsAppFallback() {
+            const modal = document.getElementById('whatsappFallbackModal');
+            modal.style.display = 'none';
+
+            // Re-enable the button
+            const button = document.getElementById('placeOrderBtn');
+            button.disabled = false;
+            button.innerHTML = 'Place Order';
+        }
+
+        // Generate ultra-clean WhatsApp message
+        function generateWhatsAppMessage(orderData) {
+            // Iterate over ALL cart items individually (no grouping - preserve customizations per item)
+            let total = 0;
+            let message = `Hello Crave 👋\n\nI'd like to place an order:\n\n`;
+            
+            cartItems.forEach((item, index) => {
+                // Use unitPrice which includes customizations and add-ons
+                const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
+                total += itemTotal;
+                
+                // Add item header with emoji
+                const itemEmoji = getItemEmoji(item.name);
+                message += `${itemEmoji} ${item.name}\n`;
+                
+                // Add customizations
+                if (item.customizations && Object.keys(item.customizations).length > 0) {
+                    Object.values(item.customizations).forEach(selections => {
+                        if (Array.isArray(selections)) {
+                            selections.forEach(choice => {
+                                if (choice && choice.name) {
+                                    message += `  • ${choice.name}\n`;
+                                }
+                            });
+                        } else if (selections && selections.name) {
+                            message += `  • ${selections.name}\n`;
+                        }
+                    });
+                }
+                
+                // Add add-ons with prices
+                if (item.addons && Array.isArray(item.addons) && item.addons.length > 0) {
+                    item.addons.forEach(addon => {
+                        if (addon && addon.name) {
+                            const addonPrice = addon.price > 0 ? ` (+GH₵${addon.price})` : '';
+                            message += `  + ${addon.name}${addonPrice}\n`;
+                        }
+                    });
+                }
+                
+                // Add special requests
+                if (item.specialRequests) {
+                    message += `  📝 ${item.specialRequests}\n`;
+                }
+                
+                // Add quantity and price
+                message += `  Qty: ${item.quantity || 1}\n`;
+                message += `  GHS ${itemTotal.toFixed(2)}\n\n`;
+            });
+            
+            // Add total with separator
+            message += `━━━━━━━━━━━━━━━━━━\n`;
+            
+            // Add delivery fee if applicable
+            const orderType = document.querySelector('input[name="orderType"]:checked')?.value || 'Pickup';
+            const deliveryFeeAmount = orderType === 'Delivery' ? deliveryFee : 0;
+            if (deliveryFeeAmount > 0) {
+                message += `Subtotal: GHS ${total.toFixed(2)}\n`;
+                message += `Delivery: GHS ${deliveryFeeAmount.toFixed(2)}\n`;
+                total += deliveryFeeAmount;
+            }
+            
+            message += `TOTAL: GHS ${total.toFixed(2)}\n\n\n`;
+            
+            // Add customer details
+            message += `👤 ${orderData.fullName}\n`;
+            message += `📞 ${orderData.phoneNumber}\n`;
+            
+            if (orderData.orderType === 'Delivery') {
+                message += `📍 Live Location:\nhttps://maps.google.com/?q=${selectedCoordinates.lat},${selectedCoordinates.lng}\n`;
+            }
+            
+            message += `🛒 ${orderData.orderType}\n\n`;
+            message += `Please confirm my order. Thank you!`;
+
+            return message;
+        }
+        
+        // Get item emoji for WhatsApp
+        function getItemEmoji(itemName) {
+            const emojiMap = {
+                'Loaded Fries': '🍟',
+                'Cheese Beef Loaded Fries': '🍟',
+                'Jerk Chicken Shawarma': '🍗',
+                'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries': '🔥',
+                'Loaded BBQ Chicken Cheddar Fries': '🍟',
+                'Honey BBQ Wings (6) and Fries': '🍗',
+                'Siracha Mayo Hot Wings': '🔥',
+                '2 Piece Glazed Crispy Chicken and Fries': '🍗',
+                'Ultimate Bacon Cheddar Burger': '🍔',
+                'Chicken Burrito': '🌮',
+                '2 Chicken Crispy Tacos': '🌮',
+                '2 Beef Crispy Tacos': '🌮',
+                'Chocolate Rich Buttercream Jar Cake': '🧁',
+                'Lemon Buttercream Jar Cake': '🍋',
+                'Biscoff Jar Cake': '🍪',
+                'Pistachio Dream Jar Cake': '🍪',
+                'Chicken and Waffles': '🧇',
+                'Loaded Omelette': '🍳',
+                'Strawberry Colada': '🥤',
+                'Pina Colada': '🥥',
+                'Watermelon Mint Ice': '🍉',
+                'Green Glow': '💚',
+                'Tropical Fruit Blend': '🥤',
+                'Pineapple Strawberry': '🍓',
+                'Strawberries and Cream': '🍓',
+                'Lemonade Ice': '🍋',
+                'Banana Peanut Butter Chocolate': '🍌'
+            };
+            
+            return emojiMap[itemName] || '🍽';
+        }
+
+        // ============================================
+        // ORDER COMPLETION FLOW
+        // ============================================
+
+        // Check if user returned from WhatsApp
+        function checkWhatsAppReturn() {
+            const whatsappOpened = sessionStorage.getItem('craveWhatsAppOpened');
+            const orderCompletionData = sessionStorage.getItem('craveOrderCompletion');
+
+            if (whatsappOpened === 'true' && orderCompletionData) {
+                // Clear the flag
+                sessionStorage.removeItem('craveWhatsAppOpened');
+                
+                // Show success overlay
+                showOrderSuccessOverlay(JSON.parse(orderCompletionData));
+            }
+        }
+
+        // Show order success overlay
+        function showOrderSuccessOverlay(orderData) {
+            const overlay = document.getElementById('orderSuccessOverlay');
+            
+            // Calculate points earned
+            let pointsEarned = 0;
+            if (typeof CraveRewardsEngine !== 'undefined') {
+                const result = CraveRewardsEngine.processOrder({
+                    total: orderData.total,
+                    items: orderData.items
+                });
+                pointsEarned = result.pointsEarned || 0;
+            }
+
+            // Get current tier and progress
+            let currentTier = 'Bronze';
+            let tierProgress = 0;
+            let currentPoints = 0;
+            
+            if (typeof CraveRewardsData !== 'undefined') {
+                currentPoints = CraveRewardsData.Points.get();
+                currentTier = CraveRewardsData.Tier.get();
+                const progress = CraveRewardsEngine.getMilestoneProgress();
+                tierProgress = progress ? Math.round(progress.progress) : 0;
+            }
+
+            // Update overlay with data
+            document.getElementById('successOrderTotal').textContent = `GH₵ ${orderData.total.toFixed(2)}`;
+            document.getElementById('successPrepTime').textContent = orderData.orderType === 'Delivery' ? '20-30 min' : '15-20 min';
+            document.getElementById('successCurrentPoints').textContent = currentPoints;
+            document.getElementById('successPointsEarned').textContent = `+${pointsEarned}`;
+            document.getElementById('successCurrentTier').textContent = currentTier.charAt(0).toUpperCase() + currentTier.slice(1);
+            document.getElementById('successTierProgress').textContent = `${tierProgress}%`;
+            document.getElementById('successProgressBar').style.width = `${tierProgress}%`;
+
+            // Check for spin unlock
+            let earnedSpin = false;
+            if (typeof CraveSpinWheel !== 'undefined') {
+                const availableSpins = CraveSpinWheel.getAvailableSpins();
+                earnedSpin = availableSpins > 0;
+            }
+
+            // Show announcements
+            if (pointsEarned > 0) {
+                document.getElementById('rewardAnnouncement').style.display = 'flex';
+            }
+            if (earnedSpin) {
+                document.getElementById('spinAnnouncement').style.display = 'flex';
+            }
+
+            // Show overlay
+            overlay.style.display = 'flex';
+
+            // Play success sound
+            if (window.CraveSound) window.CraveSound.success();
+
+            // Launch confetti
+            launchConfetti();
+
+            // Animate numbers
+            animateCountUp('successCurrentPoints', 0, currentPoints, 1000);
+            animateCountUp('successPointsEarned', 0, pointsEarned, 1000);
+
+            // Start countdown
+            startRedirectCountdown();
+
+            // Setup event listeners
+            setupSuccessOverlayListeners(earnedSpin);
+        }
+
+        // Animate count-up
+        function animateCountUp(elementId, start, end, duration) {
+            const element = document.getElementById(elementId);
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 16);
+        }
+
+        // Launch confetti
+        function launchConfetti() {
+            // Simple confetti implementation
+            const colors = ['#d4a373', '#c49a6c', '#ffd700', '#00c853', '#2196f3'];
+            const confettiCount = 100;
+
+            for (let i = 0; i < confettiCount; i++) {
+                createConfettiPiece(colors[Math.floor(Math.random() * colors.length)]);
+            }
+        }
+
+        function createConfettiPiece(color) {
+            const confetti = document.createElement('div');
+            confetti.style.cssText = `
+                position: fixed;
+                width: 10px;
+                height: 10px;
+                background: ${color};
+                left: ${Math.random() * 100}vw;
+                top: -10px;
+                border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                z-index: 10003;
+                pointer-events: none;
+                animation: confettiFall ${2 + Math.random() * 2}s linear forwards;
+            `;
+            document.body.appendChild(confetti);
+
+            setTimeout(() => confetti.remove(), 4000);
+        }
+
+        // Add confetti animation
+        const confettiStyle = document.createElement('style');
+        confettiStyle.textContent = `
+            @keyframes confettiFall {
+                to {
+                    transform: translateY(100vh) rotate(720deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(confettiStyle);
+
+        // Start redirect countdown
+        let countdownTimer;
+        function startRedirectCountdown() {
+            let seconds = 5;
+            const countdownElement = document.getElementById('redirectCountdown');
+            
+            countdownTimer = setInterval(() => {
+                seconds--;
+                countdownElement.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdownTimer);
+                    redirectToRewards();
+                }
+            }, 1000);
+        }
+
+        // Setup success overlay listeners
+        function setupSuccessOverlayListeners(earnedSpin) {
+            const viewRewardsBtn = document.getElementById('viewRewardsBtn');
+            
+            viewRewardsBtn.addEventListener('click', () => {
+                clearInterval(countdownTimer);
+                redirectToRewards(earnedSpin);
+            });
+        }
+
+        // Redirect to rewards
+        function redirectToRewards(earnedSpin = false) {
+            // Store spin unlock flag for rewards page
+            if (earnedSpin) {
+                sessionStorage.setItem('craveEarnedSpin', 'true');
+            }
+            
+            window.location.href = 'rewards.html';
+        }
+
+        // Visibility change detection
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                checkWhatsAppReturn();
+            }
+        });
+
+        // Focus detection
+        window.addEventListener('focus', () => {
+            checkWhatsAppReturn();
+        });
+
+        // Page show detection (for Safari)
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                checkWhatsAppReturn();
+            }
+        });
+
+        // Check on page load (in case user refreshed)
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(checkWhatsAppReturn, 500);
+        });
+    </script>
+    
+    <!-- Payment Modal -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-modal-content">
+            <h3><i class="fas fa-mobile-alt"></i> Mobile Money Payment</h3>
+            <p>You will be redirected to Paystack to complete your payment securely.</p>
+            <div class="payment-modal-amount" id="paymentAmount">GH¢ 0.00</div>
+            <p>After successful payment, you'll receive a confirmation and your order will be processed immediately.</p>
+            <button class="payment-modal-close" onclick="closePaymentModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- WhatsApp Fallback Modal -->
+    <div class="whatsapp-fallback-modal" id="whatsappFallbackModal" style="display: none;">
+        <div class="whatsapp-fallback-content">
+            <div class="whatsapp-fallback-icon">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <h3>Open WhatsApp</h3>
+            <p>Tap the button below to open WhatsApp with your order details.</p>
+            <a id="whatsappFallbackBtn" href="#" target="_blank" class="whatsapp-fallback-btn">
+                <i class="fab fa-whatsapp"></i> Open WhatsApp
+            </a>
+            <button class="whatsapp-fallback-close" onclick="closeWhatsAppFallback()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Premium Order Success Overlay -->
+    <div class="order-success-overlay" id="orderSuccessOverlay" style="display: none;">
+        <div class="order-success-content">
+            <div class="success-checkmark">
+                <div class="checkmark-circle"></div>
+                <div class="checkmark-check"></div>
+            </div>
+            <h1 class="success-title">🎉 Thank You!</h1>
+            <p class="success-subtitle">Your CRAVE order has been prepared and sent successfully.</p>
+            
+            <div class="success-details">
+                <div class="success-detail-item">
+                    <div class="detail-icon">💰</div>
+                    <div class="detail-info">
+                        <div class="detail-label">Order Total</div>
+                        <div class="detail-value" id="successOrderTotal">GH₵ 0.00</div>
+                    </div>
+                </div>
+                <div class="success-detail-item">
+                    <div class="detail-icon">⏱️</div>
+                    <div class="detail-info">
+                        <div class="detail-label">Est. Preparation Time</div>
+                        <div class="detail-value" id="successPrepTime">15-20 min</div>
+                    </div>
+                </div>
+                <div class="success-detail-item">
+                    <div class="detail-icon">⭐</div>
+                    <div class="detail-info">
+                        <div class="detail-label">Current Points</div>
+                        <div class="detail-value" id="successCurrentPoints">0</div>
+                    </div>
+                </div>
+                <div class="success-detail-item highlight">
+                    <div class="detail-icon">🎁</div>
+                    <div class="detail-info">
+                        <div class="detail-label">Points Earned</div>
+                        <div class="detail-value" id="successPointsEarned">+0</div>
+                    </div>
+                </div>
+                <div class="success-detail-item">
+                    <div class="detail-icon">🏆</div>
+                    <div class="detail-info">
+                        <div class="detail-label">Current Tier</div>
+                        <div class="detail-value" id="successCurrentTier">Bronze</div>
+                    </div>
+                </div>
+                <div class="success-detail-item">
+                    <div class="detail-icon">📈</div>
+                    <div class="detail-info">
+                        <div class="detail-label">Progress to Next Tier</div>
+                        <div class="detail-value" id="successTierProgress">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reward-announcement" id="rewardAnnouncement" style="display: none;">
+                <div class="reward-icon">🎁</div>
+                <div class="reward-text">Reward Unlocked!</div>
+            </div>
+
+            <div class="spin-announcement" id="spinAnnouncement" style="display: none;">
+                <div class="spin-icon">🎡</div>
+                <div class="spin-text">You earned a FREE Spin!</div>
+            </div>
+
+            <div class="success-progress-bar">
+                <div class="progress-fill" id="successProgressBar"></div>
+            </div>
+
+            <button class="success-cta-btn" id="viewRewardsBtn">
+                <i class="fas fa-gift"></i> View My Rewards
+            </button>
+            
+            <div class="redirect-countdown">
+                Redirecting in <span id="redirectCountdown">5</span> seconds...
+            </div>
+        </div>
+    </div>
+
+    <!-- Spin Popup -->
+    <div class="spin-popup-overlay" id="spinPopupOverlay" style="display: none;">
+        <div class="spin-popup-content">
+            <div class="spin-popup-icon">🎉</div>
+            <h2 class="spin-popup-title">Congratulations!</h2>
+            <p class="spin-popup-subtitle">You earned a Spin & Win opportunity.</p>
+            <button class="spin-popup-btn" id="spinNowBtn">
+                <i class="fas fa-dharmachakra"></i> 🎡 Spin Now
+            </button>
+            <button class="spin-popup-close" id="spinPopupClose">Maybe Later</button>
+        </div>
+    </div>
+
+    <style>
+        .whatsapp-fallback-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .whatsapp-fallback-content {
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .whatsapp-fallback-icon {
+            font-size: 64px;
+            color: #25D366;
+            margin-bottom: 20px;
+        }
+
+        .whatsapp-fallback-content h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #0f0f0f;
+        }
+
+        .whatsapp-fallback-content p {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .whatsapp-fallback-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #25D366;
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+        }
+
+        .whatsapp-fallback-btn:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+        }
+
+        .whatsapp-fallback-close {
+            background: transparent;
+            border: none;
+            color: #999;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 16px;
+            transition: color 0.3s ease;
+        }
+
+        .whatsapp-fallback-close:hover {
+            color: #666;
+        }
+
+        /* Premium Order Success Overlay */
+        .order-success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .order-success-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 48px 32px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .success-checkmark {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 32px;
+        }
+
+        .checkmark-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00c853, #00a843);
+            animation: scaleIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .checkmark-check {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 30px;
+            border-left: 8px solid white;
+            border-bottom: 8px solid white;
+            transform: translate(-50%, -60%) rotate(-45deg);
+            animation: drawCheck 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+        }
+
+        @keyframes drawCheck {
+            from { width: 0; height: 0; opacity: 0; }
+            to { width: 60px; height: 30px; opacity: 1; }
+        }
+
+        .success-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            animation: bounceIn 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        .success-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .success-detail-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .success-detail-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .success-detail-item.highlight {
+            background: linear-gradient(135deg, rgba(212, 163, 115, 0.2), rgba(196, 154, 108, 0.2));
+            border-color: rgba(212, 163, 115, 0.4);
+            grid-column: span 2;
+        }
+
+        .detail-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .success-detail-item.highlight .detail-value {
+            color: #d4a373;
+            font-size: 24px;
+        }
+
+        .reward-announcement,
+        .spin-announcement {
+            background: linear-gradient(135deg, rgba(212, 163, 115, 0.3), rgba(196, 154, 108, 0.3));
+            border: 1px solid rgba(212, 163, 115, 0.5);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .reward-icon,
+        .spin-icon {
+            font-size: 32px;
+        }
+
+        .reward-text,
+        .spin-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #d4a373;
+        }
+
+        .success-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4a373, #c49a6c);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 1s ease-out;
+        }
+
+        .success-cta-btn {
+            width: 100%;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #d4a373, #c49a6c);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 163, 115, 0.3);
+            margin-bottom: 16px;
+        }
+
+        .success-cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 163, 115, 0.4);
+        }
+
+        .redirect-countdown {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Spin Popup */
+        .spin-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10002;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .spin-popup-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid #d4a373;
+            border-radius: 24px;
+            padding: 48px 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(212, 163, 115, 0.3);
+            animation: bounceIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .spin-popup-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .spin-popup-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .spin-popup-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 32px;
+        }
+
+        .spin-popup-btn {
+            width: 100%;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #ffd700, #ffb700);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+            margin-bottom: 12px;
+        }
+
+        .spin-popup-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+        }
+
+        .spin-popup-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 16px;
+            transition: color 0.3s ease;
+        }
+
+        .spin-popup-close:hover {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .order-success-content {
+                padding: 32px 24px;
+                max-width: 95%;
+            }
+
+            .success-details {
+                grid-template-columns: 1fr;
+            }
+
+            .success-detail-item.highlight {
+                grid-column: span 1;
+            }
+
+            .success-title {
+                font-size: 28px;
+            }
+
+            .success-checkmark {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+    
+    <!-- Paystack Payment Integration -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script>
+        // Paystack Payment Handler
+        let paystackHandler = null;
+        
+        // Initialize Paystack when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener for Pay Now button
+            const payNowBtn = document.getElementById('payNowBtn');
+            if (payNowBtn) {
+                payNowBtn.addEventListener('click', initiatePaystackPayment);
+            }
+        });
+        
+        // Initiate Paystack Payment
+        function initiatePaystackPayment() {
+            const form = document.getElementById('checkoutForm');
+            
+            // Validate form first
+            if (!validateCheckoutForm()) {
+                return;
+            }
+            
+            // Get order data
+            const orderData = {
+                fullName: form.fullName.value,
+                email: form.email.value,
+                phoneNumber: form.phoneNumber.value,
+                orderType: form.querySelector('input[name="orderType"]:checked').value,
+                specialRequests: form.specialRequests.value,
+                deliveryAddress: form.deliveryAddress ? form.deliveryAddress.value : '',
+                deliveryCoordinates: form.deliveryCoordinates ? form.deliveryCoordinates.value : ''
+            };
+            
+            // Calculate total amount
+            const total = calculateOrderTotal();
+            
+            // Show payment modal with amount
+            showPaymentModal(total);
+            
+            // Initialize Paystack transaction
+            initializePaystackTransaction(orderData, total);
+        }
+        
+        // Show payment modal
+        function showPaymentModal(amount) {
+            const modal = document.getElementById('paymentModal');
+            const amountElement = document.getElementById('paymentAmount');
+            
+            amountElement.textContent = `GH¢ ${amount.toFixed(2)}`;
+            modal.style.display = 'flex';
+        }
+        
+        // Close payment modal
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            modal.style.display = 'none';
+        }
+        
+        // Initialize Paystack transaction
+        function initializePaystackTransaction(orderData, amount) {
+            // Convert to kobo (Paystack uses smallest currency unit)
+            const amountInKobo = Math.round(amount * 100);
+            
+            // Generate unique transaction reference
+            const transactionRef = 'CRV_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            // Initialize Paystack handler
+            paystackHandler = PaystackPop.setup({
+                key: 'pk_test_1234567890abcdef', // Replace with your actual Paystack public key
+                email: orderData.email,
+                amount: amountInKobo,
+                currency: 'GHS',
+                ref: transactionRef,
+                metadata: {
+                    custom_fields: [
+                        {
+                            display_name: "Customer Name",
+                            variable_name: "customer_name",
+                            value: orderData.fullName
+                        },
+                        {
+                            display_name: "Phone Number", 
+                            variable_name: "phone_number",
+                            value: orderData.phoneNumber
+                        },
+                        {
+                            display_name: "Order Type",
+                            variable_name: "order_type", 
+                            value: orderData.orderType
+                        }
+                    ]
+                },
+                callback: function(response) {
+                    // Payment successful
+                    handlePaymentSuccess(response, orderData, amount);
+                },
+                onClose: function() {
+                    // Payment window closed
+                    closePaymentModal();
+                    showPaymentMessage('Payment cancelled. You can try again or use WhatsApp to place your order.', 'warning');
+                }
+            });
+            
+            // Open payment window
+            paystackHandler.openIframe();
+        }
+        
+        // Handle successful payment
+        function handlePaymentSuccess(response, orderData, amount) {
+            closePaymentModal();
+            
+            // Show success message
+            showPaymentMessage('Payment successful! Processing your order...', 'success');
+            if (window.CraveSound) window.CraveSound.success();
+            
+            // Send order confirmation to WhatsApp (for order tracking)
+            sendOrderConfirmation(orderData, amount, response.reference);
+            
+            // Clear cart and form
+            clearCartAndForm();
+            
+            // Redirect to tracking page after delay
+            setTimeout(() => {
+                window.location.href = 'tracking.html?payment_ref=' + response.reference;
+            }, 3000);
+        }
+        
+        // Send order confirmation to WhatsApp
+        function sendOrderConfirmation(orderData, amount, paymentRef) {
+            // Group cart items
+            const groupedItems = {};
+            cartItems.forEach(item => {
+                if (groupedItems[item.name]) {
+                    groupedItems[item.name].quantity += 1;
+                } else {
+                    groupedItems[item.name] = {
+                        name: item.name,
+                        price: item.price,
+                        quantity: 1
+                    };
+                }
+            });
+            
+            // Build confirmation message
+            let message = `PAYMENT CONFIRMED! \ud83d\udcb0\ud83c\udffe\n\n`;
+            message += `\ud83e\udd3e Order Details:\n`;
+            
+            Object.values(groupedItems).forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                message += `- ${item.name} x${item.quantity} - GH¢ ${itemTotal.toFixed(2)}\n`;
+            });
+            
+            message += `\n\n\ud83d\udcb0 Total: GH¢ ${amount.toFixed(2)}`;
+            message += `\n\ud83d\udd3c Payment ID: ${paymentRef}`;
+            message += `\n\ud83d\udc64 ${orderData.fullName}`;
+            message += `\n\ud83d\udcde ${orderData.phoneNumber}`;
+            message += `\n\ud83d\ude9a ${orderData.orderType}`;
+            
+            if (orderData.orderType === 'Delivery' && orderData.deliveryAddress) {
+                message += `\n\ud83d\udccd ${orderData.deliveryAddress}`;
+            }
+            
+            message += `\n\nStatus: PAID - Processing order...\ud83d\ude80`;
+            
+            // Send WhatsApp message
+            const whatsappUrl = `https://wa.me/233550020788?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        // Calculate order total
+        function calculateOrderTotal() {
+            let subtotal = 0;
+            cartItems.forEach(item => {
+                const unitPrice = Number(item.unitPrice ?? item.price ?? 0);
+                subtotal += unitPrice * (item.quantity || 1);
+            });
+            
+            const orderType = document.querySelector('input[name="orderType"]:checked').value;
+            const deliveryFee = orderType === 'Delivery' ? 15 : 0;
+            const total = subtotal + deliveryFee;
+            
+            return total;
+        }
+        
+        // Clear cart and form
+        function clearCartAndForm() {
+            const form = document.getElementById('checkoutForm');
+            form.reset();
+            
+            // Clear cart
+            cartItems = [];
+            saveCartToStorage();
+            localStorage.removeItem('craveCart');
+            
+            // Update display
+            updateCheckoutDisplay();
+        }
+        
+        // Show payment message
+        function showPaymentMessage(message, type) {
+            const errorElement = document.getElementById('checkoutError');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            if (type === 'success') {
+                errorElement.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                errorElement.style.color = 'white';
+            } else if (type === 'warning') {
+                errorElement.style.background = 'linear-gradient(135deg, #ffc107, #fd7e14)';
+                errorElement.style.color = 'white';
+            }
+            
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Validate checkout form
+        function validateCheckoutForm() {
+            const form = document.getElementById('checkoutForm');
+            const fullName = form.fullName.value.trim();
+            const email = form.email.value.trim();
+            const phoneNumber = form.phoneNumber.value.trim();
+            
+            if (!fullName || !email || !phoneNumber) {
+                showPaymentMessage('Please fill in all required fields.', 'error');
+                return false;
+            }
+            
+            if (!validateEmail(email)) {
+                showPaymentMessage('Please enter a valid email address.', 'error');
+                return false;
+            }
+            
+            if (!validatePhone(phoneNumber)) {
+                showPaymentMessage('Please enter a valid Ghana phone number.', 'error');
+                return false;
+            }
+            
+            if (cartItems.length === 0) {
+                showPaymentMessage('Your cart is empty. Please add items to your cart.', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Email validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        // Phone validation (Ghana numbers)
+        function validatePhone(phone) {
+            const re = /^(?:\+233|0)?[2-9]\d{8}$/;
+            return re.test(phone.replace(/\s/g, ''));
+        }
+    </script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registered successfully:', registration);
+                    })
+                    .catch(function(error) {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+    
+    <!-- CRAVE Rewards System -->
+    <script src="js/rewards-config.js"></script>
+    <script src="js/rewards-data.js"></script>
+    <script src="js/rewards-engine.js"></script>
+    <script src="js/rewards-notifications.js"></script>
+    <script src="js/promo-codes.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/recommendations.js"></script>
+    <script src="js/spin-wheel.js"></script>
+    <script src="js/referral-system.js"></script>
+    <script src="js/flash-deals.js"></script>
+    <script src="js/combo-builder.js"></script>
+    <script src="js/birthday-system.js"></script>
+    
+    <script>
+        // Initialize rewards on checkout page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Track order completion for rewards
+            const originalPlaceOrder = window.placeOrder;
+            if (originalPlaceOrder && CraveRewardsEngine) {
+                window.placeOrder = function() {
+                    const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+                    const orderTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    
+                    // Process order through rewards engine
+                    const result = CraveRewardsEngine.processOrder(orderTotal, cart);
+                    
+                    if (result.pointsEarned > 0) {
+                        setTimeout(() => {
+                            CraveRewardsNotifications.orderPlaced(result.pointsEarned, result.tier);
+                        }, 500);
+                    }
+                    
+                    // Call original function
+                    return originalPlaceOrder.apply(this, arguments);
+                };
+            }
+            
+            // Apply promo code functionality
+            const promoCodeInput = document.getElementById('promoCodeInput');
+            const applyPromoBtn = document.getElementById('applyPromoBtn');
+            
+            if (promoCodeInput && applyPromoBtn && CravePromoCodes) {
+                applyPromoBtn.addEventListener('click', function() {
+                    const code = promoCodeInput.value.trim();
+                    const orderTotal = parseFloat(document.getElementById('orderTotal').textContent.replace('GHS ', ''));
+                    
+                    const result = CravePromoCodes.apply(code, orderTotal);
+                    
+                    if (result.valid) {
+                        // Update order total with discount
+                        const finalPrice = CravePromoCodes.calculateFinalPrice(orderTotal, result);
+                        document.getElementById('orderTotal').textContent = 'GHS ' + finalPrice.finalTotal.toFixed(2);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

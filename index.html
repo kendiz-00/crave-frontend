@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+(function () {
+  if (sessionStorage.getItem('craveSplash') !== '1') return;
+  document.documentElement.classList.add('crave-splash-off', 'crave-splash-finished');
+})();
+</script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover, shrink-to-fit=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CRAVE">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="Crave - Fine Dining Restaurant. Experience memorable dining with our chefs' finest dishes.">
+    
+    <!-- Favicon - Comprehensive Solution -->
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="16x16">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="192x192">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="favicon.png" sizes="167x167">
+    <link rel="apple-touch-icon" href="favicon.png" sizes="180x180">
+    
+    <!-- Favicon Meta Tags -->
+    <meta name="msapplication-TileImage" content="favicon.png">
+    <meta name="msapplication-TileColor" content="#d4a373">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d4a373">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Home - Crave Restaurant</title>
+    <link rel="stylesheet" href="css/util.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/crave-home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+    <link rel="preload" as="image" href="images/cover_page_compressed.jpeg">
+    <link rel="preload" as="image" href="images/logo.png">
+    <link rel="preload" as="image" href="images/tx-chick.jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8CVWBJESV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-F8CVWBJESV', { send_page_view: false });
+    </script>
+    
+    <!-- Premium splash (critical path — fast, no spinner) -->
+    <style>
+        #craveSplash {
+            position: fixed;
+            inset: 0;
+            z-index: 10002;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a0a;
+            opacity: 1;
+            visibility: visible;
+        }
+        html.crave-splash-off #craveSplash { display: none !important; }
+        body.crave-splash-boot { overflow: hidden; }
+        .crave-splash__logo {
+            width: min(46vw, 168px);
+            height: auto;
+            display: block;
+            opacity: 0;
+            transform: scale(0.94);
+            filter: drop-shadow(0 8px 28px rgba(212, 175, 55, 0.25));
+        }
+        #craveSplash.is-active .crave-splash__logo {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.55s ease, transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        #craveSplash.is-done {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.45s;
+        }
+    </style>
+</head>
+<body class="crave-home">
+    <div id="craveInstallCard" class="crave-install-card" role="status" aria-live="polite">
+        <div class="crave-install-card__content">
+            <p class="crave-install-card__eyebrow">Install CRAVE</p>
+            <h2>Open the app faster with a polished home-screen experience.</h2>
+            <p>Keep your cart, enjoy quicker reorders, and launch CRAVE like a native app.</p>
+            <div class="crave-install-card__actions">
+                <button id="craveInstallBtn" class="crave-install-card__button" type="button">Install app</button>
+                <button id="craveNotifyBtn" class="crave-install-card__secondary" type="button">Enable reminders</button>
+                <button id="craveInstallDismiss" class="crave-install-card__dismiss" type="button" aria-label="Dismiss install prompt">Not now</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="craveUpdateToast" class="crave-update-toast" role="status" aria-live="polite">
+        <span>A fresh CRAVE update is ready.</span>
+        <button id="craveRefreshApp" type="button">Refresh</button>
+    </div>
+
+    <!-- Premium app splash (max ~1.2s, session-scoped) -->
+    <div id="craveSplash" class="crave-splash" role="dialog" aria-modal="true" aria-label="Crave">
+        <div class="crave-splash__glow" aria-hidden="true"></div>
+        <div class="crave-splash__logo-box">
+            <img src="images/logo.png" alt="Crave" class="crave-splash__logo" width="168" height="48" decoding="async" fetchpriority="high">
+            <div class="crave-splash__shimmer" aria-hidden="true"></div>
+        </div>
+    </div>
+	<!-- Header/Navbar -->
+	<header id="siteHeader" class="navbar-header">
+		<nav class="navbar">
+			<div class="navbar-container">
+				<div class="navbar-logo">
+					<a href="index.html" class="logo-link">
+						<img src="images/logo.png" alt="Crave Restaurant" class="logo-img" loading="eager">
+					</a>
+				</div>
+
+				<div class="navbar-menu" id="navbarMenu" aria-label="Primary navigation">
+					<ul class="navbar-menu-list">
+						<li class="navbar-menu-item"><a href="index.html" class="navbar-link" data-page="home">Home</a></li>
+						<li class="navbar-menu-item"><a href="menu.html" class="navbar-link" data-page="menu">Menu</a></li>
+						<li class="navbar-menu-item"><a href="rewards.html" class="navbar-link" data-page="rewards">Rewards</a></li>
+						<li class="navbar-menu-item"><a href="vip.html" class="navbar-link" data-page="vip">VIP</a></li>
+						<li class="navbar-menu-item"><a href="about.html" class="navbar-link" data-page="about">About</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<div class="crave-home-atmos" aria-hidden="true">
+		<div class="crave-home-atmos__wash"></div>
+		<div class="crave-home-atmos__vignette"></div>
+		<div class="crave-home-atmos__streak crave-home-atmos__streak--a"></div>
+		<div class="crave-home-atmos__streak crave-home-atmos__streak--b"></div>
+		<div class="crave-home-atmos__particles">
+			<span></span><span></span><span></span><span></span><span></span><span></span>
+			<span></span><span></span><span></span><span></span><span></span><span></span>
+		</div>
+	</div>
+
+	<!-- Sidebar -->
+	<aside class="sidebar trans-0-4">
+		<button class="btn-hide-sidebar color0-hov trans-0-4" style="min-width: 44px; min-height: 44px; font-size: 24px; padding: 8px 12px; display: block; background: none; border: none; color: #fff;"><i class="fa-solid fa-xmark"></i></button>
+
+		<ul class="menu-sidebar p-t-95 p-b-70" style="padding-top: 20px; padding-bottom: 20px;">
+			<li class="t-center m-b-13"><a href="index.html" class="txt19" style="display: block; padding: 12px;">Home</a></li>
+			<li class="t-center m-b-13"><a href="menu.html" class="txt19" style="display: block; padding: 12px;">Menu</a></li>
+			<li class="t-center m-b-13"><a href="about.html" class="txt19" style="display: block; padding: 12px;">About</a></li>
+			<li class="t-center m-b-13"><a href="blog.html" class="txt19" style="display: block; padding: 12px;">Blog</a></li>
+			<li class="t-center m-b-33"><a href="contact.html" class="txt19" style="display: block; padding: 12px;">Contact</a></li>
+			<li class="t-center">
+				<a href="reservation.html" class="btn3 flex-c-m size13 txt11 trans-0-4 m-l-r-auto" style="min-height: 44px;">Reservation</a>
+			</li>
+		</ul>
+
+		<div class="social-sidebar t-center p-t-30 p-b-30">
+			<a href="#" class="fs-18 color1-hov m-r-15" style="display: inline-block; width: 44px; height: 44px; line-height: 44px;"><i class="fa-brands fa-yelp" aria-hidden="true"></i></a>
+			<a href="#" class="fs-18 color1-hov m-r-15" style="display: inline-block; width: 44px; height: 44px; line-height: 44px;"><i class="fa-brands fa-google" aria-hidden="true"></i></a>
+			<a href="#" class="fs-18 color1-hov m-r-15" style="display: inline-block; width: 44px; height: 44px; line-height: 44px;"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+			<a href="#" class="fs-18 color1-hov m-r-15" style="display: inline-block; width: 44px; height: 44px; line-height: 44px;"><i class="fa-brands fa-facebook" aria-hidden="true"></i></a>
+			<a href="#" class="fs-18 color1-hov" style="display: inline-block; width: 44px; height: 44px; line-height: 44px;"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+		</div>
+	</aside>
+
+	<!-- Clean Premium Hero Section -->
+	<section class="clean-hero crave-reveal crave-reveal--static">
+		<div class="clean-hero__cinematic-streak" aria-hidden="true"></div>
+		<!-- Cinematic Background -->
+		<div class="hero-background">
+			<div class="hero-image-layer" style="background-image: url(images/loaded_fries_01.jpg);"></div>
+			<div class="hero-gradient-overlay"></div>
+			<div class="hero-vignette"></div>
+		</div>
+		
+		<!-- Clean Content -->
+		<div class="hero-container">
+			<div class="hero-content-wrapper">
+				<!-- Main Hero Content -->
+				<div class="hero-main-content">
+					<div class="hero-pretitle">Welcome to Crave</div>
+					<h1 class="hero-headline">ACCRA'S MOST CRAVED COMFORT FOOD</h1>
+					<p class="hero-subheading">Loaded fries, crispy chicken, handcrafted smoothies & premium desserts delivered across Accra.</p>
+					
+					<!-- Clean CTA Buttons -->
+					<div class="hero-cta-section">
+						<a href="menu.html" class="cta-button cta-primary">
+							<span class="button-text">Order Your Feast</span>
+						</a>
+						<a href="menu.html" class="cta-button cta-secondary">
+							<span class="button-text">Browse Menu</span>
+						</a>
+					</div>
+					
+					<!-- Clean Trust Section -->
+					<div class="hero-trust-section">
+						<span class="trust-item">Fast Delivery</span>
+						<span class="trust-divider">•</span>
+						<span class="trust-item">Serving Accra</span>
+						<span class="trust-divider">•</span>
+						<span class="trust-item">Fresh Daily</span>
+					</div>
+				</div>
+				
+				<!-- Minimal Featured Food Card -->
+				<div class="featured-food-card crave-spotlight">
+					<div class="featured-food-image">
+						<img src="images/loaded_fries_01.jpg" alt="Loaded Fries" loading="lazy">
+					</div>
+					<div class="featured-food-content">
+						<h3 class="featured-food-name">Loaded Fries</h3>
+						<div class="featured-food-price">GHS 45</div>
+						<button class="featured-food-btn" onclick="window.location.href='menu.html'">Order Loaded Fries</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Minimal Scroll Indicator -->
+		<div class="scroll-indicator">
+			<div class="scroll-arrow">
+				<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+					<path d="M10 5V15M10 15L17 10M10 15L3 10" stroke="#d4a373" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</div>
+		</div>
+	</section>
+
+	<div class="crave-home-ticker-wrap">
+		<div class="crave-home-ticker crave-reveal crave-reveal--static" role="status" aria-live="polite">
+			<span class="crave-home-ticker__pulse" aria-hidden="true"></span>
+			<p class="crave-home-ticker__text" id="craveHomeTickerText">Fresh orders moving across Accra right now.</p>
+		</div>
+	</div>
+
+	<!-- Social Proof Section -->
+	<section class="social-proof crave-reveal">
+		<div class="container">
+			<div class="social-proof-header">
+				<h2 class="social-proof-title">🔥 Most Craved by Customers</h2>
+				<p class="social-proof-subtitle">Our signature dishes that keep you coming back</p>
+			</div>
+			<div class="social-proof-grid">
+				<div class="social-proof-item">
+					<div class="social-proof-image">
+						<img src="images/loaded_fries_01.jpg" alt="Loaded Fries" loading="lazy">
+						<span class="social-proof-tag">New</span>
+					</div>
+					<div class="social-proof-content">
+						<h3 class="social-proof-name">Loaded Fries</h3>
+						<p class="social-proof-text">Crispy fries topped with premium ingredients</p>
+						<div class="social-proof-rating">
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+						</div>
+					</div>
+				</div>
+				<div class="social-proof-item crave-spotlight">
+					<div class="social-proof-image">
+						<img src="images/hot_chicken.jpeg" alt="Texas Hot Chicken" loading="lazy">
+						<span class="social-proof-tag">Most Popular</span>
+					</div>
+					<div class="social-proof-content">
+						<h3 class="social-proof-name">Texas Hot Chicken</h3>
+						<p class="social-proof-text">Customer favorite - crispy, spicy, unforgettable</p>
+						<div class="social-proof-rating">
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+						</div>
+					</div>
+				</div>
+				<div class="social-proof-item">
+					<div class="social-proof-image">
+						<img src="images/strawberry_cream.jpg" alt="Premium Smoothies" loading="lazy">
+						<span class="social-proof-tag">Trending</span>
+					</div>
+					<div class="social-proof-content">
+						<h3 class="social-proof-name">Premium Smoothies</h3>
+						<p class="social-proof-text">Fresh, healthy, and absolutely delicious</p>
+						<div class="social-proof-rating">
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star-half-alt"></i>
+						</div>
+					</div>
+				</div>
+				<div class="social-proof-item crave-spotlight crave-spotlight--secondary">
+					<div class="social-proof-image">
+						<img src="images/choco_jar.jpeg" alt="Signature Cupcakes" loading="lazy">
+						<span class="social-proof-tag">Chef's Pick</span>
+					</div>
+					<div class="social-proof-content">
+						<h3 class="social-proof-name">Signature Cupcakes</h3>
+						<p class="social-proof-text">Decadent treats that melt in your mouth</p>
+						<div class="social-proof-rating">
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star-half-alt"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- CTA Section -->
+	<section class="homepage-cta crave-reveal">
+		<div class="container-fluid px-3">
+			<div class="homepage-cta-content">
+				<h2 class="homepage-cta-title">Ready to taste the difference?</h2>
+				<p class="homepage-cta-subtitle">Join us for an unforgettable culinary journey</p>
+				<div class="homepage-cta-buttons">
+					<a href="menu.html" class="btn-cta-primary">
+						<i class="fas fa-shopping-cart"></i>
+						⚡ Order Now
+					</a>
+					<a href="menu.html" class="btn-cta-secondary">
+						<i class="fas fa-utensils"></i>
+						🔥 Explore Our Menu
+					</a>
+				</div>
+				<div class="cta-microcopy">
+					<span class="highlight">⚡ Most popular choice</span> - Orders confirmed instantly via WhatsApp
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="section-menu bg1 p-t-95 p-b-100 animated visible-false crave-reveal" data-appear="fadeInUp">
+		<div class="container-fluid px-3">
+			<div class="title-section-ourmenu t-center m-b-22">
+				<span class="tit2 t-center">Discover</span>
+				<h3 class="tit5 t-center m-t-2">Our Menu</h3>
+			</div>
+
+			<!-- Category Filter -->
+			<div class="category-tabs m-b-40">
+				<a class="filter-btn active" href="menu.html#most-popular" data-filter="popular">Most Popular</a>
+				<a class="filter-btn" href="menu.html#loaded-fries" data-filter="fries">Loaded Fries + Cheesy Fries</a>
+				<a class="filter-btn" href="menu.html#texas-chicken" data-filter="chicken">Texas Crispy Fried Chicken</a>
+				<a class="filter-btn" href="menu.html#smoothies" data-filter="smoothies">Smoothies</a>
+				<a class="filter-btn" href="menu.html#milkshakes" data-filter="milkshakes">Milkshakes</a>
+				<a class="filter-btn" href="menu.html#jamaican-kitchen" data-filter="jamaican">Jamaican Kitchen</a>
+				<a class="filter-btn" href="menu.html#cupcakes" data-filter="cupcakes">Cupcakes</a>
+				<a class="filter-btn" href="menu.html#cake-and-shakes" data-filter="cake-shakes">Cake and Shakes</a>
+			</div>
+
+			<!-- Menu Grid -->
+			<div class="menu-grid">
+				<!-- Featured Items -->
+				<div class="menu-item" data-category="fries">
+					<div class="menu-card">
+						<div class="menu-image">
+							<img src="images/tx-chick.jpeg" alt="Avocado Toast">
+							<div class="menu-badge popular">Popular</div>
+						</div>
+						<div class="menu-content">
+							<h4 class="menu-title">Avocado Toast</h4>
+							<p class="menu-description">Fresh avocado on artisanal bread with poached eggs and cherry tomatoes</p>
+							<div class="menu-price">GH¢ 12.99</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="menu-item" data-category="chicken">
+					<div class="menu-card">
+						<div class="menu-image">
+							<img src="images/wrap-01.jpeg" alt="Turkey Club Wrap">
+						</div>
+						<div class="menu-content">
+							<h4 class="menu-title">Turkey Club Wrap</h4>
+							<p class="menu-description">Sliced turkey, bacon, lettuce, and tomato in a whole wheat wrap</p>
+							<div class="menu-price">GH¢ 11.99</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="menu-item" data-category="smoothies">
+					<div class="menu-card">
+						<div class="menu-image">
+							<img src="images/steak.jpeg" alt="Grilled Ribeye Steak" onerror="this.src='images/placeholder.jpg'">
+							<div class="menu-badge popular">Popular</div>
+						</div>
+						<div class="menu-content">
+							<h4 class="menu-title">Grilled Ribeye Steak</h4>
+							<p class="menu-description">8oz ribeye steak grilled to perfection with garlic mashed potatoes</p>
+							<div class="menu-price">GH¢ 28.99</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="t-center m-t-40">
+				<a href="menu.html" class="btn1 flex-c-m size1 txt3 trans-0-4">View Full Menu</a>
+			</div>
+		</div>
+	</section>
+
+
+	<!-- Premium Events Section -->
+	<section class="premium-events-section crave-reveal">
+		<div class="premium-events-background">
+			<div class="premium-events-glow"></div>
+			<div class="premium-events-grain"></div>
+		</div>
+
+		<div class="container-fluid px-3">
+			<div class="premium-events-container">
+				<!-- Cinematic Header -->
+				<div class="premium-events-header">
+					<h2 class="premium-events-title">Upcoming Experiences</h2>
+					<div class="premium-events-accent"></div>
+					<p class="premium-events-subtitle">Exclusive dining events crafted for the discerning palate</p>
+				</div>
+
+				<!-- Luxury Glass Event Card -->
+				<div class="premium-event-card">
+					<!-- Event Badge -->
+					<div class="premium-event-badge">
+						<span class="premium-badge-icon">✨</span>
+						<span class="premium-badge-text">Limited Event</span>
+					</div>
+
+					<!-- Card Content -->
+					<div class="premium-event-content">
+						<!-- Icon / Visual -->
+						<div class="premium-event-icon">
+							<div class="premium-icon-glow"></div>
+							<i class="fas fa-utensils"></i>
+						</div>
+
+						<!-- Event Details -->
+						<div class="premium-event-details">
+							<h3 class="premium-event-name">Chef's Table Experience</h3>
+							<p class="premium-event-description">
+								An intimate 8-course tasting menu curated by our executive chef. Each dish tells a story of seasonal ingredients and culinary innovation, paired with exclusive wine selections.
+							</p>
+
+							<div class="premium-event-meta">
+								<div class="premium-meta-item">
+									<div class="premium-meta-icon">
+										<i class="far fa-calendar"></i>
+									</div>
+									<div class="premium-meta-text">
+										<span class="premium-meta-label">Date</span>
+										<span class="premium-meta-value">Last Friday of Month</span>
+									</div>
+								</div>
+
+								<div class="premium-meta-item">
+									<div class="premium-meta-icon">
+										<i class="far fa-clock"></i>
+									</div>
+									<div class="premium-meta-text">
+										<span class="premium-meta-label">Time</span>
+										<span class="premium-meta-value">7:00 PM - 10:00 PM</span>
+									</div>
+								</div>
+
+								<div class="premium-meta-item">
+									<div class="premium-meta-icon">
+										<i class="fas fa-map-marker-alt"></i>
+									</div>
+									<div class="premium-meta-text">
+										<span class="premium-meta-label">Location</span>
+										<span class="premium-meta-value">Private Dining Room</span>
+									</div>
+								</div>
+
+								<div class="premium-meta-item">
+									<div class="premium-meta-icon">
+										<i class="fas fa-chair"></i>
+								 </div>
+									<div class="premium-meta-text">
+										<span class="premium-meta-label">Seats</span>
+										<span class="premium-meta-value">12 Remaining</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Premium CTA Button -->
+						<div class="premium-event-cta">
+							<a href="reservation.html" class="premium-reserve-btn">
+								<span class="premium-btn-text">Reserve Experience</span>
+								<span class="premium-btn-icon">
+									<i class="fas fa-arrow-right"></i>
+								</span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<style>
+		/* Premium Events Section */
+		.premium-events-section {
+			position: relative;
+			padding: 120px 0;
+			overflow: hidden;
+		}
+
+		.premium-events-background {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+			z-index: 0;
+		}
+
+		.premium-events-glow {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 800px;
+			height: 800px;
+			background: radial-gradient(circle, rgba(212, 163, 115, 0.08) 0%, transparent 70%);
+			pointer-events: none;
+		}
+
+		.premium-events-grain {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			opacity: 0.03;
+			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+			pointer-events: none;
+		}
+
+		.premium-events-container {
+			position: relative;
+			z-index: 1;
+			max-width: 900px;
+			margin: 0 auto;
+		}
+
+		/* Cinematic Header */
+		.premium-events-header {
+			text-align: center;
+			margin-bottom: 60px;
+		}
+
+		.premium-events-title {
+			font-size: 48px;
+			font-weight: 300;
+			letter-spacing: 4px;
+			text-transform: uppercase;
+			color: #ffffff;
+			margin-bottom: 24px;
+			font-family: 'Playfair Display', serif;
+		}
+
+		.premium-events-accent {
+			width: 80px;
+			height: 2px;
+			background: linear-gradient(90deg, transparent, #d4a373, transparent);
+			margin: 0 auto 24px;
+		}
+
+		.premium-events-subtitle {
+			font-size: 16px;
+			color: #888888;
+			letter-spacing: 1px;
+			font-weight: 300;
+		}
+
+		/* Luxury Glass Event Card */
+		.premium-event-card {
+			position: relative;
+			background: rgba(255, 255, 255, 0.03);
+			backdrop-filter: blur(20px);
+			-webkit-backdrop-filter: blur(20px);
+			border-radius: 28px;
+			border: 1px solid rgba(212, 163, 115, 0.2);
+			box-shadow: 
+				0 25px 50px rgba(0, 0, 0, 0.3),
+				0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+				0 0 80px rgba(212, 163, 115, 0.1);
+			padding: 60px;
+			transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+			overflow: hidden;
+		}
+
+		.premium-event-card::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 1px;
+			background: linear-gradient(90deg, transparent, rgba(212, 163, 115, 0.5), transparent);
+		}
+
+		.premium-event-card:hover {
+			transform: translateY(-8px);
+			box-shadow: 
+				0 35px 70px rgba(0, 0, 0, 0.4),
+				0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+				0 0 100px rgba(212, 163, 115, 0.15);
+			border-color: rgba(212, 163, 115, 0.3);
+		}
+
+		/* Event Badge */
+		.premium-event-badge {
+			position: absolute;
+			top: 30px;
+			left: 30px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			background: linear-gradient(135deg, rgba(212, 163, 115, 0.2), rgba(212, 163, 115, 0.1));
+			border: 1px solid rgba(212, 163, 115, 0.3);
+			border-radius: 50px;
+			padding: 8px 20px;
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+		}
+
+		.premium-badge-icon {
+			font-size: 14px;
+		}
+
+		.premium-badge-text {
+			font-size: 12px;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+			color: #d4a373;
+			font-weight: 500;
+		}
+
+		/* Card Content */
+		.premium-event-content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+		}
+
+		/* Event Icon */
+		.premium-event-icon {
+			position: relative;
+			width: 80px;
+			height: 80px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 32px;
+			font-size: 32px;
+			color: #d4a373;
+		}
+
+		.premium-icon-glow {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 120px;
+			height: 120px;
+			background: radial-gradient(circle, rgba(212, 163, 115, 0.2) 0%, transparent 70%);
+			pointer-events: none;
+			animation: pulse-glow 3s ease-in-out infinite;
+		}
+
+		@keyframes pulse-glow {
+			0%, 100% {
+				opacity: 0.5;
+				transform: translate(-50%, -50%) scale(1);
+			}
+			50% {
+				opacity: 0.8;
+				transform: translate(-50%, -50%) scale(1.1);
+			}
+		}
+
+		/* Event Details */
+		.premium-event-details {
+			max-width: 600px;
+			margin-bottom: 40px;
+		}
+
+		.premium-event-name {
+			font-size: 32px;
+			font-weight: 300;
+			letter-spacing: 2px;
+			color: #ffffff;
+			margin-bottom: 16px;
+			font-family: 'Playfair Display', serif;
+		}
+
+		.premium-event-description {
+			font-size: 15px;
+			line-height: 1.8;
+			color: #aaaaaa;
+			margin-bottom: 32px;
+			font-weight: 300;
+		}
+
+		/* Event Meta */
+		.premium-event-meta {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 24px;
+			margin-bottom: 32px;
+		}
+
+		.premium-meta-item {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			text-align: left;
+		}
+
+		.premium-meta-icon {
+			width: 40px;
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(212, 163, 115, 0.1);
+			border: 1px solid rgba(212, 163, 115, 0.2);
+			border-radius: 50%;
+			color: #d4a373;
+			font-size: 14px;
+		}
+
+		.premium-meta-text {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.premium-meta-label {
+			font-size: 11px;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+			color: #666666;
+			margin-bottom: 4px;
+		}
+
+		.premium-meta-value {
+			font-size: 14px;
+			color: #ffffff;
+			font-weight: 400;
+		}
+
+		/* Premium CTA Button */
+		.premium-event-cta {
+			width: 100%;
+		}
+
+		.premium-reserve-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+			width: 100%;
+			max-width: 300px;
+			margin: 0 auto;
+			padding: 18px 40px;
+			background: linear-gradient(135deg, #d4a373 0%, #c49a6c 50%, #b8895e 100%);
+			border: none;
+			border-radius: 50px;
+			color: #ffffff;
+			font-size: 14px;
+			font-weight: 500;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+			text-decoration: none;
+			position: relative;
+			overflow: hidden;
+			transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+			box-shadow: 
+				0 10px 30px rgba(212, 163, 115, 0.3),
+				0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+		}
+
+		.premium-reserve-btn::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -100%;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+			transition: left 0.6s ease;
+		}
+
+		.premium-reserve-btn:hover {
+			transform: translateY(-3px);
+			box-shadow: 
+				0 15px 40px rgba(212, 163, 115, 0.4),
+				0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+		}
+
+		.premium-reserve-btn:hover::before {
+			left: 100%;
+		}
+
+		.premium-btn-text {
+			position: relative;
+			z-index: 1;
+		}
+
+		.premium-btn-icon {
+			position: relative;
+			z-index: 1;
+			transition: transform 0.3s ease;
+		}
+
+		.premium-reserve-btn:hover .premium-btn-icon {
+			transform: translateX(4px);
+		}
+
+		/* Responsive Design */
+		@media (max-width: 768px) {
+			.premium-events-section {
+				padding: 80px 0;
+			}
+
+			.premium-events-title {
+				font-size: 32px;
+				letter-spacing: 2px;
+			}
+
+			.premium-event-card {
+				padding: 40px 24px;
+				border-radius: 20px;
+			}
+
+			.premium-event-badge {
+				top: 20px;
+				left: 20px;
+				padding: 6px 16px;
+			}
+
+			.premium-event-name {
+				font-size: 24px;
+				letter-spacing: 1px;
+			}
+
+			.premium-event-description {
+				font-size: 14px;
+			}
+
+			.premium-event-meta {
+				grid-template-columns: 1fr;
+				gap: 16px;
+			}
+
+			.premium-reserve-btn {
+				padding: 16px 32px;
+				font-size: 13px;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.premium-events-title {
+				font-size: 28px;
+			}
+
+			.premium-event-card {
+				padding: 32px 20px;
+			}
+
+			.premium-event-icon {
+				width: 60px;
+				height: 60px;
+				font-size: 24px;
+			}
+
+			.premium-icon-glow {
+				width: 100px;
+				height: 100px;
+			}
+
+			.premium-event-name {
+				font-size: 22px;
+			}
+
+			.premium-meta-item {
+				gap: 12px;
+			}
+
+			.premium-meta-icon {
+				width: 36px;
+				height: 36px;
+				font-size: 12px;
+			}
+		}
+
+		/* Fade-in Animation */
+		.premium-events-section.crave-reveal {
+			opacity: 0;
+			transform: translateY(30px);
+			transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.premium-events-section.crave-reveal.visible {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	</style>
+		<!-- Reservation Section -->
+	<section class="reservation-section crave-reveal">
+		<div class="container-fluid px-3">
+			<div class="row">
+				<div class="col-lg-8 mx-auto">
+					<div class="t-center">
+						<span class="booking-subtitle">Reservation</span>
+						<h3 class="booking-title">Reserve Your Table Now</h3>
+						<p class="booking-trust">Secure your spot in seconds</p>
+					</div>
+
+					<form id="reservationForm" class="wrap-form-booking" method="post">
+						<div class="row">
+							<div class="col-md-6">
+								<span class="txt9">Date</span>
+								<div class="wrap-inputdate">
+									<input class="my-calendar" type="date" name="date" placeholder="Select date" required>
+									<i class="btn-calendar fa-solid fa-calendar" aria-hidden="true"></i>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<span class="txt9">Time</span>
+								<div class="wrap-inputtime">
+									<select class="selection-1" name="time" required>
+										<option>11:00 AM</option>
+										<option>11:30 AM</option>
+										<option>12:00 PM</option>
+										<option>12:30 PM</option>
+										<option>1:00 PM</option>
+										<option>1:30 PM</option>
+										<option>5:00 PM</option>
+										<option>5:30 PM</option>
+										<option>6:00 PM</option>
+										<option>6:30 PM</option>
+										<option>7:00 PM</option>
+										<option>7:30 PM</option>
+										<option>8:00 PM</option>
+										<option>8:30 PM</option>
+										<option>9:00 PM</option>
+										<option>9:30 PM</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<span class="txt9">People</span>
+								<div class="wrap-inputpeople">
+									<select class="selection-1" name="people" required>
+										<option>1 person</option>
+										<option>2 people</option>
+										<option>3 people</option>
+										<option>4 people</option>
+										<option>5 people</option>
+										<option>6 people</option>
+										<option>7 people</option>
+										<option>8 people</option>
+										<option>9 people</option>
+										<option>10+ people</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<span class="txt9">Name</span>
+								<div class="wrap-inputname">
+									<input type="text" name="name" placeholder="Your Name" required>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<span class="txt9">Phone</span>
+								<div class="wrap-inputphone">
+									<input type="tel" name="phone" placeholder="Phone Number" required>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<span class="txt9">Email</span>
+								<div class="wrap-inputemail">
+									<input type="email" name="email" placeholder="Email Address" required>
+								</div>
+							</div>
+						</div>
+
+						<div class="wrap-btn-booking">
+							<button type="submit" id="submitBtn" class="btn-premium">
+								<span id="btnText">Reserve Your Table Now</span>
+								<span id="btnLoader" class="btn-loader" style="display: none;">
+									<i class="fa-solid fa-spinner fa-spin"></i>
+								</span>
+							</button>
+							<p class="trust-text">⚡ Takes less than 30 seconds</p>
+						</div>
+					</form>
+
+					<!-- Success Message -->
+					<div id="successMessage" class="reservation-success" style="display: none;">
+						<div class="success-icon">
+							<i class="fa-solid fa-check-circle"></i>
+						</div>
+						<div class="success-content">
+							<h4>🎉 Reservation confirmed!</h4>
+							<p>We'll contact you shortly.</p>
+						</div>
+					</div>
+
+					<!-- Error Message -->
+					<div id="errorMessage" class="reservation-error" style="display: none;">
+						<div class="error-icon">
+							<i class="fa-solid fa-exclamation-circle"></i>
+						</div>
+						<div class="error-content">
+							<h4>Oops! Something went wrong</h4>
+							<p id="errorText">Please check your details and try again.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Premium Footer (luxury, glassmorphism) -->
+	<footer class="premium-footer crave-reveal" role="contentinfo">
+		<div class="premium-footer__inner">
+			<!-- Logo Section -->
+			<div class="footer-brand">
+				<img src="images/logo.png" alt="Crave Restaurant" class="footer-brand__logo" width="160" height="44">
+				<p class="footer-brand__tag">Crave</p>
+				<p class="footer-brand__sub">Comfort food, elevated into premium experiences.</p>
+			</div>
+
+			<!-- Quick Links -->
+			<nav class="footer-nav" aria-label="Footer Navigation">
+				<h4 class="footer-heading">Explore</h4>
+				<ul class="footer-links">
+					<li><a href="menu.html">Menu</a></li>
+					<li><a href="reservation.html">Reserve</a></li>
+					<li><a href="about.html">About</a></li>
+					<li><a href="contact.html">Contact</a></li>
+				</ul>
+			</nav>
+
+			<!-- Contact Section -->
+			<div class="footer-contact">
+				<h4 class="footer-heading">Get in Touch</h4>
+				<address class="footer-address">
+					<div class="footer-address__line">Accra, Ghana</div>
+					<a href="tel:+233550020788" class="footer-link" style="font-size: 1.05rem; font-weight: 600;">+233 55 002 0788</a>
+					<a href="mailto:hello@crave.com" class="footer-link">hello@crave.com</a>
+				</address>
+				<div class="footer-hours">Open Daily • 11:00 AM – 10:00 PM</div>
+			</div>
+
+			<!-- Social Icons -->
+			<div class="footer-social">
+				<a class="social-btn" href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+				<a class="social-btn" href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+				<a class="social-btn" href="#" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+			</div>
+
+			<!-- CTA Section -->
+			<div class="premium-footer__cta">
+				<div class="cta-copy">
+					<h3 class="cta-title">Ready for Your Next Crave?</h3>
+                    <p class="cta-sub">Order fast, earn VIP perks, and enjoy Accra’s best comfort food.</p>
+                </div>
+                <div class="cta-actions">
+                    <a href="menu.html" class="btn btn-premium-ghost">Browse Menu</a>
+                    <a href="menu.html" class="btn btn-premium">Start Your Order</a>
+			<form class="vip-form" onsubmit="event.preventDefault(); alert('Thanks for joining Crave VIP!');">
+				<input type="email" name="vip_email" placeholder="your@email.com" aria-label="Email for VIP signup" required>
+				<button class="vip-cta" type="submit">Join VIP</button>
+			</form>
+		</div>
+
+		<!-- Bottom Bar -->
+		<div class="premium-footer__bottom">
+			<div class="premium-footer__bar">
+				<div class="footer-copyright">© <span id="copyright-year">2025</span> Crave Restaurant. All rights reserved.</div>
+				<div class="footer-powered">Crafted with care</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top bg0-hov" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="fa-solid fa-angles-up" aria-hidden="true"></i>
+		</span>
+	</div>
+
+	<!-- Modal Video -->
+	<div class="modal fade" id="modal-video-01" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document" data-bs-dismiss="modal">
+			<div class="close-mo-video-01 trans-0-4" data-bs-dismiss="modal" aria-label="Close">&times;</div>
+			<div class="wrap-video-mo-01">
+				<div class="w-full wrap-pic-w op-0-0"><img src="images/icons/video-16-9.jpg" alt="Video" loading="lazy"></div>
+				<div class="video-mo-01">
+					<iframe src="https://www.youtube.com/embed/5k1hSu2gdKE?rel=0&amp;showinfo=0" allowfullscreen loading="lazy"></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/js/bootstrap.bundle.min.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js" defer></script>
+	<script src="js/swiper-custom.js" defer></script>
+	<script src="js/main.js" defer></script>
+	<script>
+		(function () {
+			if (document.documentElement.classList.contains('crave-splash-off')) return;
+			var splash = document.getElementById('craveSplash');
+			if (!splash) return;
+			var closed = false;
+			document.body.classList.add('crave-splash-boot');
+			requestAnimationFrame(function () {
+				splash.classList.add('is-active');
+			});
+			function closeSplash() {
+				if (closed) return;
+				closed = true;
+				document.documentElement.classList.add('crave-splash-finished');
+				splash.classList.add('is-done');
+				document.body.classList.remove('crave-splash-boot');
+				try {
+					sessionStorage.setItem('craveSplash', '1');
+				} catch (e) {}
+				setTimeout(function () {
+					if (splash.parentNode) splash.parentNode.removeChild(splash);
+				}, 480);
+			}
+			var start = Date.now();
+			function scheduleAfterLoad() {
+				if (closed) return;
+				var elapsed = Date.now() - start;
+				var untilMin = Math.max(0, 700 - elapsed);
+				var untilCap = Math.max(0, 1180 - elapsed);
+				var wait = Math.min(untilMin, untilCap);
+				setTimeout(closeSplash, wait);
+			}
+			if (document.readyState === 'complete') {
+				scheduleAfterLoad();
+			} else {
+				window.addEventListener('load', scheduleAfterLoad, { once: true });
+			}
+			setTimeout(closeSplash, 1180);
+		})();
+	</script>
+	<script>
+		// Mobile Optimizations
+		document.addEventListener('DOMContentLoaded', function() {
+			// Initialize Flatpickr for date picker
+			if (document.querySelector('.my-calendar')) {
+				flatpickr('.my-calendar', { 
+					dateFormat: 'Y-m-d', 
+					minDate: 'today',
+					mobile: true
+				});
+			}
+
+			// Initialize GLightbox for gallery
+			if (typeof GLightbox !== 'undefined') {
+				GLightbox({ 
+					selector: '.glightbox',
+					touchNavigation: true,
+					loop: true
+				});
+			}
+
+			// Back to top button
+			const backBtn = document.getElementById('myBtn');
+			if (backBtn) {
+				window.addEventListener('scroll', function() {
+					if (window.pageYOffset > 300) {
+						backBtn.style.display = 'flex';
+					} else {
+						backBtn.style.display = 'none';
+					}
+				});
+				backBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+			}
+
+			// Copyright year
+			const yearSpan = document.getElementById('copyright-year');
+			if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
+			// Mobile menu toggle
+			const btnShowSidebar = document.querySelector('.btn-show-sidebar');
+			const btnHideSidebar = document.querySelector('.btn-hide-sidebar');
+			const sidebar = document.querySelector('.sidebar');
+
+			if (btnShowSidebar && sidebar) {
+				btnShowSidebar.addEventListener('click', function(e) {
+					e.preventDefault();
+					sidebar.classList.add('show-sidebar');
+				});
+			}
+
+			if (btnHideSidebar && sidebar) {
+				btnHideSidebar.addEventListener('click', function(e) {
+					e.preventDefault();
+					sidebar.classList.remove('show-sidebar');
+				});
+			}
+
+			// Close sidebar when clicking on a link
+			if (sidebar) {
+				document.querySelectorAll('.sidebar a, .sidebar button').forEach(function(el) {
+					el.addEventListener('click', function() {
+						sidebar.classList.remove('show');
+						document.body.style.overflow = 'auto';
+					});
+				});
+			}
+
+			// Prevent iOS zoom on input focus
+			const inputs = document.querySelectorAll('input, select, textarea');
+			inputs.forEach(function(input) {
+				input.addEventListener('focus', function() {
+					// iOS safari fix
+					this.style.fontSize = '16px';
+				});
+			});
+
+			// Form smooth scrolling
+			const form = document.querySelector('form');
+			if (form) {
+				form.addEventListener('submit', function(e) {
+					// Prevent default only for demo
+					// In production, remove this line
+				});
+			}
+
+			// Touch optimization for swiper
+			const swipers = document.querySelectorAll('.swiper');
+			swipers.forEach(function(swiperEl) {
+				if (swiperEl.swiper) {
+					swiperEl.swiper.touchEventsTarget = 'container';
+				}
+			});
+
+			// Optimize image loading for mobile
+			const images = document.querySelectorAll('img[loading="lazy"]');
+			if ('IntersectionObserver' in window) {
+				const imageObserver = new IntersectionObserver((entries, observer) => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting) {
+							const img = entry.target;
+							// Image already has src, so loading is handled by browser
+							observer.unobserve(img);
+						}
+					});
+				}, {
+					rootMargin: '50px'
+				});
+				
+				images.forEach(img => imageObserver.observe(img));
+			}
+
+			// Crave homepage: scroll reveals, ticker, subtle hero parallax
+			(function () {
+				if (!document.body.classList.contains('crave-home')) return;
+				var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+				var reveals = document.querySelectorAll('.crave-reveal:not(.crave-reveal--static)');
+				if (reduce) {
+					reveals.forEach(function (el) { el.classList.add('is-visible'); });
+				} else if ('IntersectionObserver' in window) {
+					var io = new IntersectionObserver(function (entries, obs) {
+						entries.forEach(function (en) {
+							if (!en.isIntersecting) return;
+							en.target.classList.add('is-visible');
+							obs.unobserve(en.target);
+						});
+					}, { threshold: 0.08, rootMargin: '0px 0px -7% 0px' });
+					reveals.forEach(function (el) { io.observe(el); });
+				} else {
+					reveals.forEach(function (el) { el.classList.add('is-visible'); });
+				}
+
+				var tickerEl = document.getElementById('craveHomeTickerText');
+				if (tickerEl && !reduce) {
+					var msgs = [
+						'12 guests ordered Loaded Fries today',
+						'Biscoff Jar Cake is trending right now',
+						'Fast selling: Texas Hot Chicken',
+						'Premium smoothies — fresh blends daily',
+						'Orders confirmed quickly via WhatsApp'
+					];
+					var idx = 0;
+					setInterval(function () {
+						idx = (idx + 1) % msgs.length;
+						tickerEl.classList.add('crave-home-ticker__text--tick');
+						setTimeout(function () {
+							tickerEl.textContent = msgs[idx];
+							tickerEl.classList.remove('crave-home-ticker__text--tick');
+						}, 200);
+					}, 5200);
+				}
+
+				if (!reduce) {
+					var heroBg = document.querySelector('.clean-hero .hero-background');
+					if (heroBg) {
+						var ticking = false;
+						function tick() {
+							ticking = false;
+							var y = window.scrollY || 0;
+							var m = Math.min(y * 0.12, 72);
+							heroBg.style.transform = 'translate3d(0,' + (m * 0.35) + 'px,0)';
+						}
+						window.addEventListener('scroll', function () {
+							if (!ticking) {
+								ticking = true;
+								requestAnimationFrame(tick);
+							}
+						}, { passive: true });
+					}
+				}
+			})();
+
+			// Smooth scroll behavior
+			if (CSS.supports('scroll-behavior', 'smooth')) {
+				document.documentElement.style.scrollBehavior = 'smooth';
+			}
+
+			// Add touch feedback to buttons
+			document.querySelectorAll('button, a').forEach(el => {
+				el.addEventListener('touchstart', function() {
+					this.style.opacity = '0.7';
+				});
+				el.addEventListener('touchend', function() {
+					this.style.opacity = '1';
+				});
+			});
+		});
+
+		// Handle viewport changes for responsive adjustments
+		window.addEventListener('orientationchange', function() {
+			// Reload or adjust layout on orientation change
+			setTimeout(function() {
+				if (typeof Swiper !== 'undefined') {
+					document.querySelectorAll('.swiper').forEach(swiperEl => {
+						if (swiperEl.swiper) {
+							swiperEl.swiper.update();
+						}
+					});
+				}
+			}, 100);
+		});
+
+		// Prevent bouncy scroll on iOS
+		document.body.addEventListener('touchmove', function(e) {
+			if (e.target.closest('input, select, textarea') === null) {
+				// Allow normal scroll outside of form elements
+			}
+		}, false);
+
+		// Sticky Cart Bar — totals + premium update feedback
+		var stickyCartPrevSig = '';
+		function getCraveCartArray() {
+			try {
+				const raw = JSON.parse(localStorage.getItem('craveCart')) || [];
+				return Array.isArray(raw) ? raw : [];
+			} catch (e) {
+				return [];
+			}
+		}
+		function craveCartLineTotal(item) {
+			const qty = item.quantity || 1;
+			if (typeof item.price === 'number' && !Number.isNaN(item.price)) {
+				return item.price * qty;
+			}
+			const parsed = parseFloat(String(item.price != null ? item.price : '').replace(/[^\d.]/g, ''));
+			if (!Number.isNaN(parsed)) {
+				return parsed * qty;
+			}
+			let unit = Number(item.basePrice) || 0;
+			if (Array.isArray(item.addons)) {
+				unit += item.addons.reduce((s, a) => s + (Number(a.price) || 0), 0);
+			}
+			if (Array.isArray(item.customizations)) {
+				unit += item.customizations.reduce((s, o) => s + (Number(o.price) || 0), 0);
+			}
+			return unit * qty;
+		}
+		function updateStickyCartBar() {
+			const cart = getCraveCartArray();
+			const cartCountVal = cart.length;
+			let total = 0;
+			cart.forEach(function (item) {
+				total += craveCartLineTotal(item);
+			});
+			const stickyCartBar = document.getElementById('stickyCartBar');
+			const stickyCartItems = document.getElementById('stickyCartItems');
+			const stickyCartTotal = document.getElementById('stickyCartTotal');
+			const stickyCartUpdateDot = document.getElementById('stickyCartUpdateDot');
+			if (!stickyCartBar) return;
+			if (stickyCartItems) {
+				stickyCartItems.textContent = cartCountVal + ' ' + (cartCountVal === 1 ? 'item' : 'items');
+			}
+			if (stickyCartTotal) {
+				stickyCartTotal.textContent = total.toFixed(2);
+			}
+			stickyCartBar.setAttribute('aria-hidden', cartCountVal === 0 ? 'true' : 'false');
+			const sig = cartCountVal + ':' + total.toFixed(2);
+			if (stickyCartPrevSig && stickyCartPrevSig !== sig) {
+				stickyCartBar.classList.add('sticky-cart--updated');
+				setTimeout(function () {
+					stickyCartBar.classList.remove('sticky-cart--updated');
+				}, 480);
+				if (stickyCartUpdateDot) {
+					stickyCartUpdateDot.classList.add('is-on');
+					setTimeout(function () {
+						stickyCartUpdateDot.classList.remove('is-on');
+					}, 720);
+				}
+			}
+			stickyCartPrevSig = cartCountVal > 0 ? sig : '';
+			if (cartCountVal > 0) {
+				stickyCartBar.classList.add('active');
+			} else {
+				stickyCartBar.classList.remove('active');
+			}
+		}
+		
+		// Initialize sticky cart bar on page load
+		document.addEventListener('DOMContentLoaded', function() {
+			updateStickyCartBar();
+		});
+		
+		// Listen for cart changes (for cross-tab sync)
+		window.addEventListener('storage', function(e) {
+			if (e.key === 'craveCart') {
+				updateStickyCartBar();
+			}
+		});
+	</script>
+
+	<!-- Premium sticky floating cart (tap = cart / checkout flow) -->
+	<div id="stickyCartBar" class="sticky-cart-bar" aria-hidden="true">
+		<a href="cart.html" class="sticky-cart-hit" id="stickyCartBarLink" aria-label="View cart and continue to checkout">
+			<div class="sticky-cart-shell">
+				<div class="sticky-cart-glow-ring" aria-hidden="true"></div>
+				<div class="sticky-cart-shell-inner">
+					<span class="sticky-cart-shimmer" aria-hidden="true"></span>
+					<div class="sticky-cart-content">
+						<div class="sticky-cart-info">
+							<div class="sticky-cart-icon-wrap sticky-cart-icon-hit" aria-hidden="true">
+								<span class="sticky-cart-emoji">🛒</span>
+								<span class="sticky-cart-update-dot" id="stickyCartUpdateDot" aria-hidden="true"></span>
+							</div>
+							<div class="sticky-cart-text">
+								<span class="sticky-cart-label">View Cart</span>
+								<span class="sticky-cart-items" id="stickyCartItems" aria-live="polite">0 items</span>
+							</div>
+						</div>
+						<div class="sticky-cart-right">
+							<div class="sticky-cart-price">
+								<span class="sticky-cart-price-currency">GHS</span>
+								<span class="sticky-cart-price-value" id="stickyCartTotal">0.00</span>
+							</div>
+							<span class="sticky-cart-chevron" aria-hidden="true">
+								<svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+									<path d="M6 12L10 8M10 8L6 4M10 8H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+
+	<!-- WhatsApp Floating Button -->
+	<a href="#" id="whatsappFloatBtn" class="whatsapp-float" target="_blank" aria-label="Order via WhatsApp" title="Order on WhatsApp">
+		<i class="fa-brands fa-whatsapp"></i>
+	</a>
+	
+	<script>
+		// Update WhatsApp link with rewards data
+		document.addEventListener('DOMContentLoaded', function() {
+			const whatsappBtn = document.getElementById('whatsappFloatBtn');
+			
+			if (whatsappBtn && typeof CraveRewardsData !== 'undefined') {
+				let message = 'Hi Crave, I\'d like to place an order';
+				
+				// Add rewards information
+				const points = CraveRewardsData.Points.get();
+				const tier = CraveRewardsData.Tier.get();
+				
+				if (points > 0) {
+					message += `. I have ${points} Crave Points (${tier} tier)`;
+				}
+				
+				// Add available promo codes
+				if (typeof CravePromoCodes !== 'undefined') {
+					const promoCodes = CravePromoCodes.getAvailable();
+					const activeCodes = promoCodes.filter(pc => pc.available).slice(0, 2);
+					if (activeCodes.length > 0) {
+						message += '. Available codes: ' + activeCodes.map(pc => pc.code).join(', ');
+					}
+				}
+				
+				whatsappBtn.href = 'https://wa.me/233550020788?text=' + encodeURIComponent(message);
+			}
+		});
+	</script>
+
+	<!-- PWA Service Worker Registration -->
+	<script>
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', function() {
+				navigator.serviceWorker.register('/sw.js')
+					.then(function(registration) {
+						console.log('Service Worker registered successfully:', registration);
+					})
+					.catch(function(error) {
+						console.log('Service Worker registration failed:', error);
+					});
+			});
+		}
+	</script>
+    <script src="js/analytics.js" defer></script>
+    
+    <!-- CRAVE Rewards System -->
+    <script src="js/rewards-config.js"></script>
+    <script src="js/rewards-data.js"></script>
+    <script src="js/rewards-engine.js"></script>
+    <script src="js/rewards-notifications.js"></script>
+    <script src="js/promo-codes.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/recommendations.js"></script>
+    <script src="js/spin-wheel.js"></script>
+    <script src="js/referral-system.js"></script>
+    <script src="js/flash-deals.js"></script>
+    <script src="js/combo-builder.js"></script>
+    <script src="js/birthday-system.js"></script>
+    
+    <script>
+        // Initialize rewards on homepage
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for birthday reward
+            if (CraveRewardsEngine && CraveRewardsData) {
+                const birthdayReward = CraveRewardsEngine.checkBirthdayReward();
+                if (birthdayReward) {
+                    setTimeout(() => {
+                        CraveRewardsNotifications.birthdayReward();
+                    }, 2000);
+                }
+                
+                // Check for daily reward availability
+                if (CraveRewardsData.DailyRewards.canClaim()) {
+                    setTimeout(() => {
+                        CraveRewardsNotifications.show({
+                            type: 'info',
+                            icon: '📅',
+                            title: 'Daily Reward Available',
+                            message: 'Claim your daily bonus points!'
+                        });
+                    }, 3000);
+                }
+            }
+            
+            // Initialize flash deals
+            if (CraveFlashDeals) {
+                CraveFlashDeals.init();
+            }
+            
+            // Check for referral code in URL
+            if (CraveReferralSystem) {
+                CraveReferralSystem.checkURL();
+            }
+            
+            // Check birthday on load
+            if (CraveBirthdaySystem) {
+                CraveBirthdaySystem.checkOnLoad();
+            }
+        });
+    </script>
+</body>
+</html>

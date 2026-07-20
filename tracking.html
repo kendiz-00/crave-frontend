@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8CVWBJESV"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-F8CVWBJESV', { send_page_view: false });</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track your Crave Restaurant order in real-time">
+    <meta name="keywords" content="order tracking, delivery, food, crave restaurant">
+    <meta name="author" content="Crave Restaurant">
+    
+    <!-- Favicon - Comprehensive Solution -->
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="16x16">
+    <link rel="icon" href="favicon.png" type="image/png" sizes="192x192">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="favicon.png" sizes="167x167">
+    <link rel="apple-touch-icon" href="favicon.png" sizes="180x180">
+    
+    <!-- Favicon Meta Tags -->
+    <meta name="msapplication-TileImage" content="favicon.png">
+    <meta name="msapplication-TileColor" content="#d4a373">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d4a373">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Order Tracking - Crave Restaurant</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/util.css">
+    
+    <style>
+        /* Tracking Page Styles */
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .tracking-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .tracking-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .tracking-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #d4a574;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(212, 165, 116, 0.3);
+        }
+        
+        .tracking-header p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+        
+        .order-id {
+            background: rgba(212, 165, 116, 0.1);
+            border: 2px solid #d4a574;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .order-id-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .order-id-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #d4a574;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+        
+        .progress-container {
+            margin-bottom: 40px;
+        }
+        
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            height: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4a574, #b88a5a);
+            border-radius: 25px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
+        }
+        
+        .status-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .status-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .status-step.active .status-icon {
+            background: linear-gradient(135deg, #d4a574, #b88a5a);
+            border-color: #d4a574;
+            box-shadow: 0 0 20px rgba(212, 165, 116, 0.6);
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        .status-step.completed .status-icon {
+            background: #28a745;
+            border-color: #28a745;
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 165, 116, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(212, 165, 116, 0.8); }
+        }
+        
+        .status-text {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        
+        .status-step.active .status-text {
+            color: #d4a574;
+            font-weight: 600;
+        }
+        
+        .status-step.completed .status-text {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .delivery-time {
+            background: rgba(212, 165, 116, 0.1);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .delivery-time-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 10px;
+        }
+        
+        .delivery-time-countdown {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4a574;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .back-home {
+            background: linear-gradient(135deg, #d4a574, #b88a5a);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 auto;
+        }
+        
+        .back-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 165, 116, 0.4);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .tracking-container {
+                padding: 15px;
+            }
+            
+            .tracking-header h1 {
+                font-size: 2rem;
+            }
+            
+            .status-steps {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .status-step {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .status-icon {
+                width: 50px;
+                height: 50px;
+                margin: 0;
+            }
+            
+            .delivery-time-countdown {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tracking-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .order-id-number {
+                font-size: 1.5rem;
+            }
+            
+            .delivery-time-countdown {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tracking-container">
+        <!-- Header -->
+        <div class="tracking-header">
+            <h1>Tracking Your Order</h1>
+            <p>Real-time order updates and delivery tracking</p>
+        </div>
+        
+        <!-- Order ID -->
+        <div class="order-id">
+            <div class="order-id-label">Order ID</div>
+            <div class="order-id-number" id="orderNumber">CRV-2024-XXXX</div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+            </div>
+        </div>
+        
+        <!-- Status Steps -->
+        <div class="status-steps">
+            <div class="status-step completed" id="step1">
+                <div class="status-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="status-text">Order Received</div>
+            </div>
+            
+            <div class="status-step active" id="step2">
+                <div class="status-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="status-text">Preparing</div>
+            </div>
+            
+            <div class="status-step" id="step3">
+                <div class="status-icon">
+                    <i class="fas fa-motorcycle"></i>
+                </div>
+                <div class="status-text">On the Way</div>
+            </div>
+            
+            <div class="status-step" id="step4">
+                <div class="status-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="status-text">Delivered</div>
+            </div>
+        </div>
+        
+        <!-- Delivery Time -->
+        <div class="delivery-time">
+            <div class="delivery-time-label">Estimated Delivery Time</div>
+            <div class="delivery-time-countdown" id="deliveryCountdown">00:25:00</div>
+        </div>
+        
+        <!-- Back to Home -->
+        <a href="index.html" class="back-home">
+            <i class="fas fa-home"></i>
+            Back to Home
+        </a>
+    </div>
+    
+    <script>
+        // Generate random order ID
+        function generateOrderID() {
+            const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            const orderID = `CRV-2024-${randomNum}`;
+            document.getElementById('orderNumber').textContent = orderID;
+        }
+        
+        // Progress animation
+        let currentStep = 2;
+        let progress = 25;
+        
+        function animateProgress() {
+            const steps = document.querySelectorAll('.status-step');
+            const progressFill = document.getElementById('progressFill');
+            
+            // Remove active class from all steps
+            steps.forEach(step => step.classList.remove('active'));
+            
+            // Add active class to current step
+            if (steps[currentStep - 1]) {
+                steps[currentStep - 1].classList.add('active');
+            }
+            
+            // Update progress bar
+            progressFill.style.width = `${progress}%`;
+            
+            // Move to next step
+            currentStep++;
+            progress += 25;
+            
+            // Reset when reaching the end
+            if (currentStep > 4) {
+                currentStep = 1;
+                progress = 25;
+                
+                // Mark all as completed after full cycle
+                setTimeout(() => {
+                    steps.forEach(step => {
+                        step.classList.remove('active');
+                        step.classList.add('completed');
+                    });
+                }, 3000);
+            }
+        }
+        
+        // Countdown timer
+        let minutes = 25;
+        let seconds = 0;
+        
+        function updateCountdown() {
+            const countdownElement = document.getElementById('deliveryCountdown');
+            
+            if (minutes === 0 && seconds === 0) {
+                countdownElement.textContent = 'Delivered!';
+                countdownElement.style.color = '#28a745';
+                return;
+            }
+            
+            if (seconds === 0) {
+                minutes--;
+                seconds = 59;
+            } else {
+                seconds--;
+            }
+            
+            const displayMinutes = minutes.toString().padStart(2, '0');
+            const displaySeconds = seconds.toString().padStart(2, '0');
+            countdownElement.textContent = `${displayMinutes}:${displaySeconds}`;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateOrderID();
+            
+            // Start progress animation
+            setInterval(animateProgress, 3000);
+            
+            // Start countdown
+            setInterval(updateCountdown, 1000);
+        });
+    </script>
+    <script src="js/analytics.js" defer></script>
+</body>
+</html>
