@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8CVWBJESV"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-F8CVWBJESV', { send_page_view: false });</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover, shrink-to-fit=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="CRAVE Kitchen Dashboard - Manage orders in real-time">
+    <title>Kitchen Dashboard - Crave Restaurant</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/util.css">
+    <link rel="stylesheet" href="css/loading-skeletons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+        }
+
+        .kitchen-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .kitchen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .kitchen-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4a574;
+        }
+
+        .kitchen-header .refresh-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .kitchen-header .refresh-info .pulse {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .kitchen-columns {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .kitchen-column {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            min-height: calc(100vh - 200px);
+        }
+
+        .kitchen-column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .kitchen-column-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .kitchen-column-header .count {
+            background: rgba(212, 165, 116, 0.2);
+            color: #d4a574;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .kitchen-column.new-orders .kitchen-column-header h2 {
+            color: #fbbf24;
+        }
+
+        .kitchen-column.preparing .kitchen-column-header h2 {
+            color: #60a5fa;
+        }
+
+        .kitchen-column.ready .kitchen-column-header h2 {
+            color: #4ade80;
+        }
+
+        .kitchen-column.completed .kitchen-column-header h2 {
+            color: #a78bfa;
+        }
+
+        .order-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .order-card:hover {
+            border-color: rgba(212, 165, 116, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .order-number {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #d4a574;
+        }
+
+        .order-time {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .customer-name {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+        }
+
+        .order-type {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .order-type.delivery {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+        }
+
+        .order-type.pickup {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .order-items {
+            margin-bottom: 12px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-quantity {
+            background: rgba(212, 165, 116, 0.2);
+            color: #d4a574;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .special-instructions {
+            background: rgba(251, 191, 36, 0.1);
+            border-left: 3px solid #fbbf24;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+            color: #fbbf24;
+            border-radius: 4px;
+        }
+
+        .order-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .payment-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .payment-status.paid {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .payment-status.pending {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .payment-status.failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .preparation-timer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #d4a574;
+        }
+
+        .reward-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #a78bfa;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .order-action-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .order-action-btn.primary {
+            background: linear-gradient(135deg, #d4a574 0%, #c19660 100%);
+            color: #000;
+        }
+
+        .order-action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4);
+        }
+
+        .order-action-btn.secondary {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
+        .order-action-btn.secondary:hover {
+            background: rgba(96, 165, 250, 0.3);
+        }
+
+        .order-action-btn.success {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .order-action-btn.success:hover {
+            background: rgba(74, 222, 128, 0.3);
+        }
+
+        .order-action-btn.danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .order-action-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .empty-column {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .empty-column i {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .empty-column p {
+            font-size: 0.9rem;
+        }
+
+        .loading-skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.03) 75%);
+            background-size: 200% 100%;
+            animation: skeletonLoading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes skeletonLoading {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .skeleton-card {
+            height: 200px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 1400px) {
+            .kitchen-columns {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kitchen-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .kitchen-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .kitchen-container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="kitchen-container">
+        <div class="kitchen-header">
+            <h1><i class="fa-solid fa-utensils"></i> Kitchen Dashboard</h1>
+            <div class="refresh-info">
+                <div class="pulse"></div>
+                <span>Auto-refreshing every 10 seconds</span>
+                <span id="lastRefresh">Last refresh: --:--:--</span>
+            </div>
+        </div>
+
+        <div class="kitchen-columns">
+            <!-- New Orders Column -->
+            <div class="kitchen-column new-orders">
+                <div class="kitchen-column-header">
+                    <h2><i class="fa-solid fa-clock"></i> New Orders</h2>
+                    <span class="count" id="newOrdersCount">0</span>
+                </div>
+                <div id="newOrdersContainer">
+                    <div class="empty-column">
+                        <i class="fa-solid fa-inbox"></i>
+                        <p>No new orders</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preparing Column -->
+            <div class="kitchen-column preparing">
+                <div class="kitchen-column-header">
+                    <h2><i class="fa-solid fa-fire"></i> Preparing</h2>
+                    <span class="count" id="preparingCount">0</span>
+                </div>
+                <div id="preparingContainer">
+                    <div class="empty-column">
+                        <i class="fa-solid fa-inbox"></i>
+                        <p>No orders preparing</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ready Column -->
+            <div class="kitchen-column ready">
+                <div class="kitchen-column-header">
+                    <h2><i class="fa-solid fa-check-circle"></i> Ready</h2>
+                    <span class="count" id="readyCount">0</span>
+                </div>
+                <div id="readyContainer">
+                    <div class="empty-column">
+                        <i class="fa-solid fa-inbox"></i>
+                        <p>No orders ready</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Column -->
+            <div class="kitchen-column completed">
+                <div class="kitchen-column-header">
+                    <h2><i class="fa-solid fa-flag-checkered"></i> Completed</h2>
+                    <span class="count" id="completedCount">0</span>
+                </div>
+                <div id="completedContainer">
+                    <div class="empty-column">
+                        <i class="fa-solid fa-inbox"></i>
+                        <p>No completed orders</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/vendor-setup.js"></script>
+    <script src="js/api/config.js"></script>
+    <script src="js/api/api.js"></script>
+    <script src="js/auth/auth-api.js"></script>
+    <script src="js/auth/auth-manager.js"></script>
+    <script src="js/auth/auth-ui.js"></script>
+    <script src="js/auth/protected-routes.js"></script>
+    <script src="js/toast-notifications.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize auth
+            AuthManager.initialize();
+            AuthUI.initialize();
+            ProtectedRoutes.initialize();
+
+            // Check authentication and permissions
+            if (!AuthManager.isAuthenticated()) {
+                sessionStorage.setItem('redirectAfterLogin', 'kitchen.html');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Check permissions (STAFF, ADMIN, OWNER only)
+            const user = AuthManager.getUserData();
+            if (!user || !['STAFF', 'ADMIN', 'OWNER'].includes(user.role)) {
+                Toast.show('error', 'Access denied. Kitchen dashboard is for staff only.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Load orders
+            loadOrders();
+
+            // Start auto-refresh
+            startAutoRefresh();
+
+            // Update last refresh time
+            updateLastRefreshTime();
+        });
+
+        let refreshInterval;
+        let lastOrderIds = new Set();
+
+        function loadOrders() {
+            if (typeof APIClient !== 'undefined') {
+                APIClient.get('/orders')
+                    .then(response => {
+                        if (response.success && response.data) {
+                            displayOrders(response.data);
+                            checkForNewOrders(response.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading orders:', error);
+                        Toast.show('error', 'Failed to load orders');
+                    });
+            }
+        }
+
+        function displayOrders(orders) {
+            const newOrders = orders.filter(o => o.status === 'PENDING' || o.status === 'CONFIRMED');
+            const preparingOrders = orders.filter(o => o.status === 'PREPARING');
+            const readyOrders = orders.filter(o => o.status === 'READY');
+            const completedOrders = orders.filter(o => o.status === 'COMPLETED');
+
+            renderColumn('newOrdersContainer', newOrders, 'newOrdersCount');
+            renderColumn('preparingContainer', preparingOrders, 'preparingCount');
+            renderColumn('readyContainer', readyOrders, 'readyCount');
+            renderColumn('completedContainer', completedOrders, 'completedCount');
+        }
+
+        function renderColumn(containerId, orders, countId) {
+            const container = document.getElementById(containerId);
+            const countEl = document.getElementById(countId);
+
+            countEl.textContent = orders.length;
+
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-column">
+                        <i class="fa-solid fa-inbox"></i>
+                        <p>No orders</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = orders.map(order => renderOrderCard(order)).join('');
+        }
+
+        function renderOrderCard(order) {
+            const orderTypeClass = order.orderType === 'DELIVERY' ? 'delivery' : 'pickup';
+            const paymentStatusClass = order.paymentStatus === 'PAID' ? 'paid' : order.paymentStatus === 'PENDING' ? 'pending' : 'failed';
+            const timeOrdered = new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const preparationTime = calculatePreparationTime(order);
+
+            return `
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <span class="order-number">${order.orderNumber}</span>
+                        <span class="order-time">${timeOrdered}</span>
+                    </div>
+                    <div class="customer-name">${order.customerName}</div>
+                    <span class="order-type ${orderTypeClass}">${order.orderType}</span>
+                    <div class="order-items">
+                        ${order.items.map(item => `
+                            <div class="order-item">
+                                <span><span class="order-item-quantity">${item.quantity}</span> ${item.snapshotName}</span>
+                                <span>GHS ${item.snapshotPrice.toFixed(2)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${order.notes ? `<div class="special-instructions"><i class="fa-solid fa-note-sticky"></i> ${order.notes}</div>` : ''}
+                    <div class="order-meta">
+                        <span class="payment-status ${paymentStatusClass}">${order.paymentStatus}</span>
+                        <div class="preparation-timer">
+                            <i class="fa-solid fa-stopwatch"></i>
+                            <span>${preparationTime}</span>
+                        </div>
+                    </div>
+                    ${order.rewardPointsEarned > 0 ? `
+                        <div class="reward-status">
+                            <i class="fa-solid fa-coins"></i>
+                            <span>+${order.rewardPointsEarned} pts</span>
+                        </div>
+                    ` : ''}
+                    <div class="order-actions">
+                        ${renderOrderActions(order)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderOrderActions(order) {
+            switch (order.status) {
+                case 'PENDING':
+                case 'CONFIRMED':
+                    return `
+                        <button class="order-action-btn primary" onclick="updateOrderStatus('${order.id}', 'PREPARING')">
+                            <i class="fa-solid fa-fire"></i> Start
+                        </button>
+                        <button class="order-action-btn danger" onclick="updateOrderStatus('${order.id}', 'CANCELLED')">
+                            <i class="fa-solid fa-times"></i> Cancel
+                        </button>
+                    `;
+                case 'PREPARING':
+                    return `
+                        <button class="order-action-btn success" onclick="updateOrderStatus('${order.id}', 'READY')">
+                            <i class="fa-solid fa-check"></i> Ready
+                        </button>
+                    `;
+                case 'READY':
+                    return `
+                        <button class="order-action-btn secondary" onclick="updateOrderStatus('${order.id}', 'OUT_FOR_DELIVERY')">
+                            <i class="fa-solid fa-truck"></i> Dispatch
+                        </button>
+                        <button class="order-action-btn success" onclick="updateOrderStatus('${order.id}', 'COMPLETED')">
+                            <i class="fa-solid fa-flag-checkered"></i> Complete
+                        </button>
+                    `;
+                default:
+                    return '';
+            }
+        }
+
+        function calculatePreparationTime(order) {
+            const created = new Date(order.createdAt);
+            const now = new Date();
+            const diff = Math.floor((now - created) / 1000 / 60); // minutes
+
+            if (diff < 1) return 'Just now';
+            if (diff < 60) return `${diff}m ago`;
+            return `${Math.floor(diff / 60)}h ago`;
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            if (typeof APIClient !== 'undefined') {
+                APIClient.patch(`/orders/${orderId}/status`, { status: newStatus })
+                    .then(response => {
+                        if (response.success) {
+                            Toast.show('success', `Order status updated to ${newStatus}`);
+                            loadOrders();
+                        } else {
+                            Toast.show('error', response.message || 'Failed to update order status');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating order status:', error);
+                        Toast.show('error', 'Failed to update order status');
+                    });
+            }
+        }
+
+        function checkForNewOrders(orders) {
+            const currentOrderIds = new Set(orders.map(o => o.id));
+            const newOrders = orders.filter(o => !lastOrderIds.has(o.id));
+
+            if (newOrders.length > 0) {
+                newOrders.forEach(order => {
+                    if (order.status === 'PENDING' || order.status === 'CONFIRMED') {
+                        Toast.show('success', `New order received: ${order.orderNumber}`);
+                    } else if (order.paymentStatus === 'PAID') {
+                        Toast.show('success', `Payment confirmed: ${order.orderNumber}`);
+                    } else if (order.status === 'CANCELLED') {
+                        Toast.show('warning', `Order cancelled: ${order.orderNumber}`);
+                    } else if (order.status === 'READY') {
+                        Toast.show('success', `Order ready: ${order.orderNumber}`);
+                    }
+                });
+            }
+
+            lastOrderIds = currentOrderIds;
+        }
+
+        function startAutoRefresh() {
+            refreshInterval = setInterval(() => {
+                loadOrders();
+                updateLastRefreshTime();
+            }, 10000); // Refresh every 10 seconds
+        }
+
+        function updateLastRefreshTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('lastRefresh').textContent = `Last refresh: ${timeString}`;
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>

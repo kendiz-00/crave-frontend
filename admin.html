@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8CVWBJESV"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-F8CVWBJESV', { send_page_view: false });</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover, shrink-to-fit=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="CRAVE Admin Dashboard - Manage your restaurant">
+    <title>Admin Dashboard - Crave Restaurant</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/util.css">
+    <link rel="stylesheet" href="css/loading-skeletons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.03);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header i {
+            font-size: 1.5rem;
+            color: #d4a574;
+        }
+
+        .sidebar-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #d4a574;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav-item {
+            margin-bottom: 4px;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .sidebar-nav-link:hover {
+            background: rgba(212, 165, 116, 0.1);
+            color: #d4a574;
+        }
+
+        .sidebar-nav-link.active {
+            background: linear-gradient(135deg, #d4a574 0%, #c19660 100%);
+            color: #000;
+        }
+
+        .sidebar-nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .main-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4a574;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4a574 0%, #c19660 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #d4a574;
+            margin-bottom: 5px;
+        }
+
+        .section-header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            border-color: rgba(212, 165, 116, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .kpi-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .kpi-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .kpi-card-icon.revenue {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .kpi-card-icon.orders {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+        }
+
+        .kpi-card-icon.customers {
+            background: rgba(167, 139, 250, 0.2);
+            color: #a78bfa;
+        }
+
+        .kpi-card-icon.vip {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .kpi-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .kpi-card-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .kpi-card-change {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .kpi-card-change.positive {
+            color: #4ade80;
+        }
+
+        .kpi-card-change.negative {
+            color: #ef4444;
+        }
+
+        /* Tables */
+        .table-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: 'Poppins', sans-serif;
+            min-width: 250px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #d4a574;
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 15px;
+            color: #d4a574;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.success {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .status-badge.warning {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .status-badge.danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-badge.info {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background: rgba(212, 165, 116, 0.2);
+            color: #d4a574;
+        }
+
+        .btn-icon.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #d4a574 0%, #c19660 100%);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 165, 116, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #d4a574;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #d4a574;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .chart-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #d4a574;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .pagination-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-btn:hover {
+            background: rgba(212, 165, 116, 0.2);
+            color: #d4a574;
+        }
+
+        .pagination-btn.active {
+            background: linear-gradient(135deg, #d4a574 0%, #c19660 100%);
+            color: #000;
+            border-color: #d4a574;
+        }
+
+        .pagination-info {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: linear-gradient(135deg, #d4a574 0%, #c19660 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            color: #000;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .table-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-input,
+            .filter-select {
+                width: 100%;
+            }
+        }
+
+        /* Loading Skeletons */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.03) 75%);
+            background-size: 200% 100%;
+            animation: skeletonLoading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes skeletonLoading {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .skeleton-kpi {
+            height: 120px;
+            border-radius: 16px;
+        }
+
+        .skeleton-table-row {
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-crown"></i>
+                <h1>Admin Panel</h1>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link active" data-section="overview">
+                        <i class="fa-solid fa-chart-line"></i>
+                        Overview
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" data-section="orders">
+                        <i class="fa-solid fa-receipt"></i>
+                        Orders
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" data-section="menu">
+                        <i class="fa-solid fa-utensils"></i>
+                        Menu
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" data-section="categories">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Categories
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" data-section="customers">
+                        <i class="fa-solid fa-users"></i>
+                        Customers
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" data-section="payments">
+                        <i class="fa-solid fa-credit-card"></i>
+                        Payments
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" data-section="rewards">
+                        <i class="fa-solid fa-gift"></i>
+                        Rewards
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" data-section="reports">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        Reports
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" data-section="settings">
+                        <i class="fa-solid fa-gear"></i>
+                        Settings
+                    </a>
+                </li>
+                <li class="sidebar-nav-item" style="margin-top: 20px;">
+                    <a class="sidebar-nav-link" href="index.html">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Back to Site
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="main-header">
+                <h1 id="pageTitle">Overview</h1>
+                <div class="user-info">
+                    <span class="user-name" id="userName">Admin</span>
+                    <div class="user-avatar" id="userAvatar">A</div>
+                </div>
+            </div>
+
+            <!-- Overview Section -->
+            <div class="content-section active" id="section-overview">
+                <div class="section-header">
+                    <h2>Dashboard Overview</h2>
+                    <p>Real-time business metrics and performance indicators</p>
+                </div>
+
+                <div class="kpi-grid" id="kpiGrid">
+                    <div class="skeleton skeleton-kpi"></div>
+                    <div class="skeleton skeleton-kpi"></div>
+                    <div class="skeleton skeleton-kpi"></div>
+                    <div class="skeleton skeleton-kpi"></div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Revenue Trend</h3>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Orders Trend</h3>
+                        <div class="chart-container">
+                            <canvas id="ordersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div class="content-section" id="section-orders">
+                <div class="section-header">
+                    <h2>Orders Management</h2>
+                    <p>View and manage all customer orders</p>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>All Orders</h3>
+                        <div class="table-actions">
+                            <input type="text" class="search-input" placeholder="Search orders..." id="orderSearch">
+                            <select class="filter-select" id="orderStatusFilter">
+                                <option value="">All Status</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="CONFIRMED">Confirmed</option>
+                                <option value="PREPARING">Preparing</option>
+                                <option value="READY">Ready</option>
+                                <option value="COMPLETED">Completed</option>
+                                <option value="CANCELLED">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Status</th>
+                                <th>Payment</th>
+                                <th>Type</th>
+                                <th>Time</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px;">
+                                    <div class="skeleton skeleton-table-row"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination" id="ordersPagination">
+                        <button class="pagination-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="pagination-btn active">1</button>
+                        <button class="pagination-btn">2</button>
+                        <button class="pagination-btn">3</button>
+                        <button class="pagination-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Section -->
+            <div class="content-section" id="section-menu">
+                <div class="section-header">
+                    <h2>Menu Management</h2>
+                    <p>Create, edit, and manage menu items</p>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Menu Items</h3>
+                        <div class="table-actions">
+                            <input type="text" class="search-input" placeholder="Search menu items..." id="menuSearch">
+                            <button class="btn" onclick="openMenuModal()">
+                                <i class="fa-solid fa-plus"></i> Add Item
+                            </button>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Featured</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menuTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px;">
+                                    <div class="skeleton skeleton-table-row"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Categories Section -->
+            <div class="content-section" id="section-categories">
+                <div class="section-header">
+                    <h2>Category Management</h2>
+                    <p>Organize menu items into categories</p>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Categories</h3>
+                        <button class="btn" onclick="openCategoryModal()">
+                            <i class="fa-solid fa-plus"></i> Add Category
+                        </button>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Slug</th>
+                                <th>Items</th>
+                                <th>Status</th>
+                                <th>Sort Order</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px;">
+                                    <div class="skeleton skeleton-table-row"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Customers Section -->
+            <div class="content-section" id="section-customers">
+                <div class="section-header">
+                    <h2>Customer Management</h2>
+                    <p>View and manage customer accounts</p>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Customers</h3>
+                        <div class="table-actions">
+                            <input type="text" class="search-input" placeholder="Search customers..." id="customerSearch">
+                            <select class="filter-select" id="customerTierFilter">
+                                <option value="">All Tiers</option>
+                                <option value="BRONZE">Bronze</option>
+                                <option value="SILVER">Silver</option>
+                                <option value="GOLD">Gold</option>
+                                <option value="VIP">VIP</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Orders</th>
+                                <th>Total Spend</th>
+                                <th>Points</th>
+                                <th>Tier</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px;">
+                                    <div class="skeleton skeleton-table-row"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payments Section -->
+            <div class="content-section" id="section-payments">
+                <div class="section-header">
+                    <h2>Payment Management</h2>
+                    <p>View and manage all payment transactions</p>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Transactions</h3>
+                        <div class="table-actions">
+                            <select class="filter-select" id="paymentDateFilter">
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                            <select class="filter-select" id="paymentStatusFilter">
+                                <option value="">All Status</option>
+                                <option value="PAID">Paid</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="FAILED">Failed</option>
+                                <option value="REFUNDED">Refunded</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Gateway</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px;">
+                                    <div class="skeleton skeleton-table-row"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Rewards Section -->
+            <div class="content-section" id="section-rewards">
+                <div class="section-header">
+                    <h2>Rewards Management</h2>
+                    <p>Manage customer rewards and loyalty program</p>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Reward Transactions</h3>
+                        <div class="table-actions">
+                            <input type="text" class="search-input" placeholder="Search transactions..." id="rewardsSearch">
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Type</th>
+                                <th>Points</th>
+                                <th>Balance</th>
+                                <th>Reason</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rewardsTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px;">
+                                    <div class="skeleton skeleton-table-row"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div class="content-section" id="section-reports">
+                <div class="section-header">
+                    <h2>Analytics & Reports</h2>
+                    <p>Business intelligence and performance metrics</p>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Revenue by Category</h3>
+                        <div class="chart-container">
+                            <canvas id="categoryRevenueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Popular Menu Items</h3>
+                        <div class="chart-container">
+                            <canvas id="popularItemsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Peak Hours</h3>
+                        <div class="chart-container">
+                            <canvas id="peakHoursChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Customer Growth</h3>
+                        <div class="chart-container">
+                            <canvas id="customerGrowthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="content-section" id="section-settings">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                    <p>Configure restaurant and system settings</p>
+                </div>
+
+                <div class="table-container">
+                    <h3>Restaurant Information</h3>
+                    <form id="restaurantSettingsForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Restaurant Name</label>
+                                <input type="text" class="form-input" value="Crave Restaurant">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-input" value="+233 20 123 4567">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-input" value="123 Restaurant Street, Accra, Ghana">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Opening Time</label>
+                                <input type="time" class="form-input" value="10:00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Closing Time</label>
+                                <input type="time" class="form-input" value="22:00">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Save Settings</button>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <h3>Payment Settings</h3>
+                    <form id="paymentSettingsForm">
+                        <div class="form-group">
+                            <label class="form-label">Delivery Fee (GHS)</label>
+                            <input type="number" class="form-input" value="15.00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tax Rate (%)</label>
+                            <input type="number" class="form-input" value="12.5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Paystack Public Key</label>
+                            <input type="text" class="form-input" value="pk_test_xxxxxxxxxxxx">
+                        </div>
+                        <button type="submit" class="btn">Save Payment Settings</button>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <h3>Rewards Configuration</h3>
+                    <form id="rewardsSettingsForm">
+                        <div class="form-group">
+                            <label class="form-label">Points per GHS Spent</label>
+                            <input type="number" class="form-input" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">VIP Threshold (Points)</label>
+                            <input type="number" class="form-input" value="1000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Points Redemption Rate (GHS per 100 points)</label>
+                            <input type="number" class="form-input" value="5.00" step="0.01">
+                        </div>
+                        <button type="submit" class="btn">Save Rewards Settings</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Menu Modal -->
+    <div class="modal" id="menuModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="menuModalTitle">Add Menu Item</h3>
+                <button class="modal-close" onclick="closeMenuModal()">&times;</button>
+            </div>
+            <form id="menuForm">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" name="description" rows="3" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Price (GHS)</label>
+                        <input type="number" class="form-input" name="price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-input" name="categoryId" required id="menuCategorySelect">
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Preparation Time (min)</label>
+                        <input type="number" class="form-input" name="preparationTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Calories</label>
+                        <input type="number" class="form-input" name="calories">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="url" class="form-input" name="imageUrl" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="isAvailable" checked> Available
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="isFeatured"> Featured
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeMenuModal()">Cancel</button>
+                    <button type="submit" class="btn">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="categoryModalTitle">Add Category</h3>
+                <button class="modal-close" onclick="closeCategoryModal()">&times;</button>
+            </div>
+            <form id="categoryForm">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" name="description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="url" class="form-input" name="imageUrl">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sort Order</label>
+                    <input type="number" class="form-input" name="sortOrder" value="0">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="isActive" checked> Active
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">Cancel</button>
+                    <button type="submit" class="btn">Save Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/vendor-setup.js"></script>
+    <script src="js/api/config.js"></script>
+    <script src="js/api/api.js"></script>
+    <script src="js/auth/auth-api.js"></script>
+    <script src="js/auth/auth-manager.js"></script>
+    <script src="js/auth/auth-ui.js"></script>
+    <script src="js/auth/protected-routes.js"></script>
+    <script src="js/toast-notifications.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize auth
+            AuthManager.initialize();
+            AuthUI.initialize();
+            ProtectedRoutes.initialize();
+
+            // Check authentication and permissions
+            if (!AuthManager.isAuthenticated()) {
+                sessionStorage.setItem('redirectAfterLogin', 'admin.html');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Check permissions (ADMIN, OWNER only)
+            const user = AuthManager.getUserData();
+            if (!user || !['ADMIN', 'OWNER'].includes(user.role)) {
+                Toast.show('error', 'Access denied. Admin dashboard is for administrators only.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Update user info
+            document.getElementById('userName').textContent = user.name || 'Admin';
+            document.getElementById('userAvatar').textContent = (user.name || 'A')[0].toUpperCase();
+
+            // Initialize navigation
+            initializeNavigation();
+
+            // Load initial data
+            loadOverviewData();
+            loadOrders();
+            loadMenu();
+            loadCategories();
+            loadCustomers();
+            loadPayments();
+            loadRewards();
+            loadReports();
+        });
+
+        // Navigation
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.sidebar-nav-link[data-section]');
+            const sections = document.querySelectorAll('.content-section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('data-section');
+
+                    // Update active states
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Show section
+                    sections.forEach(s => s.classList.remove('active'));
+                    document.getElementById(`section-${sectionId}`).classList.add('active');
+
+                    // Update page title
+                    document.getElementById('pageTitle').textContent = this.textContent.trim();
+
+                    // Close mobile sidebar
+                    document.getElementById('sidebar').classList.remove('active');
+                });
+            });
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Overview Data
+        function loadOverviewData() {
+            if (typeof APIClient !== 'undefined') {
+                // Load KPI data
+                APIClient.get('/orders')
+                    .then(response => {
+                        if (response.success && response.data) {
+                            const orders = response.data;
+                            const today = new Date().toDateString();
+                            const todayOrders = orders.filter(o => new Date(o.createdAt).toDateString() === today);
+                            const todayRevenue = todayOrders.reduce((sum, o) => sum + parseFloat(o.grandTotal), 0);
+                            const completedOrders = orders.filter(o => o.status === 'COMPLETED').length;
+                            const cancelledOrders = orders.filter(o => o.status === 'CANCELLED').length;
+
+                            renderKPIs({
+                                revenue: todayRevenue,
+                                orders: todayOrders.length,
+                                customers: new Set(orders.map(o => o.userId)).size,
+                                completed: completedOrders,
+                                cancelled: cancelledOrders
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading overview data:', error);
+                    });
+            }
+
+            // Initialize charts
+            initializeCharts();
+        }
+
+        function renderKPIs(data) {
+            const kpiGrid = document.getElementById('kpiGrid');
+            kpiGrid.innerHTML = `
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-icon revenue">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value">GHS ${data.revenue.toFixed(2)}</div>
+                    <div class="kpi-card-label">Today's Revenue</div>
+                    <div class="kpi-card-change positive">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <span>+12.5%</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-icon orders">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value">${data.orders}</div>
+                    <div class="kpi-card-label">Today's Orders</div>
+                    <div class="kpi-card-change positive">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <span>+8.3%</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-icon customers">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value">${data.customers}</div>
+                    <div class="kpi-card-label">Active Customers</div>
+                    <div class="kpi-card-change positive">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <span>+5.2%</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-icon vip">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value">${data.completed}</div>
+                    <div class="kpi-card-label">Completed Orders</div>
+                    <div class="kpi-card-change positive">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <span>+15.7%</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initializeCharts() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Revenue (GHS)',
+                        data: [1200, 1900, 1500, 2100, 2400, 3200, 2800],
+                        borderColor: '#d4a574',
+                        backgroundColor: 'rgba(212, 165, 116, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Orders Chart
+            const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+            new Chart(ordersCtx,  {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Orders',
+                        data: [15, 25, 20, 30, 35, 45, 40],
+                        backgroundColor: '#60a5fa'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Orders
+        function loadOrders() {
+            if (typeof APIClient !== 'undefined') {
+                APIClient.get('/orders')
+                    .then(response => {
+                        if (response.success && response.data) {
+                            renderOrdersTable(response.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading orders:', error);
+                    });
+            }
+        }
+
+        function renderOrdersTable(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td>${order.orderNumber}</td>
+                    <td>${order.customerName}</td>
+                    <td><span class="status-badge ${getStatusClass(order.status)}">${order.status}</span></td>
+                    <td><span class="status-badge ${getPaymentStatusClass(order.paymentStatus)}">${order.paymentStatus}</span></td>
+                    <td>${order.orderType}</td>
+                    <td>${new Date(order.createdAt).toLocaleString()}</td>
+                    <td>GHS ${parseFloat(order.grandTotal).toFixed(2)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon" onclick="viewOrder('${order.id}')" title="View">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="btn-icon" onclick="updateOrderStatus('${order.id}')" title="Update Status">
+                                <i class="fa-solid fa-edit"></i>
+                            </button>
+                            <button class="btn-icon danger" onclick="cancelOrder('${order.id}')" title="Cancel">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                'COMPLETED': 'success',
+                'CONFIRMED': 'info',
+                'PREPARING': 'warning',
+                'READY': 'success',
+                'CANCELLED': 'danger',
+                'PENDING': 'warning'
+            };
+            return statusMap[status] || 'info';
+        }
+
+        function getPaymentStatusClass(status) {
+            const statusMap = {
+                'PAID': 'success',
+                'PENDING': 'warning',
+                'FAILED': 'danger',
+                'REFUNDED': 'danger'
+            };
+            return statusMap[status] || 'info';
+        }
+
+        function viewOrder(orderId) {
+            // Implement order view modal
+            Toast.show('info', 'View order details');
+        }
+
+        function updateOrderStatus(orderId) {
+            // Implement order status update
+            Toast.show('info', 'Update order status');
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                if (typeof APIClient !== 'undefined') {
+                    APIClient.patch(`/orders/${orderId}/status`, { status: 'CANCELLED' })
+                        .then(response => {
+                            if (response.success) {
+                                Toast.show('success', 'Order cancelled successfully');
+                                loadOrders();
+                            } else {
+                                Toast.show('error', 'Failed to cancel order');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error cancelling order:', error);
+                            Toast.show('error', 'Failed to cancel order');
+                        });
+                }
+            }
+        }
+
+        // Menu
+        function loadMenu() {
+            if (typeof APIClient !== 'undefined') {
+                APIClient.get('/menu')
+                    .then(response => {
+                        if (response.success && response.data) {
+                            renderMenuTable(response.data);
+                            populateCategorySelect(response.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading menu:', error);
+                    });
+            }
+        }
+
+        function renderMenuTable(items) {
+            const tbody = document.getElementById('menuTableBody');
+            tbody.innerHTML = items.map(item => `
+                <tr>
+                    <td><img src="${item.imageUrl}" alt="${item.name}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;"></td>
+                    <td>${item.name}</td>
+                    <td>${item.category?.name || 'N/A'}</td>
+                    <td>GHS ${parseFloat(item.price).toFixed(2)}</td>
+                    <td><span class="status-badge ${item.isAvailable ? 'success' : 'danger'}">${item.isAvailable ? 'Available' : 'Unavailable'}</span></td>
+                    <td><span class="status-badge ${item.isFeatured ? 'success' : 'info'}">${item.isFeatured ? 'Featured' : 'Regular'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon" onclick="editMenuItem('${item.id}')" title="Edit">
+                                <i class="fa-solid fa-edit"></i>
+                            </button>
+                            <button class="btn-icon danger" onclick="deleteMenuItem('${item.id}')" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function populateCategorySelect(items) {
+            const categories = [...new Set(items.map(item => item.category?.name).filter(Boolean))];
+            const select = document.getElementById('menuCategorySelect');
+            select.innerHTML = '<option value="">Select Category</option>' + 
+                categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+        }
+
+        function openMenuModal() {
+            document.getElementById('menuModal').classList.add('active');
+        }
+
+        function closeMenuModal() {
+            document.getElementById('menuModal').classList.remove('active');
+        }
+
+        function editMenuItem(itemId) {
+            Toast.show('info', 'Edit menu item');
+        }
+
+        function deleteMenuItem(itemId) {
+            if (confirm('Are you sure you want to delete this menu item?')) {
+                Toast.show('info', 'Delete menu item');
+            }
+        }
+
+        // Categories
+        function loadCategories() {
+            if (typeof APIClient !== 'undefined') {
+                APIClient.get('/categories')
+                    .then(response => {
+                        if (response.success && response.data) {
+                            renderCategoriesTable(response.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading categories:', error);
+                    });
+            }
+        }
+
+        function renderCategoriesTable(categories) {
+            const tbody = document.getElementById('categoriesTableBody');
+            tbody.innerHTML = categories.map(cat => `
+                <tr>
+                    <td>${cat.name}</td>
+                    <td>${cat.slug}</td>
+                    <td>${cat.menuItems?.length || 0}</td>
+                    <td><span class="status-badge ${cat.isActive ? 'success' : 'danger'}">${cat.isActive ? 'Active' : 'Inactive'}</span></td>
+                    <td>${cat.sortOrder}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon" onclick="editCategory('${cat.id}')" title="Edit">
+                                <i class="fa-solid fa-edit"></i>
+                            </button>
+                            <button class="btn-icon danger" onclick="deleteCategory('${cat.id}')" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openCategoryModal() {
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('active');
+        }
+
+        function editCategory(catId) {
+            Toast.show('info', 'Edit category');
+        }
+
+        function deleteCategory(catId) {
+            if (confirm('Are you sure you want to delete this category?')) {
+                Toast.show('info', 'Delete category');
+            }
+        }
+
+        // Customers
+        function loadCustomers() {
+            if (typeof APIClient !== 'undefined') {
+                APIClient.get('/users')
+                    .then(response => {
+                        if (response.success && response.data) {
+                            renderCustomersTable(response.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading customers:', error);
+                    });
+            }
+        }
+
+        function renderCustomersTable(customers) {
+            const tbody = document.getElementById('customersTableBody');
+            tbody.innerHTML = customers.map(customer => `
+                <tr>
+                    <td>${customer.firstName} ${customer.lastName}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.phone || 'N/A'}</td>
+                    <td>${customer.orders?.length || 0}</td>
+                    <td>GHS ${(customer.totalSpend || 0).toFixed(2)}</td>
+                    <td>${customer.points || 0}</td>
+                    <td><span class="status-badge info">${customer.tier || 'Bronze'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon" onclick="viewCustomer('${customer.id}')" title="View">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="btn-icon" onclick="resetRewards('${customer.id}')" title="Reset Rewards">
+                                <i class="fa-solid fa-rotate-left"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function viewCustomer(customerId) {
+            Toast.show('info', 'View customer details');
+        }
+
+        function resetRewards(customerId) {
+            if (confirm('Are you sure you want to reset this customer\'s rewards?')) {
+                Toast.show('info', 'Reset customer rewards');
+            }
+        }
+
+        // Payments
+        function loadPayments() {
+            if (typeof APIClient !== 'undefined') {
+                APIClient.get('/payments')
+                    .then(response => {
+                        if (response.success && response.data) {
+                            renderPaymentsTable(response.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading payments:', error);
+                    });
+            }
+        }
+
+        function renderPaymentsTable(payments) {
+            const tbody = document.getElementById('paymentsTableBody');
+            tbody.innerHTML = payments.map(payment => `
+                <tr>
+                    <td>${payment.reference}</td>
+                    <td>${payment.order?.customerName || 'N/A'}</td>
+                    <td>GHS ${parseFloat(payment.amount).toFixed(2)}</td>
+                    <td>${payment.gateway}</td>
+                    <td>${payment.method}</td>
+                    <td><span class="status-badge ${getPaymentStatusClass(payment.status)}">${payment.status}</span></td>
+                    <td>${new Date(payment.createdAt).toLocaleString()}</td>
+                    <td>
+                        <div class="action-buttons">
+                            ${payment.status === 'PAID' ? `
+                                <button class="btn-icon danger" onclick="refundPayment('${payment.id}')" title="Refund">
+                                    <i class="fa-solid fa-undo"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function refundPayment(paymentId) {
+            if (confirm('Are you sure you want to refund this payment?')) {
+                if (typeof APIClient !== 'undefined') {
+                    APIClient.post(`/payments/${paymentId}/refund`, { reason: 'Admin refund' })
+                        .then(response => {
+                            if (response.success) {
+                                Toast.show('success', 'Payment refunded successfully');
+                                loadPayments();
+                            } else {
+                                Toast.show('error', 'Failed to refund payment');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error refunding payment:', error);
+                            Toast.show('error', 'Failed to refund payment');
+                        });
+                }
+            }
+        }
+
+        // Rewards
+        function loadRewards() {
+            if (typeof APIClient !== 'undefined') {
+                APIClient.get('/rewards/transactions')
+                    .then(response => {
+                        if (response.success && response.data) {
+                            renderRewardsTable(response.data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading rewards:', error);
+                    });
+            }
+        }
+
+        function renderRewardsTable(transactions) {
+            const tbody = document.getElementById('rewardsTableBody');
+            tbody.innerHTML = transactions.map(tx => `
+                <tr>
+                    <td>${tx.user?.name || 'N/A'}</td>
+                    <td><span class="status-badge ${tx.type === 'EARN' ? 'success' : 'warning'}">${tx.type}</span></td>
+                    <td>${tx.points > 0 ? '+' : ''}${tx.points}</td>
+                    <td>${tx.runningBalance}</td>
+                    <td>${tx.reason}</td>
+                    <td>${new Date(tx.createdAt).toLocaleString()}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon" onclick="adjustRewards('${tx.userId}')" title="Adjust">
+                                <i class="fa-solid fa-sliders"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function adjustRewards(userId) {
+            Toast.show('info', 'Adjust customer rewards');
+        }
+
+        // Reports
+        function loadReports() {
+            // Initialize report charts
+            setTimeout(() => {
+                initializeReportCharts();
+            }, 500);
+        }
+
+        function initializeReportCharts() {
+            // Category Revenue Chart
+            const categoryCtx = document.getElementById('categoryRevenueChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Appetizers', 'Main Course', 'Desserts', 'Beverages'],
+                    datasets: [{
+                        data: [25, 45, 15, 15],
+                        backgroundColor: ['#d4a574', '#60a5fa', '#4ade80', '#a78bfa']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Popular Items Chart
+            const popularCtx = document.getElementById('popularItemsChart').getContext('2d');
+            new Chart(popularCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jollof Rice', 'Grilled Chicken', 'Fufu & Soup', 'Banku', 'Waakye'],
+                    datasets: [{
+                        label: 'Orders',
+                        data: [120, 95, 80, 65, 55],
+                        backgroundColor: '#d4a574'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Peak Hours Chart
+            const peakCtx = document.getElementById('peakHoursChart').getContext('2d');
+            new Chart(peakCtx, {
+                type: 'line',
+                data: {
+                    labels: ['10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM', '7PM', '8PM', '9PM'],
+                    datasets: [{
+                        label: 'Orders',
+                        data: [5, 15, 35, 40, 25, 20, 15, 30, 45, 50, 35, 20],
+                        borderColor: '#4ade80',
+                        backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Customer Growth Chart
+            const growthCtx = document.getElementById('customerGrowthChart').getContext('2d');
+            new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Customers',
+                        data: [150, 180, 220, 280, 350, 420],
+                        borderColor: '#a78bfa',
+                        backgroundColor: 'rgba(167, 139, 250, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Form submissions
+        document.getElementById('menuForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            Toast.show('success', 'Menu item saved successfully');
+            closeMenuModal();
+            loadMenu();
+        });
+
+        document.getElementById('categoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            Toast.show('success', 'Category saved successfully');
+            closeCategoryModal();
+            loadCategories();
+        });
+
+        document.getElementById('restaurantSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            Toast.show('success', 'Restaurant settings saved successfully');
+        });
+
+        document.getElementById('paymentSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            Toast.show('success', 'Payment settings saved successfully');
+        });
+
+        document.getElementById('rewardsSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            Toast.show('success', 'Rewards settings saved successfully');
+        });
+    </script>
+</body>
+</html>
