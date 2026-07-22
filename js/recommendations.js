@@ -10,19 +10,28 @@ const CraveRecommendations = (function() {
     const data = typeof CraveRewardsData !== 'undefined' ? CraveRewardsData : null;
     const engine = typeof CraveRewardsEngine !== 'undefined' ? CraveRewardsEngine : null;
 
-    // Sample menu data (in production, this would come from your menu API)
-    const menuItems = [
-        { name: 'Loaded Fries', category: 'Sides', price: 25, popular: true },
-        { name: 'Classic Burger', category: 'Main', price: 45, popular: true },
-        { name: 'Chicken Burger', category: 'Main', price: 40, popular: true },
-        { name: 'Smoothie', category: 'Drinks', price: 20, popular: true },
-        { name: 'Chocolate Cake', category: 'Dessert', price: 15, popular: true },
-        { name: 'Ice Cream', category: 'Dessert', price: 12, popular: false },
-        { name: 'Fries', category: 'Sides', price: 15, popular: false },
-        { name: 'Soda', category: 'Drinks', price: 8, popular: false },
-        { name: 'Salad', category: 'Main', price: 30, popular: false },
-        { name: 'Chicken Wings', category: 'Main', price: 35, popular: true }
-    ];
+    // Menu items will be loaded from API
+    let menuItems = [];
+
+    // Load menu items from API
+    async function loadMenuItems() {
+        if (typeof MenuAPI !== 'undefined') {
+            try {
+                const items = await MenuAPI.getAll();
+                menuItems = items.map(item => ({
+                    name: item.name,
+                    category: item.categoryName || 'Main',
+                    price: item.price,
+                    popular: item.featured || false,
+                    description: item.description
+                }));
+            } catch (error) {
+                console.error('Error loading menu items for recommendations:', error);
+                // Fallback to empty array
+                menuItems = [];
+            }
+        }
+    }
 
     // Get recommendations based on purchase history
     function getRecommendationsBasedOnHistory() {
@@ -255,6 +264,7 @@ const CraveRecommendations = (function() {
 
     // Public API
     return {
+        loadMenuItems: loadMenuItems,
         getBasedOnHistory: getRecommendationsBasedOnHistory,
         getBasedOnCart: getRecommendationsBasedOnCart,
         getPopular: getPopularItems,

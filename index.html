@@ -1561,6 +1561,11 @@
 	</script>
     <script src="js/analytics.js" defer></script>
     
+    <!-- API Scripts -->
+    <script src="js/api/config.js"></script>
+    <script src="js/api/api.js"></script>
+    <script src="js/api/menu.js"></script>
+    
     <!-- CRAVE Rewards System -->
     <script src="js/rewards-config.js"></script>
     <script src="js/rewards-data.js"></script>
@@ -1576,8 +1581,62 @@
     <script src="js/birthday-system.js"></script>
     
     <script>
+        // Load featured meals from API
+        async function loadFeaturedMeals() {
+            try {
+                const featuredItems = await MenuAPI.getFeatured();
+                renderFeaturedMeals(featuredItems);
+            } catch (error) {
+                console.error('Error loading featured meals:', error);
+                // Keep hardcoded items as fallback
+            }
+        }
+
+        // Render featured meals in social proof section
+        function renderFeaturedMeals(items) {
+            const grid = document.querySelector('.social-proof-grid');
+            if (!grid || !items || items.length === 0) return;
+
+            // Take first 3-4 items for featured section
+            const featured = items.slice(0, 4);
+            
+            grid.innerHTML = featured.map((item, index) => {
+                const isSpotlight = index === 1;
+                const tag = item.featured ? 'Most Popular' : (index === 0 ? 'New' : 'Trending');
+                const image = item.image || 'images/placeholder.jpg';
+                
+                return `
+                    <div class="social-proof-item ${isSpotlight ? 'crave-spotlight' : ''}">
+                        <div class="social-proof-image">
+                            <img src="${image}" alt="${item.name}" loading="lazy">
+                            <span class="social-proof-tag">${tag}</span>
+                        </div>
+                        <div class="social-proof-content">
+                            <h3 class="social-proof-name">${item.name}</h3>
+                            <p class="social-proof-text">${item.description || 'Delicious'}</p>
+                            <div class="social-proof-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         // Initialize rewards on homepage
         document.addEventListener('DOMContentLoaded', function() {
+            // Load featured meals from API
+            loadFeaturedMeals();
+            
+            // Load menu items for recommendations
+            if (CraveRecommendations) {
+                CraveRecommendations.loadMenuItems();
+            }
+            
             // Check for birthday reward
             if (CraveRewardsEngine && CraveRewardsData) {
                 const birthdayReward = CraveRewardsEngine.checkBirthdayReward();

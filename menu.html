@@ -955,84 +955,15 @@
     <script src="js/main.js"></script>
     <script src="js/analytics.js" defer></script>
     
+    <!-- API Scripts -->
+    <script src="js/api/config.js"></script>
+    <script src="js/api/api.js"></script>
+    <script src="js/api/menu.js"></script>
+    
     <!-- Bolt Menu JavaScript -->
     <script>
-        // Menu Data Structure (Scalable)
-        const menuData = {
-            'most-popular': {
-                title: 'Most Popular',
-                items: [
-                    { name: 'Loaded Fries', price: 105.99, description: 'Our signature loaded fries with jerk chicken, vegetables, melted cheese and special sauces' },
-                    { name: 'Cheese Beef Loaded Fries', price: 120.99, description: 'Loaded fries with seasoned beef and melted cheese' },
-                    { name: 'Jerk Chicken Shawarma', price: 90.99, description: 'Traditional jerk chicken wrapped in warm pita' },
-                    { name: 'Chocolate Rich Buttercream Frosting Jar Cake', price: 35.99, description: 'Decadent chocolate cake with rich buttercream' },
-                    { name: 'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries', price: 110.99, description: 'Extremely spicy fried chicken - not for the faint of heart!' },
-                    { name: 'Loaded BBQ Chicken Cheddar Cheese Fries', price: 150.99, description: 'Smoky BBQ chicken and melted sharp cheddar over hot, crispy fries — a crowd favorite. Limited-time special; pair with a smoothie or jar cake for the perfect finish.' },
-                    { name: 'Biscoff Jar Cake', price: 40.99, description: 'Speculoos cookie butter cake in a jar' },
-                    { name: 'Lemon Buttercream Jar Cake', price: 40.99, description: 'Fresh lemon cake with zesty buttercream frosting' }
-                ]
-            },
-            'texas-chicken': {
-                title: 'Texas Crispy Fried Chicken',
-                items: [
-                    { name: 'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries', price: 110.99, description: 'Extremely spicy fried chicken - not for the faint of heart!' },
-                    { name: 'Honey BBQ Wings (6) and Fries', price: 160.99, description: 'Sweet and tangy BBQ wings with crispy fries' },
-                    { name: 'Siracha Mayo Hot Wings (6) and Fries', price: 175.99, description: 'Spicy sriracha mayo wings with fries' },
-                    { name: '2 Piece Glazed Crispy Chicken and Fries', price: 120.99, description: 'Classic crispy chicken with sweet glaze' },
-                    { name: 'Loaded Fries', price: 150.99, description: 'Crispy fries topped with cheese, bacon, and special sauce' },
-                    { name: 'Loaded BBQ Chicken Cheddar Cheese Fries', price: 150.99, description: 'BBQ chicken, cheddar cheese, and crispy fries' },
-                    { name: 'Grilled Cheese Sandwich', price: 50.99, description: 'Classic grilled cheese with melted cheddar' },
-                    { name: 'Tuna Fish Sandwich', price: 170.99, description: 'Fresh tuna salad sandwich on toasted bread' },
-                    { name: 'American BLT (Bacon Lettuce Tomato)', price: 220.99, description: 'Classic BLT with crispy bacon' },
-                    { name: 'Bacon Cheddar Fries', price: 170.99, description: 'Crispy fries with bacon and cheddar cheese' },
-                    { name: 'Ultimate Bacon Cheddar Burger', price: 140.99, description: 'Double bacon patty with extra cheddar' },
-                    { name: 'Melted Cheddar Burger', price: 160.99, description: 'Juicy burger with melted cheddar cheese' }
-                ]
-            },
-            'mexican-food': {
-                title: 'Mexican Food & Dish',
-                items: [
-                    { name: 'Chicken Burrito', price: 200.99, description: 'Grilled chicken, rice, beans, and salsa wrapped in tortilla' },
-                    { name: '2 Chicken Crispy Tacos', price: 170.99, description: 'Two crispy tacos with seasoned chicken' },
-                    { name: '2 Beef Crispy Tacos', price: 110.99, description: 'Two crispy tacos with seasoned ground beef' }
-                ]
-            },
-            'cupcakes': {
-                title: 'Cupcakes',
-                items: [
-                    { name: 'Chocolate Rich Buttercream Frosting Jar Cake', price: 8.99, description: 'Decadent chocolate cake with rich buttercream' },
-                    { name: 'Vanilla Buttercream Cake Slice', price: 7.99, description: 'Classic vanilla cake with buttercream frosting' },
-                    { name: 'Lemon Buttercream Jar Cake', price: 8.99, description: 'Fresh lemon cake with zesty buttercream frosting' },
-                    { name: 'Biscoff Jar Cake', price: 8.99, description: 'Speculoos cookie butter cake in a jar' },
-                    { name: 'Bailey\'s Irish Cream Jar Cake', price: 9.99, description: 'Adult cake with Irish cream flavor' },
-                    { name: 'Salted Caramel Cake', price: 8.99, description: 'Sweet and salty caramel cake' },
-                    { name: 'Pistachio Dream Jar Cake', price: 9.99, description: 'Nutty pistachio cake in a jar' },
-                    { name: 'Coffee Latte Jar Cake', price: 8.99, description: 'Coffee-flavored cake with latte frosting' },
-                    { name: 'Pink Guava Buttercream Jar Cake', price: 9.99, description: 'Tropical guava cake with buttercream' }
-                ]
-            },
-            'breakfast': {
-                title: 'Breakfast',
-                items: [
-                    { name: 'Chicken and Waffles', price: 12.99, description: 'Crispy fried chicken on fluffy waffles with syrup' },
-                    { name: 'Loaded Omelette', price: 10.99, description: 'Three-egg omelette with cheese, vegetables, and your choice of meat' }
-                ]
-            },
-            'smoothies': {
-                title: 'Smoothies',
-                items: [
-                    { name: 'Strawberry Colada', price: 6.99, description: 'Strawberry and pineapple smoothie with coconut' },
-                    { name: 'Pina Colada', price: 6.99, description: 'Classic pineapple and coconut smoothie' },
-                    { name: 'Watermelon Mint Ice', price: 5.99, description: 'Refreshing watermelon with mint' },
-                    { name: 'Green Glow', price: 7.99, description: 'Spinach, kale, banana, and green apple' },
-                    { name: 'Tropical Fruit Blend', price: 7.99, description: 'Mango, pineapple, and passion fruit' },
-                    { name: 'Pineapple Strawberry', price: 6.99, description: 'Sweet pineapple and strawberry blend' },
-                    { name: 'Strawberries and Cream', price: 6.99, description: 'Strawberry smoothie with creamy vanilla' },
-                    { name: 'Lemonade Ice', price: 5.99, description: 'Refreshing lemonade ice smoothie' },
-                    { name: 'Banana Peanut Butter Chocolate', price: 7.99, description: 'Banana, peanut butter, and chocolate protein' }
-                ]
-            }
-        };
+        // Menu Data Structure (will be populated from API)
+        let menuData = {};
 
         const MENU_BADGE_DEFS = {
             bestseller: { label: 'Bestseller', icon: '🔥', cls: 'bolt-badge--gold' },
@@ -1168,6 +1099,134 @@
                 btn.disabled = false;
                 if (card) card.classList.remove('bolt-food-item--pulse');
             }, 1000);
+        }
+
+        // Load categories and menu from API
+        async function loadMenuFromAPI() {
+            try {
+                // Show loading state
+                showLoadingState();
+
+                // Fetch categories
+                const categories = await MenuAPI.getCategories();
+                
+                // Fetch all menu items
+                const menuItems = await MenuAPI.getAll();
+
+                // Transform API data to menuData format
+                menuData = transformAPIDataToMenuData(categories, menuItems);
+
+                // Render category navigation
+                renderCategoryNavigation(categories);
+
+                // Render menu items
+                initializeMenu();
+
+                // Hide loading state
+                hideLoadingState();
+
+            } catch (error) {
+                console.error('Error loading menu from API:', error);
+                showErrorState('Unable to load menu. Please try again.');
+            }
+        }
+
+        // Transform API data to menuData format
+        function transformAPIDataToMenuData(categories, menuItems) {
+            const transformed = {};
+            
+            categories.forEach(category => {
+                const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, '-');
+                transformed[slug] = {
+                    title: category.name,
+                    description: category.description || '',
+                    items: menuItems
+                        .filter(item => item.categoryId === category.id || item.categorySlug === slug)
+                        .map(item => ({
+                            name: item.name,
+                            price: item.price,
+                            description: item.description,
+                            image: item.image,
+                            available: item.available !== false,
+                            featured: item.featured || false,
+                            badges: item.badges || []
+                        }))
+                };
+            });
+
+            return transformed;
+        }
+
+        // Render category navigation dynamically
+        function renderCategoryNavigation(categories) {
+            const navList = document.querySelector('.bolt-category-nav-list');
+            if (!navList) return;
+
+            navList.innerHTML = categories.map((category, index) => {
+                const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, '-');
+                const isActive = index === 0 ? 'active' : '';
+                return `<a href="#${slug}" class="bolt-category-nav-item ${isActive}">${category.name}</a>`;
+            }).join('');
+        }
+
+        // Show loading state
+        function showLoadingState() {
+            const menuContainer = document.querySelector('.bolt-menu-container');
+            if (menuContainer) {
+                menuContainer.classList.add('loading');
+                
+                // Add loading skeleton if not exists
+                if (!document.getElementById('menuLoadingSkeleton')) {
+                    const skeleton = document.createElement('div');
+                    skeleton.id = 'menuLoadingSkeleton';
+                    skeleton.className = 'menu-loading-skeleton';
+                    skeleton.innerHTML = `
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                    `;
+                    menuContainer.insertBefore(skeleton, menuContainer.firstChild);
+                }
+            }
+        }
+
+        // Hide loading state
+        function hideLoadingState() {
+            const menuContainer = document.querySelector('.bolt-menu-container');
+            if (menuContainer) {
+                menuContainer.classList.remove('loading');
+            }
+            
+            const skeleton = document.getElementById('menuLoadingSkeleton');
+            if (skeleton) {
+                skeleton.remove();
+            }
+        }
+
+        // Show error state
+        function showErrorState(message) {
+            const menuContainer = document.querySelector('.bolt-menu-container');
+            if (!menuContainer) return;
+
+            hideLoadingState();
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'menu-error-state';
+            errorDiv.innerHTML = `
+                <div class="error-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>${message}</p>
+                    <button onclick="loadMenuFromAPI()" class="retry-btn">Retry</button>
+                </div>
+            `;
+            
+            // Remove existing error state
+            const existingError = document.querySelector('.menu-error-state');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            menuContainer.insertBefore(errorDiv, menuContainer.firstChild);
         }
 
         // Initialize menu
@@ -1487,9 +1546,67 @@
         }
 
         var menuSearchDebounceTimer = null;
+        var isSearchingAPI = false;
 
-        function applyMenuSearchFilter(rawQuery) {
+        // Search using API with client-side fallback
+        async function applyMenuSearchFilter(rawQuery) {
             var q = String(rawQuery || '').trim().toLowerCase();
+            
+            // If query is empty, reset all items
+            if (!q) {
+                document.querySelectorAll('.bolt-food-item').forEach(function(c) {
+                    c.classList.remove('bolt-menu-search-miss');
+                });
+                document.querySelectorAll('.bolt-menu-section').forEach(function(sec) {
+                    sec.classList.remove('bolt-menu-section--search-empty');
+                });
+                var emptyEl = document.getElementById('boltMenuSearchEmpty');
+                if (emptyEl) emptyEl.hidden = true;
+                return;
+            }
+
+            // Try API search first if available
+            if (typeof MenuAPI !== 'undefined' && !isSearchingAPI) {
+                isSearchingAPI = true;
+                try {
+                    var results = await MenuAPI.search(q);
+                    if (results && results.length > 0) {
+                        // Filter items based on API results
+                        var resultNames = new Set(results.map(r => r.name.toLowerCase()));
+                        var cards = document.querySelectorAll('.bolt-food-item');
+                        var total = 0;
+                        cards.forEach(function(c) {
+                            var name = c.getAttribute('data-item-ref');
+                            var decodedName = '';
+                            try {
+                                decodedName = decodeURIComponent(name).toLowerCase();
+                            } catch(e) {
+                                decodedName = name.toLowerCase();
+                            }
+                            var ok = resultNames.has(decodedName);
+                            if (ok) total++;
+                            c.classList.toggle('bolt-menu-search-miss', !ok);
+                        });
+                        
+                        document.querySelectorAll('.bolt-menu-section').forEach(function(sec) {
+                            var vis = sec.querySelectorAll('.bolt-food-item:not(.bolt-menu-search-miss)').length;
+                            sec.classList.toggle('bolt-menu-section--search-empty', vis === 0);
+                        });
+                        
+                        var emptyEl = document.getElementById('boltMenuSearchEmpty');
+                        if (emptyEl) {
+                            emptyEl.hidden = total > 0;
+                        }
+                        isSearchingAPI = false;
+                        return;
+                    }
+                } catch(error) {
+                    console.error('API search failed, falling back to client-side:', error);
+                }
+                isSearchingAPI = false;
+            }
+
+            // Fallback to client-side search
             var cards = document.querySelectorAll('.bolt-food-item');
             var total = 0;
             for (var i = 0; i < cards.length; i++) {
@@ -1514,7 +1631,7 @@
             clearTimeout(menuSearchDebounceTimer);
             menuSearchDebounceTimer = setTimeout(function () {
                 applyMenuSearchFilter(value);
-            }, 100);
+            }, 300); // Increased debounce for API calls
         }
 
         function initBoltMenuSearch() {
@@ -1564,13 +1681,14 @@
             // Load cart first
             loadCartFromStorage();
             
-            // Initialize menu with error handling
-            try {
-                initializeMenu();
-                console.log('Menu initialized successfully');
-            } catch (error) {
-                console.error('Error initializing menu:', error);
-            }
+            // Load menu from API
+            loadMenuFromAPI().then(() => {
+                console.log('Menu loaded from API successfully');
+                // Initialize category navigation after menu is loaded
+                initializeCategoryNav();
+            }).catch(error => {
+                console.error('Failed to load menu from API:', error);
+            });
 
             try {
                 initBoltMenuSearch();
@@ -1633,14 +1751,6 @@
                 });
             }
 
-            // Initialize category navigation with error handling
-            try {
-                initializeCategoryNav();
-                console.log('Category navigation initialized');
-            } catch (error) {
-                console.error('Error initializing category navigation:', error);
-            }
-            
             // Initialize sticky cart bar
             updateStickyCartBar();
             
@@ -1652,6 +1762,83 @@
         });
 
     </script>
+    
+    <style>
+        /* Loading Skeleton Styles */
+        .menu-loading-skeleton {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .skeleton-item {
+            height: 120px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 12px;
+        }
+        
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        /* Error State Styles */
+        .menu-error-state {
+            padding: 40px 20px;
+            text-align: center;
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 12px;
+            margin: 20px;
+        }
+        
+        .menu-error-state .error-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .menu-error-state i {
+            font-size: 48px;
+            color: #ff6b6b;
+        }
+        
+        .menu-error-state p {
+            margin: 0;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .menu-error-state .retry-btn {
+            padding: 12px 24px;
+            background: #d4a373;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .menu-error-state .retry-btn:hover {
+            background: #c49a6c;
+        }
+        
+        /* Loading state for container */
+        .bolt-menu-container.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
     
     <!-- PWA Service Worker Registration -->
     <script>
