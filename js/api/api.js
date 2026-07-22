@@ -74,16 +74,69 @@ const APIClient = (function() {
     }
 
     /**
-     * Make HTTP request with retry logic
+     * Get access token from AuthManager
      */
-    async function fetchWithRetry(url, options, attempt = 1) {
+    function getAccessToken() {
+        if (typeof AuthManager !== 'undefined' && AuthManager.getAccessToken) {
+            return AuthManager.getAccessToken();
+        }
+        return sessionStorage.getItem('crave_access_token');
+    }
+
+    /**
+     * Handle 401 response with token refresh
+     */
+    async function handle401Error(url, originalOptions) {
         try {
+            if (typeof AuthManager !== 'undefined' && AuthManager.refreshAccessToken) {
+                const success = await AuthManager.refreshAccessToken();
+                if (success) {
+                    // Retry the original request with new token
+                    const newToken = getAccessToken();
+                    if (newToken) {
+                        originalOptions.headers = originalOptions.headers || {};
+                        originalOptions.headers['Authorization'] = `Bearer ${newToken}`;
+                        return await fetchWithRetry(url, originalOptions);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Token refresh failed:', error);
+        }
+        
+        // If refresh fails, redirect to login
+        if (typeof AuthManager !== 'undefined' && AuthManager.logout) {
+            AuthManager.logout();
+        }
+        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+        window.location.href = 'login.html';
+        
+        throw new Error('Authentication failed. Please login again.');
+    }
+
+    /**
+     * Make HTTP request with retry logic and token injection
+     */
+    async function fetchWithRetry(url, options, attempt = 1, isRetryAfter401 = false) {
+        try {
+            // Inject access token if available
+            const token = getAccessToken();
+            if (token) {
+                options.headers = options.headers || {};
+                options.headers['Authorization'] = `Bearer ${token}`;
+            }
+
             const { controller, timeoutId } = createTimeout(APIConfig.timeout);
             const response = await fetch(url, {
                 ...options,
                 signal: controller.signal
             });
             clearTimeout(timeoutId);
+
+            // Handle 401 Unauthorized - attempt token refresh
+            if (response.status === 401 && !isRetryAfter401) {
+                return await handle401Error(url, options);
+            }
 
             if (!response.ok) {
                 const error = new Error(`HTTP error! status: ${response.status}`);
@@ -111,7 +164,7 @@ const APIClient = (function() {
             if (shouldRetry) {
                 const retryDelay = APIConfig.retry.delay * Math.pow(APIConfig.retry.backoffMultiplier, attempt - 1);
                 await delay(retryDelay);
-                return fetchWithRetry(url, options, attempt + 1);
+                return fetchWithRetry(url, options, attempt + 1, isRetryAfter401);
             }
 
             throw error;

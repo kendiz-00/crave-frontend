@@ -172,6 +172,9 @@
                         <li class="navbar-menu-item"><a href="about.html" class="navbar-link" data-page="about">About</a></li>
                     </ul>
                 </div>
+                <div class="navbar-auth" id="navbarAuth">
+                    <!-- Will be populated by AuthUI -->
+                </div>
             </div>
         </nav>
     </header>
@@ -2104,6 +2107,17 @@
         }
     </script>
     
+    <!-- API Scripts -->
+    <script src="js/vendor-setup.js"></script>
+    <script src="js/api/config.js"></script>
+    <script src="js/api/api.js"></script>
+    
+    <!-- Authentication System -->
+    <script src="js/auth/auth-api.js"></script>
+    <script src="js/auth/auth-manager.js"></script>
+    <script src="js/auth/auth-ui.js"></script>
+    <script src="js/cart-sync.js"></script>
+    
     <!-- CRAVE Rewards System -->
     <script src="js/rewards-config.js"></script>
     <script src="js/rewards-data.js"></script>
@@ -2121,6 +2135,16 @@
     <script>
         // Initialize rewards on checkout page
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize auth
+            AuthManager.initialize();
+            AuthUI.initialize();
+            
+            // Initialize cart sync
+            CartSync.initialize();
+            
+            // Show guest/login/account options based on auth state
+            updateCheckoutAuthUI();
+            
             // Track order completion for rewards
             const originalPlaceOrder = window.placeOrder;
             if (originalPlaceOrder && CraveRewardsEngine) {
@@ -2161,6 +2185,71 @@
                 });
             }
         });
+
+        // Update checkout UI based on authentication state
+        function updateCheckoutAuthUI() {
+            const isAuthenticated = AuthManager.isAuthenticated();
+            const user = AuthManager.getUser();
+            const checkoutForm = document.getElementById('checkoutForm');
+            
+            if (isAuthenticated && user) {
+                // Pre-fill form with user data
+                const fullNameInput = document.getElementById('fullName');
+                const phoneNumberInput = document.getElementById('phoneNumber');
+                
+                if (fullNameInput && user.name) {
+                    fullNameInput.value = user.name;
+                }
+                if (phoneNumberInput && user.phone) {
+                    phoneNumberInput.value = user.phone;
+                }
+                
+                // Show account info section
+                const formSection = document.querySelector('.checkout-form-section');
+                if (formSection) {
+                    const accountInfo = document.createElement('div');
+                    accountInfo.className = 'account-info';
+                    accountInfo.innerHTML = `
+                        <div style="background: rgba(212, 165, 116, 0.1); border: 1px solid rgba(212, 165, 116, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #d4a574, #c19660); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #111;">
+                                    ${user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 16px;">${user.name || 'Customer'}</div>
+                                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">${user.email || ''}</div>
+                                </div>
+                                <a href="profile.html" style="margin-left: auto; color: #d4a574; text-decoration: none; font-size: 14px; font-weight: 600;">View Profile</a>
+                            </div>
+                        </div>
+                    `;
+                    formSection.insertBefore(accountInfo, checkoutForm);
+                }
+            } else {
+                // Show guest checkout with login option
+                const formSection = document.querySelector('.checkout-form-section');
+                if (formSection) {
+                    const guestOption = document.createElement('div');
+                    guestOption.className = 'guest-option';
+                    guestOption.innerHTML = `
+                        <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center;">
+                            <div style="color: #ffffff; font-size: 16px; margin-bottom: 12px;">
+                                <i class="fas fa-user-circle" style="margin-right: 8px; color: #d4a574;"></i>
+                                Continue as guest or sign in for faster checkout
+                            </div>
+                            <a href="login.html" style="display: inline-block; background: linear-gradient(135deg, #d4a574, #c19660); color: #111; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 14px;">
+                                Sign In
+                            </a>
+                            <span style="margin: 0 16px; color: rgba(255, 255, 255, 0.5);">or</span>
+                            <a href="register.html" style="display: inline-block; background: transparent; color: #d4a574; text-decoration: none; padding: 12px 24px; border: 1px solid #d4a574; border-radius: 8px; font-weight: 600; font-size: 14px;">
+                                Create Account
+                            </a>
+                        </div>
+                    `;
+                    formSection.insertBefore(guestOption, checkoutForm);
+                }
+            }
+        }
     </script>
 </body>
 </html>

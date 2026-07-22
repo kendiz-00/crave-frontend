@@ -1,6 +1,7 @@
 /**
  * CRAVE Rewards Data Management Layer
  * Handles all data persistence and retrieval using LocalStorage
+ * Supports user-specific data when authenticated
  */
 
 const CraveRewardsData = (function() {
@@ -9,10 +10,26 @@ const CraveRewardsData = (function() {
     const config = typeof CraveRewardsConfig !== 'undefined' ? CraveRewardsConfig : null;
     const keys = config ? config.storageKeys : {};
 
+    // Get current user ID if authenticated
+    function getUserId() {
+        if (typeof AuthManager !== 'undefined' && AuthManager.getUser) {
+            const user = AuthManager.getUser();
+            return user ? user.id : null;
+        }
+        return null;
+    }
+
+    // Get user-specific storage key
+    function getUserKey(baseKey) {
+        const userId = getUserId();
+        return userId ? `${baseKey}_${userId}` : baseKey;
+    }
+
     // Helper functions for LocalStorage
     function getStorage(key, defaultValue = null) {
         try {
-            const value = localStorage.getItem(key);
+            const userKey = getUserKey(key);
+            const value = localStorage.getItem(userKey);
             if (value === null) return defaultValue;
             return JSON.parse(value);
         } catch (e) {
@@ -23,7 +40,8 @@ const CraveRewardsData = (function() {
 
     function setStorage(key, value) {
         try {
-            localStorage.setItem(key, JSON.stringify(value));
+            const userKey = getUserKey(key);
+            localStorage.setItem(userKey, JSON.stringify(value));
             return true;
         } catch (e) {
             console.error(`Error writing ${key} to storage:`, e);
@@ -33,7 +51,8 @@ const CraveRewardsData = (function() {
 
     function removeStorage(key) {
         try {
-            localStorage.removeItem(key);
+            const userKey = getUserKey(key);
+            localStorage.removeItem(userKey);
             return true;
         } catch (e) {
             console.error(`Error removing ${key} from storage:`, e);

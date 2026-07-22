@@ -547,6 +547,9 @@
                         <li class="navbar-menu-item"><a href="about.html" class="navbar-link" data-page="about">About</a></li>
                     </ul>
                 </div>
+                <div class="navbar-auth" id="navbarAuth">
+                    <!-- Will be populated by AuthUI -->
+                </div>
             </div>
         </nav>
     </header>
@@ -889,6 +892,17 @@
     </script>
     <script src="js/analytics.js" defer></script>
     
+    <!-- API Scripts -->
+    <script src="js/vendor-setup.js"></script>
+    <script src="js/api/config.js"></script>
+    <script src="js/api/api.js"></script>
+    
+    <!-- Authentication System -->
+    <script src="js/auth/auth-api.js"></script>
+    <script src="js/auth/auth-manager.js"></script>
+    <script src="js/auth/auth-ui.js"></script>
+    <script src="js/cart-sync.js"></script>
+    
     <!-- CRAVE Rewards System -->
     <script src="js/rewards-config.js"></script>
     <script src="js/rewards-data.js"></script>
@@ -906,6 +920,13 @@
     <script>
         // Initialize rewards on cart page
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize auth
+            AuthManager.initialize();
+            AuthUI.initialize();
+            
+            // Initialize cart sync
+            CartSync.initialize();
+            
             // Show "complete your meal" suggestions
             if (CraveRecommendations) {
                 const cart = JSON.parse(localStorage.getItem('craveCart')) || [];

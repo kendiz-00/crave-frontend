@@ -836,6 +836,14 @@ function initCravePwaLayer() {
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize authentication system
+  if (typeof AuthManager !== 'undefined') {
+    AuthManager.initialize();
+  }
+  if (typeof AuthUI !== 'undefined') {
+    AuthUI.initialize();
+  }
+
   initCravePremiumTactileCapture();
   initCravePwaLayer();
   // Navbar toggle and sticky behavior
