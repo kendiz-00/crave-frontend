@@ -705,9 +705,21 @@
                         </a>
                     </li>
                     <li class="profile-nav-item">
+                        <a class="profile-nav-link" data-tab="payments">
+                            <i class="fa-solid fa-credit-card"></i>
+                            Payment History
+                        </a>
+                    </li>
+                    <li class="profile-nav-item">
                         <a class="profile-nav-link" data-tab="addresses">
                             <i class="fa-solid fa-location-dot"></i>
                             Addresses
+                        </a>
+                    </li>
+                    <li class="profile-nav-item">
+                        <a class="profile-nav-link" data-tab="payment-methods">
+                            <i class="fa-solid fa-wallet"></i>
+                            Payment Methods
                         </a>
                     </li>
                     <li class="profile-nav-item">
@@ -785,6 +797,39 @@
                             <h3>No orders yet</h3>
                             <p>Start ordering to see your order history here</p>
                             <a href="menu.html" class="btn">Browse Menu</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment History Tab -->
+                <div class="profile-tab" id="tab-payments">
+                    <div class="tab-header">
+                        <h2>Payment History</h2>
+                        <p>View your past transactions</p>
+                    </div>
+
+                    <div id="paymentsContent">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-credit-card"></i>
+                            <h3>No payment history</h3>
+                            <p>Your payment transactions will appear here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods Tab -->
+                <div class="profile-tab" id="tab-payment-methods">
+                    <div class="tab-header">
+                        <h2>Saved Payment Methods</h2>
+                        <p>Manage your payment options for faster checkout</p>
+                    </div>
+
+                    <div id="paymentMethodsContent">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-wallet"></i>
+                            <h3>No saved payment methods</h3>
+                            <p>Add a payment method for quick checkout</p>
+                            <button class="btn" id="addPaymentMethodBtn">Add Payment Method</button>
                         </div>
                     </div>
                 </div>
@@ -983,7 +1028,13 @@
     <script src="js/auth/auth-manager.js"></script>
     <script src="js/auth/auth-ui.js"></script>
     <script src="js/auth/protected-routes.js"></script>
+    <script src="js/toast-notifications.js"></script>
     <script src="js/main.js"></script>
+    
+    <!-- CRAVE Rewards System -->
+    <script src="js/rewards-config.js"></script>
+    <script src="js/rewards-data.js"></script>
+    <script src="js/rewards-engine.js"></script>
     <script src="js/analytics.js" defer></script>
     
     <script>
@@ -1051,6 +1102,139 @@
 
             // Load rewards data from localStorage (for now)
             loadRewardsData();
+            
+            // Load orders data
+            loadOrdersData();
+            
+            // Load payment history
+            loadPaymentHistory();
+        }
+
+        function loadRewardsData() {
+            if (typeof CraveRewardsData !== 'undefined') {
+                const points = CraveRewardsData.Points.get();
+                const tier = CraveRewardsData.Tiers.getCurrent();
+                const achievements = CraveRewardsData.Achievements.getUnlocked();
+                
+                document.getElementById('statPoints').textContent = points;
+                document.getElementById('rewardPoints').textContent = points;
+                document.getElementById('rewardTier').textContent = tier;
+                document.getElementById('rewardAchievements').textContent = achievements.length;
+                
+                // Update VIP status
+                updateVipStatus(points);
+            }
+        }
+
+        function updateVipStatus(points) {
+            const vipThreshold = 1000;
+            const isVip = points >= vipThreshold;
+            
+            const title = document.getElementById('vipStatusTitle');
+            const subtitle = document.getElementById('vipStatusSubtitle');
+            
+            if (isVip) {
+                title.textContent = 'VIP Member';
+                subtitle.textContent = `You have ${points} points`;
+            } else {
+                title.textContent = 'Not a VIP Member';
+                subtitle.textContent = `Earn ${vipThreshold - points} more points to unlock VIP status`;
+            }
+        }
+
+        async function loadOrdersData() {
+            try {
+                if (typeof APIClient !== 'undefined') {
+                    const response = await APIClient.get('/orders');
+                    if (response.success && response.data && response.data.length > 0) {
+                        displayOrders(response.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        function displayOrders(orders) {
+            const container = document.getElementById('ordersContent');
+            container.innerHTML = `
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orders.map(order => `
+                            <tr>
+                                <td>${order.orderNumber || order.id}</td>
+                                <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                                <td>${order.items.length} items</td>
+                                <td>GHS ${(order.total || 0).toFixed(2)}</td>
+                                <td><span class="order-status ${getStatusClass(order.status)}">${order.status || 'Pending'}</span></td>
+                                <td><a href="tracking.html?order_id=${order.id}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Track</a></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                'completed': 'completed',
+                'delivered': 'completed',
+                'pending': 'pending',
+                'processing': 'pending',
+                'cancelled': 'cancelled'
+            };
+            return statusMap[status?.toLowerCase()] || 'pending';
+        }
+
+        async function loadPaymentHistory() {
+            try {
+                if (typeof APIClient !== 'undefined') {
+                    const response = await APIClient.get('/payments');
+                    if (response.success && response.data && response.data.length > 0) {
+                        displayPaymentHistory(response.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading payment history:', error);
+            }
+        }
+
+        function displayPaymentHistory(payments) {
+            const container = document.getElementById('paymentsContent');
+            container.innerHTML = `
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${payments.map(payment => `
+                            <tr>
+                                <td>${payment.reference || payment.id}</td>
+                                <td>${new Date(payment.createdAt).toLocaleDateString()}</td>
+                                <td>GHS ${(payment.amount || 0).toFixed(2)}</td>
+                                <td>${payment.method || 'Card'}</td>
+                                <td><span class="order-status ${payment.status === 'success' ? 'completed' : 'cancelled'}">${payment.status || 'Pending'}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
         }
 
         function loadRewardsData() {

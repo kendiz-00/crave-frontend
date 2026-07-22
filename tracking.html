@@ -198,6 +198,138 @@
             margin-bottom: 30px;
         }
         
+        .delivery-time-icon {
+            font-size: 32px;
+            color: #d4a574;
+            margin-bottom: 15px;
+        }
+        
+        .delivery-time-text {
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        
+        .delivery-time-sub {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .order-details {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .order-details h3 {
+            color: #d4a574;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .order-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .order-detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .order-detail-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        .order-detail-value {
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .action-btn-primary {
+            background: linear-gradient(135deg, #d4a574, #c19660);
+            color: #111;
+            border: none;
+        }
+        
+        .action-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 165, 116, 0.3);
+        }
+        
+        .action-btn-secondary {
+            background: transparent;
+            color: #d4a574;
+            border: 2px solid #d4a574;
+        }
+        
+        .action-btn-secondary:hover {
+            background: rgba(212, 165, 116, 0.1);
+        }
+        
+        .action-btn-ghost {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: none;
+        }
+        
+        .action-btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 640px) {
+            .tracking-container {
+                padding: 15px;
+            }
+            
+            .tracking-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .status-steps {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .status-step {
+                flex: 1 1 45%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+        
         .delivery-time-label {
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
@@ -297,36 +429,45 @@
         <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+                <div class="progress-fill" id="progressFill" style="width: 20%;"></div>
             </div>
         </div>
         
         <!-- Status Steps -->
         <div class="status-steps">
-            <div class="status-step completed" id="step1">
+            <div class="status-step completed" data-status="received">
                 <div class="status-icon">
                     <i class="fas fa-check"></i>
                 </div>
                 <div class="status-text">Order Received</div>
             </div>
-            
-            <div class="status-step active" id="step2">
+            <div class="status-step" data-status="preparing">
                 <div class="status-icon">
                     <i class="fas fa-utensils"></i>
                 </div>
                 <div class="status-text">Preparing</div>
             </div>
-            
-            <div class="status-step" id="step3">
+            <div class="status-step" data-status="cooking">
+                <div class="status-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="status-text">Cooking</div>
+            </div>
+            <div class="status-step" data-status="ready">
+                <div class="status-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="status-text">Ready</div>
+            </div>
+            <div class="status-step" data-status="delivery">
                 <div class="status-icon">
                     <i class="fas fa-motorcycle"></i>
                 </div>
-                <div class="status-text">On the Way</div>
+                <div class="status-text">Out for Delivery</div>
             </div>
-            
-            <div class="status-step" id="step4">
+            <div class="status-step" data-status="delivered">
                 <div class="status-icon">
-                    <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-home"></i>
                 </div>
                 <div class="status-text">Delivered</div>
             </div>
@@ -334,98 +475,215 @@
         
         <!-- Delivery Time -->
         <div class="delivery-time">
-            <div class="delivery-time-label">Estimated Delivery Time</div>
-            <div class="delivery-time-countdown" id="deliveryCountdown">00:25:00</div>
+            <div class="delivery-time-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="delivery-time-text" id="deliveryTimeText">Estimated Delivery</div>
+            <div class="delivery-time-sub" id="deliveryTimeSub">30-45 minutes</div>
         </div>
         
-        <!-- Back to Home -->
-        <a href="index.html" class="back-home">
-            <i class="fas fa-home"></i>
-            Back to Home
-        </a>
+        <!-- Order Details -->
+        <div class="order-details">
+            <h3>Order Details</h3>
+            <div class="order-detail-row">
+                <span class="order-detail-label">Items</span>
+                <span class="order-detail-value" id="orderItems">-</span>
+            </div>
+            <div class="order-detail-row">
+                <span class="order-detail-label">Delivery Address</span>
+                <span class="order-detail-value" id="deliveryAddress">-</span>
+            </div>
+            <div class="order-detail-row">
+                <span class="order-detail-label">Payment Method</span>
+                <span class="order-detail-value" id="paymentMethod">-</span>
+            </div>
+            <div class="order-detail-row">
+                <span class="order-detail-label">Total</span>
+                <span class="order-detail-value" id="orderTotal">-</span>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="index.html" class="action-btn action-btn-primary">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <a href="menu.html" class="action-btn action-btn-secondary">
+                <i class="fas fa-utensils"></i>
+                Order Again
+            </a>
+            <button class="action-btn action-btn-ghost" onclick="contactSupport()">
+                <i class="fas fa-phone"></i>
+                Contact Support
+            </button>
+        </div>
     </div>
+
+    <!-- API Scripts -->
+    <script src="js/vendor-setup.js"></script>
+    <script src="js/api/config.js"></script>
+    <script src="js/api/api.js"></script>
+    
+    <!-- Authentication System -->
+    <script src="js/auth/auth-api.js"></script>
+    <script src="js/auth/auth-manager.js"></script>
+    <script src="js/auth/auth-ui.js"></script>
     
     <script>
-        // Generate random order ID
-        function generateOrderID() {
-            const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-            const orderID = `CRV-2024-${randomNum}`;
-            document.getElementById('orderNumber').textContent = orderID;
-        }
-        
-        // Progress animation
-        let currentStep = 2;
-        let progress = 25;
-        
-        function animateProgress() {
-            const steps = document.querySelectorAll('.status-step');
-            const progressFill = document.getElementById('progressFill');
-            
-            // Remove active class from all steps
-            steps.forEach(step => step.classList.remove('active'));
-            
-            // Add active class to current step
-            if (steps[currentStep - 1]) {
-                steps[currentStep - 1].classList.add('active');
-            }
-            
-            // Update progress bar
-            progressFill.style.width = `${progress}%`;
-            
-            // Move to next step
-            currentStep++;
-            progress += 25;
-            
-            // Reset when reaching the end
-            if (currentStep > 4) {
-                currentStep = 1;
-                progress = 25;
-                
-                // Mark all as completed after full cycle
-                setTimeout(() => {
-                    steps.forEach(step => {
-                        step.classList.remove('active');
-                        step.classList.add('completed');
-                    });
-                }, 3000);
-            }
-        }
-        
-        // Countdown timer
-        let minutes = 25;
-        let seconds = 0;
-        
-        function updateCountdown() {
-            const countdownElement = document.getElementById('deliveryCountdown');
-            
-            if (minutes === 0 && seconds === 0) {
-                countdownElement.textContent = 'Delivered!';
-                countdownElement.style.color = '#28a745';
-                return;
-            }
-            
-            if (seconds === 0) {
-                minutes--;
-                seconds = 59;
-            } else {
-                seconds--;
-            }
-            
-            const displayMinutes = minutes.toString().padStart(2, '0');
-            const displaySeconds = seconds.toString().padStart(2, '0');
-            countdownElement.textContent = `${displayMinutes}:${displaySeconds}`;
-        }
-        
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            generateOrderID();
+            // Initialize auth
+            AuthManager.initialize();
+            AuthUI.initialize();
             
-            // Start progress animation
-            setInterval(animateProgress, 3000);
+            // Load order details
+            loadOrderDetails();
             
-            // Start countdown
-            setInterval(updateCountdown, 1000);
+            // Start status polling
+            startStatusPolling();
         });
+
+        function loadOrderDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('order_id');
+            
+            if (orderId) {
+                document.getElementById('orderNumber').textContent = orderId;
+                
+                // Try to get order data from localStorage
+                const orderData = localStorage.getItem(`order_${orderId}`);
+                if (orderData) {
+                    const order = JSON.parse(orderData);
+                    displayOrderDetails(order);
+                } else {
+                    // In production, fetch from API
+                    fetchOrderFromAPI(orderId);
+                }
+            } else {
+                // Try last order
+                const lastOrder = localStorage.getItem('lastOrder');
+                if (lastOrder) {
+                    const order = JSON.parse(lastOrder);
+                    document.getElementById('orderNumber').textContent = order.orderNumber;
+                    displayOrderDetails(order);
+                }
+            }
+        }
+
+        function displayOrderDetails(order) {
+            // Display items
+            if (order.items && order.items.length > 0) {
+                const itemsText = order.items.map(item => `${item.name} x${item.quantity}`).join(', ');
+                document.getElementById('orderItems').textContent = itemsText;
+            }
+            
+            // Display other details
+            document.getElementById('deliveryAddress').textContent = order.deliveryAddress || 'Pickup';
+            document.getElementById('paymentMethod').textContent = order.paymentMethod || 'Card';
+            document.getElementById('orderTotal').textContent = `GHS ${(order.total || 0).toFixed(2)}`;
+            
+            // Update status if available
+            if (order.status) {
+                updateOrderStatus(order.status);
+            }
+        }
+
+        async function fetchOrderFromAPI(orderId) {
+            try {
+                if (typeof APIClient !== 'undefined') {
+                    const response = await APIClient.get(`/orders/${orderId}`);
+                    if (response.success && response.data) {
+                        displayOrderDetails(response.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching order:', error);
+            }
+        }
+
+        function updateOrderStatus(status) {
+            const statusMap = {
+                'received': 0,
+                'preparing': 1,
+                'cooking': 2,
+                'ready': 3,
+                'delivery': 4,
+                'delivered': 5
+            };
+            
+            const currentIndex = statusMap[status] || 0;
+            const progress = ((currentIndex + 1) / 6) * 100;
+            
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            const steps = document.querySelectorAll('.status-step');
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                
+                if (index < currentIndex) {
+                    step.classList.add('completed');
+                } else if (index === currentIndex) {
+                    step.classList.add('active');
+                }
+            });
+            
+            // Update delivery time text based on status
+            const deliveryTimeText = document.getElementById('deliveryTimeText');
+            const deliveryTimeSub = document.getElementById('deliveryTimeSub');
+            
+            switch(status) {
+                case 'received':
+                    deliveryTimeText.textContent = 'Order Received';
+                    deliveryTimeSub.textContent = 'Preparing your order';
+                    break;
+                case 'preparing':
+                    deliveryTimeText.textContent = 'Preparing';
+                    deliveryTimeSub.textContent = 'Chef is preparing your meal';
+                    break;
+                case 'cooking':
+                    deliveryTimeText.textContent = 'Cooking';
+                    deliveryTimeSub.textContent = 'Your meal is being cooked';
+                    break;
+                case 'ready':
+                    deliveryTimeText.textContent = 'Ready for Pickup';
+                    deliveryTimeSub.textContent = 'Order is ready';
+                    break;
+                case 'delivery':
+                    deliveryTimeText.textContent = 'Out for Delivery';
+                    deliveryTimeSub.textContent = 'Driver is on the way';
+                    break;
+                case 'delivered':
+                    deliveryTimeText.textContent = 'Delivered';
+                    deliveryTimeSub.textContent = 'Enjoy your meal!';
+                    break;
+            }
+        }
+
+        function startStatusPolling() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('order_id');
+            
+            if (!orderId) return;
+            
+            // Poll for status updates every 10 seconds
+            setInterval(async () => {
+                try {
+                    if (typeof APIClient !== 'undefined') {
+                        const response = await APIClient.get(`/orders/${orderId}/status`);
+                        if (response.success && response.data) {
+                            updateOrderStatus(response.data.status);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error polling status:', error);
+                }
+            }, 10000);
+        }
+
+        function contactSupport() {
+            // In production, this would open a support chat or dial a phone number
+            alert('Support: +233 50 000 0000\nEmail: support@crave.com');
+        }
     </script>
     <script src="js/analytics.js" defer></script>
 </body>

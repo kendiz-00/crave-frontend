@@ -1,0 +1,555 @@
+/**
+ * CRAVE Loading Skeletons
+ * Professional loading states with smooth animations
+ */
+
+/* Base Skeleton Animation */
+@keyframes skeletonLoading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Skeleton Base Styles */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.03) 25%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.03) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeletonLoading 1.5s infinite;
+    border-radius: 8px;
+}
+
+/* Skeleton Variants */
+.skeleton-text {
+    height: 16px;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.skeleton-text-sm {
+    height: 12px;
+    width: 80%;
+    border-radius: 4px;
+}
+
+.skeleton-text-lg {
+    height: 24px;
+    width: 60%;
+    border-radius: 6px;
+}
+
+.skeleton-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.skeleton-avatar-lg {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+
+.skeleton-button {
+    height: 44px;
+    width: 120px;
+    border-radius: 8px;
+}
+
+.skeleton-button-lg {
+    height: 52px;
+    width: 160px;
+    border-radius: 8px;
+}
+
+.skeleton-card {
+    height: 200px;
+    border-radius: 16px;
+}
+
+.skeleton-image {
+    height: 150px;
+    width: 100%;
+    border-radius: 12px;
+}
+
+.skeleton-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.skeleton-row .skeleton {
+    flex: 1;
+}
+
+.skeleton-row .skeleton-avatar {
+    flex: 0 0 auto;
+}
+
+/* Card Skeleton */
+.skeleton-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.skeleton-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.skeleton-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* List Item Skeleton */
+.skeleton-list-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.skeleton-list-item .skeleton-avatar {
+    flex-shrink: 0;
+}
+
+.skeleton-list-item .skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Table Skeleton */
+.skeleton-table-row {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.skeleton-table-row .skeleton {
+    flex: 1;
+}
+
+/* Loading Spinner */
+.spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(212, 165, 116, 0.3);
+    border-radius: 50%;
+    border-top-color: #d4a574;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner-sm {
+    width: 24px;
+    height: 24px;
+    border-width: 2px;
+}
+
+.spinner-lg {
+    width: 60px;
+    height: 60px;
+    border-width: 4px;
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Fade In Delayed */
+.fade-in-delayed {
+    animation: fadeIn 0.3s ease-out 0.15s backwards;
+}
+
+.fade-in-delayed-2 {
+    animation: fadeIn 0.3s ease-out 0.3s backwards;
+}
+
+/* Slide In Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Scale In Animation */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.scale-in {
+    animation: scaleIn 0.2s ease-out;
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.bounce {
+    animation: bounce 0.5s ease-in-out;
+}
+
+/* Shimmer Effect */
+.shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.05),
+        transparent
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(10px);
+}
+
+.loading-overlay .spinner {
+    border-color: #d4a574;
+    border-top-color: transparent;
+}
+
+.loading-overlay .spinner::before,
+.loading-overlay .spinner::after {
+    border-color: #d4a574;
+    border-top-color: transparent;
+}
+
+/* Loading State Container */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    min-height: 200px;
+}
+
+.loading-state .spinner {
+    margin-bottom: 20px;
+}
+
+.loading-state p {
+    color: rgba(255, 200, 200, 0.7);
+    font-size: 0.95rem;
+}
+
+/* Smooth Page Transitions */
+.page-transition {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Button Loading State */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 0.6s linear infinite;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+}
+
+/* Card Hover Effect */
+.card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Button Hover Effect */
+.btn-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212, 165, 116, 0.3);
+}
+
+/* Input Focus Transition */
+.input-focus {
+    transition: all 0.3s ease;
+}
+
+.input-focus:focus {
+    border-color: #d4a574;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+}
+
+/* Progress Bar Animation */
+.progress-bar-animated {
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Notification Animation */
+.notification-enter {
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification-exit {
+    animation: slideIn 0.3s ease-out reverse;
+}
+
+/* Modal Animation */
+.modal-enter {
+    animation: scaleIn 0.3s ease-out;
+}
+
+.modal-exit {
+    animation: scaleIn 0.3s ease-out reverse;
+}
+
+/* Skeleton Card for Menu Items */
+.menu-item-skeleton {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+}
+
+.menu-item-skeleton .skeleton-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.menu-item-skeleton .skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Skeleton for Cart Items */
+.cart-item-skeleton {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.cart-item-skeleton .skeleton-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.cart-item-skeleton .skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Skeleton for Order Tracking */
+.tracking-step-skeleton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+}
+
+.tracking-step-skeleton .skeleton-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.tracking-step-skeleton .skeleton-text {
+    width: 100px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Skeleton for Profile */
+.profile-skeleton {
+    display: flex;
+    gap: 20px;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    margin-bottom: 20px;
+}
+
+.profile-skeleton .skeleton-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.profile-skeleton .skeleton-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Skeleton for Checkout */
+.checkout-skeleton {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.checkout-skeleton .skeleton-row {
+    margin-bottom: 16px;
+}
+
+.checkout-skeleton .skeleton-row:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive Skeletons */
+@media (max-width: 768px) {
+    .skeleton-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .skeleton-row .skeleton-avatar {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .menu-item-skeleton {
+        flex-direction: column;
+    }
+    
+    .menu-item-skeleton .skeleton-image {
+        width: 100%;
+        height: 150px;
+    }
+}

@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <!-- Main CSS -->
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/loading-skeletons.css">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8CVWBJESV"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -257,6 +258,48 @@
                         <!-- Hidden coordinates input -->
                         <input type="hidden" id="deliveryCoordinates" name="deliveryCoordinates" required>
                         <input type="hidden" id="deliveryAddress" name="deliveryAddress" required>
+                    </div>
+
+                    <!-- Payment Method Selection -->
+                    <div class="checkout-form-group">
+                        <label class="checkout-label">
+                            Payment Method <span class="required">*</span>
+                        </label>
+                        <div id="paymentMethodSelector"></div>
+                        <div id="paymentMethodForm"></div>
+                    </div>
+
+                    <!-- Promo Code -->
+                    <div class="checkout-form-group">
+                        <label for="promoCode" class="checkout-label">
+                            Promo Code (Optional)
+                        </label>
+                        <div class="promo-code-group">
+                            <input 
+                                type="text" 
+                                id="promoCode" 
+                                name="promoCode" 
+                                class="checkout-input" 
+                                placeholder="Enter promo code"
+                            >
+                            <button type="button" id="applyPromoBtn" class="promo-apply-btn">
+                                Apply
+                            </button>
+                        </div>
+                        <div id="promoCodeMessage" class="promo-code-message"></div>
+                    </div>
+
+                    <!-- Reward Points -->
+                    <div class="checkout-form-group" id="rewardPointsSection">
+                        <label class="checkout-label">
+                            Reward Points
+                        </label>
+                        <div class="reward-points-info">
+                            <span id="availablePoints">0</span> points available
+                            <button type="button" id="usePointsBtn" class="use-points-btn">
+                                Use Points
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Order Type -->
@@ -2118,6 +2161,13 @@
     <script src="js/auth/auth-ui.js"></script>
     <script src="js/cart-sync.js"></script>
     
+    <!-- Payment System -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script src="js/payment-config.js"></script>
+    <script src="js/payment-service.js"></script>
+    <script src="js/payment-ui.js"></script>
+    <script src="js/toast-notifications.js"></script>
+    
     <!-- CRAVE Rewards System -->
     <script src="js/rewards-config.js"></script>
     <script src="js/rewards-data.js"></script>
@@ -2142,114 +2192,182 @@
             // Initialize cart sync
             CartSync.initialize();
             
+            // Initialize payment UI
+            initializePaymentFlow();
+            
             // Show guest/login/account options based on auth state
             updateCheckoutAuthUI();
             
-            // Track order completion for rewards
-            const originalPlaceOrder = window.placeOrder;
-            if (originalPlaceOrder && CraveRewardsEngine) {
-                window.placeOrder = function() {
-                    const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-                    const orderTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                    
-                    // Process order through rewards engine
-                    const result = CraveRewardsEngine.processOrder(orderTotal, cart);
-                    
-                    if (result.pointsEarned > 0) {
-                        setTimeout(() => {
-                            CraveRewardsNotifications.orderPlaced(result.pointsEarned, result.tier);
-                        }, 500);
-                    }
-                    
-                    // Call original function
-                    return originalPlaceOrder.apply(this, arguments);
-                };
-            }
+            // Load cart items
+            loadCartItems();
             
-            // Apply promo code functionality
-            const promoCodeInput = document.getElementById('promoCodeInput');
-            const applyPromoBtn = document.getElementById('applyPromoBtn');
+            // Initialize payment flow
+            let selectedPaymentMethod = 'card';
             
-            if (promoCodeInput && applyPromoBtn && CravePromoCodes) {
-                applyPromoBtn.addEventListener('click', function() {
-                    const code = promoCodeInput.value.trim();
-                    const orderTotal = parseFloat(document.getElementById('orderTotal').textContent.replace('GHS ', ''));
-                    
-                    const result = CravePromoCodes.apply(code, orderTotal);
-                    
-                    if (result.valid) {
-                        // Update order total with discount
-                        const finalPrice = CravePromoCodes.calculateFinalPrice(orderTotal, result);
-                        document.getElementById('orderTotal').textContent = 'GHS ' + finalPrice.finalTotal.toFixed(2);
-                    }
-                });
-            }
+            PaymentUI.renderPaymentMethodSelector('paymentMethodSelector', {
+                selectedMethod: selectedPaymentMethod,
+                onSelect: function(method) {
+                    selectedPaymentMethod = method;
+                    renderPaymentForm(method);
+                }
+            });
+            
+            renderPaymentForm(selectedPaymentMethod);
+            
+            // Handle form submission
+            document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
+            
+            // Load reward points if authenticated
+            loadRewardPoints();
         });
 
-        // Update checkout UI based on authentication state
-        function updateCheckoutAuthUI() {
-            const isAuthenticated = AuthManager.isAuthenticated();
-            const user = AuthManager.getUser();
-            const checkoutForm = document.getElementById('checkoutForm');
+        function renderPaymentForm(method) {
+            const formContainer = document.getElementById('paymentMethodForm');
             
-            if (isAuthenticated && user) {
-                // Pre-fill form with user data
-                const fullNameInput = document.getElementById('fullName');
-                const phoneNumberInput = document.getElementById('phoneNumber');
-                
-                if (fullNameInput && user.name) {
-                    fullNameInput.value = user.name;
-                }
-                if (phoneNumberInput && user.phone) {
-                    phoneNumberInput.value = user.phone;
-                }
-                
-                // Show account info section
-                const formSection = document.querySelector('.checkout-form-section');
-                if (formSection) {
-                    const accountInfo = document.createElement('div');
-                    accountInfo.className = 'account-info';
-                    accountInfo.innerHTML = `
-                        <div style="background: rgba(212, 165, 116, 0.1); border: 1px solid rgba(212, 165, 116, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #d4a574, #c19660); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #111;">
-                                    ${user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                                </div>
-                                <div>
-                                    <div style="font-weight: 600; color: #ffffff; font-size: 16px;">${user.name || 'Customer'}</div>
-                                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">${user.email || ''}</div>
-                                </div>
-                                <a href="profile.html" style="margin-left: auto; color: #d4a574; text-decoration: none; font-size: 14px; font-weight: 600;">View Profile</a>
-                            </div>
-                        </div>
-                    `;
-                    formSection.insertBefore(accountInfo, checkoutForm);
-                }
-            } else {
-                // Show guest checkout with login option
-                const formSection = document.querySelector('.checkout-form-section');
-                if (formSection) {
-                    const guestOption = document.createElement('div');
-                    guestOption.className = 'guest-option';
-                    guestOption.innerHTML = `
-                        <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center;">
-                            <div style="color: #ffffff; font-size: 16px; margin-bottom: 12px;">
-                                <i class="fas fa-user-circle" style="margin-right: 8px; color: #d4a574;"></i>
-                                Continue as guest or sign in for faster checkout
-                            </div>
-                            <a href="login.html" style="display: inline-block; background: linear-gradient(135deg, #d4a574, #c19660); color: #111; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 14px;">
-                                Sign In
-                            </a>
-                            <span style="margin: 0 16px; color: rgba(255, 255, 255, 0.5);">or</span>
-                            <a href="register.html" style="display: inline-block; background: transparent; color: #d4a574; text-decoration: none; padding: 12px 24px; border: 1px solid #d4a574; border-radius: 8px; font-weight: 600; font-size: 14px;">
-                                Create Account
-                            </a>
-                        </div>
-                    `;
-                    formSection.insertBefore(guestOption, checkoutForm);
-                }
+            switch(method) {
+                case 'card':
+                    PaymentUI.renderCardForm('paymentMethodForm');
+                    break;
+                case 'mobileMoney':
+                    PaymentUI.renderMobileMoneyForm('paymentMethodForm');
+                    break;
+                case 'bankTransfer':
+                    PaymentUI.renderBankTransferForm('paymentMethodForm');
+                    break;
             }
         }
+
+        function loadCartItems() {
+            const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            const cartItemsContainer = document.getElementById('checkoutCartItems');
+            const emptyCartState = document.getElementById('emptyCartState');
+            
+            if (cart.length === 0) {
+                cartItemsContainer.style.display = 'none';
+                emptyCartState.style.display = 'block';
+                document.getElementById('placeOrderBtn').disabled = true;
+                return;
+            }
+            
+            cartItemsContainer.style.display = 'block';
+            emptyCartState.style.display = 'none';
+            document.getElementById('placeOrderBtn').disabled = false;
+            
+            let subtotal = 0;
+            cartItemsContainer.innerHTML = cart.map((item, index) => {
+                subtotal += item.price * item.quantity;
+                return `
+                    <div class="checkout-cart-item">
+                        <div class="checkout-item-info">
+                            <div class="checkout-item-name">${item.name}</div>
+                            <div class="checkout-item-details">
+                                ${item.customizations ? `<div class="checkout-item-customizations">${item.customizations}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="checkout-item-quantity">
+                            x${item.quantity}
+                        </div>
+                        <div class="checkout-item-price">
+                            GHS ${(item.price * item.quantity).toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Update totals
+            const deliveryFee = 15;
+            const total = subtotal + deliveryFee;
+            document.getElementById('subtotalAmount').textContent = `GHS ${subtotal.toFixed(2)}`;
+            document.getElementById('deliveryFee').textContent = `GHS ${deliveryFee.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `GHS ${total.toFixed(2)}`;
+        }
+
+        function loadRewardPoints() {
+            if (typeof CraveRewardsData !== 'undefined' && AuthManager.isAuthenticated()) {
+                const points = CraveRewardsData.Points.get();
+                document.getElementById('availablePoints').textContent = points;
+            } else {
+                document.getElementById('rewardPointsSection').style.display = 'none';
+            }
+        }
+
+        async function handleCheckout(e) {
+            e.preventDefault();
+            
+            const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            if (cart.length === 0) {
+                ToastNotifications.error('Your cart is empty');
+                return;
+            }
+            
+            // Get form data
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                deliveryAddress: document.getElementById('deliveryAddress').value,
+                orderType: document.querySelector('input[name="orderType"]:checked').value,
+                additionalNotes: document.getElementById('additionalNotes').value,
+                items: cart,
+                subtotal: parseFloat(document.getElementById('subtotalAmount').textContent.replace('GHS ', '')),
+                deliveryFee: parseFloat(document.getElementById('deliveryFee').textContent.replace('GHS ', '')),
+                total: parseFloat(document.getElementById('totalAmount').textContent.replace('GHS ', ''))
+            };
+            
+            // Show payment processing
+            const processingOverlay = PaymentUI.showPaymentProcessing();
+            
+            try {
+                // Initialize payment
+                const user = AuthManager.getUser();
+                const paymentOptions = {
+                    email: user ? user.email : formData.phoneNumber,
+                    amount: formData.total,
+                    orderId: PaymentService.generateReference(),
+                    customerName: formData.fullName,
+                    orderData: formData,
+                    onSuccess: function(response, verification) {
+                        PaymentUI.hidePaymentProcessing(processingOverlay);
+                        
+                        // Save order details
+                        localStorage.setItem('lastOrder', JSON.stringify({
+                            orderNumber: verification.orderId || response.reference,
+                            items: formData.items,
+                            total: formData.total,
+                            deliveryAddress: formData.deliveryAddress,
+                            estimatedDelivery: '30-45 minutes'
+                        }));
+                        
+                        // Clear cart
+                        localStorage.removeItem('craveCart');
+                        
+                        // Show success and redirect
+                        ToastNotifications.success('Payment successful!');
+                        setTimeout(() => {
+                            window.location.href = `order-confirmation.html?order_id=${verification.orderId || response.reference}`;
+                        }, 1500);
+                    },
+                    onError: function(error) {
+                        PaymentUI.hidePaymentProcessing(processingOverlay);
+                        ToastNotifications.error(error);
+                    },
+                    onClose: function() {
+                        PaymentUI.hidePaymentProcessing(processingOverlay);
+                    }
+                };
+                
+                PaymentService.initializePaystack(paymentOptions);
+                
+            } catch (error) {
+                PaymentUI.hidePaymentProcessing(processingOverlay);
+                ToastNotifications.error('Payment initialization failed');
+                console.error('Payment error:', error);
+            }
+        }
+
+        function initializePaymentFlow() {
+            // Payment flow is initialized in DOMContentLoaded
+        }
     </script>
+
 </body>
 </html>

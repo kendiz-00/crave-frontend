@@ -251,6 +251,48 @@
             justify-content: space-between;
         }
         
+        .cart-quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 4px;
+        }
+        
+        .cart-quantity-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .cart-quantity-btn:hover {
+            background: rgba(212, 165, 116, 0.2);
+            border-color: #d4a574;
+        }
+        
+        .cart-quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .cart-quantity-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            min-width: 24px;
+            text-align: center;
+        }
+        
         .cart-price {
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 18px;
@@ -755,23 +797,29 @@
                         <img src="images/${getFoodImage(item.name)}" alt="${item.name}" class="cart-item-image" onerror="this.src='images/placeholder.jpg'">
                         <div class="cart-item-details">
                             <h4 class="cart-title">${item.name}</h4>
-                            <div class="cart-qty-controls">
-                                <button class="cart-qty-btn" onclick="decreaseQuantity(${index})" title="Decrease quantity">-</button>
-                                <span class="cart-qty">${item.quantity}</span>
-                                <button class="cart-qty-btn" onclick="increaseQuantity(${index})" title="Increase quantity">+</button>
-                            </div>
+                            <div class="cart-qty">Qty: ${item.quantity || 1}</div>
                             ${customizationsHtml}
                             ${addonsHtml}
                             ${specialRequestsHtml}
                         </div>
                     </div>
                     <div class="cart-right">
-                        <span class="cart-price">GH¢ ${itemTotal.toFixed(2)}</span>
-                        <button class="cart-delete" onclick="removeFromCart(${index})" title="Remove item">
-                            <i class="fa-solid fa-trash"></i>
+                        <div class="cart-quantity-control">
+                            <button class="cart-quantity-btn" onclick="updateQuantity(${index}, -1)" ${item.quantity <= 1 ? 'disabled' : ''}>
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span class="cart-quantity-value">${item.quantity || 1}</span>
+                            <button class="cart-quantity-btn" onclick="updateQuantity(${index}, 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="cart-price">GH¢ ${itemTotal.toFixed(2)}</div>
+                        <button class="cart-delete" onclick="removeItem(${index})">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </div>
                 `;
+                
                 cartItemsContainer.appendChild(itemElement);
             });
             
@@ -783,16 +831,38 @@
             updateCartBadge();
         }
 
-        function updateCartDisplay() {
-            // This function can be used to update totals if needed
+        function updateQuantity(index, change) {
             const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-            const cartArray = cart;
-            const itemCount = cartArray.reduce((total, item) => total + item.quantity, 0);
-            
-            // Update page title with item count if needed
-            if (itemCount > 0) {
-                document.title = `Cart (${itemCount}) - Crave Restaurant`;
+            if (cart[index]) {
+                const newQuantity = Math.max(1, (cart[index].quantity || 1) + change);
+                cart[index].quantity = newQuantity;
+                localStorage.setItem('craveCart', JSON.stringify(cart));
+                loadCartItems();
+                
+                // Sync with backend if authenticated
+                if (typeof CartSync !== 'undefined') {
+                    CartSync.syncToBackend();
+                }
             }
+        }
+
+        function removeItem(index) {
+            const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('craveCart', JSON.stringify(cart));
+            loadCartItems();
+            
+            // Sync with backend if authenticated
+            if (typeof CartSync !== 'undefined') {
+                CartSync.syncToBackend();
+            }
+            
+            ToastNotifications.success('Item removed from cart');
+        }
+
+        function updateCartDisplay() {
+            // This function is called by main.js, but we handle it in loadCartItems
+            loadCartItems();
         }
 
         // Update cart badge function
@@ -805,92 +875,7 @@
                 badge.style.display = cartCount > 0 ? 'flex' : 'none';
             }
         }
-
-        // Remove item from cart
-        function removeFromCart(index) {
-            let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-            
-            // Remove specific item by index
-            cart.splice(index, 1);
-            
-            // Save back to localStorage
-            localStorage.setItem('craveCart', JSON.stringify(cart));
-            
-            // Update window cart items
-            window.cartItems = cart;
-            
-            // Refresh display
-            loadCartItems();
-            updateCartDisplay();
-            updateCartBadge();
-        }
-
-        // Increase quantity for specific item
-        function increaseQuantity(index) {
-            let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-            if (cart[index]) {
-                cart[index].quantity = (cart[index].quantity || 1) + 1;
-                localStorage.setItem('craveCart', JSON.stringify(cart));
-                window.cartItems = cart;
-                loadCartItems();
-                updateCartDisplay();
-                updateCartBadge();
-            }
-        }
-
-        // Decrease quantity for specific item
-        function decreaseQuantity(index) {
-            let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-            if (cart[index] && (cart[index].quantity || 1) > 1) {
-                cart[index].quantity--;
-                localStorage.setItem('craveCart', JSON.stringify(cart));
-                window.cartItems = cart;
-                loadCartItems();
-                updateCartDisplay();
-                updateCartBadge();
-            }
-        }
-
-        // Clear cart functionality
-        document.getElementById('clearCartBtn')?.addEventListener('click', function() {
-            if (confirm('Are you sure you want to clear your cart?')) {
-                localStorage.removeItem('craveCart');
-                window.cartItems = [];
-                loadCartItems();
-                updateCartDisplay();
-                updateCartBadge();
-            }
-        });
-
-        // Checkout functionality
-        document.getElementById('checkoutBtn')?.addEventListener('click', function() {
-            const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-            
-            if (cart.length === 0) {
-                alert('Your cart is empty. Add some items before checkout.');
-                return;
-            }
-            
-            // Redirect to checkout page
-            window.location.href = 'checkout.html';
-        });
     </script>
-    
-    <!-- PWA Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                        console.log('Service Worker registered successfully:', registration);
-                    })
-                    .catch(function(error) {
-                        console.log('Service Worker registration failed:', error);
-                    });
-            });
-        }
-    </script>
-    <script src="js/analytics.js" defer></script>
     
     <!-- API Scripts -->
     <script src="js/vendor-setup.js"></script>
@@ -902,6 +887,9 @@
     <script src="js/auth/auth-manager.js"></script>
     <script src="js/auth/auth-ui.js"></script>
     <script src="js/cart-sync.js"></script>
+    
+    <!-- Toast Notifications -->
+    <script src="js/toast-notifications.js"></script>
     
     <!-- CRAVE Rewards System -->
     <script src="js/rewards-config.js"></script>
@@ -926,6 +914,9 @@
             
             // Initialize cart sync
             CartSync.initialize();
+            
+            // Initialize toast notifications
+            // (ToastNotifications auto-initializes)
             
             // Show "complete your meal" suggestions
             if (CraveRecommendations) {
