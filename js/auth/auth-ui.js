@@ -18,9 +18,9 @@ const AuthUI = (function() {
     function updateNavbar() {
         const isAuthenticated = AuthManager.isAuthenticated();
         const user = AuthManager.getUserData();
-        
-        // Find navbar auth section
-        const navbarAuth = document.querySelector('.navbar-auth');
+
+        // Find navbar auth section - try both class names
+        const navbarAuth = document.querySelector('.crave-navbar__auth-guest') || document.querySelector('.navbar-auth');
         if (!navbarAuth) return;
         
         if (isAuthenticated && user) {
@@ -438,4 +438,13 @@ const AuthUI = (function() {
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = AuthUI;
+}
+
+// Auto-initialize on load
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function() {
+        if (AuthUI && AuthManager) {
+            AuthUI.initialize();
+        }
+    });
 }

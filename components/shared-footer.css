@@ -30,7 +30,7 @@
 .crave-footer {
     background: var(--crave-darker);
     border-top: 1px solid var(--crave-glass-border);
-    margin-top: auto;
+    margin-top: 80px;
     position: relative;
 }
 

@@ -6,7 +6,7 @@
 const AuthAPI = typeof AuthAPI !== 'undefined' ? AuthAPI : null;
 
 if (!AuthAPI) {
-    console.error('AuthAPI not loaded. Make sure auth-api.js is loaded before auth-manager.js');
+    console.warn('AuthAPI not loaded. Authentication API calls will not work. Load auth-api.js before auth-manager.js for full functionality.');
 }
 
 const AuthManager = (function() {
@@ -524,4 +524,13 @@ const AuthManager = (function() {
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = AuthManager;
+}
+
+// Auto-initialize on load
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function() {
+        if (AuthManager) {
+            AuthManager.initialize();
+        }
+    });
 }
