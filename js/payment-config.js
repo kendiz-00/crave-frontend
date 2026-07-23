@@ -3,9 +3,12 @@
  * Environment-based configuration for Paystack
  */
 
+// Get Paystack public key from environment variable or use default
+const PAYSTACK_PUBLIC_KEY = window.ENV?.PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder';
+
 const PaymentConfig = {
     paystack: {
-        publicKey: typeof PAYSTACK_PUBLIC_KEY !== 'undefined' ? PAYSTACK_PUBLIC_KEY : 'pk_test_placeholder',
+        publicKey: PAYSTACK_PUBLIC_KEY,
         currency: 'GHS',
         channels: ['card', 'mobile_money', 'bank_transfer']
     },

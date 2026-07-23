@@ -3,10 +3,13 @@
  * Centralized API configuration for the frontend
  */
 
+// Get API base URL from environment variable or use default
+const API_BASE_URL = window.ENV?.API_BASE_URL || 'http://localhost:4000';
+
 const APIConfig = {
-    // Base URL - change this for different environments
-    baseURL: 'http://localhost:3001/api',
-    
+    // Base URL - from environment variable
+    baseURL: API_BASE_URL,
+
     // API endpoints
     endpoints: {
         // Menu endpoints
