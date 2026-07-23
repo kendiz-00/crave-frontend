@@ -1,0 +1,109 @@
+<!-- CRAVE Premium Shared Footer -->
+<!-- Include this component on all pages -->
+<!-- Add <link rel="stylesheet" href="components/shared-footer.css"> to head -->
+
+<footer class="crave-footer" role="contentinfo">
+    <div class="crave-footer__inner">
+        <div class="crave-footer__container">
+            <!-- Logo Section -->
+            <div class="crave-footer__brand">
+                <img src="images/logo.png" alt="CRAVE" class="crave-footer__logo" width="160" height="44">
+                <p class="crave-footer__tagline">Premium dining, elevated experiences</p>
+                <p class="crave-footer__description">Comfort food crafted with passion, served with elegance.</p>
+            </div>
+
+            <!-- Quick Links -->
+            <nav class="crave-footer__nav" aria-label="Footer Navigation">
+                <h4 class="crave-footer__heading">Explore</h4>
+                <ul class="crave-footer__links">
+                    <li><a href="menu.html" class="crave-footer__link">Menu</a></li>
+                    <li><a href="rewards.html" class="crave-footer__link">Rewards</a></li>
+                    <li><a href="vip.html" class="crave-footer__link">VIP</a></li>
+                    <li><a href="reservation.html" class="crave-footer__link">Reservations</a></li>
+                    <li><a href="about.html" class="crave-footer__link">About Us</a></li>
+                    <li><a href="contact.html" class="crave-footer__link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <!-- Contact Section -->
+            <div class="crave-footer__contact">
+                <h4 class="crave-footer__heading">Get in Touch</h4>
+                <address class="crave-footer__address">
+                    <div class="crave-footer__address-line">Accra, Ghana</div>
+                    <a href="tel:+233550020788" class="crave-footer__link">+233 55 002 0788</a>
+                    <a href="mailto:hello@crave.com" class="crave-footer__link">hello@crave.com</a>
+                </address>
+                <div class="crave-footer__hours">
+                    <span class="crave-footer__hours-label">Open Daily</span>
+                    <span class="crave-footer__hours-time">11:00 AM – 10:00 PM</span>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="crave-footer__social">
+                <h4 class="crave-footer__heading">Follow Us</h4>
+                <div class="crave-footer__social-links">
+                    <a href="#" class="crave-footer__social-link" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="#" class="crave-footer__social-link" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <a href="#" class="crave-footer__social-link" aria-label="X (Twitter)">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="#" class="crave-footer__social-link" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="crave-footer__cta">
+            <div class="crave-footer__cta-content">
+                <h3 class="crave-footer__cta-title">Ready for Your Next Crave?</h3>
+                <p class="crave-footer__cta-subtitle">Order now or join our VIP for exclusive offers</p>
+            </div>
+            <div class="crave-footer__cta-actions">
+                <a href="menu.html" class="crave-footer__cta-btn crave-footer__cta-btn--ghost">View Menu</a>
+                <a href="menu.html" class="crave-footer__cta-btn crave-footer__cta-btn--primary">Order Now</a>
+            </div>
+        </div>
+
+        <!-- VIP Signup -->
+        <div class="crave-footer__vip">
+            <form class="crave-footer__vip-form" onsubmit="event.preventDefault(); alert('Thanks for joining CRAVE VIP!');">
+                <input type="email" name="vip_email" placeholder="Enter your email" class="crave-footer__vip-input" aria-label="Email for VIP signup" required>
+                <button type="submit" class="crave-footer__vip-btn">Join VIP</button>
+            </form>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="crave-footer__bottom">
+            <div class="crave-footer__bottom-inner">
+                <div class="crave-footer__copyright">
+                    © <span id="craveFooterYear">2025</span> CRAVE Restaurant. All rights reserved.
+                </div>
+                <div class="crave-footer__legal">
+                    <a href="#" class="crave-footer__legal-link">Privacy Policy</a>
+                    <a href="#" class="crave-footer__legal-link">Terms of Service</a>
+                    <a href="#" class="crave-footer__legal-link">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Shared Footer JavaScript
+(function() {
+    'use strict';
+
+    // Update copyright year
+    const yearElement = document.getElementById('craveFooterYear');
+    if (yearElement) {
+        yearElement.textContent = new Date().getFullYear();
+    }
+})();
+</script>

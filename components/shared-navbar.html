@@ -1,0 +1,151 @@
+<!-- CRAVE Premium Shared Navbar -->
+<!-- Include this component on all pages -->
+<!-- Add <link rel="stylesheet" href="components/shared-navbar.css"> to head -->
+
+<header id="craveNavbar" class="crave-navbar">
+    <nav class="crave-navbar__inner">
+        <div class="crave-navbar__container">
+            <!-- Logo -->
+            <div class="crave-navbar__logo">
+                <a href="index.html" class="crave-navbar__logo-link" aria-label="CRAVE Home">
+                    <img src="images/logo.png" alt="CRAVE" class="crave-navbar__logo-img" width="160" height="44">
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <div class="crave-navbar__menu" id="craveNavbarMenu">
+                <ul class="crave-navbar__list">
+                    <li class="crave-navbar__item">
+                        <a href="index.html" class="crave-navbar__link" data-page="home">Home</a>
+                    </li>
+                    <li class="crave-navbar__item">
+                        <a href="menu.html" class="crave-navbar__link" data-page="menu">Menu</a>
+                    </li>
+                    <li class="crave-navbar__item">
+                        <a href="rewards.html" class="crave-navbar__link" data-page="rewards">Rewards</a>
+                    </li>
+                    <li class="crave-navbar__item">
+                        <a href="vip.html" class="crave-navbar__link" data-page="vip">VIP</a>
+                    </li>
+                    <li class="crave-navbar__item">
+                        <a href="contact.html" class="crave-navbar__link" data-page="contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Auth Section -->
+            <div class="crave-navbar__auth" id="craveNavbarAuth">
+                <!-- Will be populated by AuthUI -->
+                <div class="crave-navbar__auth-guest">
+                    <a href="login.html" class="crave-navbar__auth-link">Login</a>
+                    <a href="register.html" class="crave-navbar__auth-btn">Join CRAVE</a>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="crave-navbar__toggle" id="craveNavbarToggle" aria-label="Toggle menu" aria-expanded="false">
+                <span class="crave-navbar__toggle-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="crave-navbar__mobile" id="craveNavbarMobile">
+        <div class="crave-navbar__mobile-inner">
+            <ul class="crave-navbar__mobile-list">
+                <li class="crave-navbar__mobile-item">
+                    <a href="index.html" class="crave-navbar__mobile-link" data-page="home">Home</a>
+                </li>
+                <li class="crave-navbar__mobile-item">
+                    <a href="menu.html" class="crave-navbar__mobile-link" data-page="menu">Menu</a>
+                </li>
+                <li class="crave-navbar__mobile-item">
+                    <a href="rewards.html" class="crave-navbar__mobile-link" data-page="rewards">Rewards</a>
+                </li>
+                <li class="crave-navbar__mobile-item">
+                    <a href="vip.html" class="crave-navbar__mobile-link" data-page="vip">VIP</a>
+                </li>
+                <li class="crave-navbar__mobile-item">
+                    <a href="contact.html" class="crave-navbar__mobile-link" data-page="contact">Contact</a>
+                </li>
+            </ul>
+            <div class="crave-navbar__mobile-auth" id="craveNavbarMobileAuth">
+                <!-- Will be populated by AuthUI -->
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+// Shared Navbar JavaScript
+(function() {
+    'use strict';
+
+    const navbar = document.getElementById('craveNavbar');
+    const navbarToggle = document.getElementById('craveNavbarToggle');
+    const navbarMobile = document.getElementById('craveNavbarMobile');
+
+    // Toggle mobile menu
+    if (navbarToggle && navbarMobile) {
+        navbarToggle.addEventListener('click', function() {
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
+            navbarMobile.classList.toggle('crave-navbar__mobile--active');
+            document.body.classList.toggle('crave-navbar__mobile-open');
+        });
+
+        // Close mobile menu when clicking a link
+        const mobileLinks = navbarMobile.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navbarToggle.setAttribute('aria-expanded', 'false');
+                navbarMobile.classList.remove('crave-navbar__mobile--active');
+                document.body.classList.remove('crave-navbar__mobile-open');
+            });
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && navbarMobile.classList.contains('crave-navbar__mobile--active')) {
+                navbarToggle.setAttribute('aria-expanded', 'false');
+                navbarMobile.classList.remove('crave-navbar__mobile--active');
+                document.body.classList.remove('crave-navbar__mobile-open');
+            }
+        });
+    }
+
+    // Highlight active page
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const pageName = currentPage.replace('.html', '') || 'home';
+    
+    const navLinks = document.querySelectorAll('[data-page]');
+    navLinks.forEach(link => {
+        const linkPage = link.getAttribute('data-page');
+        if (linkPage === pageName) {
+            link.classList.add('crave-navbar__link--active');
+            link.classList.add('crave-navbar__mobile-link--active');
+        }
+    });
+
+    // Sticky navbar effect
+    if (navbar) {
+        let lastScroll = 0;
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 50) {
+                navbar.classList.add('crave-navbar--scrolled');
+            } else {
+                navbar.classList.remove('crave-navbar--scrolled');
+            }
+            
+            lastScroll = currentScroll;
+        });
+    }
+})();
+</script>

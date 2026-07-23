@@ -1,0 +1,550 @@
+/**
+ * CRAVE Premium Shared Footer CSS
+ * Consistent footer design across all pages
+ * Modern, premium restaurant footer
+ */
+
+/* ============================================
+   ROOT VARIABLES
+   ============================================ */
+:root {
+    --crave-gold: #d4a373;
+    --crave-gold-light: #e8c49a;
+    --crave-gold-dark: #c49a6c;
+    --crave-black: #0a0a0a;
+    --crave-dark: #111111;
+    --crave-darker: #080808;
+    --crave-white: #ffffff;
+    --crave-gray: #888888;
+    --crave-gray-light: #aaaaaa;
+    --crave-glass-bg: rgba(10, 10, 10, 0.95);
+    --crave-glass-border: rgba(212, 163, 115, 0.15);
+    --crave-shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --crave-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --crave-transition-smooth: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============================================
+   FOOTER BASE
+   ============================================ */
+.crave-footer {
+    background: var(--crave-darker);
+    border-top: 1px solid var(--crave-glass-border);
+    margin-top: auto;
+    position: relative;
+}
+
+.crave-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--crave-gold), transparent);
+    opacity: 0.5;
+}
+
+/* ============================================
+   FOOTER INNER
+   ============================================ */
+.crave-footer__inner {
+    padding: 80px 0 0 0;
+}
+
+.crave-footer__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+
+/* ============================================
+   FOOTER BRAND
+   ============================================ */
+.crave-footer__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.crave-footer__logo {
+    height: 44px;
+    width: auto;
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(212, 163, 115, 0.3));
+}
+
+.crave-footer__tagline {
+    color: var(--crave-gold);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.crave-footer__description {
+    color: var(--crave-gray-light);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ============================================
+   FOOTER NAVIGATION
+   ============================================ */
+.crave-footer__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.crave-footer__heading {
+    color: var(--crave-white);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.crave-footer__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.crave-footer__link {
+    color: var(--crave-gray-light);
+    text-decoration: none;
+    font-size: 14px;
+    transition: var(--crave-transition);
+    display: inline-block;
+}
+
+.crave-footer__link:hover {
+    color: var(--crave-gold);
+    transform: translateX(4px);
+}
+
+/* ============================================
+   FOOTER CONTACT
+   ============================================ */
+.crave-footer__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.crave-footer__address {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-style: normal;
+}
+
+.crave-footer__address-line {
+    color: var(--crave-gray-light);
+    font-size: 14px;
+}
+
+.crave-footer__address .crave-footer__link {
+    color: var(--crave-white);
+    font-weight: 500;
+}
+
+.crave-footer__address .crave-footer__link:hover {
+    color: var(--crave-gold);
+}
+
+.crave-footer__hours {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.crave-footer__hours-label {
+    color: var(--crave-gray);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.crave-footer__hours-time {
+    color: var(--crave-white);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ============================================
+   FOOTER SOCIAL
+   ============================================ */
+.crave-footer__social {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.crave-footer__social-links {
+    display: flex;
+    gap: 12px;
+}
+
+.crave-footer__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: rgba(212, 163, 115, 0.1);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    border-radius: 12px;
+    color: var(--crave-gold);
+    font-size: 18px;
+    transition: var(--crave-transition);
+    text-decoration: none;
+}
+
+.crave-footer__social-link:hover {
+    background: var(--crave-gold);
+    border-color: var(--crave-gold);
+    color: var(--crave-black);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(212, 163, 115, 0.3);
+}
+
+/* ============================================
+   FOOTER CTA
+   ============================================ */
+.crave-footer__cta {
+    max-width: 1400px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+}
+
+.crave-footer__cta-content {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.crave-footer__cta-title {
+    color: var(--crave-white);
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    letter-spacing: 0.5px;
+}
+
+.crave-footer__cta-subtitle {
+    color: var(--crave-gray-light);
+    font-size: 16px;
+    margin: 0;
+}
+
+.crave-footer__cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.crave-footer__cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: var(--crave-transition-smooth);
+}
+
+.crave-footer__cta-btn--ghost {
+    background: transparent;
+    color: var(--crave-white);
+    border: 2px solid rgba(212, 163, 115, 0.3);
+}
+
+.crave-footer__cta-btn--ghost:hover {
+    background: rgba(212, 163, 115, 0.1);
+    border-color: var(--crave-gold);
+    color: var(--crave-gold);
+}
+
+.crave-footer__cta-btn--primary {
+    background: linear-gradient(135deg, var(--crave-gold), var(--crave-gold-dark));
+    color: var(--crave-black);
+    border: 2px solid var(--crave-gold);
+    box-shadow: 0 4px 16px rgba(212, 163, 115, 0.3);
+}
+
+.crave-footer__cta-btn--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(212, 163, 115, 0.4);
+    background: linear-gradient(135deg, var(--crave-gold-light), var(--crave-gold));
+}
+
+/* ============================================
+   FOOTER VIP
+   ============================================ */
+.crave-footer__vip {
+    max-width: 1400px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+}
+
+.crave-footer__vip-form {
+    display: flex;
+    gap: 12px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.crave-footer__vip-input {
+    flex: 1;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    border-radius: 50px;
+    color: var(--crave-white);
+    font-size: 14px;
+    transition: var(--crave-transition);
+}
+
+.crave-footer__vip-input::placeholder {
+    color: var(--crave-gray);
+}
+
+.crave-footer__vip-input:focus {
+    outline: none;
+    border-color: var(--crave-gold);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.1);
+}
+
+.crave-footer__vip-btn {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--crave-gold), var(--crave-gold-dark));
+    color: var(--crave-black);
+    border: none;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--crave-transition-smooth);
+    box-shadow: 0 4px 16px rgba(212, 163, 115, 0.3);
+}
+
+.crave-footer__vip-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(212, 163, 115, 0.4);
+    background: linear-gradient(135deg, var(--crave-gold-light), var(--crave-gold));
+}
+
+/* ============================================
+   FOOTER BOTTOM
+   ============================================ */
+.crave-footer__bottom {
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(212, 163, 115, 0.1);
+    padding: 24px 0;
+}
+
+.crave-footer__bottom-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+}
+
+.crave-footer__copyright {
+    color: var(--crave-gray);
+    font-size: 13px;
+}
+
+.crave-footer__legal {
+    display: flex;
+    gap: 24px;
+}
+
+.crave-footer__legal-link {
+    color: var(--crave-gray);
+    font-size: 13px;
+    text-decoration: none;
+    transition: var(--crave-transition);
+}
+
+.crave-footer__legal-link:hover {
+    color: var(--crave-gold);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .crave-footer__container {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        padding: 0 20px;
+    }
+
+    .crave-footer__cta-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .crave-footer__cta-btn {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .crave-footer__bottom-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .crave-footer__inner {
+        padding: 60px 0 0 0;
+    }
+
+    .crave-footer__container {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 0 16px;
+        margin-bottom: 32px;
+    }
+
+    .crave-footer__cta {
+        padding: 0 16px;
+        margin-bottom: 32px;
+    }
+
+    .crave-footer__cta-title {
+        font-size: 24px;
+    }
+
+    .crave-footer__cta-subtitle {
+        font-size: 14px;
+    }
+
+    .crave-footer__vip {
+        padding: 0 16px;
+        margin-bottom: 32px;
+    }
+
+    .crave-footer__vip-form {
+        flex-direction: column;
+    }
+
+    .crave-footer__vip-input,
+    .crave-footer__vip-btn {
+        width: 100%;
+    }
+
+    .crave-footer__bottom {
+        padding: 20px 0;
+    }
+
+    .crave-footer__bottom-inner {
+        padding: 0 16px;
+    }
+
+    .crave-footer__legal {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .crave-footer__inner {
+        padding: 48px 0 0 0;
+    }
+
+    .crave-footer__container {
+        gap: 24px;
+        padding: 0 12px;
+    }
+
+    .crave-footer__cta-title {
+        font-size: 20px;
+    }
+
+    .crave-footer__cta-subtitle {
+        font-size: 13px;
+    }
+
+    .crave-footer__bottom-inner {
+        padding: 0 12px;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Focus styles */
+.crave-footer__link:focus,
+.crave-footer__social-link:focus,
+.crave-footer__cta-btn:focus,
+.crave-footer__vip-input:focus,
+.crave-footer__vip-btn:focus,
+.crave-footer__legal-link:focus {
+    outline: 2px solid var(--crave-gold);
+    outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .crave-footer__link,
+    .crave-footer__social-link,
+    .crave-footer__cta-btn,
+    .crave-footer__vip-input,
+    .crave-footer__vip-btn,
+    .crave-footer__legal-link {
+        transition: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .crave-footer {
+        background: var(--crave-black);
+        border-top: 2px solid var(--crave-gold);
+    }
+
+    .crave-footer__link:hover,
+    .crave-footer__social-link:hover {
+        background: var(--crave-gold);
+        color: var(--crave-black);
+    }
+
+    .crave-footer__cta-btn--primary {
+        background: var(--crave-gold);
+        border: 2px solid var(--crave-gold);
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+    .crave-footer {
+        display: none;
+    }
+}

@@ -1,0 +1,652 @@
+/**
+ * CRAVE Premium Shared Navbar CSS
+ * Glassmorphism design with gold accents
+ * Modern, premium restaurant navigation
+ */
+
+/* ============================================
+   ROOT VARIABLES
+   ============================================ */
+:root {
+    --crave-gold: #d4a373;
+    --crave-gold-light: #e8c49a;
+    --crave-gold-dark: #c49a6c;
+    --crave-black: #0a0a0a;
+    --crave-dark: #111111;
+    --crave-darker: #080808;
+    --crave-white: #ffffff;
+    --crave-gray: #888888;
+    --crave-gray-light: #aaaaaa;
+    --crave-glass-bg: rgba(10, 10, 10, 0.85);
+    --crave-glass-border: rgba(212, 163, 115, 0.15);
+    --crave-shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --crave-shadow-gold: 0 8px 32px rgba(212, 163, 115, 0.15);
+    --crave-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --crave-transition-smooth: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============================================
+   NAVBAR BASE
+   ============================================ */
+.crave-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--crave-glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--crave-glass-border);
+    box-shadow: var(--crave-shadow-soft);
+    transition: var(--crave-transition);
+}
+
+.crave-navbar--scrolled {
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-bottom: 1px solid rgba(212, 163, 115, 0.25);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================
+   NAVBAR INNER
+   ============================================ */
+.crave-navbar__inner {
+    width: 100%;
+    height: 80px;
+}
+
+.crave-navbar__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+/* ============================================
+   LOGO
+   ============================================ */
+.crave-navbar__logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: var(--crave-transition);
+}
+
+.crave-navbar__logo-link:hover {
+    transform: scale(1.02);
+}
+
+.crave-navbar__logo-img {
+    height: 44px;
+    width: auto;
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(212, 163, 115, 0.3));
+    transition: var(--crave-transition);
+}
+
+.crave-navbar__logo-link:hover .crave-navbar__logo-img {
+    filter: drop-shadow(0 6px 16px rgba(212, 163, 115, 0.5));
+}
+
+/* ============================================
+   DESKTOP MENU
+   ============================================ */
+.crave-navbar__menu {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.crave-navbar__list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 8px;
+}
+
+.crave-navbar__item {
+    margin: 0;
+}
+
+.crave-navbar__link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--crave-white);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border-radius: 12px;
+    transition: var(--crave-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.crave-navbar__link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(212, 163, 115, 0.1), rgba(212, 163, 115, 0.05));
+    opacity: 0;
+    transition: var(--crave-transition);
+    border-radius: 12px;
+}
+
+.crave-navbar__link:hover {
+    color: var(--crave-gold);
+    background: rgba(212, 163, 115, 0.08);
+}
+
+.crave-navbar__link:hover::before {
+    opacity: 1;
+}
+
+.crave-navbar__link--active {
+    color: var(--crave-gold);
+    background: rgba(212, 163, 115, 0.12);
+    font-weight: 600;
+}
+
+.crave-navbar__link--active::before {
+    opacity: 1;
+    background: linear-gradient(135deg, rgba(212, 163, 115, 0.15), rgba(212, 163, 115, 0.08));
+}
+
+/* ============================================
+   AUTH SECTION
+   ============================================ */
+.crave-navbar__auth {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.crave-navbar__auth-guest {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.crave-navbar__auth-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--crave-white);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border-radius: 12px;
+    transition: var(--crave-transition);
+}
+
+.crave-navbar__auth-link:hover {
+    color: var(--crave-gold);
+    background: rgba(212, 163, 115, 0.08);
+}
+
+.crave-navbar__auth-btn {
+    display: flex;
+    align-items: center;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--crave-gold), var(--crave-gold-dark));
+    color: var(--crave-black);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 50px;
+    box-shadow: 0 4px 16px rgba(212, 163, 115, 0.3);
+    transition: var(--crave-transition-smooth);
+    border: 1px solid rgba(212, 163, 115, 0.3);
+}
+
+.crave-navbar__auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(212, 163, 115, 0.4);
+    background: linear-gradient(135deg, var(--crave-gold-light), var(--crave-gold));
+}
+
+.crave-navbar__auth-btn:active {
+    transform: translateY(0);
+}
+
+/* Authenticated User Dropdown */
+.crave-navbar__user {
+    position: relative;
+}
+
+.crave-navbar__user-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: rgba(212, 163, 115, 0.1);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--crave-transition);
+    text-decoration: none;
+}
+
+.crave-navbar__user-trigger:hover {
+    background: rgba(212, 163, 115, 0.15);
+    border-color: rgba(212, 163, 115, 0.3);
+}
+
+.crave-navbar__user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--crave-gold), var(--crave-gold-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--crave-black);
+}
+
+.crave-navbar__user-name {
+    color: var(--crave-white);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.crave-navbar__user-chevron {
+    color: var(--crave-gold);
+    font-size: 12px;
+    transition: var(--crave-transition);
+}
+
+.crave-navbar__user-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 220px;
+    background: rgba(20, 20, 20, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: var(--crave-transition-smooth);
+    z-index: 1001;
+}
+
+.crave-navbar__user-dropdown--active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.crave-navbar__user-dropdown-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+}
+
+.crave-navbar__user-dropdown-item {
+    margin: 0;
+}
+
+.crave-navbar__user-dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--crave-white);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: var(--crave-transition);
+}
+
+.crave-navbar__user-dropdown-link:hover {
+    background: rgba(212, 163, 115, 0.1);
+    color: var(--crave-gold);
+}
+
+.crave-navbar__user-dropdown-link i {
+    width: 18px;
+    text-align: center;
+    color: var(--crave-gold);
+}
+
+.crave-navbar__user-dropdown-divider {
+    height: 1px;
+    background: rgba(212, 163, 115, 0.15);
+    margin: 8px 0;
+}
+
+.crave-navbar__user-dropdown-link--logout {
+    color: #ff6b6b;
+}
+
+.crave-navbar__user-dropdown-link--logout:hover {
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+}
+
+.crave-navbar__user-dropdown-link--logout i {
+    color: #ff6b6b;
+}
+
+/* ============================================
+   MOBILE MENU TOGGLE
+   ============================================ */
+.crave-navbar__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(212, 163, 115, 0.1);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: var(--crave-transition);
+    padding: 0;
+}
+
+.crave-navbar__toggle:hover {
+    background: rgba(212, 163, 115, 0.15);
+    border-color: rgba(212, 163, 115, 0.3);
+}
+
+.crave-navbar__toggle-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 20px;
+}
+
+.crave-navbar__toggle-icon span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--crave-gold);
+    border-radius: 2px;
+    transition: var(--crave-transition-smooth);
+}
+
+.crave-navbar__toggle[aria-expanded="true"] .crave-navbar__toggle-icon span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.crave-navbar__toggle[aria-expanded="true"] .crave-navbar__toggle-icon span:nth-child(2) {
+    opacity: 0;
+}
+
+.crave-navbar__toggle[aria-expanded="true"] .crave-navbar__toggle-icon span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ============================================
+   MOBILE MENU
+   ============================================ */
+.crave-navbar__mobile {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 10, 0.98);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--crave-transition-smooth);
+    z-index: 999;
+    overflow-y: auto;
+}
+
+.crave-navbar__mobile--active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.crave-navbar__mobile-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+
+.crave-navbar__mobile-list {
+    list-style: none;
+    margin: 0 0 32px 0;
+    padding: 0;
+}
+
+.crave-navbar__mobile-item {
+    margin: 0 0 4px 0;
+}
+
+.crave-navbar__mobile-link {
+    display: block;
+    padding: 16px 20px;
+    color: var(--crave-white);
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: 12px;
+    transition: var(--crave-transition);
+}
+
+.crave-navbar__mobile-link:hover {
+    color: var(--crave-gold);
+    background: rgba(212, 163, 115, 0.08);
+}
+
+.crave-navbar__mobile-link--active {
+    color: var(--crave-gold);
+    background: rgba(212, 163, 115, 0.12);
+    font-weight: 600;
+}
+
+.crave-navbar__mobile-auth {
+    padding-top: 24px;
+    border-top: 1px solid rgba(212, 163, 115, 0.15);
+}
+
+.crave-navbar__mobile-auth .crave-navbar__auth-guest {
+    flex-direction: column;
+    width: 100%;
+}
+
+.crave-navbar__mobile-auth .crave-navbar__auth-link,
+.crave-navbar__mobile-auth .crave-navbar__auth-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Body scroll lock when mobile menu is open */
+body.crave-navbar__mobile-open {
+    overflow: hidden;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .crave-navbar__container {
+        padding: 0 20px;
+        gap: 24px;
+    }
+
+    .crave-navbar__list {
+        gap: 4px;
+    }
+
+    .crave-navbar__link {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+
+    .crave-navbar__auth-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .crave-navbar__inner {
+        height: 70px;
+    }
+
+    .crave-navbar__container {
+        padding: 0 16px;
+    }
+
+    .crave-navbar__menu {
+        display: none;
+    }
+
+    .crave-navbar__toggle {
+        display: flex;
+    }
+
+    .crave-navbar__mobile {
+        top: 70px;
+    }
+
+    .crave-navbar__mobile-inner {
+        padding: 32px 16px;
+    }
+
+    .crave-navbar__mobile-link {
+        font-size: 16px;
+        padding: 14px 16px;
+    }
+
+    .crave-navbar__auth-guest {
+        display: none;
+    }
+
+    .crave-navbar__auth .crave-navbar__user {
+        display: none;
+    }
+
+    .crave-navbar__mobile-auth .crave-navbar__auth-guest {
+        display: flex;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .crave-navbar__inner {
+        height: 64px;
+    }
+
+    .crave-navbar__container {
+        padding: 0 12px;
+        gap: 12px;
+    }
+
+    .crave-navbar__logo-img {
+        height: 36px;
+    }
+
+    .crave-navbar__toggle {
+        width: 44px;
+        height: 44px;
+    }
+
+    .crave-navbar__mobile {
+        top: 64px;
+    }
+
+    .crave-navbar__mobile-inner {
+        padding: 24px 12px;
+    }
+
+    .crave-navbar__mobile-link {
+        font-size: 15px;
+        padding: 12px 14px;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Focus styles */
+.crave-navbar__link:focus,
+.crave-navbar__auth-link:focus,
+.crave-navbar__auth-btn:focus,
+.crave-navbar__toggle:focus,
+.crave-navbar__user-trigger:focus,
+.crave-navbar__user-dropdown-link:focus {
+    outline: 2px solid var(--crave-gold);
+    outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .crave-navbar,
+    .crave-navbar__link,
+    .crave-navbar__auth-link,
+    .crave-navbar__auth-btn,
+    .crave-navbar__toggle,
+    .crave-navbar__user-trigger,
+    .crave-navbar__user-dropdown,
+    .crave-navbar__user-dropdown-link,
+    .crave-navbar__mobile,
+    .crave-navbar__mobile-link {
+        transition: none;
+    }
+
+    .crave-navbar__toggle-icon span {
+        transition: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .crave-navbar {
+        background: var(--crave-black);
+        border-bottom: 2px solid var(--crave-gold);
+    }
+
+    .crave-navbar__link:hover,
+    .crave-navbar__link--active {
+        background: var(--crave-gold);
+        color: var(--crave-black);
+    }
+
+    .crave-navbar__auth-btn {
+        background: var(--crave-gold);
+        border: 2px solid var(--crave-gold);
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+    .crave-navbar {
+        display: none;
+    }
+}
