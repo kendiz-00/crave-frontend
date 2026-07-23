@@ -1239,9 +1239,13 @@
 
         function loadRewardsData() {
             // Load from existing rewards system
-            const points = localStorage.getItem('crave_points') || '0';
-            const tier = localStorage.getItem('crave_tier') || 'bronze';
-            const achievements = localStorage.getItem('crave_achievements') || '[]';
+            const user = AuthManager.getUserData();
+            const userId = user ? user.id : null;
+            
+            // Try user-specific keys first, fall back to generic keys
+            const points = localStorage.getItem(userId ? `crave_points_${userId}` : 'crave_points') || localStorage.getItem('crave_points') || '0';
+            const tier = localStorage.getItem(userId ? `crave_tier_${userId}` : 'crave_tier') || localStorage.getItem('crave_tier') || 'bronze';
+            const achievements = localStorage.getItem(userId ? `crave_achievements_${userId}` : 'crave_achievements') || localStorage.getItem('crave_achievements') || '[]';
 
             document.getElementById('statPoints').textContent = points;
             document.getElementById('rewardPoints').textContent = points;
@@ -1249,7 +1253,7 @@
             document.getElementById('rewardAchievements').textContent = JSON.parse(achievements).length;
 
             // Update VIP status
-            const vipStatus = localStorage.getItem('crave_vip_status');
+            const vipStatus = localStorage.getItem(userId ? `crave_vip_status_${userId}` : 'crave_vip_status') || localStorage.getItem('crave_vip_status');
             if (vipStatus === 'true') {
                 document.getElementById('vipStatusTitle').textContent = 'VIP Member';
                 document.getElementById('vipStatusSubtitle').textContent = 'Enjoy exclusive VIP benefits';

@@ -1195,32 +1195,32 @@ function initMenuCards() {
     'most-popular': [
       { img: 'images/meat.jpeg', alt: 'Grilled Chicken Salad', title: 'Grilled Chicken Salad', desc: 'Grilled chicken breast over mixed greens with balsamic vinaigrette', price: '$15.99', badge: '🔥 Popular' },
       { img: 'images/smoothies.jpeg', alt: 'Fresh Smoothie', title: 'Fresh Smoothie', desc: 'Blend of seasonal fruits with yogurt and honey', price: '$6.99', badge: 'Best Seller' },
-      { img: 'images/coffee.jpeg', alt: 'Artisan Coffee', title: 'Artisan Coffee', desc: 'Single-origin coffee beans roasted in-house', price: '$4.99', badge: 'Popular' }
+      { img: 'images/chick.jpeg', alt: 'Artisan Coffee', title: 'Artisan Coffee', desc: 'Single-origin coffee beans roasted in-house', price: '$4.99', badge: 'Popular' }
     ],
     'loaded-fries': [
       { img: 'images/tx-chick.jpeg', alt: 'Avocado Toast', title: 'Avocado Toast', desc: 'Fresh avocado on artisanal bread with poached eggs and cherry tomatoes', price: '$12.99', badge: '🔥 Popular' },
-      { img: 'images/pancakes.jpeg', alt: 'Fluffy Pancakes', title: 'Fluffy Pancakes', desc: 'Light and fluffy pancakes served with maple syrup and fresh berries', price: '$9.99' }
+      { img: 'images/waffles.jpg', alt: 'Fluffy Pancakes', title: 'Fluffy Pancakes', desc: 'Light and fluffy pancakes served with maple syrup and fresh berries', price: '$9.99' }
     ],
     'texas-chicken': [
       { img: 'images/meat.jpeg', alt: 'Grilled Chicken Salad', title: 'Grilled Chicken Salad', desc: 'Grilled chicken breast over mixed greens with balsamic vinaigrette', price: '$15.99', badge: '🔥 Popular' },
       { img: 'images/wrap-01.jpeg', alt: 'Turkey Club Wrap', title: 'Turkey Club Wrap', desc: 'Sliced turkey, bacon, lettuce, and tomato in a whole wheat wrap', price: '$11.99' }
     ],
     'smoothies': [
-      { img: 'images/steak.jpeg', alt: 'Grilled Ribeye Steak', title: 'Grilled Ribeye Steak', desc: '8oz ribeye steak grilled to perfection with garlic mashed potatoes', price: '$28.99', badge: '🔥 Popular' },
-      { img: 'images/pasta.jpeg', alt: 'Truffle Pasta', title: 'Truffle Pasta', desc: 'House-made pasta with black truffle oil, parmesan, and fresh herbs', price: '$22.99' }
+      { img: 'images/oxtail.jpeg', alt: 'Grilled Ribeye Steak', title: 'Grilled Ribeye Steak', desc: '8oz ribeye steak grilled to perfection with garlic mashed potatoes', price: '$28.99', badge: '🔥 Popular' },
+      { img: 'images/inside.jpeg', alt: 'Truffle Pasta', title: 'Truffle Pasta', desc: 'House-made pasta with black truffle oil, parmesan, and fresh herbs', price: '$22.99' }
     ],
     'milkshakes': [
       { img: 'images/smoothies.jpeg', alt: 'Fresh Smoothie', title: 'Fresh Smoothie', desc: 'Blend of seasonal fruits with yogurt and honey', price: '$6.99' },
-      { img: 'images/coffee.jpeg', alt: 'Artisan Coffee', title: 'Artisan Coffee', desc: 'Single-origin coffee beans roasted in-house', price: '$4.99', badge: 'Popular' }
+      { img: 'images/chick.jpeg', alt: 'Artisan Coffee', title: 'Artisan Coffee', desc: 'Single-origin coffee beans roasted in-house', price: '$4.99', badge: 'Popular' }
     ],
     'jamaican-kitchen': [
-      { img: 'images/meat.jpeg', alt: 'Jerk Chicken', title: 'Jerk Chicken', desc: 'Spicy marinated chicken with traditional Jamaican spices', price: '$16.99', badge: '🔥 Popular' }
+      { img: 'images/jamaican.jpeg', alt: 'Jerk Chicken', title: 'Jerk Chicken', desc: 'Spicy marinated chicken with traditional Jamaican spices', price: '$16.99', badge: '🔥 Popular' }
     ],
     'cupcakes': [
       { img: 'images/cupcake.jpeg', alt: 'Red Velvet Cupcake', title: 'Red Velvet Cupcake', desc: 'Classic red velvet with cream cheese frosting', price: '$4.50' }
     ],
     'cake-and-shakes': [
-      { img: 'images/cupcake.jpeg', alt: 'Chocolate Cake', title: 'Chocolate Cake', desc: 'Rich chocolate cake with vanilla ice cream', price: '$7.99' }
+      { img: 'images/cake.jpg', alt: 'Chocolate Cake', title: 'Chocolate Cake', desc: 'Rich chocolate cake with vanilla ice cream', price: '$7.99' }
     ]
   };
 
@@ -1230,7 +1230,7 @@ function initMenuCards() {
       <div class="menu-item" data-category="${item.category || 'popular'}">
         <div class="menu-card">
           <div class="menu-image">
-            <img src="${item.img}" alt="${item.alt}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+            <img src="${item.img}" alt="${item.alt}" loading="lazy" onerror="this.src='images/logo.png'">
             ${badgeHtml}
           </div>
           <div class="menu-content">
@@ -1331,23 +1331,6 @@ function buildWhatsAppCartMessage() {
  * INIT MENU CART - REMOVED
  * Cart logic is now handled in menu.html with array-based structure
  */
-
-/**
- * Initialize WhatsApp Order Integration
- */
-function initWhatsAppOrders() {
-  document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('btn-order')) {
-      event.preventDefault();
-      const itemName = event.target.getAttribute('data-item');
-      const phoneNumber = '233550020788';
-      const message = `Hi Crave, I'd like to order ${itemName}`;
-      const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-      window.open(whatsappUrl, '_blank');
-    }
-  });
-}
 
 /**
  * Initialize Mobile Sticky Order Bar

@@ -1347,7 +1347,7 @@
                 img.removeEventListener('load', onImgLoad);
             });
             img.addEventListener('error', function onImgErr() {
-                img.src = 'images/placeholder.jpg';
+                img.src = 'images/logo.png';
                 wrap.classList.add('is-loaded');
                 img.removeEventListener('error', onImgErr);
             });

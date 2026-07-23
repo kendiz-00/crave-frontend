@@ -116,21 +116,21 @@
                     <ul class="m-b-70">
                         <li class="txt14 m-b-14">
                             <i class="fa-solid fa-location-dot fs-16 dis-inline-block size19"></i>
-                            8th floor, 379 Hudson St, New York, NY 10018
+                            Accra, Ghana
                         </li>
                         <li class="txt14 m-b-14">
                             <i class="fa-solid fa-phone fs-16 dis-inline-block size19"></i>
-                            <a href="tel:+19671668879">(+1) 96 716 6879</a>
+                            <a href="tel:+233550020788">+233 55 002 0788</a>
                         </li>
                         <li class="txt14 m-b-14">
                             <i class="fa-solid fa-envelope fs-13 dis-inline-block size19"></i>
-                            <a href="mailto:contact@crave-restaurant.com">contact@crave-restaurant.com</a>
+                            <a href="mailto:hello@crave.com">hello@crave.com</a>
                         </li>
                     </ul>
 
                     <h4 class="txt13 m-b-32">Opening Times</h4>
                     <ul>
-                        <li class="txt14">11:00 AM " 10:00 PM</li>
+                        <li class="txt14">11:00 AM - 10:00 PM</li>
                         <li class="txt14">Every Day</li>
                     </ul>
                 </div>
@@ -331,7 +331,7 @@
                     <div class="bolt-food-price">$${item.price.toFixed(2)}</div>
                 </div>
                 <div class="bolt-food-right">
-                    <img src="images/${getFoodImage(item.name)}" alt="${item.name}" class="bolt-food-image" onerror="this.src='images/placeholder.jpg'">
+                    <img src="images/${getFoodImage(item.name)}" alt="${item.name}" class="bolt-food-image" onerror="this.src='images/logo.png'">
                     <button class="bolt-food-add-btn" onclick="addToCart('${item.name}', ${item.price})">+</button>
                 </div>
             `;
@@ -339,75 +339,10 @@
             return div;
         }
 
-        <!-- Premium Footer (copied from homepage) -->
-        <footer class="premium-footer crave-reveal" role="contentinfo">
-            <div class="premium-footer__inner container-fluid px-3 p-t-48 p-b-56">
-                <div class="premium-footer__grid row gx-4 gy-4 align-items-start">
-                    <div class="col-12 col-md-4">
-                        <div class="footer-brand">
-                            <img src="images/logo.png" alt="Crave" class="footer-brand__logo" width="160" height="44">
-                            <p class="footer-brand__tag">Crave — Elevating everyday comfort into curated experiences.</p>
-                            <p class="footer-brand__sub">Hospitality, elevated — open doors, warm service.</p>
-                        </div>
-                    </div>
-
-                    <div class="col-6 col-md-4">
-                        <nav class="footer-nav" aria-label="Footer Navigation">
-                            <h4 class="footer-heading">Explore</h4>
-                            <ul class="footer-links">
-                                <li><a href="menu.html">Menu</a></li>
-                                <li><a href="reservation.html">Reservations</a></li>
-                                <li><a href="about.html">About</a></li>
-                                <li><a href="contact.html">Contact</a></li>
-                                <li><a href="delivery.html">Delivery Info</a></li>
-                            </ul>
-                        </nav>
-                    </div>
-
-                    <div class="col-6 col-md-4">
-                        <div class="footer-contact">
-                            <h4 class="footer-heading">Contact</h4>
-                            <address class="footer-address">
-                                <div class="footer-address__line">8th floor, 379 Hudson St, New York, NY</div>
-                                <a href="tel:+19671668879" class="footer-link">(+1) 96 716 6879</a>
-                                <a href="mailto:contact@crave-restaurant.com" class="footer-link">contact@crave-restaurant.com</a>
-                            </address>
-                            <div class="footer-hours">Open: <span>11:00 AM – 10:00 PM</span></div>
-                            <div class="footer-social">
-                                <a class="social-btn" href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                                <a class="social-btn" href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                                <a class="social-btn" href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="premium-footer__cta mt-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
-                    <div class="cta-copy">
-                        <h3 class="cta-title">Ready for another Crave experience?</h3>
-                        <p class="cta-sub">Order now or join our VIP list for exclusive offers.</p>
-                    </div>
-                    <div class="cta-actions d-flex gap-2 align-items-center">
-                        <a href="menu.html" class="btn btn-premium-ghost">View Menu</a>
-                        <a href="menu.html" class="btn btn-premium">Order Now</a>
-                        <form class="vip-form" action="#" onsubmit="event.preventDefault(); alert('Thanks — VIP registered (demo)');">
-                            <input type="email" name="vip_email" placeholder="Join VIP — email" aria-label="VIP email" required>
-                            <button class="vip-cta" type="submit">Join VIP</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="premium-footer__bottom">
-                <div class="container-fluid px-3">
-                    <div class="premium-footer__bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 p-3">
-                        <div class="footer-copyright">© <span id="copyright-year">2025</span> Crave Restaurant. All rights reserved.</div>
-                        <div class="footer-powered">Powered by Crave • Crafted with care</div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-            
+        function showAddToCartFeedback(itemName) {
+            const feedback = document.createElement('div');
+            feedback.className = 'add-to-cart-feedback';
+            feedback.innerHTML = `<i class="fas fa-check"></i> ${itemName} added to cart`;
             document.body.appendChild(feedback);
             
             setTimeout(() => {
