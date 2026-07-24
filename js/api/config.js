@@ -3,8 +3,20 @@
  * Centralized API configuration for the frontend
  */
 
-// Get API base URL from environment variable or use default
-const API_BASE_URL = window.ENV?.API_BASE_URL || 'http://localhost:4000';
+const getFallbackApiUrl = () => {
+    if (typeof window !== 'undefined' && window.location) {
+        const host = window.location.hostname;
+        if (host !== 'localhost' && host !== '127.0.0.1') {
+            return 'https://crave-backend-staging.onrender.com';
+        }
+    }
+    return 'http://localhost:4000';
+};
+
+// Get API base URL from environment variable or use dynamic default
+const API_BASE_URL = (typeof window !== 'undefined' && window.ENV?.API_BASE_URL) 
+    ? window.ENV.API_BASE_URL 
+    : getFallbackApiUrl();
 
 const APIConfig = {
     // Base URL - from environment variable

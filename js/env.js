@@ -4,12 +4,23 @@
  */
 
 (function() {
-    // Default environment variables for development
+    const isLocalhost = typeof window !== 'undefined' && 
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+    const defaultApiUrl = isLocalhost 
+        ? 'http://localhost:4000' 
+        : 'https://crave-backend-staging.onrender.com';
+
+    const defaultAppUrl = isLocalhost 
+        ? 'http://localhost:3000' 
+        : (typeof window !== 'undefined' ? window.location.origin : 'https://crave-frontend.vercel.app');
+
+    // Default environment variables
     const defaultEnv = {
-        APP_ENV: 'development',
-        API_BASE_URL: 'http://localhost:4000',
+        APP_ENV: isLocalhost ? 'development' : 'production',
+        API_BASE_URL: defaultApiUrl,
         PAYSTACK_PUBLIC_KEY: 'pk_test_placeholder',
-        APP_URL: 'http://localhost:3000'
+        APP_URL: defaultAppUrl
     };
 
     // Try to load from window.ENV (injected by build process or server)
@@ -30,3 +41,4 @@
         });
     }
 })();
+

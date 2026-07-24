@@ -3,8 +3,12 @@
  * Reusable fetch wrapper with error handling, loading states, and caching
  */
 
+const defaultBaseUrl = (typeof window !== 'undefined' && window.location && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+    ? 'https://crave-backend-staging.onrender.com'
+    : 'http://localhost:4000';
+
 const APIConfig = typeof APIConfig !== 'undefined' ? APIConfig : {
-    baseURL: 'http://localhost:4000',
+    baseURL: (typeof window !== 'undefined' && window.ENV?.API_BASE_URL) ? window.ENV.API_BASE_URL : defaultBaseUrl,
     timeout: 10000,
     cacheDuration: 5 * 60 * 1000,
     retry: {
@@ -13,6 +17,7 @@ const APIConfig = typeof APIConfig !== 'undefined' ? APIConfig : {
         backoffMultiplier: 2
     }
 };
+
 
 const APIClient = (function() {
     'use strict';

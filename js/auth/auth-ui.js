@@ -16,70 +16,81 @@ const AuthUI = (function() {
      * Update navbar based on authentication state
      */
     function updateNavbar() {
-        const isAuthenticated = AuthManager.isAuthenticated();
-        const user = AuthManager.getUserData();
+        const isAuthenticated = AuthManager ? AuthManager.isAuthenticated() : false;
+        const user = AuthManager ? AuthManager.getUserData() : null;
 
-        // Find navbar auth section - try both class names
-        const navbarAuth = document.querySelector('.crave-navbar__auth-guest') || document.querySelector('.navbar-auth');
+        // Target the parent auth container or the guest wrapper
+        const parentAuth = document.getElementById('craveNavbarAuth') || document.querySelector('.crave-navbar__auth');
+        const navbarAuth = parentAuth || document.querySelector('.crave-navbar__auth-guest') || document.querySelector('.navbar-auth');
         if (!navbarAuth) return;
-        
+
+        // Toggle body authenticated class for mobile menu styling
+        if (isAuthenticated) {
+            document.body.classList.add('authenticated');
+        } else {
+            document.body.classList.remove('authenticated');
+        }
+
         if (isAuthenticated && user) {
-            // Logged in state
+            const initial = (user.name || 'U').charAt(0).toUpperCase();
             navbarAuth.innerHTML = `
-                <div class="navbar-user">
-                    <div class="navbar-avatar">
-                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=d4a574&color=fff&size=40" alt="${user.name || 'User'}">
-                    </div>
-                    <div class="navbar-user-info">
-                        <span class="navbar-user-name">${user.name || 'User'}</span>
-                    </div>
-                    <div class="navbar-dropdown">
-                        <button class="navbar-dropdown-toggle" aria-label="User menu">
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </button>
-                        <div class="navbar-dropdown-menu">
-                            <a href="profile.html" class="navbar-dropdown-item">
-                                <i class="fa-solid fa-user"></i>
-                                My Profile
-                            </a>
-                            <a href="profile.html#orders" class="navbar-dropdown-item">
-                                <i class="fa-solid fa-receipt"></i>
-                                My Orders
-                            </a>
-                            <a href="rewards.html" class="navbar-dropdown-item">
-                                <i class="fa-solid fa-gift"></i>
-                                Rewards
-                            </a>
-                            <a href="vip.html" class="navbar-dropdown-item">
-                                <i class="fa-solid fa-crown"></i>
-                                VIP
-                            </a>
-                            <div class="navbar-dropdown-divider"></div>
-                            <button class="navbar-dropdown-item navbar-logout-btn">
-                                <i class="fa-solid fa-sign-out-alt"></i>
-                                Logout
-                            </button>
-                        </div>
+                <div class="crave-navbar__user">
+                    <button type="button" class="crave-navbar__user-trigger" id="craveUserDropdownToggle" aria-expanded="false" aria-label="User menu">
+                        <span class="crave-navbar__user-avatar">${initial}</span>
+                        <span class="crave-navbar__user-name">${user.name || 'User'}</span>
+                        <i class="fa-solid fa-chevron-down crave-navbar__user-chevron"></i>
+                    </button>
+                    <div class="crave-navbar__user-dropdown" id="craveUserDropdown">
+                        <ul class="crave-navbar__user-dropdown-list">
+                            <li class="crave-navbar__user-dropdown-item">
+                                <a href="profile.html" class="crave-navbar__user-dropdown-link">
+                                    <i class="fa-solid fa-user"></i> My Profile
+                                </a>
+                            </li>
+                            <li class="crave-navbar__user-dropdown-item">
+                                <a href="profile.html#orders" class="crave-navbar__user-dropdown-link">
+                                    <i class="fa-solid fa-receipt"></i> My Orders
+                                </a>
+                            </li>
+                            <li class="crave-navbar__user-dropdown-item">
+                                <a href="rewards.html" class="crave-navbar__user-dropdown-link">
+                                    <i class="fa-solid fa-gift"></i> Rewards
+                                </a>
+                            </li>
+                            <li class="crave-navbar__user-dropdown-item">
+                                <a href="vip.html" class="crave-navbar__user-dropdown-link">
+                                    <i class="fa-solid fa-crown"></i> VIP
+                                </a>
+                            </li>
+                            <li class="crave-navbar__user-dropdown-divider"></li>
+                            <li class="crave-navbar__user-dropdown-item">
+                                <button type="button" class="crave-navbar__user-dropdown-link crave-navbar__user-dropdown-link--logout navbar-logout-btn">
+                                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                                </button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             `;
-            
-            // Add dropdown toggle functionality
-            const dropdownToggle = navbarAuth.querySelector('.navbar-dropdown-toggle');
-            const dropdownMenu = navbarAuth.querySelector('.navbar-dropdown-menu');
-            
+
+            const dropdownToggle = navbarAuth.querySelector('#craveUserDropdownToggle') || navbarAuth.querySelector('.crave-navbar__user-trigger');
+            const dropdownMenu = navbarAuth.querySelector('#craveUserDropdown') || navbarAuth.querySelector('.crave-navbar__user-dropdown');
+
             if (dropdownToggle && dropdownMenu) {
                 dropdownToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    const isExpanded = dropdownMenu.classList.contains('crave-navbar__user-dropdown--active');
+                    dropdownToggle.setAttribute('aria-expanded', !isExpanded);
+                    dropdownMenu.classList.toggle('crave-navbar__user-dropdown--active');
                     dropdownMenu.classList.toggle('show');
                 });
-                
-                // Close dropdown when clicking outside
+
                 document.addEventListener('click', () => {
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
+                    dropdownMenu.classList.remove('crave-navbar__user-dropdown--active');
                     dropdownMenu.classList.remove('show');
                 });
-                
-                // Logout button
+
                 const logoutBtn = navbarAuth.querySelector('.navbar-logout-btn');
                 if (logoutBtn) {
                     logoutBtn.addEventListener('click', async () => {
@@ -88,10 +99,12 @@ const AuthUI = (function() {
                 }
             }
         } else {
-            // Logged out state
+            // Guest state preserving premium class names
             navbarAuth.innerHTML = `
-                <a href="login.html" class="navbar-link navbar-login-btn">Login</a>
-                <a href="register.html" class="navbar-link navbar-register-btn">Register</a>
+                <div class="crave-navbar__auth-guest">
+                    <a href="login.html" class="crave-navbar__auth-link">Login</a>
+                    <a href="register.html" class="crave-navbar__auth-btn">Join CRAVE</a>
+                </div>
             `;
         }
     }
