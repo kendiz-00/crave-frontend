@@ -416,7 +416,7 @@ html {
     opacity: 0;
     visibility: hidden;
     transition: var(--crave-transition-smooth);
-    z-index: 999;
+    z-index: 1005;
     overflow-y: auto;
 }
 
@@ -560,7 +560,7 @@ body.crave-navbar__mobile-open {
     }
 
     .mobile-auth-links {
-        display: flex;
+        display: block;
     }
 
     /* When logged in, show profile, hide login/register */
