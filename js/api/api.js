@@ -7,7 +7,7 @@ const defaultBaseUrl = (typeof window !== 'undefined' && window.location && wind
     ? 'https://crave-backend-staging.onrender.com'
     : 'http://localhost:4000';
 
-const APIConfig = typeof APIConfig !== 'undefined' ? APIConfig : {
+const _APIConfig = (typeof window !== 'undefined' && window.APIConfig) ? window.APIConfig : {
     baseURL: (typeof window !== 'undefined' && window.ENV?.API_BASE_URL) ? window.ENV.API_BASE_URL : defaultBaseUrl,
     timeout: 10000,
     cacheDuration: 5 * 60 * 1000,
@@ -33,7 +33,7 @@ const APIClient = (function() {
         if (!cached) return null;
         
         const now = Date.now();
-        if (now - cached.timestamp > APIConfig.cacheDuration) {
+        if (now - cached.timestamp > _APIConfig.cacheDuration) {
             cache.delete(key);
             return null;
         }
@@ -131,7 +131,7 @@ const APIClient = (function() {
                 options.headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const { controller, timeoutId } = createTimeout(APIConfig.timeout);
+            const { controller, timeoutId } = createTimeout(_APIConfig.timeout);
             const response = await fetch(url, {
                 ...options,
                 signal: controller.signal
@@ -162,12 +162,12 @@ const APIClient = (function() {
 
             // Retry on network errors or 5xx errors
             const shouldRetry = 
-                attempt < APIConfig.retry.maxAttempts &&
+                attempt < _APIConfig.retry.maxAttempts &&
                 (error.name === 'TypeError' || 
                  (error.status && error.status >= 500));
 
             if (shouldRetry) {
-                const retryDelay = APIConfig.retry.delay * Math.pow(APIConfig.retry.backoffMultiplier, attempt - 1);
+                const retryDelay = _APIConfig.retry.delay * Math.pow(_APIConfig.retry.backoffMultiplier, attempt - 1);
                 await delay(retryDelay);
                 return fetchWithRetry(url, options, attempt + 1, isRetryAfter401);
             }
@@ -180,7 +180,7 @@ const APIClient = (function() {
      * Build full URL from endpoint
      */
     function buildURL(endpoint, params = {}) {
-        const url = new URL(APIConfig.baseURL + endpoint);
+        const url = new URL(_APIConfig.baseURL + endpoint);
         
         Object.keys(params).forEach(key => {
             if (params[key] !== null && params[key] !== undefined) {

@@ -3,9 +3,9 @@
  * Manages authentication state, tokens, and session lifecycle
  */
 
-const AuthAPI = typeof AuthAPI !== 'undefined' ? AuthAPI : null;
+const _AuthAPI = (typeof window !== 'undefined' && window.AuthAPI) ? window.AuthAPI : (typeof AuthAPI !== 'undefined' ? AuthAPI : null);
 
-if (!AuthAPI) {
+if (!_AuthAPI) {
     console.warn('AuthAPI not loaded. Authentication API calls will not work. Load auth-api.js before auth-manager.js for full functionality.');
 }
 
@@ -171,7 +171,7 @@ const AuthManager = (function() {
      */
     async function login(credentials, rememberMe = false) {
         try {
-            const response = await AuthAPI.login(credentials);
+            const response = await _AuthAPI.login(credentials);
             
             if (response.success && response.data) {
                 const { accessToken, refreshToken, user } = response.data;
@@ -255,7 +255,7 @@ const AuthManager = (function() {
      */
     async function register(userData) {
         try {
-            const response = await AuthAPI.register(userData);
+            const response = await _AuthAPI.register(userData);
             
             if (response.success && response.data) {
                 const { accessToken, refreshToken, user } = response.data;
@@ -287,7 +287,7 @@ const AuthManager = (function() {
      */
     async function logout() {
         try {
-            await AuthAPI.logout();
+            await _AuthAPI.logout();
         } catch (error) {
             console.error('Logout API error:', error);
         } finally {
@@ -320,7 +320,7 @@ const AuthManager = (function() {
         }
 
         try {
-            const response = await AuthAPI.refreshToken(token);
+            const response = await _AuthAPI.refreshToken(token);
             
             if (response.success && response.data) {
                 const { accessToken, refreshToken: newRefreshToken } = response.data;
@@ -356,7 +356,7 @@ const AuthManager = (function() {
      */
     async function fetchCurrentUser() {
         try {
-            const response = await AuthAPI.getCurrentUser();
+            const response = await _AuthAPI.getCurrentUser();
             
             if (response.success && response.data) {
                 setUserData(response.data);

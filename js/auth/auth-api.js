@@ -3,9 +3,9 @@
  * Authentication-specific API methods using the existing APIClient
  */
 
-const APIClient = typeof APIClient !== 'undefined' ? APIClient : null;
+const _APIClient = (typeof window !== 'undefined' && window.APIClient) ? window.APIClient : (typeof APIClient !== 'undefined' ? APIClient : null);
 
-if (!APIClient) {
+if (!_APIClient) {
     console.error('APIClient not loaded. Make sure api.js is loaded before auth-api.js');
 }
 
@@ -17,8 +17,8 @@ const AuthAPI = (function() {
      * POST /api/auth/login
      */
     async function login(credentials) {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.post('/auth/login', credentials, { 
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.post('/auth/login', credentials, { 
             useCache: false 
         });
     }
@@ -28,8 +28,8 @@ const AuthAPI = (function() {
      * POST /api/auth/register
      */
     async function register(userData) {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.post('/auth/register', userData, { 
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.post('/auth/register', userData, { 
             useCache: false 
         });
     }
@@ -39,8 +39,8 @@ const AuthAPI = (function() {
      * POST /api/auth/logout
      */
     async function logout() {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.post('/auth/logout', {}, { 
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.post('/auth/logout', {}, { 
             useCache: false 
         });
     }
@@ -50,8 +50,8 @@ const AuthAPI = (function() {
      * POST /api/auth/refresh
      */
     async function refreshToken(refreshToken) {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.post('/auth/refresh', { refreshToken }, { 
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.post('/auth/refresh', { refreshToken }, { 
             useCache: false 
         });
     }
@@ -61,8 +61,8 @@ const AuthAPI = (function() {
      * GET /api/auth/me
      */
     async function getCurrentUser() {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.get('/auth/me', { 
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.get('/auth/me', { 
             useCache: false 
         });
     }

@@ -3,9 +3,9 @@
  * Route protection logic for authenticated pages
  */
 
-const AuthManager = typeof AuthManager !== 'undefined' ? AuthManager : null;
+const _AuthManager = (typeof window !== 'undefined' && window.AuthManager) ? window.AuthManager : (typeof AuthManager !== 'undefined' ? AuthManager : null);
 
-if (!AuthManager) {
+if (!_AuthManager) {
     console.error('AuthManager not loaded. Make sure auth-manager.js is loaded before protected-routes.js');
 }
 
@@ -44,7 +44,7 @@ const ProtectedRoutes = (function() {
      * Check authentication and redirect if needed
      */
     function checkAuth() {
-        const isAuthenticated = AuthManager.isAuthenticated();
+        const isAuthenticated = _AuthManager.isAuthenticated();
         const currentPage = window.location.pathname.split('/').pop();
 
         // Store current page for redirect after login
@@ -70,7 +70,7 @@ const ProtectedRoutes = (function() {
         checkAuth();
 
         // Listen for auth state changes
-        AuthManager.on('authStateChanged', (data) => {
+        _AuthManager.on('authStateChanged', (data) => {
             const currentPage = window.location.pathname.split('/').pop();
             
             if (data.authenticated) {

@@ -3,9 +3,9 @@
  * Menu-specific API methods
  */
 
-const APIClient = typeof APIClient !== 'undefined' ? APIClient : null;
+const _APIClient = (typeof window !== 'undefined' && window.APIClient) ? window.APIClient : (typeof APIClient !== 'undefined' ? APIClient : null);
 
-if (!APIClient) {
+if (!_APIClient) {
     console.error('APIClient not loaded. Make sure api.js is loaded before menu.js');
 }
 
@@ -16,24 +16,24 @@ const MenuAPI = (function() {
      * Get all menu items
      */
     async function getAllMenu() {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.get('/menu', { useCache: true, cacheKey: 'menu_all' });
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.get('/menu', { useCache: true, cacheKey: 'menu_all' });
     }
 
     /**
      * Get featured menu items
      */
     async function getFeaturedMenu() {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.get('/menu/featured', { useCache: true, cacheKey: 'menu_featured' });
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.get('/menu/featured', { useCache: true, cacheKey: 'menu_featured' });
     }
 
     /**
      * Search menu items
      */
     async function searchMenu(query) {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.get('/menu/search', { 
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.get('/menu/search', { 
             params: { q: query },
             useCache: true,
             cacheKey: `menu_search_${query}`
@@ -44,8 +44,8 @@ const MenuAPI = (function() {
      * Get menu items by category slug
      */
     async function getMenuByCategory(categorySlug) {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.get(`/menu/category/${categorySlug}`, { 
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.get(`/menu/category/${categorySlug}`, { 
             useCache: true,
             cacheKey: `menu_category_${categorySlug}`
         });
@@ -55,26 +55,26 @@ const MenuAPI = (function() {
      * Get all categories
      */
     async function getAllCategories() {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.get('/categories', { useCache: true, cacheKey: 'categories_all' });
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.get('/categories', { useCache: true, cacheKey: 'categories_all' });
     }
 
     /**
      * Get category by slug
      */
     async function getCategoryBySlug(slug) {
-        if (!APIClient) throw new Error('API client not available');
-        return await APIClient.get(`/categories/${slug}`, { useCache: true });
+        if (!_APIClient) throw new Error('API client not available');
+        return await _APIClient.get(`/categories/${slug}`, { useCache: true });
     }
 
     /**
      * Clear menu-related cache
      */
     function clearMenuCache() {
-        if (!APIClient) return;
-        APIClient.clearCache('menu_all');
-        APIClient.clearCache('menu_featured');
-        APIClient.clearCache('categories_all');
+        if (!_APIClient) return;
+        _APIClient.clearCache('menu_all');
+        _APIClient.clearCache('menu_featured');
+        _APIClient.clearCache('categories_all');
     }
 
     // Public API
