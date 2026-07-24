@@ -798,12 +798,6 @@
                         <li class="crave-navbar__item">
                             <a href="rewards.html" class="crave-navbar__link" data-page="rewards">Rewards</a>
                         </li>
-                        <li class="crave-navbar__item">
-                            <a href="vip.html" class="crave-navbar__link" data-page="vip">VIP</a>
-                        </li>
-                        <li class="crave-navbar__item">
-                            <a href="contact.html" class="crave-navbar__link" data-page="contact">Contact</a>
-                        </li>
                     </ul>
                 </div>
 
@@ -841,10 +835,28 @@
                         <a href="rewards.html" class="crave-navbar__mobile-link" data-page="rewards">Rewards</a>
                     </li>
                     <li class="crave-navbar__mobile-item">
+                        <a href="about.html" class="crave-navbar__mobile-link" data-page="about">About</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item">
+                        <a href="reservation.html" class="crave-navbar__mobile-link" data-page="reservation">Reservation</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item">
                         <a href="vip.html" class="crave-navbar__mobile-link" data-page="vip">VIP</a>
                     </li>
                     <li class="crave-navbar__mobile-item">
                         <a href="contact.html" class="crave-navbar__mobile-link" data-page="contact">Contact</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item">
+                        <a href="tracking.html" class="crave-navbar__mobile-link" data-page="tracking">Tracking</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item mobile-profile-link">
+                        <a href="profile.html" class="crave-navbar__mobile-link" data-page="profile">Profile</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item mobile-auth-links">
+                        <a href="login.html" class="crave-navbar__mobile-link" data-page="login">Login</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item mobile-auth-links">
+                        <a href="register.html" class="crave-navbar__mobile-link" data-page="register">Register</a>
                     </li>
                 </ul>
                 <div class="crave-navbar__mobile-auth" id="craveNavbarMobileAuth">
@@ -1023,6 +1035,79 @@
         // Menu Data Structure (will be populated from API)
         let menuData = {};
 
+        // Fallback menu dataset for when API is unavailable
+        const fallbackMenuData = {
+            'most-popular': {
+                title: 'Most Popular',
+                description: 'Our best-selling items loved by customers',
+                items: [
+                    { name: 'Loaded Fries', price: 35, description: 'Our signature loaded fries with cheese and toppings', image: 'loaded_fries_01.jpg', available: true, featured: true, badges: ['bestseller'] },
+                    { name: 'Jerk Chicken Shawarma', price: 45, description: 'Spicy jerk chicken wrapped in warm shawarma', image: 'jerk_shawarma.jpeg', available: true, featured: true, badges: ['hot'] },
+                    { name: 'Chocolate Rich Buttercream Frosting Jar Cake', price: 40, description: 'Decadent chocolate cake with rich buttercream frosting', image: 'choco_jar.jpeg', available: true, featured: true, badges: ['chef'] },
+                    { name: 'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries', price: 55, description: 'Extremely spicy fried chicken for the brave', image: 'hot_chicken.jpeg', available: true, featured: true, badges: ['hot'] }
+                ]
+            },
+            'texas-chicken': {
+                title: 'Texas Crispy Fried Chicken',
+                description: 'Crispy, juicy chicken with Texas-style seasoning',
+                items: [
+                    { name: 'Loaded BBQ Chicken Cheddar Cheese Fries', price: 40, description: 'Crispy chicken with BBQ sauce and melted cheddar', image: 'bbq_fries.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Honey BBQ Wings (6) and Fries', price: 38, description: '6 honey BBQ wings served with crispy fries', image: 'bbq_wings.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Siracha Mayo Hot Wings (6) and Fries', price: 38, description: '6 spicy sriracha wings with fries', image: 'siracha_wings_fries.jpg', available: true, featured: false, badges: ['hot'] },
+                    { name: '2 Piece Glazed Crispy Chicken and Fries', price: 35, description: '2 pieces of glazed crispy chicken with fries', image: 'glazed_chicken_fries.jpg', available: true, featured: false, badges: [] }
+                ]
+            },
+            'mexican-food': {
+                title: 'Mexican Food & Dish',
+                description: 'Authentic Mexican flavors with a CRAVE twist',
+                items: [
+                    { name: 'Chicken Burrito', price: 42, description: 'Flour tortilla filled with seasoned chicken and toppings', image: 'burrito.jpg', available: true, featured: false, badges: [] },
+                    { name: '2 Chicken Crispy Tacos', price: 35, description: '2 crispy chicken tacos with fresh toppings', image: 'tacos.jpg', available: true, featured: false, badges: [] },
+                    { name: '2 Beef Crispy Tacos', price: 38, description: '2 crispy beef tacos with cheese and salsa', image: 'beef_tacos.jpg', available: true, featured: false, badges: [] }
+                ]
+            },
+            'cupcakes': {
+                title: 'Cupcakes',
+                description: 'Sweet treats and decadent desserts',
+                items: [
+                    { name: 'Biscoff Jar Cake', price: 35, description: 'Biscoff cookie butter layered cake in a jar', image: 'biscoff-cake.jpg', available: true, featured: true, badges: ['chef'] },
+                    { name: 'Lemon Buttercream Jar Cake', price: 32, description: 'Zesty lemon cake with creamy buttercream', image: 'lemon-cake.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Vanilla Buttercream Cake Slice', price: 28, description: 'Classic vanilla cake slice with buttercream', image: 'vanilla-cake.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Bailey\'s Irish Cream Jar Cake', price: 38, description: 'Irish cream infused cake for adults', image: 'baileys-cake.jpg', available: true, featured: true, badges: ['chef'] },
+                    { name: 'Salted Caramel Cake', price: 35, description: 'Rich caramel cake with sea salt', image: 'caramel-cake.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Pistachio Dream Jar Cake', price: 40, description: 'Nutty pistachio cake in a jar', image: 'pistachio-cake.jpg', available: true, featured: true, badges: ['chef'] },
+                    { name: 'Coffee Latte Jar Cake', price: 35, description: 'Coffee-infused cake for caffeine lovers', image: 'coffee-cake.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Pink Guava Buttercream Jar Cake', price: 38, description: 'Tropical guava cake with pink buttercream', image: 'guava-cake.jpg', available: true, featured: true, badges: ['chef'] }
+                ]
+            },
+            'breakfast': {
+                title: 'Breakfast',
+                description: 'Start your day right with our breakfast options',
+                items: [
+                    { name: 'Chicken and Waffles', price: 45, description: 'Crispy chicken served with fluffy waffles', image: 'waffles.jpg', available: true, featured: true, badges: ['bestseller'] },
+                    { name: 'Loaded Omelette', price: 35, description: 'Fluffy omelette loaded with your choice of fillings', image: 'omelette.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Grilled Cheese Sandwich', price: 25, description: 'Classic grilled cheese with melted cheddar', image: 'grilled_sandwich.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Tuna Fish Sandwich', price: 30, description: 'Fresh tuna sandwich with lettuce and mayo', image: 'tuna_sandwich.jpg', available: true, featured: false, badges: [] },
+                    { name: 'American BLT (Bacon Lettuce Tomato)', price: 32, description: 'Classic BLT with crispy bacon', image: 'blt_sandwich.jpg', available: true, featured: false, badges: [] }
+                ]
+            },
+            'smoothies': {
+                title: 'Smoothies',
+                description: 'Refreshing blends and fruit drinks',
+                items: [
+                    { name: 'Strawberry Colada', price: 25, description: 'Strawberry and coconut blend', image: 'strawberry_banana.jpg', available: true, featured: true, badges: ['refresh'] },
+                    { name: 'Pina Colada', price: 25, description: 'Classic pineapple and coconut smoothie', image: 'pina-colada.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Watermelon Mint Ice', price: 22, description: 'Refreshing watermelon with mint', image: 'watermelon_mint.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Green Glow', price: 28, description: 'Healthy green smoothie blend', image: 'green_glow.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Tropical Fruit Blend', price: 30, description: 'Mix of tropical fruits', image: 'tropical-smoothie.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Pineapple Strawberry', price: 26, description: 'Pineapple and strawberry combination', image: 'pineapple-strawberry.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Strawberries and Cream', price: 28, description: 'Creamy strawberry smoothie', image: 'strawberry_cream.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Lemonade Ice', price: 20, description: 'Refreshing Brazilian lemonade', image: 'brazilian_lemonade.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Banana Peanut Butter Chocolate', price: 30, description: 'Rich banana peanut butter chocolate blend', image: 'peanut.jpeg', available: true, featured: true, badges: [] }
+                ]
+            }
+        };
+
         const MENU_BADGE_DEFS = {
             bestseller: { label: 'Bestseller', icon: '🔥', cls: 'bolt-badge--gold' },
             hot: { label: 'Extra Hot', icon: '🌶', cls: 'bolt-badge--ember' },
@@ -1165,10 +1250,8 @@
                 // Show loading state
                 showLoadingState();
 
-                // Fetch categories
+                // Try to fetch from API
                 const categories = await MenuAPI.getCategories();
-                
-                // Fetch all menu items
                 const menuItems = await MenuAPI.getAll();
 
                 // Transform API data to menuData format
@@ -1184,8 +1267,23 @@
                 hideLoadingState();
 
             } catch (error) {
-                console.error('Error loading menu from API:', error);
-                showErrorState('Unable to load menu. Please try again.');
+                console.error('Error loading menu from API, using fallback:', error);
+                
+                // Use fallback dataset
+                menuData = fallbackMenuData;
+                
+                // Render category navigation from fallback
+                const fallbackCategories = Object.keys(fallbackMenuData).map(key => ({
+                    slug: key,
+                    name: fallbackMenuData[key].title
+                }));
+                renderCategoryNavigation(fallbackCategories);
+                
+                // Render menu items from fallback
+                initializeMenu();
+                
+                // Hide loading state
+                hideLoadingState();
             }
         }
 

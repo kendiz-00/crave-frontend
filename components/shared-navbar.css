@@ -552,6 +552,24 @@ body.crave-navbar__mobile-open {
     .crave-navbar__mobile-auth .crave-navbar__auth-guest {
         display: flex;
     }
+
+    /* Mobile auth links - show/hide based on auth state */
+    .mobile-profile-link {
+        display: none;
+    }
+
+    .mobile-auth-links {
+        display: flex;
+    }
+
+    /* When logged in, show profile, hide login/register */
+    body.authenticated .mobile-profile-link {
+        display: block;
+    }
+
+    body.authenticated .mobile-auth-links {
+        display: none;
+    }
 }
 
 /* Small Mobile */
