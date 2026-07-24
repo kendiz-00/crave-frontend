@@ -4,7 +4,7 @@
  */
 
 const APIConfig = typeof APIConfig !== 'undefined' ? APIConfig : {
-    baseURL: 'http://localhost:3001/api',
+    baseURL: 'http://localhost:4000',
     timeout: 10000,
     cacheDuration: 5 * 60 * 1000,
     retry: {

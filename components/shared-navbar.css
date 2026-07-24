@@ -7,7 +7,8 @@
 /* ============================================
    ROOT VARIABLES
    ============================================ */
-:root {
+:root,
+html {
     --crave-gold: #d4a373;
     --crave-gold-light: #e8c49a;
     --crave-gold-dark: #c49a6c;

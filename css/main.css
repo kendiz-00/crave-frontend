@@ -206,6 +206,7 @@ body.crave-offline {
 }
 
 html.crave-splash-finished:not(.crave-splash-off) body > header.navbar-header,
+html.crave-splash-finished:not(.crave-splash-off) body > header.crave-navbar,
 html.crave-splash-finished:not(.crave-splash-off) body > aside.sidebar,
 html.crave-splash-finished:not(.crave-splash-off) body > section,
 html.crave-splash-finished:not(.crave-splash-off) body > footer.bg1 {
@@ -230,6 +231,7 @@ html.crave-splash-finished:not(.crave-splash-off) body > footer.bg1 {
   }
 
   html.crave-splash-finished:not(.crave-splash-off) body > header.navbar-header,
+  html.crave-splash-finished:not(.crave-splash-off) body > header.crave-navbar,
   html.crave-splash-finished:not(.crave-splash-off) body > aside.sidebar,
   html.crave-splash-finished:not(.crave-splash-off) body > section,
   html.crave-splash-finished:not(.crave-splash-off) body > footer.bg1 {
