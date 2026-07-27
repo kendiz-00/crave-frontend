@@ -308,3 +308,8 @@ const APIClient = (function() {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = APIClient;
 }
+
+// Export to window for browser use
+if (typeof window !== 'undefined') {
+    window.APIClient = APIClient;
+}

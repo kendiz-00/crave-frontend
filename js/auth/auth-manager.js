@@ -526,6 +526,11 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = AuthManager;
 }
 
+// Export to window for browser use
+if (typeof window !== 'undefined') {
+    window.AuthManager = AuthManager;
+}
+
 // Auto-initialize on load
 if (typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', function() {

@@ -3,9 +3,7 @@
  * UI utilities for authentication state and forms
  */
 
-const _AuthManager = (typeof window !== 'undefined' && window.AuthManager) ? window.AuthManager : (typeof AuthManager !== 'undefined' ? AuthManager : null);
-
-if (!_AuthManager) {
+if (typeof window !== 'undefined' && !window.AuthManager) {
     console.error('AuthManager not loaded. Make sure auth-manager.js is loaded before auth-ui.js');
 }
 
@@ -16,8 +14,8 @@ const AuthUI = (function() {
      * Update navbar based on authentication state
      */
     function updateNavbar() {
-        const isAuthenticated = _AuthManager ? _AuthManager.isAuthenticated() : false;
-        const user = _AuthManager ? _AuthManager.getUserData() : null;
+        const isAuthenticated = window.AuthManager ? window.AuthManager.isAuthenticated() : false;
+        const user = window.AuthManager ? window.AuthManager.getUserData() : null;
 
         // Target the parent auth container or the guest wrapper
         const parentAuth = document.getElementById('craveNavbarAuth') || document.querySelector('.crave-navbar__auth');
@@ -116,7 +114,7 @@ const AuthUI = (function() {
         showLoading();
         
         try {
-            await _AuthManager.logout();
+            await window.AuthManager.logout();
             
             // Store redirect destination
             sessionStorage.removeItem('redirectAfterLogin');
@@ -324,16 +322,16 @@ const AuthUI = (function() {
         showLoading(submitBtn);
         
         try {
-            const result = await _AuthManager.login({ email, password }, rememberMe);
+            const result = await window.AuthManager.login({ email, password }, rememberMe);
             
             if (result.success) {
                 showSuccess('Login successful!');
                 
                 // Migrate anonymous rewards
-                const anonymousRewards = _AuthManager.migrateAnonymousRewards();
+                const anonymousRewards = window.AuthManager.migrateAnonymousRewards();
                 if (anonymousRewards) {
                     // TODO: Send anonymous rewards to backend
-                    _AuthManager.clearAnonymousRewards();
+                    window.AuthManager.clearAnonymousRewards();
                     showSuccess('Your rewards have been saved to your account!');
                 }
                 
@@ -393,7 +391,7 @@ const AuthUI = (function() {
         showLoading(submitBtn);
         
         try {
-            const result = await _AuthManager.register({ name, email, password, phone });
+            const result = await window.AuthManager.register({ name, email, password, phone });
             
             if (result.success) {
                 showSuccess('Registration successful!');
@@ -421,7 +419,7 @@ const AuthUI = (function() {
      */
     function initialize() {
         // Update navbar on auth state changes
-        _AuthManager.on('authStateChanged', () => {
+        window.AuthManager.on('authStateChanged', () => {
             updateNavbar();
         });
         
@@ -456,7 +454,7 @@ if (typeof module !== 'undefined' && module.exports) {
 // Auto-initialize on load
 if (typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', function() {
-        if (AuthUI && _AuthManager) {
+        if (AuthUI && window.AuthManager) {
             AuthUI.initialize();
         }
     });
