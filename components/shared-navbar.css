@@ -519,10 +519,24 @@ body.crave-navbar__mobile-open {
 
     .crave-navbar__container {
         padding: 0 16px;
+        gap: 16px;
     }
 
+    /* Keep primary navigation visible - make it compact */
     .crave-navbar__menu {
-        display: none;
+        display: flex;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .crave-navbar__list {
+        gap: 8px;
+    }
+
+    .crave-navbar__link {
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: 500;
     }
 
     .crave-navbar__toggle {
@@ -582,6 +596,23 @@ body.crave-navbar__mobile-open {
     .crave-navbar__container {
         padding: 0 12px;
         gap: 12px;
+    }
+
+    /* Keep primary navigation visible - make it very compact */
+    .crave-navbar__menu {
+        display: flex;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .crave-navbar__list {
+        gap: 6px;
+    }
+
+    .crave-navbar__link {
+        padding: 6px 10px;
+        font-size: 12px;
+        font-weight: 500;
     }
 
     .crave-navbar__logo-img {
