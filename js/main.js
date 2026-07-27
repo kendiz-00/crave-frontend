@@ -868,8 +868,9 @@ document.addEventListener('DOMContentLoaded', function() {
   initMenuCards();
   
   // SIMPLE WORKING CART SYSTEM
-  initSimpleCart();
-  initCraveReengagement();
+  // CartSync.initialize() is called in menu.html and other pages that load cart-sync.js
+  // initSimpleCart() was from an older cart implementation, now replaced by CartSync
+  // initCraveReengagement();
   
   // Initialize menu category scroll
   initMenuCategoryScroll();
