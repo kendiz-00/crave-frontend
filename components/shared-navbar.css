@@ -354,7 +354,7 @@ html {
    MOBILE MENU TOGGLE
    ============================================ */
 .crave-navbar__toggle {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -366,6 +366,7 @@ html {
     cursor: pointer;
     transition: var(--crave-transition);
     padding: 0;
+    flex-shrink: 0;
 }
 
 .crave-navbar__toggle:hover {
