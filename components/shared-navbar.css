@@ -419,11 +419,16 @@ html {
     transition: var(--crave-transition-smooth);
     z-index: 1005;
     overflow-y: auto;
+    height: calc(100vh - 80px) !important;
+    border-top: 2px solid rgba(212, 163, 115, 0.3);
+    border-left: 1px solid rgba(212, 163, 115, 0.2);
+    border-right: 1px solid rgba(212, 163, 115, 0.2);
+    box-shadow: 0 -4px 24px rgba(212, 163, 115, 0.15);
 }
 
 .crave-navbar__mobile--active {
-    opacity: 1;
-    visibility: visible;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .crave-navbar__mobile-inner {
