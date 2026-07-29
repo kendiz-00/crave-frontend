@@ -335,13 +335,13 @@
                                 <span id="totalAmount">GH¢ 0.00</span>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Place Order Button -->
-                    <button type="submit" class="checkout-place-order-btn" id="placeOrderBtn">
-                        <i class="fas fa-shopping-cart"></i>
-                        Confirm & Pay
-                    </button>
+                        <!-- Place Order Button -->
+                        <button type="submit" class="checkout-place-order-btn" id="placeOrderBtn">
+                            <i class="fas fa-shopping-cart"></i>
+                            Confirm & Pay
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -357,52 +357,68 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg1">
-        <div class="container-fluid px-3 p-t-40 p-b-70">
-            <div class="row">
-                <div class="col-sm-6 col-md-4 p-t-50 m-b-30">
-                    <h4 class="txt13 m-b-33">Contact Us</h4>
-                    <ul class="m-b-70">
-                        <li class="txt14 m-b-14">
-                            <i class="fa-solid fa-location-dot fs-16 dis-inline-block size19"></i>
-                            8th floor, 379 Hudson St, New York, NY 10018
-                        </li>
-                        <li class="txt14 m-b-14">
-                            <i class="fa-solid fa-phone fs-16 dis-inline-block size19"></i>
-                            <a href="tel:+19671668879">(+1) 96 716 6879</a>
-                        </li>
-                        <li class="txt14 m-b-14">
-                            <i class="fa-solid fa-envelope fs-13 dis-inline-block size19"></i>
-                            <a href="mailto:contact@crave-restaurant.com">contact@crave-restaurant.com</a>
-                        </li>
-                    </ul>
+	<!-- Premium Footer (luxury, glassmorphism) -->
+	<footer class="premium-footer crave-reveal" role="contentinfo">
+		<div class="premium-footer__inner">
+			<!-- Logo Section -->
+			<div class="footer-brand">
+				<img src="images/logo.png" alt="Crave Restaurant" class="footer-brand__logo" width="160" height="44">
+				<p class="footer-brand__tag">Crave</p>
+				<p class="footer-brand__sub">Comfort food, elevated into premium experiences.</p>
+			</div>
 
-                    <h4 class="txt13 m-b-32">Opening Times</h4>
-                    <ul>
-                        <li class="txt14">11:00 AM " 10:00 PM</li>
-                        <li class="txt14">Every Day</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+			<!-- Quick Links -->
+			<nav class="footer-nav" aria-label="Footer Navigation">
+				<h4 class="footer-heading">Explore</h4>
+				<ul class="footer-links">
+					<li><a href="menu.html">Menu</a></li>
+					<li><a href="reservation.html">Reserve</a></li>
+					<li><a href="about.html">About</a></li>
+					<li><a href="contact.html">Contact</a></li>
+				</ul>
+			</nav>
 
-        <div class="end-footer bg2">
-            <div class="container-fluid px-3">
-                <div class="flex-sb-m flex-w p-t-22 p-b-22">
-                    <div class="p-t-5 p-b-5">
-                        <a href="#" class="fs-15 c-white"><i class="fa-brands fa-yelp"></i></a>
-                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-google"></i></a>
-                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#" class="fs-15 c-white m-l-18"><i class="fa-brands fa-x-twitter"></i></a>
-                    </div>
-                    <div class="txt17 p-r-20 p-t-5 p-b-5">
-                        &copy; <span id="copyright-year">2025</span> Crave Restaurant. All rights reserved.
-                    </div>
+			<!-- Contact Section -->
+			<div class="footer-contact">
+				<h4 class="footer-heading">Get in Touch</h4>
+				<address class="footer-address">
+					<div class="footer-address__line">Accra, Ghana</div>
+					<a href="tel:+233550020788" class="footer-link" style="font-size: 1.05rem; font-weight: 600;">+233 55 002 0788</a>
+					<a href="mailto:hello@crave.com" class="footer-link">hello@crave.com</a>
+				</address>
+				<div class="footer-hours">Open Daily • 11:00 AM – 10:00 PM</div>
+			</div>
+
+			<!-- Social Icons -->
+			<div class="footer-social">
+				<a class="social-btn" href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+				<a class="social-btn" href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+				<a class="social-btn" href="#" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+			</div>
+
+			<!-- CTA Section -->
+			<div class="premium-footer__cta">
+				<div class="cta-copy">
+					<h3 class="cta-title">Ready for Your Next Crave?</h3>
+                    <p class="cta-sub">Order fast, earn VIP perks, and enjoy Accra's best comfort food.</p>
                 </div>
-            </div>
-        </div>
-    </footer>
+                <div class="cta-actions">
+                    <a href="menu.html" class="btn btn-premium-ghost">Browse Menu</a>
+                    <a href="menu.html" class="btn btn-premium">Start Your Order</a>
+			<form class="vip-form" onsubmit="event.preventDefault(); alert('Thanks for joining Crave VIP!');">
+				<input type="email" name="vip_email" placeholder="your@email.com" aria-label="Email for VIP signup" required>
+				<button class="vip-cta" type="submit">Join VIP</button>
+			</form>
+		</div>
+
+		<!-- Bottom Bar -->
+		<div class="premium-footer__bottom">
+			<div class="premium-footer__bar">
+				<div class="footer-copyright">© <span id="copyright-year">2025</span> Crave Restaurant. All rights reserved.</div>
+				<div class="footer-powered">Crafted with care</div>
+			</div>
+		</div>
+	</footer>
 
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/233550020788?text=Hi%20Crave%2C%20I%E2%80%99d%20like%20to%20place%20an%20order" class="whatsapp-float" target="_blank">
@@ -1309,16 +1325,6 @@
         });
     </script>
     
-    <!-- Payment Modal -->
-    <div class="payment-modal" id="paymentModal">
-        <div class="payment-modal-content">
-            <h3><i class="fas fa-mobile-alt"></i> Mobile Money Payment</h3>
-            <p>You will be redirected to Paystack to complete your payment securely.</p>
-            <div class="payment-modal-amount" id="paymentAmount">GH¢ 0.00</div>
-            <p>After successful payment, you'll receive a confirmation and your order will be processed immediately.</p>
-            <button class="payment-modal-close" onclick="closePaymentModal()">Close</button>
-        </div>
-    </div>
 
     <!-- WhatsApp Fallback Modal -->
     <div class="whatsapp-fallback-modal" id="whatsappFallbackModal" style="display: none;">
