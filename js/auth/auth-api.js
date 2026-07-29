@@ -16,7 +16,7 @@ const AuthAPI = (function() {
      */
     async function login(credentials) {
         if (!window.APIClient) throw new Error('API client not available');
-        return await window.APIClient.post('/auth/login', credentials, { 
+        return await window.APIClient.post('/api/auth/login', credentials, { 
             useCache: false 
         });
     }
@@ -27,7 +27,7 @@ const AuthAPI = (function() {
      */
     async function register(userData) {
         if (!window.APIClient) throw new Error('API client not available');
-        return await window.APIClient.post('/auth/register', userData, { 
+        return await window.APIClient.post('/api/auth/register', userData, { 
             useCache: false 
         });
     }
@@ -38,7 +38,7 @@ const AuthAPI = (function() {
      */
     async function logout() {
         if (!window.APIClient) throw new Error('API client not available');
-        return await window.APIClient.post('/auth/logout', {}, { 
+        return await window.APIClient.post('/api/auth/logout', {}, { 
             useCache: false 
         });
     }
@@ -49,7 +49,7 @@ const AuthAPI = (function() {
      */
     async function refreshToken(refreshToken) {
         if (!window.APIClient) throw new Error('API client not available');
-        return await window.APIClient.post('/auth/refresh', { refreshToken }, { 
+        return await window.APIClient.post('/api/auth/refresh', { refreshToken }, { 
             useCache: false 
         });
     }
@@ -60,7 +60,7 @@ const AuthAPI = (function() {
      */
     async function getCurrentUser() {
         if (!window.APIClient) throw new Error('API client not available');
-        return await window.APIClient.get('/auth/me', { 
+        return await window.APIClient.get('/api/auth/me', { 
             useCache: false 
         });
     }

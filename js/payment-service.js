@@ -111,7 +111,7 @@ const PaymentService = (function() {
     async function verifyPayment(reference) {
         try {
             if (typeof APIClient !== 'undefined') {
-                const response = await APIClient.post('/payments/verify', { reference });
+                const response = await APIClient.post('/api/payments/verify', { reference });
                 return response;
             }
             return { success: false, message: 'API client not available' };
@@ -127,7 +127,7 @@ const PaymentService = (function() {
     async function createOrder(orderData) {
         try {
             if (typeof APIClient !== 'undefined') {
-                const response = await APIClient.post('/orders', orderData);
+                const response = await APIClient.post('/api/orders', orderData);
                 return response;
             }
             return { success: false, message: 'API client not available' };

@@ -25,27 +25,27 @@ const APIConfig = {
     // API endpoints
     endpoints: {
         // Menu endpoints
-        menu: '/menu',
-        menuFeatured: '/menu/featured',
-        menuSearch: '/menu/search',
-        menuCategory: '/menu/category',
+        menu: '/api/menu',
+        menuFeatured: '/api/menu/featured',
+        menuSearch: '/api/menu/search',
+        menuCategory: '/api/menu/category',
         
         // Category endpoints
-        categories: '/categories',
+        categories: '/api/categories',
         
         // Auth endpoints (for future use)
         auth: {
-            login: '/auth/login',
-            register: '/auth/register',
-            refresh: '/auth/refresh',
-            logout: '/auth/logout'
+            login: '/api/auth/login',
+            register: '/api/auth/register',
+            refresh: '/api/auth/refresh',
+            logout: '/api/auth/logout'
         },
         
         // Cart endpoints (for future use)
-        cart: '/cart',
+        cart: '/api/cart',
         
         // Order endpoints (for future use)
-        orders: '/orders'
+        orders: '/api/orders'
     },
     
     // Request timeout in milliseconds

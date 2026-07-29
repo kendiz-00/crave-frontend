@@ -83,7 +83,7 @@ const CartSync = (function() {
                 if (user && cart.length > 0) {
                     // Sync to backend via API
                     if (typeof APIClient !== 'undefined') {
-                        await APIClient.put('/cart/sync', { 
+                        await APIClient.put('/api/cart/sync', { 
                             userId: user.id,
                             items: cart 
                         });
@@ -110,7 +110,7 @@ const CartSync = (function() {
             if (!user) return null;
 
             if (typeof APIClient !== 'undefined') {
-                const response = await APIClient.get(`/cart/${user.id}`);
+                const response = await APIClient.get(`/api/cart/${user.id}`);
                 if (response.success && response.data) {
                     return response.data.items || [];
                 }
@@ -158,7 +158,7 @@ const CartSync = (function() {
             
             // Save merged cart to backend
             if (typeof APIClient !== 'undefined') {
-                await APIClient.put('/cart/sync', {
+                await APIClient.put('/api/cart/sync', {
                     userId: user.id,
                     items: mergedCart
                 });
