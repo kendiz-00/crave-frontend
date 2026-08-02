@@ -9,7 +9,7 @@
 
     const defaultApiUrl = isLocalhost 
         ? 'http://localhost:4000' 
-        : 'https://crave-backend-staging.onrender.com';
+        : 'https://crave-backend-oie3.onrender.com';
 
     const defaultAppUrl = isLocalhost 
         ? 'http://localhost:3000' 

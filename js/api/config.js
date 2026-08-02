@@ -7,7 +7,7 @@ const getFallbackApiUrl = () => {
     if (typeof window !== 'undefined' && window.location) {
         const host = window.location.hostname;
         if (host !== 'localhost' && host !== '127.0.0.1') {
-            return 'https://crave-backend-staging.onrender.com';
+            return 'https://crave-backend-oie3.onrender.com';
         }
     }
     return 'http://localhost:4000';

@@ -4,7 +4,7 @@
  */
 
 const defaultBaseUrl = (typeof window !== 'undefined' && window.location && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
-    ? 'https://crave-backend-staging.onrender.com'
+    ? 'https://crave-backend-oie3.onrender.com'
     : 'http://localhost:4000';
 
 const _APIConfig = (typeof window !== 'undefined' && window.APIConfig) ? window.APIConfig : {
