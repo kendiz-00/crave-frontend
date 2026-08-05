@@ -1407,15 +1407,22 @@
 
         // Initialize menu
         function initializeMenu() {
+            console.log('🎨 initializeMenu() called with categories:', Object.keys(menuData));
+            
             Object.keys(menuData).forEach(categoryId => {
                 const category = menuData[categoryId];
                 const container = document.getElementById(`${categoryId}-items`);
+                
+                console.log(categoryId, category.items.length, container);
                 
                 if (container) {
                     category.items.forEach(function (menuEntry, idx) {
                         const foodItem = createFoodItem(menuEntry, categoryId, idx);
                         container.appendChild(foodItem);
                     });
+                    console.log(`✅ Rendered ${category.items.length} items for category ${categoryId}`);
+                } else {
+                    console.warn(`⚠️ No container found for category ${categoryId} (looking for ${categoryId}-items)`);
                 }
             });
         }
