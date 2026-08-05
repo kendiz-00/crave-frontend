@@ -1189,77 +1189,160 @@ function initMenuFilter() {
  * Initialize Menu Cards Generation (reusable template)
  */
 function initMenuCards() {
+  console.log('🔍 initMenuCards() called');
+  
   // Only run on menu.html
-  if (!window.location.pathname.includes('menu.html')) return;
-
-  const menuData = {
-    'most-popular': [
-      { img: 'images/meat.jpeg', alt: 'Grilled Chicken Salad', title: 'Grilled Chicken Salad', desc: 'Grilled chicken breast over mixed greens with balsamic vinaigrette', price: '$15.99', badge: '🔥 Popular' },
-      { img: 'images/smoothies.jpeg', alt: 'Fresh Smoothie', title: 'Fresh Smoothie', desc: 'Blend of seasonal fruits with yogurt and honey', price: '$6.99', badge: 'Best Seller' },
-      { img: 'images/chick.jpeg', alt: 'Artisan Coffee', title: 'Artisan Coffee', desc: 'Single-origin coffee beans roasted in-house', price: '$4.99', badge: 'Popular' }
-    ],
-    'loaded-fries': [
-      { img: 'images/tx-chick.jpeg', alt: 'Avocado Toast', title: 'Avocado Toast', desc: 'Fresh avocado on artisanal bread with poached eggs and cherry tomatoes', price: '$12.99', badge: '🔥 Popular' },
-      { img: 'images/waffles.jpg', alt: 'Fluffy Pancakes', title: 'Fluffy Pancakes', desc: 'Light and fluffy pancakes served with maple syrup and fresh berries', price: '$9.99' }
-    ],
-    'texas-chicken': [
-      { img: 'images/meat.jpeg', alt: 'Grilled Chicken Salad', title: 'Grilled Chicken Salad', desc: 'Grilled chicken breast over mixed greens with balsamic vinaigrette', price: '$15.99', badge: '🔥 Popular' },
-      { img: 'images/wrap-01.jpeg', alt: 'Turkey Club Wrap', title: 'Turkey Club Wrap', desc: 'Sliced turkey, bacon, lettuce, and tomato in a whole wheat wrap', price: '$11.99' }
-    ],
-    'smoothies': [
-      { img: 'images/oxtail.jpeg', alt: 'Grilled Ribeye Steak', title: 'Grilled Ribeye Steak', desc: '8oz ribeye steak grilled to perfection with garlic mashed potatoes', price: '$28.99', badge: '🔥 Popular' },
-      { img: 'images/inside.jpeg', alt: 'Truffle Pasta', title: 'Truffle Pasta', desc: 'House-made pasta with black truffle oil, parmesan, and fresh herbs', price: '$22.99' }
-    ],
-    'milkshakes': [
-      { img: 'images/smoothies.jpeg', alt: 'Fresh Smoothie', title: 'Fresh Smoothie', desc: 'Blend of seasonal fruits with yogurt and honey', price: '$6.99' },
-      { img: 'images/chick.jpeg', alt: 'Artisan Coffee', title: 'Artisan Coffee', desc: 'Single-origin coffee beans roasted in-house', price: '$4.99', badge: 'Popular' }
-    ],
-    'jamaican-kitchen': [
-      { img: 'images/jamaican.jpeg', alt: 'Jerk Chicken', title: 'Jerk Chicken', desc: 'Spicy marinated chicken with traditional Jamaican spices', price: '$16.99', badge: '🔥 Popular' }
-    ],
-    'cupcakes': [
-      { img: 'images/cupcake.jpeg', alt: 'Red Velvet Cupcake', title: 'Red Velvet Cupcake', desc: 'Classic red velvet with cream cheese frosting', price: '$4.50' }
-    ],
-    'cake-and-shakes': [
-      { img: 'images/cake.jpg', alt: 'Chocolate Cake', title: 'Chocolate Cake', desc: 'Rich chocolate cake with vanilla ice cream', price: '$7.99' }
-    ]
-  };
-
-  function createMenuCard(item) {
-    const badgeHtml = item.badge ? `<div class="menu-badge">${item.badge}</div>` : '';
-    return `
-      <div class="menu-item" data-category="${item.category || 'popular'}">
-        <div class="menu-card">
-          <div class="menu-image">
-            <img src="${item.img}" alt="${item.alt}" loading="lazy" onerror="this.src='images/logo.png'">
-            ${badgeHtml}
-          </div>
-          <div class="menu-content">
-            <h4 class="menu-title">${item.title}</h4>
-            <p class="menu-description">${item.desc}</p>
-            <div class="menu-price">${item.price}</div>
-            <div class="qty-controls">
-              <button class="qty-btn" data-action="decrease" data-item="${item.title}" type="button">-</button>
-              <input class="qty-input" type="number" min="1" value="1" data-item="${item.title}" />
-              <button class="qty-btn" data-action="increase" data-item="${item.title}" type="button">+</button>
-            </div>
-            <button class="btn-add-cart" data-item="${item.title}" data-price="${item.price}">Add to Cart</button>
-            <button class="btn-order" data-item="${item.title}">Order This Item</button>
-          </div>
-        </div>
-      </div>
-    `;
+  if (!window.location.pathname.includes('menu.html')) {
+    console.log('⏭️ Skipping initMenuCards - not on menu.html');
+    return;
   }
 
-  Object.keys(menuData).forEach(sectionId => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      const grid = section.querySelector('.menu-grid');
-      if (grid) {
-        grid.innerHTML = menuData[sectionId].map(createMenuCard).join('');
+  console.log('✅ On menu.html, proceeding with menu initialization');
+
+  async function loadMenuFromAPI() {
+    console.log('🌐 loadMenuFromAPI() starting...');
+    
+    try {
+      console.log('📡 Fetching categories...');
+      if (!window.MenuAPI) {
+        console.error('❌ MenuAPI not available');
+        throw new Error('MenuAPI not loaded');
       }
+      
+      const categories = await window.MenuAPI.getCategories();
+      console.log('✅ Categories fetched:', categories);
+      
+      console.log('📡 Fetching menu items...');
+      const menuItems = await window.MenuAPI.getAll();
+      console.log('✅ Menu items fetched:', menuItems);
+      
+      console.log('🔄 Transforming API data...');
+      const transformedData = transformAPIDataToMenuData(categories, menuItems);
+      console.log('✅ Data transformed:', transformedData);
+      
+      console.log('🎨 Rendering menu...');
+      renderMenuFromData(transformedData);
+      console.log('✅ Menu rendered successfully');
+      
+    } catch (error) {
+      console.error('❌ API loading failed:', error);
+      console.log('🔄 Falling back to static menu data');
+      renderFallbackMenu();
     }
-  });
+  }
+
+  function transformAPIDataToMenuData(categories, menuItems) {
+    console.log('🔄 transformAPIDataToMenuData() called with', categories?.length, 'categories and', menuItems?.length, 'items');
+    
+    const menuData = {};
+    
+    // Group items by category slug
+    categories.forEach(category => {
+      const slug = category.slug;
+      const items = menuItems.filter(item => item.categoryId === category.id);
+      
+      menuData[slug] = items.map(item => ({
+        img: item.imageUrl || 'images/logo.png',
+        alt: item.name,
+        title: item.name,
+        desc: item.description,
+        price: `$${item.price}`,
+        badge: item.isFeatured ? '🔥 Popular' : null,
+        category: slug,
+        id: item.id
+      }));
+    });
+    
+    console.log('🔄 Transformed data keys:', Object.keys(menuData));
+    return menuData;
+  }
+
+  function renderMenuFromData(menuData) {
+    console.log('🎨 renderMenuFromData() called with', Object.keys(menuData).length, 'sections');
+    
+    function createMenuCard(item) {
+      const badgeHtml = item.badge ? `<div class="menu-badge">${item.badge}</div>` : '';
+      return `
+        <div class="menu-item" data-category="${item.category || 'popular'}" data-id="${item.id || ''}">
+          <div class="menu-card">
+            <div class="menu-image">
+              <img src="${item.img}" alt="${item.alt}" loading="lazy" onerror="this.src='images/logo.png'">
+              ${badgeHtml}
+            </div>
+            <div class="menu-content">
+              <h4 class="menu-title">${item.title}</h4>
+              <p class="menu-description">${item.desc}</p>
+              <div class="menu-price">${item.price}</div>
+              <div class="qty-controls">
+                <button class="qty-btn" data-action="decrease" data-item="${item.title}" type="button">-</button>
+                <input class="qty-input" type="number" min="1" value="1" data-item="${item.title}" />
+                <button class="qty-btn" data-action="increase" data-item="${item.title}" type="button">+</button>
+              </div>
+              <button class="btn-add-cart" data-item="${item.title}" data-price="${item.price}">Add to Cart</button>
+              <button class="btn-order" data-item="${item.title}">Order This Item</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    Object.keys(menuData).forEach(sectionId => {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        const grid = section.querySelector('.menu-grid');
+        if (grid) {
+          grid.innerHTML = menuData[sectionId].map(createMenuCard).join('');
+          console.log(`✅ Rendered ${menuData[sectionId].length} items for section ${sectionId}`);
+        } else {
+          console.warn(`⚠️ No grid found for section ${sectionId}`);
+        }
+      } else {
+        console.warn(`⚠️ No section found with ID ${sectionId}`);
+      }
+    });
+  }
+
+  function renderFallbackMenu() {
+    console.log('🔄 renderFallbackMenu() called');
+    
+    const menuData = {
+      'most-popular': [
+        { img: 'images/meat.jpeg', alt: 'Grilled Chicken Salad', title: 'Grilled Chicken Salad', desc: 'Grilled chicken breast over mixed greens with balsamic vinaigrette', price: '$15.99', badge: '🔥 Popular' },
+        { img: 'images/smoothies.jpeg', alt: 'Fresh Smoothie', title: 'Fresh Smoothie', desc: 'Blend of seasonal fruits with yogurt and honey', price: '$6.99', badge: 'Best Seller' },
+        { img: 'images/chick.jpeg', alt: 'Artisan Coffee', title: 'Artisan Coffee', desc: 'Single-origin coffee beans roasted in-house', price: '$4.99', badge: 'Popular' }
+      ],
+      'loaded-fries': [
+        { img: 'images/tx-chick.jpeg', alt: 'Avocado Toast', title: 'Avocado Toast', desc: 'Fresh avocado on artisanal bread with poached eggs and cherry tomatoes', price: '$12.99', badge: '🔥 Popular' },
+        { img: 'images/waffles.jpg', alt: 'Fluffy Pancakes', title: 'Fluffy Pancakes', desc: 'Light and fluffy pancakes served with maple syrup and fresh berries', price: '$9.99' }
+      ],
+      'texas-chicken': [
+        { img: 'images/meat.jpeg', alt: 'Grilled Chicken Salad', title: 'Grilled Chicken Salad', desc: 'Grilled chicken breast over mixed greens with balsamic vinaigrette', price: '$15.99', badge: '🔥 Popular' },
+        { img: 'images/wrap-01.jpeg', alt: 'Turkey Club Wrap', title: 'Turkey Club Wrap', desc: 'Sliced turkey, bacon, lettuce, and tomato in a whole wheat wrap', price: '$11.99' }
+      ],
+      'smoothies': [
+        { img: 'images/oxtail.jpeg', alt: 'Grilled Ribeye Steak', title: 'Grilled Ribeye Steak', desc: '8oz ribeye steak grilled to perfection with garlic mashed potatoes', price: '$28.99', badge: '🔥 Popular' },
+        { img: 'images/inside.jpeg', alt: 'Truffle Pasta', title: 'Truffle Pasta', desc: 'House-made pasta with black truffle oil, parmesan, and fresh herbs', price: '$22.99' }
+      ],
+      'milkshakes': [
+        { img: 'images/smoothies.jpeg', alt: 'Fresh Smoothie', title: 'Fresh Smoothie', desc: 'Blend of seasonal fruits with yogurt and honey', price: '$6.99' },
+        { img: 'images/chick.jpeg', alt: 'Artisan Coffee', title: 'Artisan Coffee', desc: 'Single-origin coffee beans roasted in-house', price: '$4.99', badge: 'Popular' }
+      ],
+      'jamaican-kitchen': [
+        { img: 'images/jamaican.jpeg', alt: 'Jerk Chicken', title: 'Jerk Chicken', desc: 'Spicy marinated chicken with traditional Jamaican spices', price: '$16.99', badge: '🔥 Popular' }
+      ],
+      'cupcakes': [
+        { img: 'images/cupcake.jpeg', alt: 'Red Velvet Cupcake', title: 'Red Velvet Cupcake', desc: 'Classic red velvet with cream cheese frosting', price: '$4.50' }
+      ],
+      'cake-and-shakes': [
+        { img: 'images/cake.jpg', alt: 'Chocolate Cake', title: 'Chocolate Cake', desc: 'Rich chocolate cake with vanilla ice cream', price: '$7.99' }
+      ]
+    };
+
+    renderMenuFromData(menuData);
+  }
+
+  // Start API loading
+  loadMenuFromAPI();
 }
 
 /**

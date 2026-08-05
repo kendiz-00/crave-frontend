@@ -48,8 +48,8 @@ const APIConfig = {
         orders: '/api/orders'
     },
     
-    // Request timeout in milliseconds
-    timeout: 10000,
+    // Request timeout in milliseconds (30 seconds for Render cold starts)
+    timeout: 30000,
     
     // Cache duration in milliseconds (5 minutes)
     cacheDuration: 5 * 60 * 1000,

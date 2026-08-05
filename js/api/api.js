@@ -9,7 +9,7 @@ const defaultBaseUrl = (typeof window !== 'undefined' && window.location && wind
 
 const _APIConfig = (typeof window !== 'undefined' && window.APIConfig) ? window.APIConfig : {
     baseURL: (typeof window !== 'undefined' && window.ENV?.API_BASE_URL) ? window.ENV.API_BASE_URL : defaultBaseUrl,
-    timeout: 10000,
+    timeout: 30000,
     cacheDuration: 5 * 60 * 1000,
     retry: {
         maxAttempts: 3,
@@ -17,6 +17,15 @@ const _APIConfig = (typeof window !== 'undefined' && window.APIConfig) ? window.
         backoffMultiplier: 2
     }
 };
+
+// Log the actual baseURL being used for debugging
+if (typeof window !== 'undefined') {
+    console.log('🔧 API Configuration:');
+    console.log('  - defaultBaseUrl:', defaultBaseUrl);
+    console.log('  - window.ENV?.API_BASE_URL:', window.ENV?.API_BASE_URL);
+    console.log('  - window.APIConfig?.baseURL:', window.APIConfig?.baseURL);
+    console.log('  - Final baseURL:', _APIConfig.baseURL);
+}
 
 
 const APIClient = (function() {

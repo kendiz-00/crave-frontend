@@ -15,7 +15,10 @@ const MenuAPI = (function() {
      */
     async function getAllMenu() {
         if (!window.APIClient) throw new Error('API client not available');
-        return await window.APIClient.get('/api/menu', { useCache: true, cacheKey: 'menu_all' });
+        console.log('Fetching /api/menu...');
+        const result = await window.APIClient.get('/api/menu', { useCache: true, cacheKey: 'menu_all' });
+        console.log('Menu received');
+        return result;
     }
 
     /**
@@ -54,7 +57,10 @@ const MenuAPI = (function() {
      */
     async function getAllCategories() {
         if (!window.APIClient) throw new Error('API client not available');
-        return await window.APIClient.get('/api/categories', { useCache: true, cacheKey: 'categories_all' });
+        console.log('Fetching /api/categories...');
+        const result = await window.APIClient.get('/api/categories', { useCache: true, cacheKey: 'categories_all' });
+        console.log('Categories received');
+        return result;
     }
 
     /**
