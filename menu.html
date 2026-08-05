@@ -1411,9 +1411,10 @@
             
             Object.keys(menuData).forEach(categoryId => {
                 const category = menuData[categoryId];
-                const container = document.getElementById(`${categoryId}-items`);
+                const containerId = `${categoryId}-items`;
+                const container = document.getElementById(containerId);
                 
-                console.log(categoryId, category.items.length, container);
+                console.log(categoryId, container, containerId);
                 
                 if (container) {
                     category.items.forEach(function (menuEntry, idx) {
@@ -1422,7 +1423,38 @@
                     });
                     console.log(`✅ Rendered ${category.items.length} items for category ${categoryId}`);
                 } else {
-                    console.warn(`⚠️ No container found for category ${categoryId} (looking for ${categoryId}-items)`);
+                    console.warn(`⚠️ No container found for category ${categoryId}, creating dynamically`);
+                    
+                    // Create category section dynamically
+                    const section = document.createElement('div');
+                    section.className = 'bolt-category-section';
+                    section.id = categoryId;
+                    
+                    const sectionHeader = document.createElement('div');
+                    sectionHeader.className = 'bolt-category-header';
+                    sectionHeader.innerHTML = `
+                        <h2 class="bolt-category-title">${category.title}</h2>
+                        <p class="bolt-category-description">${category.description}</p>
+                    `;
+                    
+                    const newContainer = document.createElement('div');
+                    newContainer.className = 'bolt-food-grid';
+                    newContainer.id = containerId;
+                    
+                    section.appendChild(sectionHeader);
+                    section.appendChild(newContainer);
+                    
+                    // Append to menu container
+                    const menuContainer = document.querySelector('.bolt-menu-container') || document.body;
+                    menuContainer.appendChild(section);
+                    
+                    // Render items
+                    category.items.forEach(function (menuEntry, idx) {
+                        const foodItem = createFoodItem(menuEntry, categoryId, idx);
+                        newContainer.appendChild(foodItem);
+                    });
+                    
+                    console.log(`✅ Created dynamic section and rendered ${category.items.length} items for category ${categoryId}`);
                 }
             });
         }
