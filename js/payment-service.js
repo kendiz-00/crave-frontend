@@ -141,7 +141,7 @@ const PaymentService = (function() {
      * Calculate order total
      */
     function calculateOrderTotal(items, deliveryFee = 0, taxRate = 0) {
-        const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const subtotal = items.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
         const tax = subtotal * (taxRate / 100);
         const total = subtotal + deliveryFee + tax;
         return {

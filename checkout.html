@@ -1993,7 +1993,7 @@
             message += `\ud83e\udd3e Order Details:\n`;
             
             Object.values(groupedItems).forEach(item => {
-                const itemTotal = item.price * item.quantity;
+                const itemTotal = Number(item.price) * item.quantity;
                 message += `- ${item.name} x${item.quantity} - GH¢ ${itemTotal.toFixed(2)}\n`;
             });
             
@@ -2226,7 +2226,7 @@
             
             let subtotal = 0;
             cartItemsContainer.innerHTML = cart.map((item, index) => {
-                subtotal += item.price * item.quantity;
+                subtotal += Number(item.price) * item.quantity;
                 return `
                     <div class="checkout-cart-item">
                         <div class="checkout-item-info">
@@ -2239,7 +2239,7 @@
                             x${item.quantity}
                         </div>
                         <div class="checkout-item-price">
-                            GHS ${(item.price * item.quantity).toFixed(2)}
+                            GHS ${(Number(item.price) * item.quantity).toFixed(2)}
                         </div>
                     </div>
                 `;

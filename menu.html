@@ -1466,7 +1466,7 @@
             priceRow.className = 'bolt-food-price-row';
             const priceEl = document.createElement('span');
             priceEl.className = 'bolt-food-price';
-            priceEl.textContent = 'GH¢' + item.price.toFixed(2);
+            priceEl.textContent = 'GH¢' + Number(item.price).toFixed(2);
             priceRow.appendChild(priceEl);
             meta.appendChild(priceRow);
 

@@ -341,7 +341,7 @@
 					<div class="menu-card-body">
 						<div class="menu-card-title">${item.name}</div>
 						<div class="menu-card-desc">${item.desc}</div>
-						<div class="menu-card-price">$${item.price.toFixed(2)}</div>
+						<div class="menu-card-price">$${Number(item.price).toFixed(2)}</div>
 						<div class="menu-card-controls">
 							<button class="qty-btn" onclick="changeQty('${item.name}', -1)">−</button>
 							<div class="qty-display" id="qty-${item.name}">0</div>

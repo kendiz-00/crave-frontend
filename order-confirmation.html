@@ -286,7 +286,7 @@
                 itemsList.innerHTML = order.items.map(item => `
                     <div class="item-preview">
                         <span>${item.name} x${item.quantity}</span>
-                        <span>GHS ${(item.price * item.quantity).toFixed(2)}</span>
+                        <span>GHS ${(Number(item.price) * item.quantity).toFixed(2)}</span>
                     </div>
                 `).join('');
             }

@@ -387,7 +387,7 @@
                 <div class="bolt-food-content">
                     <div class="bolt-food-name">${item.name}</div>
                     <div class="bolt-food-description">${item.description}</div>
-                    <div class="bolt-food-price">$${item.price.toFixed(2)}</div>
+                    <div class="bolt-food-price">$${Number(item.price).toFixed(2)}</div>
                 </div>
                 <div class="bolt-food-right">
                     <img src="images/${getFoodImage(item.name)}" alt="${item.name}" class="bolt-food-image" onerror="this.src='images/logo.png'">
