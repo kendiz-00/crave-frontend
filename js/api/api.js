@@ -132,6 +132,8 @@ const APIClient = (function() {
      * Make HTTP request with retry logic and token injection
      */
     async function fetchWithRetry(url, options, attempt = 1, isRetryAfter401 = false) {
+        console.log(`📡 Fetching: ${url}`);
+        
         try {
             // Inject access token if available
             const token = getAccessToken();
@@ -146,6 +148,8 @@ const APIClient = (function() {
                 signal: controller.signal
             });
             clearTimeout(timeoutId);
+
+            console.log(`📡 Response: ${url} - Status: ${response.status}`);
 
             // Handle 401 Unauthorized - attempt token refresh
             if (response.status === 401 && !isRetryAfter401) {
@@ -165,6 +169,8 @@ const APIClient = (function() {
             }
             return await response.text();
         } catch (error) {
+            console.error(`❌ Fetch failed: ${url} - Error:`, error.message);
+            
             if (error.name === 'AbortError') {
                 throw new Error('Request timeout');
             }
@@ -177,6 +183,7 @@ const APIClient = (function() {
 
             if (shouldRetry) {
                 const retryDelay = _APIConfig.retry.delay * Math.pow(_APIConfig.retry.backoffMultiplier, attempt - 1);
+                console.log(`🔄 Retrying ${url} (attempt ${attempt + 1}/${_APIConfig.retry.maxAttempts}) after ${retryDelay}ms`);
                 await delay(retryDelay);
                 return fetchWithRetry(url, options, attempt + 1, isRetryAfter401);
             }
