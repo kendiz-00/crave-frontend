@@ -132,7 +132,13 @@ const APIClient = (function() {
      * Make HTTP request with retry logic and token injection
      */
     async function fetchWithRetry(url, options, attempt = 1, isRetryAfter401 = false) {
-        console.log(`📡 Fetching: ${url}`);
+        console.log(`� ACTUAL API REQUEST`, {
+            path: url,
+            baseURL: _APIConfig.baseURL,
+            finalURL: url,
+            timestamp: new Date().toISOString()
+        });
+        console.log(`�📡 Fetching: ${url}`);
         
         try {
             // Inject access token if available
