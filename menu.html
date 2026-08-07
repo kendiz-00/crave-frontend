@@ -1414,14 +1414,22 @@
                 const containerId = `${categoryId}-items`;
                 const container = document.getElementById(containerId);
                 
-                console.log(categoryId, container, containerId);
+                console.log(`🔍 Category: ${categoryId}`);
+                console.log(`  - Items count: ${category.items ? category.items.length : 0}`);
+                console.log(`  - Container ID: ${containerId}`);
+                console.log(`  - Container exists: ${container !== null}`);
                 
                 if (container) {
+                    console.log(`  - Using existing container`);
                     category.items.forEach(function (menuEntry, idx) {
                         const foodItem = createFoodItem(menuEntry, categoryId, idx);
                         container.appendChild(foodItem);
                     });
-                    console.log(`✅ Rendered ${category.items.length} items for category ${categoryId}`);
+                    console.log(`✅ Rendered ${category.items.length} items for category ${categoryId} into existing container`);
+                    
+                    // Verify DOM after rendering
+                    const renderedItems = container.querySelectorAll('.bolt-food-item');
+                    console.log(`  - DOM verification: ${renderedItems.length} items actually in container`);
                 } else {
                     console.warn(`⚠️ No container found for category ${categoryId}, creating dynamically`);
                     
@@ -1448,6 +1456,9 @@
                     const menuContainer = document.querySelector('.bolt-menu-container') || document.body;
                     menuContainer.appendChild(section);
                     
+                    console.log(`  - Created dynamic section with ID: ${categoryId}`);
+                    console.log(`  - Appended to menu container: ${menuContainer.className || 'body'}`);
+                    
                     // Render items
                     category.items.forEach(function (menuEntry, idx) {
                         const foodItem = createFoodItem(menuEntry, categoryId, idx);
@@ -1455,7 +1466,21 @@
                     });
                     
                     console.log(`✅ Created dynamic section and rendered ${category.items.length} items for category ${categoryId}`);
+                    
+                    // Verify DOM after rendering
+                    const renderedItems = newContainer.querySelectorAll('.bolt-food-item');
+                    console.log(`  - DOM verification: ${renderedItems.length} items actually in new container`);
                 }
+            });
+            
+            // Final DOM verification
+            console.log('🔍 FINAL DOM VERIFICATION');
+            const allSections = document.querySelectorAll('.bolt-category-section');
+            console.log(`  - Total category sections in DOM: ${allSections.length}`);
+            allSections.forEach(section => {
+                const sectionId = section.id;
+                const items = section.querySelectorAll('.bolt-food-item');
+                console.log(`  - Section "${sectionId}": ${items.length} items`);
             });
         }
 
