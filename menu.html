@@ -1269,66 +1269,125 @@
         // Load categories and menu from API
         async function loadMenuFromAPI() {
             try {
-                // Try to fetch from API (no loading state since we already show fallback)
+                console.log('[MENU] Loading menu from API...');
+                
+                // Fetch from API
                 const categoryResponse = await MenuAPI.getCategories();
                 const menuResponse = await MenuAPI.getAll();
 
                 const categories = categoryResponse.data || categoryResponse;
                 const menuItems = menuResponse.data || menuResponse;
 
-                console.log("Categories:", categories);
-                console.log("Menu Items:", menuItems);
+                console.log('[MENU] API response received');
+                console.log('[MENU] Categories:', categories.length);
+                console.log('[MENU] Menu items:', menuItems.length);
 
                 // Transform API data to menuData format
                 menuData = transformAPIDataToMenuData(categories, menuItems);
 
-                console.log("Transformed Menu:", menuData);
+                console.log('[MENU] Menu transformed successfully');
 
                 // Render category navigation
                 renderCategoryNavigation(categories);
 
-                // Render menu items
+                // Render menu items (only once)
                 initializeMenu();
 
+                console.log('[MENU] API menu rendered successfully');
+
             } catch (error) {
-                console.error('Error loading menu from API, keeping fallback:', error);
-                // Keep using fallback menu that was already loaded
+                console.error('[MENU] Error loading menu from API, using fallback:', error);
+                
+                // Use fallback menu if API fails
+                menuData = fallbackMenuData;
+                
+                const fallbackCategories = Object.keys(fallbackMenuData).map(key => ({
+                    slug: key,
+                    name: fallbackMenuData[key].title
+                }));
+                renderCategoryNavigation(fallbackCategories);
+                
+                initializeMenu();
+                
+                console.log('[MENU] Fallback menu rendered');
             }
         }
 
         // Transform API data to menuData format
         function transformAPIDataToMenuData(categories, menuItems) {
             const transformed = {};
+            let totalTransformedItems = 0;
+            const unmatchedItems = [];
+
+            console.log('[MENU] Transforming API data...');
+            console.log('[MENU] API categories:', categories.length);
+            console.log('[MENU] API menu items:', menuItems.length);
 
             categories.forEach(category => {
-
-                const slug =
-                    category.slug ||
-                    category.name.toLowerCase().replace(/\s+/g, "-");
+                // Normalize category slug
+                const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, "-").replace(/_/g, "-");
+                
+                // Match items by categoryId (primary), category.id, or category.slug
+                const categoryItems = menuItems.filter(item => {
+                    const matchById = item.categoryId === category.id;
+                    const matchByNestedId = item.category?.id === category.id;
+                    const matchBySlug = item.category?.slug === slug;
+                    const matchByName = item.category?.name?.toLowerCase().replace(/\s+/g, "-").replace(/_/g, "-") === slug;
+                    
+                    return matchById || matchByNestedId || matchBySlug || matchByName;
+                });
 
                 transformed[slug] = {
                     title: category.name,
                     description: category.description || "",
-                    items: menuItems
-                        .filter(item =>
-                            item.category?.id === category.id ||
-                            item.category?.slug === slug
-                        )
-                        .map(item => ({
-                            name: item.name,
-                            price: item.price,
-                            description: item.description,
-                            image: item.imageUrl,
-                            available: item.isAvailable,
-                            featured: item.isFeatured,
-                            badges: item.badges || [],
-                            addOns: item.addOns || [],
-                            calories: item.calories,
-                            preparationTime: item.preparationTime
-                        }))
+                    items: categoryItems.map(item => ({
+                        name: item.name,
+                        price: item.price,
+                        description: item.description,
+                        image: item.imageUrl,
+                        available: item.isAvailable,
+                        featured: item.isFeatured,
+                        badges: item.badges || [],
+                        addOns: item.addOns || [],
+                        calories: item.calories,
+                        preparationTime: item.preparationTime
+                    }))
                 };
 
+                totalTransformedItems += categoryItems.length;
+                console.log(`[MENU] Category ${slug}: ${categoryItems.length} items`);
             });
+
+            // Log unmatched items
+            menuItems.forEach(item => {
+                const isMatched = categories.some(category => {
+                    const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, "-").replace(/_/g, "-");
+                    return item.categoryId === category.id ||
+                           item.category?.id === category.id ||
+                           item.category?.slug === slug ||
+                           item.category?.name?.toLowerCase().replace(/\s+/g, "-").replace(/_/g, "-") === slug;
+                });
+                
+                if (!isMatched) {
+                    unmatchedItems.push({
+                        name: item.name,
+                        categoryId: item.categoryId,
+                        category: item.category
+                    });
+                }
+            });
+
+            if (unmatchedItems.length > 0) {
+                console.warn('[MENU] Unmatched items:', unmatchedItems);
+            }
+
+            console.log(`[MENU] API items: ${menuItems.length}`);
+            console.log(`[MENU] Transformed items: ${totalTransformedItems}`);
+            console.log(`[MENU] Unmatched items: ${unmatchedItems.length}`);
+
+            if (totalTransformedItems !== menuItems.length) {
+                console.error(`[MENU] MISMATCH: ${menuItems.length} API items but ${totalTransformedItems} transformed items`);
+            }
 
             return transformed;
         }
@@ -1407,44 +1466,22 @@
 
         // Initialize menu
         function initializeMenu() {
-            console.log('🚨 API-DOM-DIAG: initializeMenu() START');
-            console.log('🚨 API-DOM-DIAG: menuData keys:', Object.keys(menuData));
-            console.log('🚨 API-DOM-DIAG: menuData:', JSON.stringify(menuData, null, 2));
+            console.log('[MENU] initializeMenu() called');
             
             const categoryKeys = Object.keys(menuData);
-            console.log('🚨 API-DOM-DIAG: Number of categories:', categoryKeys.length);
+            console.log(`[MENU] Categories to render: ${categoryKeys.length}`);
             
-            categoryKeys.forEach((categoryId, index) => {
-                console.log('🚨 API-DOM-DIAG: === Processing category', index + 1, 'of', categoryKeys.length, '===');
-                console.log('🚨 API-DOM-DIAG: Category slug/id:', categoryId);
-                
+            categoryKeys.forEach(categoryId => {
                 const category = menuData[categoryId];
-                console.log('🚨 API-DOM-DIAG: Category object:', category);
-                console.log('🚨 API-DOM-DIAG: category.items:', category.items);
-                console.log('🚨 API-DOM-DIAG: Items count:', category.items ? category.items.length : 0);
-                
                 const containerId = `${categoryId}-items`;
-                console.log('🚨 API-DOM-DIAG: Searching for container ID:', containerId);
-                
                 const container = document.getElementById(containerId);
-                console.log('🚨 API-DOM-DIAG: Container exists?', container !== null);
-                console.log('🚨 API-DOM-DIAG: Container element:', container);
                 
                 if (container) {
-                    console.log('🚨 API-DOM-DIAG: Using EXISTING container for', categoryId);
                     category.items.forEach(function (menuEntry, idx) {
-                        console.log('🚨 API-DOM-DIAG: Creating item', idx, 'for', categoryId, ':', menuEntry.name);
                         const foodItem = createFoodItem(menuEntry, categoryId, idx);
                         container.appendChild(foodItem);
                     });
-                    console.log('🚨 API-DOM-DIAG: Rendered', category.items.length, 'items for', categoryId, 'into existing container');
-                    
-                    // Verify DOM after rendering
-                    const renderedItems = container.querySelectorAll('.bolt-food-item');
-                    console.log('🚨 API-DOM-DIAG: DOM verification - items in container:', renderedItems.length);
                 } else {
-                    console.log('🚨 API-DOM-DIAG: Container NOT FOUND for', categoryId, '- creating DYNAMIC section');
-                    
                     // Create category section dynamically
                     const section = document.createElement('div');
                     section.className = 'bolt-category-section';
@@ -1464,44 +1501,28 @@
                     section.appendChild(sectionHeader);
                     section.appendChild(newContainer);
                     
-                    // Append to menu container
                     const menuContainer = document.querySelector('.bolt-menu-container') || document.body;
-                    console.log('🚨 API-DOM-DIAG: Appending to menu container:', menuContainer.className || 'body');
                     menuContainer.appendChild(section);
-                    console.log('🚨 API-DOM-DIAG: Appended to menu container: bolt-menu-container');
                     
                     // Render items
                     category.items.forEach(function (menuEntry, idx) {
-                        console.log('🚨 API-DOM-DIAG: Creating item', idx, 'for', categoryId, '(dynamic):', menuEntry.name);
                         const foodItem = createFoodItem(menuEntry, categoryId, idx);
                         newContainer.appendChild(foodItem);
                     });
-                    
-                    console.log('🚨 API-DOM-DIAG: Created dynamic section and rendered', category.items.length, 'items for', categoryId);
-                    
-                    // Verify DOM after rendering
-                    const renderedItems = newContainer.querySelectorAll('.bolt-food-item');
-                    console.log('🚨 API-DOM-DIAG: DOM verification - items in new container:', renderedItems.length);
                 }
             });
             
-            // Final DOM verification
-            console.log('🚨 API-DOM-DIAG: === FINAL DOM VERIFICATION ===');
+            // Final verification
             const allSections = document.querySelectorAll('.bolt-category-section');
-            console.log('🚨 API-DOM-DIAG: Total category sections in DOM:', allSections.length);
-            allSections.forEach(section => {
-                const sectionId = section.id;
-                const items = section.querySelectorAll('.bolt-food-item');
-                console.log('🚨 API-DOM-DIAG: Section', sectionId, ':', items.length, 'items');
+            console.log(`[MENU] Total sections in DOM: ${allSections.length}`);
+            
+            categoryKeys.forEach(categoryId => {
+                const container = document.getElementById(`${categoryId}-items`);
+                const items = container ? container.querySelectorAll('.bolt-food-item') : [];
+                console.log(`[MENU] Category ${categoryId}: ${items.length} items`);
             });
             
-            const menuContainer = document.querySelector('.bolt-menu-container');
-            if (menuContainer) {
-                const allItems = menuContainer.querySelectorAll('.bolt-food-item, .food-item, .menu-card');
-                console.log('🚨 API-DOM-DIAG: Total items in bolt-menu-container:', allItems.length);
-            }
-            
-            console.log('🚨 API-DOM-DIAG: initializeMenu() END');
+            console.log('[MENU] initializeMenu() complete');
         }
 
         // Create food item — Bolt-style listing: main column + image with floating +
@@ -1942,22 +1963,8 @@
             loadCartFromStorage();
             
             // Initialize category navigation from fallback immediately
-            const fallbackCategories = Object.keys(fallbackMenuData).map(key => ({
-                slug: key,
-                name: fallbackMenuData[key].title
-            }));
-            renderCategoryNavigation(fallbackCategories);
-            
-            // Load fallback menu immediately to prevent delay
-            menuData = fallbackMenuData;
-            initializeMenu();
-            
-            // Then try to load from API and update if successful
-            loadMenuFromAPI().then(() => {
-                console.log('Menu loaded from API successfully');
-            }).catch(error => {
-                console.error('Failed to load menu from API, using fallback:', error);
-            });
+            // Initialize menu - try API first, fallback on failure
+            loadMenuFromAPI();
 
             try {
                 initBoltMenuSearch();
