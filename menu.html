@@ -1471,6 +1471,12 @@
             const categoryKeys = Object.keys(menuData);
             console.log(`[MENU] Categories to render: ${categoryKeys.length}`);
             
+            // Print menuData category names and item counts
+            categoryKeys.forEach(categoryId => {
+                const category = menuData[categoryId];
+                console.log(`[MENU] menuData category "${categoryId}": ${category.items ? category.items.length : 0} items`);
+            });
+            
             categoryKeys.forEach(categoryId => {
                 const category = menuData[categoryId];
                 const containerId = `${categoryId}-items`;
@@ -1512,14 +1518,68 @@
                 }
             });
             
-            // Final verification
-            const allSections = document.querySelectorAll('.bolt-category-section');
-            console.log(`[MENU] Total sections in DOM: ${allSections.length}`);
+            // DOM verification after rendering
+            console.log('[MENU] === DOM VERIFICATION ===');
             
-            categoryKeys.forEach(categoryId => {
-                const container = document.getElementById(`${categoryId}-items`);
-                const items = container ? container.querySelectorAll('.bolt-food-item') : [];
-                console.log(`[MENU] Category ${categoryId}: ${items.length} items`);
+            const menuContainer = document.querySelector('.bolt-menu-container');
+            if (menuContainer) {
+                const sections = menuContainer.querySelectorAll('.menu-section, .bolt-category-section');
+                console.log(`[MENU] Sections in bolt-menu-container: ${sections.length}`);
+                
+                sections.forEach((section, index) => {
+                    const sectionId = section.id || `section-${index}`;
+                    const foodItems = section.querySelectorAll('.food-item, .bolt-food-item');
+                    console.log(`[MENU] Section "${sectionId}": ${foodItems.length} food items`);
+                });
+                
+                const allFoodItems = menuContainer.querySelectorAll('.food-item, .bolt-food-item');
+                console.log(`[MENU] Total food items in bolt-menu-container: ${allFoodItems.length}`);
+                
+                // Check first food item
+                if (allFoodItems.length > 0) {
+                    const firstItem = allFoodItems[0];
+                    console.log('[MENU] First food item outerHTML:', firstItem.outerHTML);
+                    
+                    const computed = window.getComputedStyle(firstItem);
+                    console.log('[MENU] First food item computed styles:');
+                    console.log(`  - display: ${computed.display}`);
+                    console.log(`  - visibility: ${computed.visibility}`);
+                    console.log(`  - opacity: ${computed.opacity}`);
+                    console.log(`  - height: ${computed.height}`);
+                    console.log(`  - width: ${computed.width}`);
+                    
+                    // Check parent elements for hiding
+                    console.log('[MENU] Checking parent elements for hiding styles:');
+                    let parent = firstItem.parentElement;
+                    let depth = 0;
+                    while (parent && depth < 10) {
+                        const parentComputed = window.getComputedStyle(parent);
+                        const isHidden = 
+                            parentComputed.display === 'none' ||
+                            parentComputed.visibility === 'hidden' ||
+                            parentComputed.opacity === '0' ||
+                            parentComputed.height === '0px' ||
+                            parentComputed.width === '0px';
+                        
+                        if (isHidden) {
+                            console.log(`  - Parent ${depth} (${parent.className || parent.tagName}): display=${parentComputed.display}, visibility=${parentComputed.visibility}, opacity=${parentComputed.opacity}, height=${parentComputed.height}, width=${parentComputed.width}`);
+                        }
+                        
+                        parent = parent.parentElement;
+                        depth++;
+                    }
+                }
+            } else {
+                console.log('[MENU] bolt-menu-container not found');
+            }
+            
+            // Check if dynamically created sections are hidden by CSS
+            const dynamicSections = document.querySelectorAll('.bolt-category-section');
+            console.log(`[MENU] Dynamic bolt-category-section elements: ${dynamicSections.length}`);
+            
+            dynamicSections.forEach((section, index) => {
+                const computed = window.getComputedStyle(section);
+                console.log(`[MENU] Dynamic section ${index} (${section.id}): display=${computed.display}, visibility=${computed.visibility}, opacity=${computed.opacity}`);
             });
             
             console.log('[MENU] initializeMenu() complete');
