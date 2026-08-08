@@ -1407,31 +1407,43 @@
 
         // Initialize menu
         function initializeMenu() {
-            console.log('🎨 initializeMenu() called with categories:', Object.keys(menuData));
+            console.log('🚨 API-DOM-DIAG: initializeMenu() START');
+            console.log('🚨 API-DOM-DIAG: menuData keys:', Object.keys(menuData));
+            console.log('🚨 API-DOM-DIAG: menuData:', JSON.stringify(menuData, null, 2));
             
-            Object.keys(menuData).forEach(categoryId => {
-                const category = menuData[categoryId];
-                const containerId = `${categoryId}-items`;
-                const container = document.getElementById(containerId);
+            const categoryKeys = Object.keys(menuData);
+            console.log('🚨 API-DOM-DIAG: Number of categories:', categoryKeys.length);
+            
+            categoryKeys.forEach((categoryId, index) => {
+                console.log('🚨 API-DOM-DIAG: === Processing category', index + 1, 'of', categoryKeys.length, '===');
+                console.log('🚨 API-DOM-DIAG: Category slug/id:', categoryId);
                 
-                console.log(`🔍 Category: ${categoryId}`);
-                console.log(`  - Items count: ${category.items ? category.items.length : 0}`);
-                console.log(`  - Container ID: ${containerId}`);
-                console.log(`  - Container exists: ${container !== null}`);
+                const category = menuData[categoryId];
+                console.log('🚨 API-DOM-DIAG: Category object:', category);
+                console.log('🚨 API-DOM-DIAG: category.items:', category.items);
+                console.log('🚨 API-DOM-DIAG: Items count:', category.items ? category.items.length : 0);
+                
+                const containerId = `${categoryId}-items`;
+                console.log('🚨 API-DOM-DIAG: Searching for container ID:', containerId);
+                
+                const container = document.getElementById(containerId);
+                console.log('🚨 API-DOM-DIAG: Container exists?', container !== null);
+                console.log('🚨 API-DOM-DIAG: Container element:', container);
                 
                 if (container) {
-                    console.log(`  - Using existing container`);
+                    console.log('🚨 API-DOM-DIAG: Using EXISTING container for', categoryId);
                     category.items.forEach(function (menuEntry, idx) {
+                        console.log('🚨 API-DOM-DIAG: Creating item', idx, 'for', categoryId, ':', menuEntry.name);
                         const foodItem = createFoodItem(menuEntry, categoryId, idx);
                         container.appendChild(foodItem);
                     });
-                    console.log(`✅ Rendered ${category.items.length} items for category ${categoryId} into existing container`);
+                    console.log('🚨 API-DOM-DIAG: Rendered', category.items.length, 'items for', categoryId, 'into existing container');
                     
                     // Verify DOM after rendering
                     const renderedItems = container.querySelectorAll('.bolt-food-item');
-                    console.log(`  - DOM verification: ${renderedItems.length} items actually in container`);
+                    console.log('🚨 API-DOM-DIAG: DOM verification - items in container:', renderedItems.length);
                 } else {
-                    console.warn(`⚠️ No container found for category ${categoryId}, creating dynamically`);
+                    console.log('🚨 API-DOM-DIAG: Container NOT FOUND for', categoryId, '- creating DYNAMIC section');
                     
                     // Create category section dynamically
                     const section = document.createElement('div');
@@ -1454,34 +1466,42 @@
                     
                     // Append to menu container
                     const menuContainer = document.querySelector('.bolt-menu-container') || document.body;
+                    console.log('🚨 API-DOM-DIAG: Appending to menu container:', menuContainer.className || 'body');
                     menuContainer.appendChild(section);
-                    
-                    console.log(`  - Created dynamic section with ID: ${categoryId}`);
-                    console.log(`  - Appended to menu container: ${menuContainer.className || 'body'}`);
+                    console.log('🚨 API-DOM-DIAG: Appended to menu container: bolt-menu-container');
                     
                     // Render items
                     category.items.forEach(function (menuEntry, idx) {
+                        console.log('🚨 API-DOM-DIAG: Creating item', idx, 'for', categoryId, '(dynamic):', menuEntry.name);
                         const foodItem = createFoodItem(menuEntry, categoryId, idx);
                         newContainer.appendChild(foodItem);
                     });
                     
-                    console.log(`✅ Created dynamic section and rendered ${category.items.length} items for category ${categoryId}`);
+                    console.log('🚨 API-DOM-DIAG: Created dynamic section and rendered', category.items.length, 'items for', categoryId);
                     
                     // Verify DOM after rendering
                     const renderedItems = newContainer.querySelectorAll('.bolt-food-item');
-                    console.log(`  - DOM verification: ${renderedItems.length} items actually in new container`);
+                    console.log('🚨 API-DOM-DIAG: DOM verification - items in new container:', renderedItems.length);
                 }
             });
             
             // Final DOM verification
-            console.log('🔍 FINAL DOM VERIFICATION');
+            console.log('🚨 API-DOM-DIAG: === FINAL DOM VERIFICATION ===');
             const allSections = document.querySelectorAll('.bolt-category-section');
-            console.log(`  - Total category sections in DOM: ${allSections.length}`);
+            console.log('🚨 API-DOM-DIAG: Total category sections in DOM:', allSections.length);
             allSections.forEach(section => {
                 const sectionId = section.id;
                 const items = section.querySelectorAll('.bolt-food-item');
-                console.log(`  - Section "${sectionId}": ${items.length} items`);
+                console.log('🚨 API-DOM-DIAG: Section', sectionId, ':', items.length, 'items');
             });
+            
+            const menuContainer = document.querySelector('.bolt-menu-container');
+            if (menuContainer) {
+                const allItems = menuContainer.querySelectorAll('.bolt-food-item, .food-item, .menu-card');
+                console.log('🚨 API-DOM-DIAG: Total items in bolt-menu-container:', allItems.length);
+            }
+            
+            console.log('🚨 API-DOM-DIAG: initializeMenu() END');
         }
 
         // Create food item — Bolt-style listing: main column + image with floating +
