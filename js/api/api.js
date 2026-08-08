@@ -132,13 +132,13 @@ const APIClient = (function() {
      * Make HTTP request with retry logic and token injection
      */
     async function fetchWithRetry(url, options, attempt = 1, isRetryAfter401 = false) {
-        console.log(`� ACTUAL API REQUEST`, {
+        console.log(`🚨 ACTUAL API REQUEST`, {
             path: url,
             baseURL: _APIConfig.baseURL,
             finalURL: url,
             timestamp: new Date().toISOString()
         });
-        console.log(`�📡 Fetching: ${url}`);
+        console.log(`📡 Fetching: ${url}`);
         
         try {
             // Inject access token if available
@@ -149,36 +149,43 @@ const APIClient = (function() {
             }
 
             const { controller, timeoutId } = createTimeout(_APIConfig.timeout);
-            const response = await fetch(url, {
-                ...options,
-                signal: controller.signal
-            });
-            clearTimeout(timeoutId);
+            
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
 
-            console.log(`📡 Response: ${url} - Status: ${response.status}`);
+                console.log(`📡 Response: ${url} - Status: ${response.status}`);
 
-            // Handle 401 Unauthorized - attempt token refresh
-            if (response.status === 401 && !isRetryAfter401) {
-                return await handle401Error(url, options);
+                // Handle 401 Unauthorized - attempt token refresh
+                if (response.status === 401 && !isRetryAfter401) {
+                    return await handle401Error(url, options);
+                }
+
+                if (!response.ok) {
+                    const error = new Error(`HTTP error! status: ${response.status}`);
+                    error.status = response.status;
+                    error.response = response;
+                    throw error;
+                }
+
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return await response.json();
+                }
+                return await response.text();
+            } catch (fetchError) {
+                clearTimeout(timeoutId);
+                throw fetchError;
             }
-
-            if (!response.ok) {
-                const error = new Error(`HTTP error! status: ${response.status}`);
-                error.status = response.status;
-                error.response = response;
-                throw error;
-            }
-
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                return await response.json();
-            }
-            return await response.text();
         } catch (error) {
             console.error(`❌ Fetch failed: ${url} - Error:`, error.message);
             
             if (error.name === 'AbortError') {
-                throw new Error('Request timeout');
+                console.error(`❌ Request aborted: ${url} - Reason: ${error.message || 'timeout'}`);
+                throw new Error(`Request aborted: ${error.message || 'timeout'}`);
             }
 
             // Retry on network errors or 5xx errors

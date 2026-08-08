@@ -875,8 +875,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize menu category scroll
   initMenuCategoryScroll();
   
-  // Initialize reservation form
-  initReservationForm();
+  // Initialize reservation form (only if function exists and page has reservation form)
+  if (typeof initReservationForm === 'function' && document.querySelector('.reservation-form')) {
+    initReservationForm();
+  }
   
   // SAFE: Floating Cart Button Functionality
   const floatingCartBtn = document.getElementById('floatingCartBtn');
