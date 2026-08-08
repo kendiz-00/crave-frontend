@@ -62,6 +62,11 @@ const APIConfig = {
     }
 };
 
+// Export for use in browser window
+if (typeof window !== 'undefined') {
+    window.APIConfig = APIConfig;
+}
+
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = APIConfig;

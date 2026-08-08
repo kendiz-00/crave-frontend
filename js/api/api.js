@@ -76,7 +76,9 @@ const APIClient = (function() {
      */
     function createTimeout(timeout) {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        const timeoutId = setTimeout(() => {
+            controller.abort(new Error('Request timeout'));
+        }, timeout);
         return { controller, timeoutId };
     }
 
@@ -183,15 +185,13 @@ const APIClient = (function() {
         } catch (error) {
             console.error(`❌ Fetch failed: ${url} - Error:`, error.message);
             
-            if (error.name === 'AbortError') {
-                console.error(`❌ Request aborted: ${url} - Reason: ${error.message || 'timeout'}`);
-                throw new Error(`Request aborted: ${error.message || 'timeout'}`);
-            }
+            const isAbort = error.name === 'AbortError';
 
-            // Retry on network errors or 5xx errors
+            // Retry on network errors, timeouts/aborts, or 5xx server errors
             const shouldRetry = 
                 attempt < _APIConfig.retry.maxAttempts &&
                 (error.name === 'TypeError' || 
+                 isAbort ||
                  (error.status && error.status >= 500));
 
             if (shouldRetry) {
@@ -199,6 +199,11 @@ const APIClient = (function() {
                 console.log(`🔄 Retrying ${url} (attempt ${attempt + 1}/${_APIConfig.retry.maxAttempts}) after ${retryDelay}ms`);
                 await delay(retryDelay);
                 return fetchWithRetry(url, options, attempt + 1, isRetryAfter401);
+            }
+
+            if (isAbort) {
+                console.error(`❌ Request aborted: ${url} - Reason: ${error.message || 'timeout'}`);
+                throw new Error(`Request aborted: ${error.message || 'timeout'}`);
             }
 
             throw error;
