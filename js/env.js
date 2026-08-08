@@ -41,6 +41,11 @@
         window.ENV = defaultEnv;
     }
 
+    // Force production API base URL if using legacy staging URL or on remote host
+    if (!isLocalhost && (!window.ENV.API_BASE_URL || window.ENV.API_BASE_URL.includes('staging') || window.ENV.API_BASE_URL.includes('crave-backend-staging.onrender.com'))) {
+        window.ENV.API_BASE_URL = 'https://crave-backend-oie3.onrender.com';
+    }
+
     // 🔍 DIAGNOSTIC: Log final state
     console.log('🔍 env.js - FINAL STATE');
     console.log('  - window.ENV.API_BASE_URL:', window.ENV.API_BASE_URL);

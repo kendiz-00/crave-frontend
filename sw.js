@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'crave-pwa-v2';
+const CACHE_VERSION = 'crave-pwa-v3';
 const STATIC_CACHE = `crave-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `crave-runtime-${CACHE_VERSION}`;
 const OFFLINE_URL = 'offline.html';
@@ -54,11 +54,13 @@ self.addEventListener('fetch', event => {
   }
 
   if (STATIC_ASSETS.some(asset => url.pathname.endsWith(asset.replace('/', '')) || url.pathname === asset)) {
-    event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
-      const copy = response.clone();
-      caches.open(STATIC_CACHE).then(cache => cache.put(request, copy));
-      return response;
-    }).catch(() => caches.match(request))));
+    event.respondWith(
+      fetch(request).then(response => {
+        const copy = response.clone();
+        caches.open(STATIC_CACHE).then(cache => cache.put(request, copy));
+        return response;
+      }).catch(() => caches.match(request))
+    );
     return;
   }
 
