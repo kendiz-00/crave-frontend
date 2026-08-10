@@ -1266,80 +1266,111 @@
             }, 1000);
         }
 
-        // Load categories and menu from API
+        function normalizeCategorySlug(value) {
+            if (value === null || value === undefined) return '';
+            return String(value)
+                .trim()
+                .toLowerCase()
+                .replace(/&/g, 'and')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .replace(/-+/g, '-');
+        }
+
+        function extractApiArray(payload) {
+            if (Array.isArray(payload)) return payload;
+            if (payload && Array.isArray(payload.data)) return payload.data;
+            return [];
+        }
+
+        // Instant initial menu render from local cache or fallback
+        function renderInitialMenu() {
+            try {
+                const cachedMenu = localStorage.getItem('crave_cached_menu_data');
+                const cachedCategories = localStorage.getItem('crave_cached_categories');
+                if (cachedMenu && cachedCategories) {
+                    menuData = JSON.parse(cachedMenu);
+                    const categories = JSON.parse(cachedCategories);
+                    renderCategoryNavigation(categories);
+                    initializeMenu();
+                    console.log('[MENU] Instantly rendered menu from local cache');
+                    return;
+                }
+            } catch (e) {
+                console.warn('[MENU] Local cache parse failed, using fallback:', e);
+            }
+
+            // Fallback rendering for first visit before API response
+            menuData = fallbackMenuData;
+            const fallbackCategories = Object.keys(fallbackMenuData).map(key => ({
+                slug: key,
+                name: fallbackMenuData[key].title
+            }));
+            renderCategoryNavigation(fallbackCategories);
+            initializeMenu();
+            console.log('[MENU] Instantly rendered fallback menu');
+        }
+
+        // Load categories and menu from API in parallel
         async function loadMenuFromAPI() {
             try {
-                console.log('[MENU] Loading menu from API...');
-                
-                // Fetch from API
-                const categoryResponse = await MenuAPI.getCategories();
-                const menuResponse = await MenuAPI.getAll();
+                console.log('[MENU] Loading menu from API (parallel fetch)...');
 
-                const categories = categoryResponse.data || categoryResponse;
-                const menuItems = menuResponse.data || menuResponse;
+                const [categoryResponse, menuResponse] = await Promise.all([
+                    MenuAPI.getCategories(),
+                    MenuAPI.getAll()
+                ]);
+
+                const categories = extractApiArray(categoryResponse);
+                const menuItems = extractApiArray(menuResponse);
 
                 console.log('[MENU] API response received');
                 console.log('[MENU] Categories:', categories.length);
                 console.log('[MENU] Menu items:', menuItems.length);
 
-                // Transform API data to menuData format
-                menuData = transformAPIDataToMenuData(categories, menuItems);
+                const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
+                menuData = freshMenuData;
 
-                console.log('[MENU] Menu transformed successfully');
+                try {
+                    localStorage.setItem('crave_cached_menu_data', JSON.stringify(freshMenuData));
+                    localStorage.setItem('crave_cached_categories', JSON.stringify(categories));
+                } catch (e) {
+                    console.warn('[MENU] Could not cache API menu data:', e);
+                }
 
-                // Render category navigation
                 renderCategoryNavigation(categories);
-
-                // Render menu items (only once)
                 initializeMenu();
 
                 console.log('[MENU] API menu rendered successfully');
 
             } catch (error) {
-                console.error('[MENU] Error loading menu from API, using fallback:', error);
-                
-                // Use fallback menu if API fails
-                menuData = fallbackMenuData;
-                
-                const fallbackCategories = Object.keys(fallbackMenuData).map(key => ({
-                    slug: key,
-                    name: fallbackMenuData[key].title
-                }));
-                renderCategoryNavigation(fallbackCategories);
-                
-                initializeMenu();
-                
-                console.log('[MENU] Fallback menu rendered');
+                console.error('[MENU] Error loading menu from API:', error);
             }
         }
 
         // Transform API data to menuData format
         function transformAPIDataToMenuData(categories, menuItems) {
+            const apiCategories = extractApiArray(categories);
+            const apiMenuItems = extractApiArray(menuItems).filter(item => !item.isDeleted && item.isAvailable !== false);
             const transformed = {};
             let totalTransformedItems = 0;
             const unmatchedItems = [];
 
             console.log('[MENU] Transforming API data...');
-            console.log('[MENU] API categories:', categories.length);
-            console.log('[MENU] API menu items:', menuItems.length);
+            console.log('[MENU] API categories:', apiCategories.length);
+            console.log('[MENU] API menu items:', apiMenuItems.length);
 
-            categories.forEach(category => {
-                // Normalize category slug
-                const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, "-").replace(/_/g, "-");
-                
-                // Match items by categoryId (primary), category.id, or category.slug
-                const categoryItems = menuItems.filter(item => {
-                    const matchById = item.categoryId === category.id;
-                    const matchByNestedId = item.category?.id === category.id;
-                    const matchBySlug = item.category?.slug === slug;
-                    const matchByName = item.category?.name?.toLowerCase().replace(/\s+/g, "-").replace(/_/g, "-") === slug;
-                    
-                    return matchById || matchByNestedId || matchBySlug || matchByName;
+            apiCategories.forEach(category => {
+                const slug = normalizeCategorySlug(category.slug || category.name);
+                const categoryItems = apiMenuItems.filter(item => {
+                    const itemCategorySlug = normalizeCategorySlug(item.category?.slug || item.category?.name || '');
+                    const itemCategoryId = item.categoryId || item.category?.id;
+                    return itemCategoryId === category.id || itemCategorySlug === slug || normalizeCategorySlug(item.category?.name) === slug;
                 });
 
                 transformed[slug] = {
                     title: category.name,
-                    description: category.description || "",
+                    description: category.description || '',
                     items: categoryItems.map(item => ({
                         name: item.name,
                         price: item.price,
@@ -1358,16 +1389,14 @@
                 console.log(`[MENU] Category ${slug}: ${categoryItems.length} items`);
             });
 
-            // Log unmatched items
-            menuItems.forEach(item => {
-                const isMatched = categories.some(category => {
-                    const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, "-").replace(/_/g, "-");
-                    return item.categoryId === category.id ||
-                           item.category?.id === category.id ||
-                           item.category?.slug === slug ||
-                           item.category?.name?.toLowerCase().replace(/\s+/g, "-").replace(/_/g, "-") === slug;
+            apiMenuItems.forEach(item => {
+                const itemCategorySlug = normalizeCategorySlug(item.category?.slug || item.category?.name || '');
+                const itemCategoryId = item.categoryId || item.category?.id;
+                const isMatched = apiCategories.some(category => {
+                    const slug = normalizeCategorySlug(category.slug || category.name);
+                    return itemCategoryId === category.id || itemCategorySlug === slug || normalizeCategorySlug(item.category?.name) === slug;
                 });
-                
+
                 if (!isMatched) {
                     unmatchedItems.push({
                         name: item.name,
@@ -1381,12 +1410,12 @@
                 console.warn('[MENU] Unmatched items:', unmatchedItems);
             }
 
-            console.log(`[MENU] API items: ${menuItems.length}`);
+            console.log(`[MENU] API items: ${apiMenuItems.length}`);
             console.log(`[MENU] Transformed items: ${totalTransformedItems}`);
             console.log(`[MENU] Unmatched items: ${unmatchedItems.length}`);
 
-            if (totalTransformedItems !== menuItems.length) {
-                console.error(`[MENU] MISMATCH: ${menuItems.length} API items but ${totalTransformedItems} transformed items`);
+            if (totalTransformedItems !== apiMenuItems.length) {
+                console.error(`[MENU] MISMATCH: ${apiMenuItems.length} API items but ${totalTransformedItems} transformed items`);
             }
 
             return transformed;
@@ -1397,8 +1426,9 @@
             const navList = document.querySelector('.bolt-category-nav-list');
             if (!navList) return;
 
-            navList.innerHTML = categories.map((category, index) => {
-                const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, '-');
+            const apiCategories = extractApiArray(categories);
+            navList.innerHTML = apiCategories.map((category, index) => {
+                const slug = normalizeCategorySlug(category.slug || category.name);
                 const isActive = index === 0 ? 'active' : '';
                 return `<a href="#${slug}" class="bolt-category-nav-item ${isActive}">${category.name}</a>`;
             }).join('');
@@ -1466,123 +1496,65 @@
 
         // Initialize menu
         function initializeMenu() {
-            console.log('[MENU] initializeMenu() called');
-            
-            const categoryKeys = Object.keys(menuData);
-            console.log(`[MENU] Categories to render: ${categoryKeys.length}`);
-            
-            // Print menuData category names and item counts
+            const isDebugMenu = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || (window.ENV && window.ENV.APP_ENV === 'development');
+
+            if (isDebugMenu) {
+                console.log('[MENU] initializeMenu() called');
+            }
+
+            const categoryKeys = Object.keys(menuData || {});
+            if (isDebugMenu) {
+                console.log(`[MENU] Categories to render: ${categoryKeys.length}`);
+                categoryKeys.forEach(categoryId => {
+                    const category = menuData[categoryId];
+                    console.log(`[MENU] menuData category "${categoryId}": ${category && category.items ? category.items.length : 0} items`);
+                });
+            }
+
             categoryKeys.forEach(categoryId => {
                 const category = menuData[categoryId];
-                console.log(`[MENU] menuData category "${categoryId}": ${category.items ? category.items.length : 0} items`);
-            });
-            
-            categoryKeys.forEach(categoryId => {
-                const category = menuData[categoryId];
+                if (!category || !Array.isArray(category.items)) return;
+
                 const containerId = `${categoryId}-items`;
-                const container = document.getElementById(containerId);
-                
-                if (container) {
-                    category.items.forEach(function (menuEntry, idx) {
-                        const foodItem = createFoodItem(menuEntry, categoryId, idx);
-                        container.appendChild(foodItem);
-                    });
-                } else {
-                    // Create category section dynamically
-                    const section = document.createElement('div');
-                    section.className = 'bolt-category-section';
+                let container = document.getElementById(containerId);
+
+                if (!container) {
+                    const section = document.createElement('section');
+                    section.className = 'bolt-menu-section';
                     section.id = categoryId;
-                    
-                    const sectionHeader = document.createElement('div');
-                    sectionHeader.className = 'bolt-category-header';
-                    sectionHeader.innerHTML = `
-                        <h2 class="bolt-category-title">${category.title}</h2>
-                        <p class="bolt-category-description">${category.description}</p>
-                    `;
-                    
+
+                    const title = document.createElement('h2');
+                    title.className = 'bolt-section-title';
+                    title.textContent = category.title || categoryId;
+
                     const newContainer = document.createElement('div');
-                    newContainer.className = 'bolt-food-grid';
+                    newContainer.className = 'bolt-food-list';
                     newContainer.id = containerId;
-                    
-                    section.appendChild(sectionHeader);
+
+                    section.appendChild(title);
                     section.appendChild(newContainer);
-                    
+
                     const menuContainer = document.querySelector('.bolt-menu-container') || document.body;
                     menuContainer.appendChild(section);
-                    
-                    // Render items
-                    category.items.forEach(function (menuEntry, idx) {
-                        const foodItem = createFoodItem(menuEntry, categoryId, idx);
-                        newContainer.appendChild(foodItem);
-                    });
+                    container = newContainer;
                 }
-            });
-            
-            // DOM verification after rendering
-            console.log('[MENU] === DOM VERIFICATION ===');
-            
-            const menuContainer = document.querySelector('.bolt-menu-container');
-            if (menuContainer) {
-                const sections = menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section');
-                console.log(`[MENU] Sections in bolt-menu-container: ${sections.length}`);
-                
-                sections.forEach((section, index) => {
-                    const sectionId = section.id || `section-${index}`;
-                    const foodItems = section.querySelectorAll('.food-item, .bolt-food-item');
-                    console.log(`[MENU] Section "${sectionId}": ${foodItems.length} food items`);
+
+                container.innerHTML = '';
+                category.items.forEach(function (menuEntry, idx) {
+                    const foodItem = createFoodItem(menuEntry, categoryId, idx);
+                    container.appendChild(foodItem);
                 });
-                
-                const allFoodItems = menuContainer.querySelectorAll('.food-item, .bolt-food-item');
-                console.log(`[MENU] Total food items in bolt-menu-container: ${allFoodItems.length}`);
-                
-                // Check first food item
-                if (allFoodItems.length > 0) {
-                    const firstItem = allFoodItems[0];
-                    console.log('[MENU] First food item outerHTML:', firstItem.outerHTML);
-                    
-                    const computed = window.getComputedStyle(firstItem);
-                    console.log('[MENU] First food item computed styles:');
-                    console.log(`  - display: ${computed.display}`);
-                    console.log(`  - visibility: ${computed.visibility}`);
-                    console.log(`  - opacity: ${computed.opacity}`);
-                    console.log(`  - height: ${computed.height}`);
-                    console.log(`  - width: ${computed.width}`);
-                    
-                    // Check parent elements for hiding
-                    console.log('[MENU] Checking parent elements for hiding styles:');
-                    let parent = firstItem.parentElement;
-                    let depth = 0;
-                    while (parent && depth < 10) {
-                        const parentComputed = window.getComputedStyle(parent);
-                        const isHidden = 
-                            parentComputed.display === 'none' ||
-                            parentComputed.visibility === 'hidden' ||
-                            parentComputed.opacity === '0' ||
-                            parentComputed.height === '0px' ||
-                            parentComputed.width === '0px';
-                        
-                        if (isHidden) {
-                            console.log(`  - Parent ${depth} (${parent.className || parent.tagName}): display=${parentComputed.display}, visibility=${parentComputed.visibility}, opacity=${parentComputed.opacity}, height=${parentComputed.height}, width=${parentComputed.width}`);
-                        }
-                        
-                        parent = parent.parentElement;
-                        depth++;
-                    }
-                }
-            } else {
-                console.log('[MENU] bolt-menu-container not found');
-            }
-            
-            // Check if dynamically created sections are hidden by CSS
-            const dynamicSections = document.querySelectorAll('.bolt-category-section');
-            console.log(`[MENU] Dynamic bolt-category-section elements: ${dynamicSections.length}`);
-            
-            dynamicSections.forEach((section, index) => {
-                const computed = window.getComputedStyle(section);
-                console.log(`[MENU] Dynamic section ${index} (${section.id}): display=${computed.display}, visibility=${computed.visibility}, opacity=${computed.opacity}`);
             });
-            
-            console.log('[MENU] initializeMenu() complete');
+
+            if (isDebugMenu) {
+                console.log('[MENU] === DOM VERIFICATION ===');
+                const menuContainer = document.querySelector('.bolt-menu-container');
+                if (menuContainer) {
+                    const allFoodItems = menuContainer.querySelectorAll('.food-item, .bolt-food-item');
+                    console.log(`[MENU] Total food items in bolt-menu-container: ${allFoodItems.length}`);
+                }
+                console.log('[MENU] initializeMenu() complete');
+            }
         }
 
         // Create food item — Bolt-style listing: main column + image with floating +
@@ -1679,6 +1651,8 @@
             img.className = 'bolt-food-image';
             img.alt = item.name;
             img.loading = 'lazy';
+            img.decoding = 'async';
+            img.fetchPriority = 'low';
             img.src = 'images/' + getFoodImage(item.name);
             img.addEventListener('load', function onImgLoad() {
                 wrap.classList.add('is-loaded');
@@ -2021,9 +1995,11 @@
             
             // Load cart first
             loadCartFromStorage();
-            
-            // Initialize category navigation from fallback immediately
-            // Initialize menu - try API first, fallback on failure
+
+            // Render cached/fallback menu immediately so the page paints before any backend cold-start delay.
+            renderInitialMenu();
+
+            // Refresh in the background with fresh API data once the response arrives.
             loadMenuFromAPI();
 
             try {
