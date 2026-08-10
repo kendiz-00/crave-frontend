@@ -1497,6 +1497,13 @@
         // Initialize menu
         function initializeMenu() {
             const isDebugMenu = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || (window.ENV && window.ENV.APP_ENV === 'development');
+            const menuContainer = document.querySelector('.bolt-menu-container');
+
+            if (menuContainer) {
+                menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section').forEach(function (section) {
+                    section.remove();
+                });
+            }
 
             if (isDebugMenu) {
                 console.log('[MENU] initializeMenu() called');
@@ -1515,42 +1522,55 @@
                 const category = menuData[categoryId];
                 if (!category || !Array.isArray(category.items)) return;
 
-                const containerId = `${categoryId}-items`;
-                let container = document.getElementById(containerId);
+                const section = document.createElement('section');
+                section.className = 'bolt-menu-section';
+                section.id = categoryId;
 
-                if (!container) {
-                    const section = document.createElement('section');
-                    section.className = 'bolt-menu-section';
-                    section.id = categoryId;
+                const title = document.createElement('h2');
+                title.className = 'bolt-section-title';
+                title.textContent = category.title || categoryId;
 
-                    const title = document.createElement('h2');
-                    title.className = 'bolt-section-title';
-                    title.textContent = category.title || categoryId;
+                const list = document.createElement('div');
+                list.className = 'bolt-food-list';
+                list.id = `${categoryId}-items`;
 
-                    const newContainer = document.createElement('div');
-                    newContainer.className = 'bolt-food-list';
-                    newContainer.id = containerId;
+                section.appendChild(title);
+                section.appendChild(list);
 
-                    section.appendChild(title);
-                    section.appendChild(newContainer);
-
-                    const menuContainer = document.querySelector('.bolt-menu-container') || document.body;
+                if (menuContainer) {
                     menuContainer.appendChild(section);
-                    container = newContainer;
                 }
 
-                container.innerHTML = '';
                 category.items.forEach(function (menuEntry, idx) {
+                    const targetContainer = document.getElementById(list.id);
+                    const itemLog = {
+                        itemName: menuEntry.name,
+                        categoryName: category.title || categoryId,
+                        categorySlug: categoryId,
+                        categoryId: categoryId,
+                        transformedCategoryKey: categoryId,
+                        targetContainerId: list.id,
+                        containerExists: !!targetContainer,
+                        inserted: false
+                    };
+
+                    if (!targetContainer) {
+                        console.warn('[MENU] Missing target container for item:', itemLog);
+                        return;
+                    }
+
                     const foodItem = createFoodItem(menuEntry, categoryId, idx);
-                    container.appendChild(foodItem);
+                    targetContainer.appendChild(foodItem);
+                    itemLog.inserted = true;
+                    console.log('[MENU ITEM]', itemLog);
                 });
             });
 
             if (isDebugMenu) {
                 console.log('[MENU] === DOM VERIFICATION ===');
-                const menuContainer = document.querySelector('.bolt-menu-container');
-                if (menuContainer) {
-                    const allFoodItems = menuContainer.querySelectorAll('.food-item, .bolt-food-item');
+                const menuRoot = document.querySelector('.bolt-menu-container');
+                if (menuRoot) {
+                    const allFoodItems = menuRoot.querySelectorAll('.food-item, .bolt-food-item');
                     console.log(`[MENU] Total food items in bolt-menu-container: ${allFoodItems.length}`);
                 }
                 console.log('[MENU] initializeMenu() complete');
