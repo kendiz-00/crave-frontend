@@ -1193,13 +1193,11 @@ function initMenuFilter() {
 function initMenuCards() {
   console.log('🔍 initMenuCards() called');
   
-  // Only run on menu.html
-  if (!window.location.pathname.includes('menu.html')) {
-    console.log('⏭️ Skipping initMenuCards - not on menu.html');
+  // menu.html handles its own menu rendering pipeline
+  if (window.location.pathname.includes('menu.html')) {
+    console.log('⏭️ Skipping initMenuCards - menu.html manages its own menu rendering');
     return;
   }
-
-  console.log('✅ On menu.html, proceeding with menu initialization');
 
   async function loadMenuFromAPI() {
     console.log('🌐 loadMenuFromAPI() starting...');
