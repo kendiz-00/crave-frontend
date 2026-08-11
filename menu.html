@@ -1280,6 +1280,8 @@
                 const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
                 menuData = freshMenuData;
 
+                console.log('[MENU] TRANSFORMED MENU DATA:', JSON.stringify(freshMenuData, null, 2));
+
                 try {
                     localStorage.setItem('crave_cached_menu_data', JSON.stringify(freshMenuData));
                     localStorage.setItem('crave_cached_categories', JSON.stringify(categories));
