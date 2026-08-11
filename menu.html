@@ -1316,18 +1316,24 @@
                 console.log(`[MENU] Processing category: id=${category.id}, slug="${category.slug}", name="${category.name}" -> normalized="${slug}"`);
                 
                 const categoryItems = apiMenuItems.filter(item => {
-                    const itemCategorySlug = normalizeCategorySlug(item.category?.slug || item.category?.name || '');
-                    const itemCategoryId = item.categoryId || item.category?.id;
+                    // Try multiple possible paths for category information
+                    const itemCategoryId = item.categoryId || item.category?.id || item.category_id;
+                    const itemCategorySlug = item.category?.slug || item.category_slug || item.category?.name || item.category_name;
+                    const itemCategoryName = item.category?.name || item.category_name;
+                    
+                    const normalizedItemSlug = normalizeCategorySlug(itemCategorySlug || '');
+                    const normalizedItemName = normalizeCategorySlug(itemCategoryName || '');
+                    
                     const matchById = itemCategoryId === category.id;
-                    const matchBySlug = itemCategorySlug === slug;
-                    const matchByName = normalizeCategorySlug(item.category?.name) === slug;
+                    const matchBySlug = normalizedItemSlug === slug;
+                    const matchByName = normalizedItemName === slug;
                     
                     const matched = matchById || matchBySlug || matchByName;
                     
                     if (matched) {
-                        console.log(`[MENU]   ✓ Item "${item.name}" matched (categoryId=${itemCategoryId}, categorySlug="${item.category?.slug}", categoryName="${item.category?.name}")`);
+                        console.log(`[MENU]   ✓ Item "${item.name}" matched (categoryId=${itemCategoryId}, categorySlug="${itemCategorySlug}", categoryName="${itemCategoryName}")`);
                     } else {
-                        console.log(`[MENU]   ✗ Item "${item.name}" NOT matched (categoryId=${itemCategoryId}, categorySlug="${item.category?.slug}", categoryName="${item.category?.name}")`);
+                        console.log(`[MENU]   ✗ Item "${item.name}" NOT matched (categoryId=${itemCategoryId}, categorySlug="${itemCategorySlug}", categoryName="${itemCategoryName}")`);
                     }
                     
                     return matched;
