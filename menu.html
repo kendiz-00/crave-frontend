@@ -1313,6 +1313,8 @@
 
             apiCategories.forEach(category => {
                 const slug = normalizeCategorySlug(category.slug || category.name);
+                console.log(`[MENU] Processing category: id=${category.id}, slug="${category.slug}", name="${category.name}" -> normalized="${slug}"`);
+                
                 const categoryItems = apiMenuItems.filter(item => {
                     const itemCategorySlug = normalizeCategorySlug(item.category?.slug || item.category?.name || '');
                     const itemCategoryId = item.categoryId || item.category?.id;
@@ -1320,7 +1322,15 @@
                     const matchBySlug = itemCategorySlug === slug;
                     const matchByName = normalizeCategorySlug(item.category?.name) === slug;
                     
-                    return matchById || matchBySlug || matchByName;
+                    const matched = matchById || matchBySlug || matchByName;
+                    
+                    if (matched) {
+                        console.log(`[MENU]   ✓ Item "${item.name}" matched (categoryId=${itemCategoryId}, categorySlug="${item.category?.slug}", categoryName="${item.category?.name}")`);
+                    } else {
+                        console.log(`[MENU]   ✗ Item "${item.name}" NOT matched (categoryId=${itemCategoryId}, categorySlug="${item.category?.slug}", categoryName="${item.category?.name}")`);
+                    }
+                    
+                    return matched;
                 });
 
                 transformed[slug] = {
@@ -1341,7 +1351,7 @@
                 };
 
                 totalTransformedItems += categoryItems.length;
-                console.log(`[MENU] Category ${slug}: ${categoryItems.length} items`);
+                console.log(`[MENU] Category "${slug}" (${category.name}): ${categoryItems.length} items matched`);
             });
 
             apiMenuItems.forEach(item => {
