@@ -1311,32 +1311,44 @@
             console.log('[MENU] API categories:', apiCategories.length);
             console.log('[MENU] API menu items:', apiMenuItems.length);
 
+            // Build a map of category ID to category object
+            const categoryMap = {};
+            apiCategories.forEach(category => {
+                if (category.id) {
+                    categoryMap[category.id] = category;
+                }
+            });
+
             apiCategories.forEach(category => {
                 const slug = normalizeCategorySlug(category.slug || category.name);
                 console.log(`[MENU] Processing category: id=${category.id}, slug="${category.slug}", name="${category.name}" -> normalized="${slug}"`);
                 
                 const categoryItems = apiMenuItems.filter(item => {
-                    // Try multiple possible paths for category information
+                    // Direct ID match first
                     const itemCategoryId = item.categoryId || item.category?.id || item.category_id;
-                    const itemCategorySlug = item.category?.slug || item.category_slug || item.category?.name || item.category_name;
-                    const itemCategoryName = item.category?.name || item.category_name;
-                    
-                    const normalizedItemSlug = normalizeCategorySlug(itemCategorySlug || '');
-                    const normalizedItemName = normalizeCategorySlug(itemCategoryName || '');
-                    
-                    const matchById = itemCategoryId && category.id && itemCategoryId === category.id;
-                    const matchBySlug = normalizedItemSlug === slug;
-                    const matchByName = normalizedItemName === slug;
-                    
-                    const matched = matchById || matchBySlug || matchByName;
-                    
-                    if (matched) {
-                        console.log(`[MENU]   ✓ Item "${item.name}" matched (categoryId=${itemCategoryId}, categorySlug="${itemCategorySlug}", categoryName="${itemCategoryName}")`);
-                    } else {
-                        console.log(`[MENU]   ✗ Item "${item.name}" NOT matched (categoryId=${itemCategoryId}, categorySlug="${itemCategorySlug}", categoryName="${itemCategoryName}")`);
+                    if (itemCategoryId && category.id && itemCategoryId === category.id) {
+                        console.log(`[MENU]   ✓ Item "${item.name}" matched by ID (${itemCategoryId})`);
+                        return true;
                     }
                     
-                    return matched;
+                    // Slug match
+                    const itemCategorySlug = item.category?.slug || item.category_slug;
+                    const normalizedItemSlug = normalizeCategorySlug(itemCategorySlug || '');
+                    if (normalizedItemSlug === slug) {
+                        console.log(`[MENU]   ✓ Item "${item.name}" matched by slug (${itemCategorySlug})`);
+                        return true;
+                    }
+                    
+                    // Name match
+                    const itemCategoryName = item.category?.name || item.category_name;
+                    const normalizedItemName = normalizeCategorySlug(itemCategoryName || '');
+                    if (normalizedItemName === slug) {
+                        console.log(`[MENU]   ✓ Item "${item.name}" matched by name (${itemCategoryName})`);
+                        return true;
+                    }
+                    
+                    console.log(`[MENU]   ✗ Item "${item.name}" NOT matched (categoryId=${itemCategoryId}, categorySlug="${itemCategorySlug}", categoryName="${itemCategoryName}")`);
+                    return false;
                 });
 
                 // Always create the category even if no items matched
