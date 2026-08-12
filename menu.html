@@ -1311,39 +1311,39 @@
             console.log('[MENU] API categories:', apiCategories.length);
             console.log('[MENU] API menu items:', apiMenuItems.length);
 
-            // Build a map of category ID to category object
-            const categoryMap = {};
-            apiCategories.forEach(category => {
-                if (category.id) {
-                    categoryMap[category.id] = category;
-                }
-            });
-
             apiCategories.forEach(category => {
                 const slug = normalizeCategorySlug(category.slug || category.name);
                 console.log(`[MENU] Processing category: id=${category.id}, slug="${category.slug}", name="${category.name}" -> normalized="${slug}"`);
                 
                 const categoryItems = apiMenuItems.filter(item => {
-                    // Direct ID match first
-                    const itemCategoryId = item.categoryId || item.category?.id || item.category_id;
-                    if (itemCategoryId && category.id && itemCategoryId === category.id) {
-                        console.log(`[MENU]   ✓ Item "${item.name}" matched by ID (${itemCategoryId})`);
+                    // Try all possible field paths for category ID
+                    const itemCategoryId = item.categoryId || item.category?.id || item.category_id || item.CategoryId;
+                    
+                    // Direct ID match
+                    if (itemCategoryId && category.id && String(itemCategoryId) === String(category.id)) {
+                        console.log(`[MENU]   ✓ Item "${item.name}" matched by ID (${itemCategoryId} === ${category.id})`);
                         return true;
                     }
                     
-                    // Slug match
-                    const itemCategorySlug = item.category?.slug || item.category_slug;
+                    // Try all possible field paths for category slug
+                    const itemCategorySlug = item.category?.slug || item.category_slug || item.categorySlug || item.CategorySlug;
                     const normalizedItemSlug = normalizeCategorySlug(itemCategorySlug || '');
                     if (normalizedItemSlug === slug) {
-                        console.log(`[MENU]   ✓ Item "${item.name}" matched by slug (${itemCategorySlug})`);
+                        console.log(`[MENU]   ✓ Item "${item.name}" matched by slug ("${itemCategorySlug}" === "${slug}")`);
                         return true;
                     }
                     
-                    // Name match
-                    const itemCategoryName = item.category?.name || item.category_name;
+                    // Try all possible field paths for category name
+                    const itemCategoryName = item.category?.name || item.category_name || item.categoryName || item.CategoryName;
                     const normalizedItemName = normalizeCategorySlug(itemCategoryName || '');
                     if (normalizedItemName === slug) {
-                        console.log(`[MENU]   ✓ Item "${item.name}" matched by name (${itemCategoryName})`);
+                        console.log(`[MENU]   ✓ Item "${item.name}" matched by name ("${itemCategoryName}" === "${slug}")`);
+                        return true;
+                    }
+                    
+                    // Try matching against category name directly
+                    if (itemCategoryName && category.name && normalizeCategorySlug(itemCategoryName) === normalizeCategorySlug(category.name)) {
+                        console.log(`[MENU]   ✓ Item "${item.name}" matched by category name ("${itemCategoryName}" === "${category.name}")`);
                         return true;
                     }
                     
