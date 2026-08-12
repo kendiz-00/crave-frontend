@@ -1491,7 +1491,15 @@
 
             categoryKeys.forEach(categoryId => {
                 const category = menuData[categoryId];
-                if (!category || !Array.isArray(category.items)) return;
+                if (!category || !Array.isArray(category.items)) {
+                    console.warn(`[MENU] Skipping category "${categoryId}": no items array`);
+                    return;
+                }
+
+                if (category.items.length === 0) {
+                    console.warn(`[MENU] Skipping category "${categoryId}": items array is empty`);
+                    return;
+                }
 
                 const section = document.createElement('section');
                 section.className = 'bolt-menu-section';
@@ -1512,6 +1520,10 @@
                     menuContainer.appendChild(section);
                 }
 
+                console.log(`[MENU] Rendering ${category.items.length} items for category "${categoryId}"`);
+                console.log(`[MENU] Items array before rendering:`, category.items);
+                console.log(`[MENU] First item:`, category.items[0]);
+
                 category.items.forEach(function (menuEntry, idx) {
                     const targetContainer = document.getElementById(list.id);
                     const itemLog = {
@@ -1530,8 +1542,11 @@
                         return;
                     }
 
+                    console.log(`[MENU] About to create card for item ${idx}:`, menuEntry);
                     const foodItem = createFoodItem(menuEntry, categoryId, idx);
+                    console.log(`[MENU] Card created for item ${idx}:`, foodItem);
                     targetContainer.appendChild(foodItem);
+                    console.log(`[MENU] Card appended to DOM for item ${idx}`);
                     itemLog.inserted = true;
                     console.log('[MENU ITEM]', itemLog);
                 });
