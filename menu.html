@@ -1339,6 +1339,7 @@
                     return matched;
                 });
 
+                // Always create the category even if no items matched
                 transformed[slug] = {
                     title: category.name,
                     description: category.description || '',
@@ -1493,11 +1494,6 @@
                 const category = menuData[categoryId];
                 if (!category || !Array.isArray(category.items)) {
                     console.warn(`[MENU] Skipping category "${categoryId}": no items array`);
-                    return;
-                }
-
-                if (category.items.length === 0) {
-                    console.warn(`[MENU] Skipping category "${categoryId}": items array is empty`);
                     return;
                 }
 
