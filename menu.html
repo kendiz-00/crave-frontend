@@ -1324,7 +1324,7 @@
                     const normalizedItemSlug = normalizeCategorySlug(itemCategorySlug || '');
                     const normalizedItemName = normalizeCategorySlug(itemCategoryName || '');
                     
-                    const matchById = itemCategoryId === category.id;
+                    const matchById = itemCategoryId && category.id && itemCategoryId === category.id;
                     const matchBySlug = normalizedItemSlug === slug;
                     const matchByName = normalizedItemName === slug;
                     
