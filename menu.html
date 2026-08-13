@@ -2010,10 +2010,16 @@
             // Load cart first
             loadCartFromStorage();
 
-            // Render cached/fallback menu immediately so the page paints before any backend cold-start delay.
-            renderInitialMenu();
+            // Clear old cache to force fresh API data
+            try {
+                localStorage.removeItem('crave_cached_menu_data');
+                localStorage.removeItem('crave_cached_categories');
+                console.log('[MENU] Cleared old cache to force fresh API data');
+            } catch (e) {
+                console.warn('[MENU] Could not clear cache:', e);
+            }
 
-            // Refresh in the background with fresh API data once the response arrives.
+            // Load fresh menu from API only
             loadMenuFromAPI();
 
             try {
