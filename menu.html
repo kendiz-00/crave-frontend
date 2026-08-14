@@ -1338,17 +1338,22 @@
                     if (categoryItems.length > 0) {
                         console.log('first matched item:', categoryItems[0]);
                     }
-                    // Show first unmatched item for this category
+                    // Show first item that should match this category by ID
                     const firstItem = apiMenuItems.find(item => {
                         const itemCategoryId = item.categoryId || item.category?.id || item.category_id || item.CategoryId || item.category?.categoryId;
-                        return String(itemCategoryId) === String(category.id);
+                        return itemCategoryId && category.id && String(itemCategoryId) === String(category.id);
                     });
-                    if (firstItem && !categoryItems.includes(firstItem)) {
-                        console.log('first item with matching categoryId but not matched:', firstItem);
+                    if (firstItem) {
+                        console.log('first item with matching categoryId:', firstItem);
                         console.log('item.categoryId:', firstItem.categoryId);
                         console.log('item.category?.id:', firstItem.category?.id);
                         console.log('item.category?.slug:', firstItem.category?.slug);
                         console.log('item.category?.name:', firstItem.category?.name);
+                        console.log('item.category_id:', firstItem.category_id);
+                        console.log('item.category_slug:', firstItem.category_slug);
+                        console.log('item.category_name:', firstItem.category_name);
+                    } else {
+                        console.log('NO items found with matching categoryId for this category');
                     }
                 }
 
