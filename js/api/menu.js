@@ -10,17 +10,48 @@ if (typeof window !== 'undefined' && !window.APIClient) {
 const MenuAPI = (function() {
     'use strict';
 
+    // Helper function to extract array from API response
+    function extractApiArray(payload) {
+        if (Array.isArray(payload)) return payload;
+        if (payload && Array.isArray(payload.data)) return payload.data;
+        return [];
+    }
+
     /**
-     * Get all menu items
+     * Get all menu items (fetches all pages)
      */
     async function getAllMenu() {
         if (!window.APIClient) throw new Error('API client not available');
-        console.log('Fetching /api/menu...');
-        console.time('GET /api/menu');
-        const result = await window.APIClient.get('/api/menu', { useCache: true, cacheKey: 'menu_all' });
-        console.timeEnd('GET /api/menu');
-        console.log('Menu received');
-        return result;
+        console.log('Fetching /api/menu (all pages)...');
+        console.time('GET /api/menu (all pages)');
+        
+        let allItems = [];
+        let page = 1;
+        let hasMore = true;
+        
+        while (hasMore) {
+            const result = await window.APIClient.get('/api/menu', { 
+                params: { page: page },
+                useCache: true, 
+                cacheKey: `menu_all_page_${page}` 
+            });
+            
+            const items = extractApiArray(result);
+            allItems = allItems.concat(items);
+            
+            // Check if there are more pages
+            if (result.pagination && result.pagination.page < result.pagination.totalPages) {
+                page++;
+            } else {
+                hasMore = false;
+            }
+        }
+        
+        console.timeEnd('GET /api/menu (all pages)');
+        console.log(`Menu received: ${allItems.length} total items`);
+        
+        // Return in same format as API response
+        return { success: true, data: allItems };
     }
 
     /**
