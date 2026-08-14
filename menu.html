@@ -1327,6 +1327,31 @@
                     return false;
                 });
 
+                // Debug: log specific categories
+                if (category.name === 'Loaded Fries' || category.name === 'Smoothies') {
+                    console.log(`=== ${category.name} DEBUG ===`);
+                    console.log('category.id:', category.id);
+                    console.log('category.slug:', category.slug);
+                    console.log('category.name:', category.name);
+                    console.log('normalized slug:', slug);
+                    console.log('matched items count:', categoryItems.length);
+                    if (categoryItems.length > 0) {
+                        console.log('first matched item:', categoryItems[0]);
+                    }
+                    // Show first unmatched item for this category
+                    const firstItem = apiMenuItems.find(item => {
+                        const itemCategoryId = item.categoryId || item.category?.id || item.category_id || item.CategoryId || item.category?.categoryId;
+                        return String(itemCategoryId) === String(category.id);
+                    });
+                    if (firstItem && !categoryItems.includes(firstItem)) {
+                        console.log('first item with matching categoryId but not matched:', firstItem);
+                        console.log('item.categoryId:', firstItem.categoryId);
+                        console.log('item.category?.id:', firstItem.category?.id);
+                        console.log('item.category?.slug:', firstItem.category?.slug);
+                        console.log('item.category?.name:', firstItem.category?.name);
+                    }
+                }
+
                 // Always create the category even if no items matched
                 transformed[slug] = {
                     title: category.name,
