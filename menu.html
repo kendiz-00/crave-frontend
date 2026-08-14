@@ -1259,28 +1259,16 @@
         // Load categories and menu from API in parallel
         async function loadMenuFromAPI() {
             try {
-                console.log('[MENU] Loading menu from API (parallel fetch)...');
-
                 const [categoryResponse, menuResponse] = await Promise.all([
                     MenuAPI.getCategories(),
                     MenuAPI.getAll()
                 ]);
 
                 const categories = extractApiArray(categoryResponse);
-                const menuItems = extractApiArray(menuResponse);
-
-                console.log('[MENU] API response received');
-                console.log('[MENU] Categories:', categories.length);
-                console.log('[MENU] Menu items:', menuItems.length);
-
-                // Log raw API data for debugging
-                console.log('[MENU] RAW CATEGORIES:', JSON.stringify(categories, null, 2));
-                console.log('[MENU] RAW MENU ITEMS:', JSON.stringify(menuItems, null, 2));
+                const menuItems = extractApiArray(menuItems);
 
                 const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
                 menuData = freshMenuData;
-
-                console.log('[MENU] TRANSFORMED MENU DATA:', JSON.stringify(freshMenuData, null, 2));
 
                 try {
                     localStorage.setItem('crave_cached_menu_data', JSON.stringify(freshMenuData));
@@ -1307,47 +1295,35 @@
             let totalTransformedItems = 0;
             const unmatchedItems = [];
 
-            console.log('[MENU] Transforming API data...');
-            console.log('[MENU] API categories:', apiCategories.length);
-            console.log('[MENU] API menu items:', apiMenuItems.length);
-
             apiCategories.forEach(category => {
                 const slug = normalizeCategorySlug(category.slug || category.name);
-                console.log(`[MENU] Processing category: id=${category.id}, slug="${category.slug}", name="${category.name}" -> normalized="${slug}"`);
                 
                 const categoryItems = apiMenuItems.filter(item => {
                     // Try all possible field paths for category ID
-                    const itemCategoryId = item.categoryId || item.category?.id || item.category_id || item.CategoryId;
-                    
-                    // Direct ID match
+                    const itemCategoryId = item.categoryId || item.category?.id || item.category_id || item.CategoryId || item.category?.categoryId;
                     if (itemCategoryId && category.id && String(itemCategoryId) === String(category.id)) {
-                        console.log(`[MENU]   ✓ Item "${item.name}" matched by ID (${itemCategoryId} === ${category.id})`);
                         return true;
                     }
                     
                     // Try all possible field paths for category slug
-                    const itemCategorySlug = item.category?.slug || item.category_slug || item.categorySlug || item.CategorySlug;
+                    const itemCategorySlug = item.category?.slug || item.category_slug || item.categorySlug || item.CategorySlug || item.category?.categorySlug;
                     const normalizedItemSlug = normalizeCategorySlug(itemCategorySlug || '');
                     if (normalizedItemSlug === slug) {
-                        console.log(`[MENU]   ✓ Item "${item.name}" matched by slug ("${itemCategorySlug}" === "${slug}")`);
                         return true;
                     }
                     
                     // Try all possible field paths for category name
-                    const itemCategoryName = item.category?.name || item.category_name || item.categoryName || item.CategoryName;
+                    const itemCategoryName = item.category?.name || item.category_name || item.categoryName || item.CategoryName || item.category?.categoryName;
                     const normalizedItemName = normalizeCategorySlug(itemCategoryName || '');
                     if (normalizedItemName === slug) {
-                        console.log(`[MENU]   ✓ Item "${item.name}" matched by name ("${itemCategoryName}" === "${slug}")`);
                         return true;
                     }
                     
                     // Try matching against category name directly
                     if (itemCategoryName && category.name && normalizeCategorySlug(itemCategoryName) === normalizeCategorySlug(category.name)) {
-                        console.log(`[MENU]   ✓ Item "${item.name}" matched by category name ("${itemCategoryName}" === "${category.name}")`);
                         return true;
                     }
                     
-                    console.log(`[MENU]   ✗ Item "${item.name}" NOT matched (categoryId=${itemCategoryId}, categorySlug="${itemCategorySlug}", categoryName="${itemCategoryName}")`);
                     return false;
                 });
 
@@ -1370,7 +1346,6 @@
                 };
 
                 totalTransformedItems += categoryItems.length;
-                console.log(`[MENU] Category "${slug}" (${category.name}): ${categoryItems.length} items matched`);
             });
 
             apiMenuItems.forEach(item => {
@@ -1392,14 +1367,6 @@
 
             if (unmatchedItems.length > 0) {
                 console.warn('[MENU] Unmatched items:', unmatchedItems);
-            }
-
-            console.log(`[MENU] API items: ${apiMenuItems.length}`);
-            console.log(`[MENU] Transformed items: ${totalTransformedItems}`);
-            console.log(`[MENU] Unmatched items: ${unmatchedItems.length}`);
-
-            if (totalTransformedItems !== apiMenuItems.length) {
-                console.error(`[MENU] MISMATCH: ${apiMenuItems.length} API items but ${totalTransformedItems} transformed items`);
             }
 
             return transformed;
