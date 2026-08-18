@@ -1942,6 +1942,10 @@
             var searchBar = wrap ? wrap.querySelector('.bolt-menu-search') : null;
             if (!input || !wrap) return;
 
+            // Ensure empty state is hidden on init
+            var emptyEl = document.getElementById('boltMenuSearchEmpty');
+            if (emptyEl) emptyEl.hidden = true;
+
             function syncClear() {
                 var v = input.value.trim();
                 if (clearBtn) clearBtn.hidden = !v;
