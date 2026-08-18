@@ -1341,8 +1341,10 @@ function initMenuCards() {
     renderMenuFromData(menuData);
   }
 
-  // Start API loading
-  loadMenuFromAPI();
+  // Start API loading (only if not on menu.html which has its own system)
+  if (!window.location.pathname.includes('menu.html')) {
+    loadMenuFromAPI();
+  }
 }
 
 /**
