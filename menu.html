@@ -1265,7 +1265,7 @@
                 ]);
 
                 const categories = extractApiArray(categoryResponse);
-                const menuItems = extractApiArray(menuItems);
+                const menuItems = extractApiArray(menuResponse);
 
                 const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
                 menuData = freshMenuData;
@@ -1326,36 +1326,6 @@
                     
                     return false;
                 });
-
-                // Debug: log specific categories
-                if (category.name === 'Loaded Fries' || category.name === 'Smoothies') {
-                    console.log(`=== ${category.name} DEBUG ===`);
-                    console.log('category.id:', category.id);
-                    console.log('category.slug:', category.slug);
-                    console.log('category.name:', category.name);
-                    console.log('normalized slug:', slug);
-                    console.log('matched items count:', categoryItems.length);
-                    if (categoryItems.length > 0) {
-                        console.log('first matched item:', categoryItems[0]);
-                    }
-                    // Show first item that should match this category by ID
-                    const firstItem = apiMenuItems.find(item => {
-                        const itemCategoryId = item.categoryId || item.category?.id || item.category_id || item.CategoryId || item.category?.categoryId;
-                        return itemCategoryId && category.id && String(itemCategoryId) === String(category.id);
-                    });
-                    if (firstItem) {
-                        console.log('first item with matching categoryId:', firstItem);
-                        console.log('item.categoryId:', firstItem.categoryId);
-                        console.log('item.category?.id:', firstItem.category?.id);
-                        console.log('item.category?.slug:', firstItem.category?.slug);
-                        console.log('item.category?.name:', firstItem.category?.name);
-                        console.log('item.category_id:', firstItem.category_id);
-                        console.log('item.category_slug:', firstItem.category_slug);
-                        console.log('item.category_name:', firstItem.category_name);
-                    } else {
-                        console.log('NO items found with matching categoryId for this category');
-                    }
-                }
 
                 // Always create the category even if no items matched
                 transformed[slug] = {
