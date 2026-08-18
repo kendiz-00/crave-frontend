@@ -1258,14 +1258,20 @@
 
         // Load categories and menu from API in parallel
         async function loadMenuFromAPI() {
+            console.log('[TRACE 1] loadMenuFromAPI ENTERED');
             try {
                 const [categoryResponse, menuResponse] = await Promise.all([
                     MenuAPI.getCategories(),
                     MenuAPI.getAll()
                 ]);
 
+                console.log('[TRACE 2] categories received:', categoryResponse);
+                console.log('[TRACE 3] menu response received');
+
                 const categories = extractApiArray(categoryResponse);
                 const menuItems = extractApiArray(menuResponse);
+
+                console.log('[TRACE 4] extracted menu items:', menuItems.length);
 
                 const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
                 menuData = freshMenuData;
@@ -1369,6 +1375,12 @@
                 console.warn('[MENU] Unmatched items:', unmatchedItems);
             }
 
+            console.log('[TRACE 5] transformed categories:');
+            console.log('  loaded-fries:', transformed['loaded-fries']?.items?.length || 0);
+            console.log('  texas-crispy-chicken:', transformed['texas-crispy-chicken']?.items?.length || 0);
+            console.log('  jamaican-kitchen:', transformed['jamaican-kitchen']?.items?.length || 0);
+            console.log('  smoothies:', transformed['smoothies']?.items?.length || 0);
+
             return transformed;
         }
 
@@ -1447,8 +1459,11 @@
 
         // Initialize menu
         function initializeMenu() {
+            console.log('[TRACE 6] initializeMenu ENTERED');
             const isDebugMenu = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || (window.ENV && window.ENV.APP_ENV === 'development');
             const menuContainer = document.querySelector('.bolt-menu-container');
+
+            console.log('[TRACE 11] DOM container before rendering:', menuContainer ? menuContainer.children.length : 0, 'children');
 
             if (menuContainer) {
                 menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section').forEach(function (section) {
@@ -1471,10 +1486,13 @@
 
             categoryKeys.forEach(categoryId => {
                 const category = menuData[categoryId];
+                console.log('[TRACE 7] category being rendered:', categoryId);
                 if (!category || !Array.isArray(category.items)) {
                     console.warn(`[MENU] Skipping category "${categoryId}": no items array`);
                     return;
                 }
+
+                console.log('[TRACE 8] items being rendered for', categoryId, ':', category.items.length);
 
                 const section = document.createElement('section');
                 section.className = 'bolt-menu-section';
@@ -1517,15 +1535,19 @@
                         return;
                     }
 
+                    console.log(`[TRACE 9] card renderer ENTERED for`, menuEntry.name);
                     console.log(`[MENU] About to create card for item ${idx}:`, menuEntry);
                     const foodItem = createFoodItem(menuEntry, categoryId, idx);
                     console.log(`[MENU] Card created for item ${idx}:`, foodItem);
                     targetContainer.appendChild(foodItem);
+                    console.log(`[TRACE 10] card appended:`, menuEntry.name);
                     console.log(`[MENU] Card appended to DOM for item ${idx}`);
                     itemLog.inserted = true;
                     console.log('[MENU ITEM]', itemLog);
                 });
             });
+
+            console.log('[TRACE 11] final DOM card count:', document.querySelectorAll('.bolt-food-item').length);
 
             if (isDebugMenu) {
                 console.log('[MENU] === DOM VERIFICATION ===');
