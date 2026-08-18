@@ -2022,9 +2022,15 @@
             var searchBar = wrap ? wrap.querySelector('.bolt-menu-search') : null;
             if (!input || !wrap) return;
 
+            // Reset search input to empty on init to prevent browser autofill/restore issues
+            input.value = '';
+
             // Ensure empty state is hidden on init
             var emptyEl = document.getElementById('boltMenuSearchEmpty');
             if (emptyEl) emptyEl.hidden = true;
+
+            // Reset search filter to show all cards
+            applyMenuSearchFilter('');
 
             function syncClear() {
                 var v = input.value.trim();
