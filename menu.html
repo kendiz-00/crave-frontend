@@ -1920,6 +1920,11 @@
             if (emptyEl) {
                 var showEmpty = !!q && total === 0;
                 emptyEl.hidden = !showEmpty;
+                // Also hide if no items exist in menu at all (not a search issue)
+                if (!q && total === 0) {
+                    var hasAnyItems = document.querySelectorAll('.bolt-food-item').length > 0;
+                    emptyEl.hidden = true;
+                }
             }
         }
 
