@@ -1977,16 +1977,10 @@
             // Load cart first
             loadCartFromStorage();
 
-            // Clear old cache to force fresh API data
-            try {
-                localStorage.removeItem('crave_cached_menu_data');
-                localStorage.removeItem('crave_cached_categories');
-                console.log('[MENU] Cleared old cache to force fresh API data');
-            } catch (e) {
-                console.warn('[MENU] Could not clear cache:', e);
-            }
+            // Render initial menu from cache or fallback first
+            renderInitialMenu();
 
-            // Load fresh menu from API only
+            // Then load fresh menu from API to update
             loadMenuFromAPI();
 
             try {
