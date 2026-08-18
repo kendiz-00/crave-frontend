@@ -1978,7 +1978,11 @@
         // Initialize everything on page load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Menu page initializing...');
-            
+
+            // Hide search empty state on page load
+            var emptyEl = document.getElementById('boltMenuSearchEmpty');
+            if (emptyEl) emptyEl.hidden = true;
+
             // Load cart first
             loadCartFromStorage();
 
