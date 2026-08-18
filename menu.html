@@ -1549,6 +1549,64 @@
 
             console.log('[TRACE 11] final DOM card count:', document.querySelectorAll('.bolt-food-item').length);
 
+            // POST-RENDER DIAGNOSTIC
+            console.log('[POST-RENDER DIAGNOSTIC]');
+            const allCards = document.querySelectorAll('.bolt-food-item');
+            console.log('Total cards in DOM:', allCards.length);
+            if (allCards.length > 0) {
+                const firstCard = allCards[0];
+                const computedStyle = window.getComputedStyle(firstCard);
+                console.log('First card computed styles:');
+                console.log('  display:', computedStyle.display);
+                console.log('  visibility:', computedStyle.visibility);
+                console.log('  opacity:', computedStyle.opacity);
+                console.log('  height:', computedStyle.height);
+                console.log('  width:', computedStyle.width);
+                console.log('  overflow:', computedStyle.overflow);
+                console.log('First card classes:', firstCard.className);
+
+                const cardParent = firstCard.parentElement;
+                if (cardParent) {
+                    const parentStyle = window.getComputedStyle(cardParent);
+                    console.log('Card parent computed styles:');
+                    console.log('  display:', parentStyle.display);
+                    console.log('  visibility:', parentStyle.visibility);
+                    console.log('  opacity:', parentStyle.opacity);
+                    console.log('  height:', parentStyle.height);
+                    console.log('  width:', parentStyle.width);
+                    console.log('Card parent classes:', cardParent.className);
+                }
+
+                const menuContainer = document.querySelector('.bolt-menu-container');
+                if (menuContainer) {
+                    const containerStyle = window.getComputedStyle(menuContainer);
+                    console.log('Menu container computed styles:');
+                    console.log('  display:', containerStyle.display);
+                    console.log('  visibility:', containerStyle.visibility);
+                    console.log('  opacity:', containerStyle.opacity);
+                    console.log('  height:', containerStyle.height);
+                    console.log('  width:', containerStyle.width);
+                    console.log('Menu container classes:', menuContainer.className);
+                }
+
+                // Check for search-miss class
+                const searchMissCards = document.querySelectorAll('.bolt-food-item.bolt-menu-search-miss');
+                console.log('Cards with bolt-menu-search-miss class:', searchMissCards.length);
+
+                // Check search empty state
+                const searchEmpty = document.getElementById('boltMenuSearchEmpty');
+                if (searchEmpty) {
+                    console.log('Search empty state hidden:', searchEmpty.hidden);
+                    console.log('Search empty state display:', window.getComputedStyle(searchEmpty).display);
+                }
+
+                // Check search input value
+                const searchInput = document.getElementById('boltMenuSearchInput');
+                if (searchInput) {
+                    console.log('Search input value:', searchInput.value);
+                }
+            }
+
             if (isDebugMenu) {
                 console.log('[MENU] === DOM VERIFICATION ===');
                 const menuRoot = document.querySelector('.bolt-menu-container');
