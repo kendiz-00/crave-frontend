@@ -1194,7 +1194,10 @@ function initMenuCards() {
   console.log('🔍 initMenuCards() called');
   
   // menu.html handles its own menu rendering pipeline
-  if (window.location.pathname.includes('menu.html')) {
+  const isMenuPage = window.location.pathname.includes('menu.html') || 
+                     window.location.pathname.includes('/menu') ||
+                     window.location.pathname === '/menu';
+  if (isMenuPage) {
     console.log('⏭️ Skipping initMenuCards - menu.html manages its own menu rendering');
     return;
   }
