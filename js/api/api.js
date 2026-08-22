@@ -101,32 +101,25 @@ const APIClient = (function() {
 
     /**
      * Handle 401 response with token refresh
+     * Returns retry result on success, throws error on failure
+     * Does NOT redirect - caller decides when to redirect
      */
     async function handle401Error(url, originalOptions) {
         try {
             if (typeof AuthManager !== 'undefined' && AuthManager.refreshAccessToken) {
-                const success = await AuthManager.refreshAccessToken();
-                if (success) {
+                const newToken = await AuthManager.refreshAccessToken();
+                if (newToken) {
                     // Retry the original request with new token
-                    const newToken = getAccessToken();
-                    if (newToken) {
-                        originalOptions.headers = originalOptions.headers || {};
-                        originalOptions.headers['Authorization'] = `Bearer ${newToken}`;
-                        return await fetchWithRetry(url, originalOptions);
-                    }
+                    originalOptions.headers = originalOptions.headers || {};
+                    originalOptions.headers['Authorization'] = `Bearer ${newToken}`;
+                    return await fetchWithRetry(url, originalOptions, 1, true); // isRetryAfter401 = true
                 }
             }
         } catch (error) {
             console.error('Token refresh failed:', error);
         }
         
-        // If refresh fails, redirect to login
-        if (typeof AuthManager !== 'undefined' && AuthManager.logout) {
-            AuthManager.logout();
-        }
-        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
-        window.location.href = 'login.html';
-        
+        // Refresh failed - throw error, caller decides what to do
         throw new Error('Authentication failed. Please login again.');
     }
 

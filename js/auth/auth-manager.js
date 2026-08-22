@@ -303,6 +303,8 @@ const AuthManager = (function() {
 
     /**
      * Refresh access token
+     * Returns new access token on success, null on failure
+     * Does NOT call logout() - caller decides when to clear session
      */
     async function refreshAccessToken() {
         if (isRefreshing) {
@@ -315,7 +317,6 @@ const AuthManager = (function() {
         const token = getRefreshToken();
 
         if (!token) {
-            await logout();
             return null;
         }
 
@@ -338,13 +339,12 @@ const AuthManager = (function() {
                 emit('tokenRefreshed', accessToken);
                 return accessToken;
             } else {
-                // Refresh failed, logout
-                await logout();
+                // Refresh failed - return null, caller decides what to do
                 return null;
             }
         } catch (error) {
             console.error('Token refresh error:', error);
-            await logout();
+            // Return null on error - caller decides what to do
             return null;
         } finally {
             isRefreshing = false;
@@ -374,17 +374,55 @@ const AuthManager = (function() {
 
     /**
      * Initialize auth state from storage
+     * Validates session with backend via GET /api/auth/me
+     * Trusts APIClient's automatic 401 → refresh → retry mechanism
+     * Does NOT redirect - caller decides when to redirect
      */
-    function initialize() {
+    async function initialize() {
         const token = getAccessToken();
-        const user = getUserData();
         
-        if (token && user) {
-            isAuthenticated = true;
-            emit('authStateChanged', { authenticated: true, user });
+        // CASE 1: No tokens - remain logged out
+        if (!token && !getRefreshToken()) {
+            isAuthenticated = false;
+            return false;
         }
         
-        return checkAuth();
+        // CASE 2: Validate with backend
+        try {
+            const currentUserData = await fetchCurrentUser();
+            if (currentUserData) {
+                isAuthenticated = true;
+                emit('authStateChanged', { authenticated: true, user: currentUserData });
+                return true;
+            }
+        } catch (error) {
+            // Distinguish between network errors and auth failures
+            const isNetworkError = 
+                error.name === 'TypeError' || 
+                error.name === 'AbortError' ||
+                error.message?.includes('timeout') ||
+                error.message?.includes('network') ||
+                error.message?.includes('fetch');
+            
+            if (isNetworkError) {
+                // Network/timeout/server failure - don't clear tokens
+                // User can retry when backend is available
+                console.warn('Session validation failed due to network error:', error.message);
+                // Keep existing session state, don't emit authStateChanged
+                return false;
+            }
+            
+            // Auth failure (401, 403, etc.) - clear session
+            console.warn('Session validation failed - clearing session:', error.message);
+        }
+        
+        // If we reach here, session is invalid (not a network error)
+        clearTokens();
+        clearUserData();
+        isAuthenticated = false;
+        emit('authStateChanged', { authenticated: false, user: null });
+        
+        return false;
     }
 
     /**
@@ -533,9 +571,9 @@ if (typeof window !== 'undefined') {
 
 // Auto-initialize on load
 if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
         if (AuthManager) {
-            AuthManager.initialize();
+            await AuthManager.initialize();
         }
     });
 }

@@ -835,10 +835,10 @@ function initCravePwaLayer() {
 }
 
 // Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   // Initialize authentication system
   if (typeof AuthManager !== 'undefined') {
-    AuthManager.initialize();
+    await AuthManager.initialize();
   }
   if (typeof AuthUI !== 'undefined') {
     AuthUI.initialize();
