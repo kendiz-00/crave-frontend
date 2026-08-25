@@ -322,7 +322,10 @@ const AuthUI = (function() {
         showLoading(submitBtn);
         
         try {
-            const result = await window.AuthManager.login({ email, password }, rememberMe);
+            const result = await window.AuthManager.login(
+                { identifier: email, password },
+                rememberMe
+            );
             
             if (result.success) {
                 showSuccess('Login successful!');
@@ -359,15 +362,21 @@ const AuthUI = (function() {
      * Handle registration form submission
      */
     async function handleRegisterForm(form) {
-        const name = form.querySelector('[name="name"]').value;
+        const firstName = form.querySelector('[name="firstName"]').value;
+        const lastName = form.querySelector('[name="lastName"]').value;
         const email = form.querySelector('[name="email"]').value;
         const password = form.querySelector('[name="password"]').value;
         const confirmPassword = form.querySelector('[name="confirmPassword"]').value;
-        const phone = form.querySelector('[name="phone"]')?.value || '';
+        let phone = form.querySelector('[name="phone"]')?.value || '';
         const submitBtn = form.querySelector('button[type="submit"]');
         
+        // Normalize Ghana phone numbers (convert 0550030877 to +233550030877)
+        if (phone && phone.startsWith('0') && phone.length === 10) {
+            phone = '+233' + phone.substring(1);
+        }
+        
         // Validation
-        if (!name || !email || !password || !confirmPassword) {
+        if (!firstName || !lastName || !email || !password || !confirmPassword) {
             showError('Please fill in all required fields');
             return;
         }
@@ -391,7 +400,7 @@ const AuthUI = (function() {
         showLoading(submitBtn);
         
         try {
-            const result = await window.AuthManager.register({ name, email, password, phone });
+            const result = await window.AuthManager.register({ firstName, lastName, email, password, phone });
             
             if (result.success) {
                 showSuccess('Registration successful!');

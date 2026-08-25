@@ -837,9 +837,7 @@ function initCravePwaLayer() {
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', async function() {
   // Initialize authentication system
-  if (typeof AuthManager !== 'undefined') {
-    await AuthManager.initialize();
-  }
+  // AuthManager.initialize() is called explicitly in each HTML file
   if (typeof AuthUI !== 'undefined') {
     AuthUI.initialize();
   }

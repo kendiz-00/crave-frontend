@@ -100,8 +100,7 @@ const APIClient = (function() {
     }
 
     /**
-     * Handle 401 response with token refresh
-     * Returns retry result on success, throws error on failure
+     * Handle 401 Unauthorized - attempt token refresh
      * Does NOT redirect - caller decides when to redirect
      */
     async function handle401Error(url, originalOptions) {
@@ -127,14 +126,6 @@ const APIClient = (function() {
      * Make HTTP request with retry logic and token injection
      */
     async function fetchWithRetry(url, options, attempt = 1, isRetryAfter401 = false) {
-        console.log(`🚨 ACTUAL API REQUEST`, {
-            path: url,
-            baseURL: _APIConfig.baseURL,
-            finalURL: url,
-            timestamp: new Date().toISOString()
-        });
-        console.log(`📡 Fetching: ${url}`);
-        
         try {
             // Inject access token if available
             const token = getAccessToken();
@@ -151,8 +142,6 @@ const APIClient = (function() {
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
-
-                console.log(`📡 Response: ${url} - Status: ${response.status}`);
 
                 // Handle 401 Unauthorized - attempt token refresh
                 if (response.status === 401 && !isRetryAfter401) {
@@ -180,8 +169,13 @@ const APIClient = (function() {
             
             const isAbort = error.name === 'AbortError';
 
+            // Check if retry is disabled for this request
+            const skipRetry = options.skipRetry === true;
+
             // Retry on network errors, timeouts/aborts, or 5xx server errors
+            // unless skipRetry is true
             const shouldRetry = 
+                !skipRetry &&
                 attempt < _APIConfig.retry.maxAttempts &&
                 (error.name === 'TypeError' || 
                  isAbort ||
@@ -189,13 +183,11 @@ const APIClient = (function() {
 
             if (shouldRetry) {
                 const retryDelay = _APIConfig.retry.delay * Math.pow(_APIConfig.retry.backoffMultiplier, attempt - 1);
-                console.log(`🔄 Retrying ${url} (attempt ${attempt + 1}/${_APIConfig.retry.maxAttempts}) after ${retryDelay}ms`);
                 await delay(retryDelay);
                 return fetchWithRetry(url, options, attempt + 1, isRetryAfter401);
             }
 
             if (isAbort) {
-                console.error(`❌ Request aborted: ${url} - Reason: ${error.message || 'timeout'}`);
                 throw new Error(`Request aborted: ${error.message || 'timeout'}`);
             }
 
@@ -273,7 +265,8 @@ const APIClient = (function() {
                 'Content-Type': 'application/json',
                 ...headers
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
+            ...options  // Include skipRetry and other options
         };
 
         return await fetchWithRetry(url, requestOptions);

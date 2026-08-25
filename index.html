@@ -1697,6 +1697,14 @@
 
         // Initialize rewards on homepage
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize authentication
+            if (typeof AuthManager !== 'undefined') {
+                AuthManager.initialize();
+            }
+            if (typeof ProtectedRoutes !== 'undefined') {
+                ProtectedRoutes.initialize();
+            }
+            
             // Load featured meals from API
             loadFeaturedMeals();
             

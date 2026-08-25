@@ -28,7 +28,8 @@ const AuthAPI = (function() {
     async function register(userData) {
         if (!window.APIClient) throw new Error('API client not available');
         return await window.APIClient.post('/api/auth/register', userData, { 
-            useCache: false 
+            useCache: false,
+            skipRetry: true  // Prevent automatic retries for registration
         });
     }
 
