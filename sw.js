@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'crave-pwa-v3';
+const CACHE_VERSION = 'crave-pwa-v5';
 const STATIC_CACHE = `crave-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `crave-runtime-${CACHE_VERSION}`;
 const OFFLINE_URL = 'offline.html';
@@ -24,6 +24,15 @@ const STATIC_ASSETS = [
   'js/swiper-custom.js'
 ];
 
+// Auth-related JS files that must ALWAYS be served from network (no caching)
+const NETWORK_FIRST_ASSETS = [
+  'js/auth/auth-api.js',
+  'js/auth/auth-manager.js',
+  'js/auth/auth-ui.js',
+  'js/auth/protected-routes.js',
+  'js/api/api.js'
+];
+
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then(cache => cache.addAll(STATIC_ASSETS)).then(() => self.skipWaiting())
@@ -37,7 +46,10 @@ self.addEventListener('activate', event => {
         return caches.delete(key);
       }
       return null;
-    }))).then(() => self.clients.claim())
+    }))).then(() => {
+      console.log('[SW] CRAVE PWA v5 active - Old caches cleared');
+      return self.clients.claim();
+    })
   );
 });
 
@@ -47,6 +59,18 @@ self.addEventListener('fetch', event => {
 
   if (request.method !== 'GET') return;
   if (url.origin !== self.location.origin) return;
+
+  // Network-first for auth-related JS files (never serve stale versions)
+  if (NETWORK_FIRST_ASSETS.some(asset => url.pathname.endsWith(asset.replace('/', '')) || url.pathname === asset)) {
+    event.respondWith(
+      fetch(request).then(response => {
+        const copy = response.clone();
+        caches.open(RUNTIME_CACHE).then(cache => cache.put(request, copy));
+        return response;
+      }).catch(() => caches.match(request))
+    );
+    return;
+  }
 
   if (request.mode === 'navigate') {
     event.respondWith(fetch(request).catch(() => caches.match(OFFLINE_URL).then(res => res || caches.match('index.html'))));

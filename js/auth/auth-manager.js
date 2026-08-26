@@ -315,6 +315,57 @@ const AuthManager = (function() {
     }
 
     /**
+     * Refresh access token
+     * Returns new access token on success, null on failure
+     * Does NOT call logout() - caller decides when to clear session
+     */
+    async function refreshAccessToken() {
+        if (isRefreshing) {
+            return new Promise((resolve) => {
+                refreshSubscribers.push(resolve);
+            });
+        }
+
+        isRefreshing = true;
+        const token = getRefreshToken();
+
+        if (!token) {
+            isRefreshing = false;
+            return null;
+        }
+
+        try {
+            const response = await _AuthAPI.refreshToken(token);
+            
+            if (response.success && response.data) {
+                const { accessToken, refreshToken: newRefreshToken } = response.data;
+                
+                setAccessToken(accessToken);
+                if (newRefreshToken) {
+                    const rememberMe = localStorage.getItem(STORAGE_KEYS.REMEMBER_ME) === 'true';
+                    setRefreshToken(newRefreshToken, rememberMe);
+                }
+                
+                // Resolve all waiting subscribers
+                refreshSubscribers.forEach(resolve => resolve(accessToken));
+                refreshSubscribers = [];
+                
+                emit('tokenRefreshed', accessToken);
+                return accessToken;
+            } else {
+                // Refresh failed - return null, caller decides what to do
+                return null;
+            }
+        } catch (error) {
+            console.error('Token refresh error:', error);
+            // Return null on error - caller decides what to do
+            return null;
+        } finally {
+            isRefreshing = false;
+        }
+    }
+
+    /**
      * Fetch current user
      */
     async function fetchCurrentUser() {

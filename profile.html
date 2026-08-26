@@ -1099,18 +1099,16 @@
     <script src="js/analytics.js" defer></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize auth
-            AuthManager.initialize();
-            AuthUI.initialize();
-            ProtectedRoutes.initialize();
+        document.addEventListener('DOMContentLoaded', async function() {
+            const authenticated = await AuthManager.initialize();
 
-            // Check authentication
-            if (!AuthManager.isAuthenticated()) {
+            if (!authenticated) {
                 sessionStorage.setItem('redirectAfterLogin', 'profile.html');
                 window.location.href = 'login.html';
                 return;
             }
+
+            AuthUI.initialize();
 
             // Load user data
             loadUserData();
