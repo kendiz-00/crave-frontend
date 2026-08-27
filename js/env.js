@@ -14,7 +14,7 @@
         (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
     const defaultApiUrl = isLocalhost 
-        ? 'http://localhost:4000' 
+        ? 'http://localhost:3000' 
         : 'https://crave-backend-oie3.onrender.com';
 
     const defaultAppUrl = isLocalhost 

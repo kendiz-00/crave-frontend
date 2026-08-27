@@ -2155,7 +2155,7 @@
     
     <script>
         // Initialize rewards on checkout page
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // Initialize auth
             AuthManager.initialize();
             AuthUI.initialize();
@@ -2189,7 +2189,7 @@
             document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
             
             // Load reward points if authenticated
-            loadRewardPoints();
+            await loadRewardPoints();
         });
 
         function renderPaymentForm(method) {
@@ -2253,9 +2253,9 @@
             document.getElementById('totalAmount').textContent = `GHS ${total.toFixed(2)}`;
         }
 
-        function loadRewardPoints() {
+        async function loadRewardPoints() {
             if (typeof CraveRewardsData !== 'undefined' && AuthManager.isAuthenticated()) {
-                const points = CraveRewardsData.Points.get();
+                const points = await CraveRewardsData.Points.get();
                 document.getElementById('availablePoints').textContent = points;
             } else {
                 document.getElementById('rewardPointsSection').style.display = 'none';

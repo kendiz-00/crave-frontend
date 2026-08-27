@@ -11,12 +11,12 @@ const CravePromoCodes = (function() {
     const notifications = typeof CraveRewardsNotifications !== 'undefined' ? CraveRewardsNotifications : null;
 
     // Apply promo code to order
-    function applyPromoCode(code, orderTotal, cartItems = []) {
+    async function applyPromoCode(code, orderTotal, cartItems = []) {
         if (!engine) {
             return { valid: false, message: 'Rewards system not available' };
         }
 
-        const result = engine.applyPromoCode(code, orderTotal, cartItems);
+        const result = await engine.applyPromoCode(code, orderTotal, cartItems);
         
         if (result.valid) {
             if (notifications) {
@@ -32,16 +32,16 @@ const CravePromoCodes = (function() {
     }
 
     // Validate promo code without applying
-    function validatePromoCode(code, orderTotal) {
+    async function validatePromoCode(code, orderTotal) {
         if (!engine) {
             return { valid: false, message: 'Rewards system not available' };
         }
         
-        return engine.applyPromoCode(code, orderTotal, []);
+        return await engine.applyPromoCode(code, orderTotal, []);
     }
 
     // Get available promo codes for current user
-    function getAvailablePromoCodes() {
+    async function getAvailablePromoCodes() {
         if (!config) return [];
         
         const available = [];
@@ -61,7 +61,7 @@ const CravePromoCodes = (function() {
             
             // Check tier restriction
             if (promoConfig.tierRestriction) {
-                const tier = typeof CraveRewardsData !== 'undefined' ? CraveRewardsData.Tier.get() : 'bronze';
+                const tier = typeof CraveRewardsData !== 'undefined' ? await CraveRewardsData.Tier.get() : 'bronze';
                 if (!promoConfig.tierRestriction.includes(tier)) {
                     isAvailable = false;
                     reason = `Requires ${promoConfig.tierRestriction.join(' or ')} tier`;

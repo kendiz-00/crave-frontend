@@ -160,6 +160,29 @@ const AuthManager = (function() {
     }
 
     /**
+     * Clear rewards cache
+     * Called on logout, login, and account switching
+     */
+    function clearRewardsCache() {
+        // Clear rewards cache from rewards-data.js if available
+        if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+            CraveRewardsData.clearCache();
+        }
+        // Also clear any localStorage reward keys for the current user
+        const user = getUserData();
+        if (user && user.id) {
+            const rewardKeys = [
+                'crave_points',
+                'crave_tier',
+                'crave_points_migrated'
+            ];
+            rewardKeys.forEach(key => {
+                localStorage.removeItem(`${key}_${user.id}`);
+            });
+        }
+    }
+
+    /**
      * Check if user is authenticated
      */
     function checkAuth() {
@@ -191,6 +214,7 @@ const AuthManager = (function() {
                 setRefreshToken(refreshToken, rememberMe);
                 setUserData(user);
                 isAuthenticated = true;
+                clearRewardsCache(); // Clear cache on login to ensure fresh data
                 
                 emit('login', user);
                 emit('authStateChanged', { authenticated: true, user });
@@ -280,6 +304,7 @@ const AuthManager = (function() {
                 setRefreshToken(refreshToken, true);
                 setUserData(user);
                 isAuthenticated = true;
+                clearRewardsCache(); // Clear cache on register to ensure fresh data
                 
                 emit('login', user);
                 emit('authStateChanged', { authenticated: true, user });
@@ -307,6 +332,7 @@ const AuthManager = (function() {
             const user = getUserData();
             clearTokens();
             clearUserData();
+            clearRewardsCache(); // Clear rewards cache on logout
             isAuthenticated = false;
             
             emit('logout', user);

@@ -33,23 +33,26 @@ const CraveRewardsEngine = (function() {
     }
 
     // Get current tier multiplier
-    function getTierMultiplier() {
+    async function getTierMultiplier() {
         if (!config || !data) return 1;
-        const tier = data.Tier.get();
+        const tier = await data.Tier.get();
         return config.points.multiplier[tier] || 1;
     }
 
     // Add points from purchase
-    function addPurchasePoints(amount) {
+    // NOTE: This function now only calculates points for display purposes.
+    // Actual point awarding is handled by backend during order creation.
+    async function addPurchasePoints(amount) {
         if (!data) return 0;
         
-        const multiplier = getTierMultiplier();
+        const multiplier = await getTierMultiplier();
         const points = calculatePoints(amount, multiplier);
         
-        data.Points.add(points);
+        // DO NOT award points here - backend handles this
+        // await data.Points.add(points);
         
-        // Check for tier upgrade
-        const tierUpdate = data.Tier.update();
+        // Check for tier upgrade (will be updated from backend)
+        const tierUpdate = await data.Tier.update();
         if (tierUpdate.upgraded) {
             emit('tier_upgraded', tierUpdate);
         }
@@ -60,10 +63,10 @@ const CraveRewardsEngine = (function() {
     }
 
     // Get next reward milestone
-    function getNextMilestone() {
+    async function getNextMilestone() {
         if (!config || !data) return null;
         
-        const currentPoints = data.Points.get();
+        const currentPoints = await data.Points.get();
         const milestones = config.milestones;
         
         for (const milestone of milestones) {
@@ -80,10 +83,10 @@ const CraveRewardsEngine = (function() {
     }
 
     // Get current milestone progress
-    function getMilestoneProgress() {
+    async function getMilestoneProgress() {
         if (!config || !data) return null;
         
-        const currentPoints = data.Points.get();
+        const currentPoints = await data.Points.get();
         const milestones = config.milestones;
         
         let previousMilestone = { points: 0 };
@@ -119,16 +122,17 @@ const CraveRewardsEngine = (function() {
     }
 
     // Redeem reward milestone
-    function redeemMilestone(pointsRequired) {
+    async function redeemMilestone(pointsRequired, rewardType = 'points') {
         if (!data) return { success: false, message: 'Data system not available' };
         
-        const currentPoints = data.Points.get();
+        const currentPoints = await data.Points.get();
         
         if (currentPoints < pointsRequired) {
             return { success: false, message: 'Not enough points' };
         }
         
-        data.Points.subtract(pointsRequired);
+        // Use specific referenceId to avoid collisions between different milestone types
+        await data.Points.subtract(pointsRequired, { referenceId: `milestone_${rewardType}_${pointsRequired}`, reason: `Redeemed milestone reward (${pointsRequired} points)` });
         
         emit('reward_redeemed', { points: pointsRequired });
         
@@ -136,15 +140,14 @@ const CraveRewardsEngine = (function() {
     }
 
     // Process order and award points
-    function processOrder(orderData) {
+    // NOTE: Order points are awarded by backend, NOT by frontend
+    // This function now only tracks order metadata for achievements
+    async function processOrder(orderData) {
         if (!data) return null;
-        
-        const amount = orderData.total || 0;
-        const pointsEarned = addPurchasePoints(amount);
         
         // Track order
         data.Orders.add(orderData);
-        data.Orders.addSpent(amount);
+        data.Orders.addSpent(orderData.total || 0);
         
         // Track individual items
         if (orderData.items) {
@@ -170,20 +173,20 @@ const CraveRewardsEngine = (function() {
         }
         
         // Check for achievements
-        checkAchievements();
+        await checkAchievements();
         
         // Check for surprise reward
-        checkSurpriseReward();
+        await checkSurpriseReward();
         
         return {
-            pointsEarned,
-            tier: data.Tier.get(),
-            nextMilestone: getNextMilestone()
+            pointsEarned: 0, // Backend handles this
+            tier: await data.Tier.get(),
+            nextMilestone: await getNextMilestone()
         };
     }
 
     // Check and unlock achievements
-    function checkAchievements() {
+    async function checkAchievements() {
         if (!config || !data) return;
         
         const achievements = config.achievements;
@@ -192,16 +195,16 @@ const CraveRewardsEngine = (function() {
         for (const [key, achievement] of Object.entries(achievements)) {
             if (unlocked.includes(key)) continue; // Already unlocked
             
-            if (evaluateAchievementCondition(achievement.condition)) {
+            if (await evaluateAchievementCondition(achievement.condition)) {
                 data.Achievements.add(key);
-                data.Points.add(achievement.points);
+                await data.Points.add(achievement.points, { referenceId: `achievement_${key}`, reason: `Achievement unlocked: ${achievement.name}` });
                 emit('achievement_unlocked', { key, achievement });
             }
         }
     }
 
     // Evaluate achievement condition
-    function evaluateAchievementCondition(condition) {
+    async function evaluateAchievementCondition(condition) {
         if (!data) return false;
         
         // Simple condition parser
@@ -236,7 +239,7 @@ const CraveRewardsEngine = (function() {
         
         if (condition.includes('tier >=')) {
             const tier = condition.match(/tier >= "(.+)"/)[1];
-            const currentTier = data.Tier.get();
+            const currentTier = await data.Tier.get();
             const tierOrder = ['bronze', 'silver', 'gold', 'diamond', 'elite'];
             return tierOrder.indexOf(currentTier) >= tierOrder.indexOf(tier);
         }
@@ -255,14 +258,14 @@ const CraveRewardsEngine = (function() {
     }
 
     // Check for surprise reward
-    function checkSurpriseReward() {
+    async function checkSurpriseReward() {
         if (!config || !data) return;
         
         const surpriseConfig = config.surpriseRewards;
         if (!surpriseConfig.enabled) return;
         
         const orders = data.Orders.getCount();
-        const tier = data.Tier.get();
+        const tier = await data.Tier.get();
         const tierOrder = ['bronze', 'silver', 'gold', 'diamond', 'elite'];
         
         if (orders < surpriseConfig.minOrders) return;
@@ -281,20 +284,20 @@ const CraveRewardsEngine = (function() {
     }
 
     // Get customer summary
-    function getCustomerSummary() {
+    async function getCustomerSummary() {
         if (!data) return null;
         
         return {
-            points: data.Points.get(),
-            tier: data.Tier.get(),
-            tierInfo: data.Tier.getInfo(data.Tier.get()),
+            points: await data.Points.get(),
+            tier: await data.Tier.get(),
+            tierInfo: data.Tier.getInfo(await data.Tier.get()),
             achievements: data.Achievements.get(),
             orders: data.Orders.getCount(),
             totalSpent: data.Orders.getTotalSpent(),
             vipStatus: data.VIP.isActive(),
             dailyStreak: data.DailyRewards.getStreak(),
             referralCount: data.Referrals.getCount(),
-            milestoneProgress: getMilestoneProgress()
+            milestoneProgress: await getMilestoneProgress()
         };
     }
 
@@ -334,7 +337,7 @@ const CraveRewardsEngine = (function() {
     }
 
     // Calculate discount from promo code
-    function applyPromoCode(code, orderTotal, cartItems = []) {
+    async function applyPromoCode(code, orderTotal, cartItems = []) {
         if (!config || !data) return { valid: false, message: 'System not available' };
         
         const promoCode = code.toUpperCase();
@@ -364,7 +367,7 @@ const CraveRewardsEngine = (function() {
         
         // Check tier restriction
         if (promoConfig.tierRestriction) {
-            const currentTier = data.Tier.get();
+            const currentTier = await data.Tier.get();
             if (!promoConfig.tierRestriction.includes(currentTier)) {
                 return { valid: false, message: 'Promo code not available for your tier' };
             }
@@ -432,7 +435,7 @@ const CraveRewardsEngine = (function() {
     }
 
     // Claim daily reward
-    function claimDailyReward() {
+    async function claimDailyReward() {
         if (!config || !data) return { success: false, message: 'System not available' };
         
         if (!data.DailyRewards.canClaim()) {
@@ -447,7 +450,8 @@ const CraveRewardsEngine = (function() {
         
         if (rewardConfig.reward.includes('Points')) {
             points = rewardConfig.points;
-            data.Points.add(points);
+            const today = new Date().toISOString().split('T')[0];
+            await data.Points.add(points, { referenceId: `daily_reward_${today}`, reason: `Daily reward claimed (streak: ${streak})` });
         } else {
             reward = rewardConfig.reward;
         }
@@ -494,14 +498,14 @@ const CraveRewardsEngine = (function() {
     }
 
     // Complete referral
-    function completeReferral(referralId) {
+    async function completeReferral(referralId) {
         if (!config || !data) return { success: false, message: 'System not available' };
         
         data.Referrals.updateStatus(referralId, 'completed');
         
         // Award referrer bonus
         const bonus = config.referral.referrerReward.value;
-        data.Points.add(bonus); // Convert credit to points
+        await data.Points.add(bonus, { referenceId: `referral_${referralId}`, reason: 'Referral bonus awarded' });
         
         emit('referral_completed', { referralId, bonus });
         
@@ -538,7 +542,7 @@ const CraveRewardsEngine = (function() {
     }
 
     // Claim birthday reward
-    function claimBirthdayReward() {
+    async function claimBirthdayReward() {
         if (!config || !data) return { success: false, message: 'System not available' };
         
         const reward = checkBirthdayReward();
@@ -548,6 +552,12 @@ const CraveRewardsEngine = (function() {
         
         // Mark as claimed
         data.Birthday.setLastClaimed(Date.now());
+        
+        // Award points if reward includes points
+        if (reward.points) {
+            const year = new Date().getFullYear();
+            await data.Points.add(reward.points, { referenceId: `birthday_reward_${year}`, reason: 'Birthday reward' });
+        }
         
         emit('birthday_reward_claimed', reward);
         

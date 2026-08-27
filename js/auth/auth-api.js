@@ -66,13 +66,37 @@ const AuthAPI = (function() {
         });
     }
 
+    /**
+     * Get user's full reward state
+     * GET /api/rewards
+     */
+    async function getRewards() {
+        if (!window.APIClient) throw new Error('API client not available');
+        return await window.APIClient.get('/api/rewards', { 
+            useCache: false 
+        });
+    }
+
+    /**
+     * Create reward transaction
+     * POST /api/rewards/transactions
+     */
+    async function createRewardTransaction(transactionData) {
+        if (!window.APIClient) throw new Error('API client not available');
+        return await window.APIClient.post('/api/rewards/transactions', transactionData, { 
+            useCache: false 
+        });
+    }
+
     // Public API
     return {
         login,
         register,
         logout,
         refreshToken,
-        getCurrentUser
+        getCurrentUser,
+        getRewards,
+        createRewardTransaction
     };
 })();
 

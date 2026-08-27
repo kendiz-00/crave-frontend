@@ -919,8 +919,13 @@
     
     <script>
         // Initialize rewards page
-        document.addEventListener('DOMContentLoaded', function() {
-            loadRewardsData();
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize auth first (must complete before loading rewards)
+            await AuthManager.initialize();
+            AuthUI.initialize();
+
+            // Now load rewards data after auth is initialized
+            await loadRewardsData();
             setupEventListeners();
             
             // Initialize flash deals system
@@ -942,19 +947,19 @@
             checkForEarnedSpin();
         });
 
-        function loadRewardsData() {
+        async function loadRewardsData() {
             // Load points
-            const points = CraveRewardsData.Points.get();
+            const points = await CraveRewardsData.Points.get();
             document.getElementById('pointsValue').textContent = points;
 
             // Load tier
-            const tier = CraveRewardsData.Tier.get();
+            const tier = await CraveRewardsData.Tier.get();
             const tierInfo = CraveRewardsData.Tier.getInfo(tier);
             document.getElementById('tierIcon').textContent = tierInfo.icon;
             document.getElementById('tierName').textContent = tierInfo.name;
 
             // Load progress
-            const progress = CraveRewardsEngine.getMilestoneProgress();
+            const progress = await CraveRewardsEngine.getMilestoneProgress();
             if (progress) {
                 document.getElementById('progressFill').style.width = progress.progress + '%';
                 document.getElementById('progressPercent').textContent = Math.round(progress.progress) + '%';
@@ -979,13 +984,13 @@
             }
 
             // Load milestones
-            loadMilestones();
+            await loadMilestones();
 
             // Load achievements
             loadAchievements();
 
             // Load promo codes
-            loadPromoCodes();
+            await loadPromoCodes();
 
             // Load daily reward status
             loadDailyReward();
@@ -997,9 +1002,9 @@
             loadSpinStats();
         }
 
-        function loadMilestones() {
+        async function loadMilestones() {
             const milestones = CraveRewardsConfig.milestones;
-            const points = CraveRewardsData.Points.get();
+            const points = await CraveRewardsData.Points.get();
             const grid = document.getElementById('milestonesGrid');
 
             grid.innerHTML = milestones.map((milestone, index) => {
@@ -1030,8 +1035,8 @@
             `).join('');
         }
 
-        function loadPromoCodes() {
-            const promoCodes = CravePromoCodes.getAvailable();
+        async function loadPromoCodes() {
+            const promoCodes = await CravePromoCodes.getAvailable();
             const list = document.getElementById('promoCodesList');
 
             list.innerHTML = promoCodes.filter(pc => pc.available).map(promo => `
@@ -1159,8 +1164,8 @@
 
         function setupEventListeners() {
             // Claim daily reward
-            document.getElementById('claimDailyBtn').addEventListener('click', function() {
-                const result = CraveRewardsEngine.claimDailyReward();
+            document.getElementById('claimDailyBtn').addEventListener('click', async function() {
+                const result = await CraveRewardsEngine.claimDailyReward();
                 if (result.success) {
                     CraveRewardsNotifications.dailyRewardClaimed(result.streak, result.reward);
                     loadDailyReward();
@@ -1374,14 +1379,6 @@
     <script src="js/combo-builder.js"></script>
     <script src="js/birthday-system.js"></script>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize auth
-            AuthManager.initialize();
-            AuthUI.initialize();
-        });
-    </script>
-
 	<!-- Shared Navbar & Footer JavaScript -->
 	<script>
 	(function() {

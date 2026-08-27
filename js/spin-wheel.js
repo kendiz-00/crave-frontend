@@ -748,7 +748,7 @@ const CraveSpinWheel = (function() {
         vibrate([50, 50, 50]);
         
         // Show result after spin
-        setTimeout(() => {
+        setTimeout(async () => {
             clearInterval(tickInterval);
             showResult(prize);
             playWinSound();
@@ -760,14 +760,14 @@ const CraveSpinWheel = (function() {
             }
             
             // Save prize to LocalStorage
-            savePrizeToVault(prize);
+            await savePrizeToVault(prize);
             
             isSpinning = false;
         }, 6000);
     }
 
     // Save prize to reward vault
-    function savePrizeToVault(prize) {
+    async function savePrizeToVault(prize) {
         if (!data) return;
         
         const vault = data.RewardVault.get() || [];
@@ -790,7 +790,7 @@ const CraveSpinWheel = (function() {
         
         // Add points if prize is points
         if (prize.type === 'points') {
-            data.Points.add(prize.value);
+            await data.Points.add(prize.value, { referenceId: `spin_${Date.now()}`, reason: 'Spin wheel prize' });
             data.SpinStats.addPointsWon(prize.value);
         }
         

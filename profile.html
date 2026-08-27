@@ -1111,7 +1111,7 @@
             AuthUI.initialize();
 
             // Load user data
-            loadUserData();
+            await loadUserData();
 
             // Tab navigation
             const tabLinks = document.querySelectorAll('.profile-nav-link');
@@ -1143,7 +1143,7 @@
             document.getElementById('deleteAccountBtn').addEventListener('click', handleDeleteAccount);
         });
 
-        function loadUserData() {
+        async function loadUserData() {
             const user = AuthManager.getUserData();
             if (!user) return;
 
@@ -1159,29 +1159,35 @@
             document.getElementById('profileEmailInput').value = user.email || '';
             document.getElementById('profilePhoneInput').value = user.phone || '';
 
-            // Load rewards data from localStorage (for now)
-            loadRewardsData();
-            
+            // Load rewards data from backend
+            await loadRewardsData();
+
             // Load orders data
             loadOrdersData();
-            
+
             // Load payment history
             loadPaymentHistory();
         }
 
-        function loadRewardsData() {
+        async function loadRewardsData() {
             if (typeof CraveRewardsData !== 'undefined') {
-                const points = CraveRewardsData.Points.get();
-                const tier = CraveRewardsData.Tiers.getCurrent();
-                const achievements = CraveRewardsData.Achievements.getUnlocked();
-                
-                document.getElementById('statPoints').textContent = points;
-                document.getElementById('rewardPoints').textContent = points;
-                document.getElementById('rewardTier').textContent = tier;
-                document.getElementById('rewardAchievements').textContent = achievements.length;
-                
-                // Update VIP status
-                updateVipStatus(points);
+                try {
+                    const points = await CraveRewardsData.Points.get();
+                    const tier = await CraveRewardsData.Tier.get();
+                    const tierInfo = CraveRewardsData.Tier.getInfo(tier);
+
+                    document.getElementById('statPoints').textContent = points;
+                    document.getElementById('rewardPoints').textContent = points;
+                    document.getElementById('rewardTier').textContent = tierInfo.name;
+                    document.getElementById('rewardAchievements').textContent = '0'; // Achievements count can be added later if needed
+
+                    // Update VIP status
+                    updateVipStatus(points);
+                } catch (error) {
+                    console.error('Error loading rewards data:', error);
+                    document.getElementById('statPoints').textContent = '0';
+                    document.getElementById('rewardPoints').textContent = '0';
+                }
             }
         }
 
@@ -1294,29 +1300,6 @@
                     </tbody>
                 </table>
             `;
-        }
-
-        function loadRewardsData() {
-            // Load from existing rewards system
-            const user = AuthManager.getUserData();
-            const userId = user ? user.id : null;
-            
-            // Try user-specific keys first, fall back to generic keys
-            const points = localStorage.getItem(userId ? `crave_points_${userId}` : 'crave_points') || localStorage.getItem('crave_points') || '0';
-            const tier = localStorage.getItem(userId ? `crave_tier_${userId}` : 'crave_tier') || localStorage.getItem('crave_tier') || 'bronze';
-            const achievements = localStorage.getItem(userId ? `crave_achievements_${userId}` : 'crave_achievements') || localStorage.getItem('crave_achievements') || '[]';
-
-            document.getElementById('statPoints').textContent = points;
-            document.getElementById('rewardPoints').textContent = points;
-            document.getElementById('rewardTier').textContent = tier.charAt(0).toUpperCase() + tier.slice(1);
-            document.getElementById('rewardAchievements').textContent = JSON.parse(achievements).length;
-
-            // Update VIP status
-            const vipStatus = localStorage.getItem(userId ? `crave_vip_status_${userId}` : 'crave_vip_status') || localStorage.getItem('crave_vip_status');
-            if (vipStatus === 'true') {
-                document.getElementById('vipStatusTitle').textContent = 'VIP Member';
-                document.getElementById('vipStatusSubtitle').textContent = 'Enjoy exclusive VIP benefits';
-            }
         }
 
         function handleProfileUpdate(e) {

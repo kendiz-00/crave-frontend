@@ -47,7 +47,7 @@ const CraveAchievements = (function() {
     }
 
     // Get achievement progress
-    function getAchievementProgress(key) {
+    async function getAchievementProgress(key) {
         if (!config || !data) return null;
         
         const achievement = config.achievements[key];
@@ -107,7 +107,7 @@ const CraveAchievements = (function() {
         
         if (condition.includes('tier >=')) {
             const tier = condition.match(/tier >= "(.+)"/)[1];
-            const currentTier = data.Tier.get();
+            const currentTier = await data.Tier.get();
             const tierOrder = ['bronze', 'silver', 'gold', 'diamond', 'elite'];
             const currentIndex = tierOrder.indexOf(currentTier);
             const targetIndex = tierOrder.indexOf(tier);
@@ -128,10 +128,10 @@ const CraveAchievements = (function() {
     }
 
     // Check for new achievements
-    function checkAchievements() {
+    async function checkAchievements() {
         if (!engine) return [];
         
-        engine.checkAchievements();
+        await engine.checkAchievements();
         return getUnlockedAchievements();
     }
 

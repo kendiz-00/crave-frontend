@@ -73,10 +73,10 @@ const CraveBirthdaySystem = (function() {
     }
 
     // Claim birthday reward
-    function claimBirthdayReward() {
+    async function claimBirthdayReward() {
         if (!engine) return { success: false, message: 'System not available' };
         
-        const result = engine.claimBirthdayReward();
+        const result = await engine.claimBirthdayReward();
         
         if (result.success && notifications) {
             notifications.birthdayReward();
@@ -448,8 +448,8 @@ const CraveBirthdaySystem = (function() {
         });
         
         if (claimBtn) {
-            claimBtn.addEventListener('click', () => {
-                const result = claimBirthdayReward();
+            claimBtn.addEventListener('click', async () => {
+                const result = await claimBirthdayReward();
                 
                 if (result.success) {
                     loadBirthdayInfo();

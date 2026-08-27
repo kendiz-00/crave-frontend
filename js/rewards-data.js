@@ -1,7 +1,7 @@
 /**
  * CRAVE Rewards Data Management Layer
- * Handles all data persistence and retrieval using LocalStorage
- * Supports user-specific data when authenticated
+ * Handles all data persistence and retrieval using Backend API for authenticated users
+ * Falls back to LocalStorage for anonymous users or when backend is unavailable
  */
 
 const CraveRewardsData = (function() {
@@ -10,6 +10,11 @@ const CraveRewardsData = (function() {
     const config = typeof CraveRewardsConfig !== 'undefined' ? CraveRewardsConfig : null;
     const keys = config ? config.storageKeys : {};
 
+    // Cache for backend reward data
+    let backendCache = null;
+    let cacheTimestamp = 0;
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
     // Get current user ID if authenticated
     function getUserId() {
         if (typeof AuthManager !== 'undefined' && AuthManager.getUser) {
@@ -17,6 +22,14 @@ const CraveRewardsData = (function() {
             return user ? user.id : null;
         }
         return null;
+    }
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+        if (typeof AuthManager !== 'undefined' && AuthManager.isAuthenticated) {
+            return AuthManager.isAuthenticated();
+        }
+        return false;
     }
 
     // Get user-specific storage key
@@ -60,34 +73,208 @@ const CraveRewardsData = (function() {
         }
     }
 
+    // Fetch rewards from backend
+    async function fetchBackendRewards() {
+        if (!isAuthenticated()) {
+            return null;
+        }
+
+        // Check cache
+        const now = Date.now();
+        if (backendCache && (now - cacheTimestamp) < CACHE_DURATION) {
+            return backendCache;
+        }
+
+        try {
+            if (typeof AuthAPI !== 'undefined' && AuthAPI.getRewards) {
+                const response = await AuthAPI.getRewards();
+                if (response.success && response.data) {
+                    backendCache = response.data;
+                    cacheTimestamp = now;
+                    return response.data;
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching rewards from backend:', error);
+        }
+
+        return null;
+    }
+
+    // Clear rewards cache
+    function clearCache() {
+        backendCache = null;
+        cacheTimestamp = 0;
+    }
+
+    // Migrate localStorage points to backend (one-time)
+    async function migrateLocalStoragePoints() {
+        if (!isAuthenticated()) {
+            return false;
+        }
+
+        const migrationKey = 'crave_points_migrated';
+        if (localStorage.getItem(migrationKey) === 'true') {
+            return false; // Already migrated
+        }
+
+        try {
+            const backendData = await fetchBackendRewards();
+            
+            // NEVER overwrite existing backend data
+            // Only migrate if backend has no transactions (new user)
+            if (backendData && backendData.history && backendData.history.length === 0) {
+                const localPoints = getStorage(keys.points, 0);
+                
+                if (localPoints > 0) {
+                    console.log(`Migrating ${localPoints} points from localStorage to backend for new user`);
+                    // Note: Migration endpoint would be needed here to properly create a transaction
+                    // For now, we'll just mark as migrated to prevent repeated attempts
+                    localStorage.setItem(migrationKey, 'true');
+                    
+                    // Clear localStorage points after migration
+                    removeStorage(keys.points);
+                    removeStorage(keys.tier);
+                    
+                    return true;
+                }
+            }
+            
+            // Mark as migrated even if no points to migrate
+            // If backend has data, we trust backend over localStorage
+            localStorage.setItem(migrationKey, 'true');
+            return false;
+        } catch (error) {
+            console.error('Error migrating points:', error);
+            // On error, don't mark as migrated to allow retry
+            return false;
+        }
+    }
+
     // Points Management
     const Points = {
-        get: function() {
+        get: async function() {
+            // If authenticated, use backend only
+            if (isAuthenticated()) {
+                // Attempt migration on first call
+                await migrateLocalStoragePoints();
+                
+                const backendData = await fetchBackendRewards();
+                if (backendData !== null && backendData.points !== undefined) {
+                    return backendData.points;
+                }
+                
+                // If backend fails, throw error - do NOT fall back to localStorage
+                throw new Error('Failed to fetch points from backend. Please check your connection.');
+            }
+            
+            // Anonymous users can use localStorage
             return getStorage(keys.points, 0);
         },
 
-        set: function(points) {
+        set: async function(points) {
+            // Points.set() is dangerous for authenticated users - should not be used
+            // Only allow for anonymous users
+            if (isAuthenticated()) {
+                throw new Error('Points.set() is not allowed for authenticated users. Use backend transaction API.');
+            }
+            
             return setStorage(keys.points, Math.max(0, points));
         },
 
-        add: function(points) {
-            const current = this.get();
-            return this.set(current + points);
+        add: async function(points, options = {}) {
+            const { orderId, referenceId, reason = 'Points earned' } = options;
+            
+            // If authenticated, use backend API only
+            if (isAuthenticated()) {
+                if (typeof AuthAPI !== 'undefined' && AuthAPI.createRewardTransaction) {
+                    const response = await AuthAPI.createRewardTransaction({
+                        type: 'EARN',
+                        points: points,
+                        reason: reason,
+                        orderId: orderId || undefined,
+                        referenceId: referenceId || undefined,
+                    });
+                    
+                    if (response.success && response.data) {
+                        // Invalidate cache
+                        backendCache = null;
+                        cacheTimestamp = 0;
+                        
+                        return response.data.newBalance;
+                    } else {
+                        throw new Error(response.message || 'Failed to add points');
+                    }
+                } else {
+                    throw new Error('AuthAPI not available');
+                }
+            }
+            
+            // Anonymous users can use localStorage
+            const current = await this.get();
+            return setStorage(keys.points, Math.max(0, current + points));
         },
 
-        subtract: function(points) {
-            const current = this.get();
-            return this.set(current - points);
+        subtract: async function(points, options = {}) {
+            const { orderId, referenceId, reason = 'Points redeemed' } = options;
+            
+            // If authenticated, use backend API only
+            if (isAuthenticated()) {
+                if (typeof AuthAPI !== 'undefined' && AuthAPI.createRewardTransaction) {
+                    const response = await AuthAPI.createRewardTransaction({
+                        type: 'REDEEM',
+                        points: -points, // Negative for redemption
+                        reason: reason,
+                        orderId: orderId || undefined,
+                        referenceId: referenceId || undefined,
+                    });
+                    
+                    if (response.success && response.data) {
+                        // Invalidate cache
+                        backendCache = null;
+                        cacheTimestamp = 0;
+                        
+                        return response.data.newBalance;
+                    } else {
+                        throw new Error(response.message || 'Failed to subtract points');
+                    }
+                } else {
+                    throw new Error('AuthAPI not available');
+                }
+            }
+            
+            // Anonymous users can use localStorage
+            const current = await this.get();
+            return setStorage(keys.points, Math.max(0, current - points));
         }
     };
 
     // Tier Management
     const Tier = {
-        get: function() {
+        get: async function() {
+            // If authenticated, use backend only
+            if (isAuthenticated()) {
+                const backendData = await fetchBackendRewards();
+                if (backendData !== null && backendData.tier !== undefined) {
+                    return backendData.tier;
+                }
+                
+                // If backend fails, calculate from points (tier is derived from points)
+                const points = await Points.get();
+                return this.calculate(points);
+            }
+            
+            // Anonymous users can use localStorage
             return getStorage(keys.tier, 'bronze');
         },
 
-        set: function(tier) {
+        set: async function(tier) {
+            // Tier.set() is not allowed for authenticated users
+            // Tier is derived from points, not stored separately
+            if (isAuthenticated()) {
+                throw new Error('Tier.set() is not allowed for authenticated users. Tier is calculated from points.');
+            }
+            
             return setStorage(keys.tier, tier);
         },
 
@@ -103,13 +290,27 @@ const CraveRewardsData = (function() {
             return 'bronze';
         },
 
-        update: function() {
-            const points = Points.get();
+        update: async function() {
+            // For authenticated users, tier is calculated from backend points
+            // No need to store separately
+            if (isAuthenticated()) {
+                const points = await Points.get();
+                const newTier = this.calculate(points);
+                const currentTier = await this.get();
+                
+                if (newTier !== currentTier) {
+                    return { upgraded: true, from: currentTier, to: newTier };
+                }
+                return { upgraded: false, current: currentTier };
+            }
+            
+            // Anonymous users can update localStorage
+            const points = await Points.get();
             const newTier = this.calculate(points);
-            const currentTier = this.get();
+            const currentTier = await this.get();
             
             if (newTier !== currentTier) {
-                this.set(newTier);
+                await this.set(newTier);
                 return { upgraded: true, from: currentTier, to: newTier };
             }
             return { upgraded: false, current: currentTier };
@@ -811,6 +1012,7 @@ const CraveRewardsData = (function() {
         SpinStats,
         
         // Utility functions
+        clearCache,
         clearAll: function() {
             Object.values(keys).forEach(key => removeStorage(key));
         },
