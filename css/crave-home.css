@@ -240,7 +240,8 @@ body.crave-home .crave-reveal:not(.crave-reveal--static) {
 body.crave-home .crave-reveal.is-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
-  filter: blur(0);
+  filter: none !important;
+  will-change: auto !important;
 }
 
 body.crave-home .crave-reveal--static {
@@ -734,7 +735,543 @@ body.crave-home .featured-food-btn:hover {
   transform: translate3d(0, -2px, 0);
 }
 
-/* ---- Social proof (testimonial-style) ---- */
+/* ---- MOST CRAVED RIGHT NOW (PHASE 2B DISCOVERY EXPERIENCE) ---- */
+body.crave-home .most-craved-section {
+  position: relative;
+  padding: 90px 0 70px;
+  background: #08080a;
+}
+
+body.crave-home .most-craved-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Editorial Header */
+body.crave-home .most-craved-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+body.crave-home .most-craved-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+body.crave-home .eyebrow-fire {
+  font-size: 14px;
+}
+
+body.crave-home .most-craved-header .eyebrow-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d4a373;
+}
+
+body.crave-home .most-craved-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 3.8vw, 2.8rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
+}
+
+body.crave-home .most-craved-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.98rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+body.crave-home .most-craved-menu-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #d4a373;
+  text-decoration: none;
+  padding: 10px 22px;
+  border: 1px solid rgba(212, 163, 115, 0.3);
+  border-radius: 30px;
+  background: rgba(212, 163, 115, 0.06);
+  transition: all 0.28s ease;
+}
+
+body.crave-home .most-craved-menu-link:hover {
+  background: linear-gradient(135deg, #d4a373 0%, #c49a6c 100%);
+  color: #111111;
+  border-color: #d4a373;
+  transform: translateX(3px);
+}
+
+/* Grid & Card Architecture */
+body.crave-home .most-craved-grid {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3, 0.9fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+body.crave-home .most-craved-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: rgba(16, 16, 22, 0.85);
+  border: 1px solid rgba(212, 163, 115, 0.18);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+body.crave-home .most-craved-item:hover {
+  transform: translateY(-6px);
+  border-color: rgba(212, 163, 115, 0.42);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55), 0 0 30px rgba(212, 163, 115, 0.15);
+}
+
+body.crave-home .most-craved-img-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #0a0a0d;
+  flex-shrink: 0;
+}
+
+body.crave-home .most-craved-item--hero .most-craved-img-box {
+  aspect-ratio: 16 / 9;
+}
+
+body.crave-home .most-craved-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+}
+
+body.crave-home .most-craved-item:hover .most-craved-img {
+  transform: scale(1.06);
+  filter: brightness(1.05);
+}
+
+/* Badges */
+body.crave-home .most-craved-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  background: rgba(10, 10, 13, 0.85);
+  color: #ffd700;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+body.crave-home .most-craved-badge--spicy {
+  border-color: rgba(255, 107, 107, 0.5);
+  color: #ff8585;
+}
+
+body.crave-home .most-craved-badge--gold {
+  border-color: rgba(255, 215, 0, 0.5);
+  color: #ffd700;
+}
+
+body.crave-home .most-craved-badge--chef {
+  border-color: rgba(212, 163, 115, 0.5);
+  color: #fdebd0;
+}
+
+/* Card Body */
+body.crave-home .most-craved-body {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+body.crave-home .most-craved-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+body.crave-home .most-craved-desc {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.45;
+  margin: 0 0 16px 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* Footer: Price + Add Button */
+body.crave-home .most-craved-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.crave-home .most-craved-price {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: #ffd700;
+  text-shadow: 0 2px 6px rgba(255, 215, 0, 0.18);
+}
+
+body.crave-home .most-craved-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 88px;
+  height: 40px;
+  padding: 0 14px;
+  background: linear-gradient(135deg, #d4a373 0%, #c49a6c 100%);
+  color: #111111;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(212, 163, 115, 0.25);
+  user-select: none;
+}
+
+body.crave-home .most-craved-add-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #ffd700 0%, #d4a373 100%);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.38);
+}
+
+body.crave-home .most-craved-add-btn--success {
+  background: linear-gradient(135deg, #20c997 0%, #12b886 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 20px rgba(32, 201, 151, 0.38) !important;
+}
+
+/* Responsive Media Queries for Most Craved */
+@media (max-width: 1024px) {
+  body.crave-home .most-craved-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  body.crave-home .most-craved-section {
+    padding: 50px 0;
+  }
+
+  body.crave-home .most-craved-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  body.crave-home .most-craved-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    padding-bottom: 16px;
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    scrollbar-width: none;
+  }
+
+  body.crave-home .most-craved-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.crave-home .most-craved-item {
+    flex: 0 0 280px;
+    scroll-snap-align: start;
+    border-radius: 18px;
+  }
+
+  body.crave-home .most-craved-img-box {
+    aspect-ratio: 16 / 10 !important;
+  }
+
+  body.crave-home .most-craved-body {
+    padding: 14px 16px 16px;
+  }
+
+  body.crave-home .most-craved-add-btn {
+    height: 42px;
+    min-width: 90px;
+    font-size: 14px;
+  }
+}
+
+/* ==========================================================================
+   VISUAL CATEGORY EXPLORER (PHASE 2C)
+   ========================================================================== */
+body.crave-home .crave-category-explorer {
+  position: relative;
+  padding: 90px 0 70px;
+  background: #0a0a0d;
+}
+
+body.crave-home .category-explorer-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Editorial Header */
+body.crave-home .category-explorer-header {
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto 44px;
+}
+
+body.crave-home .category-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: rgba(212, 163, 115, 0.08);
+  border: 1px solid rgba(212, 163, 115, 0.22);
+}
+
+body.crave-home .category-eyebrow .eyebrow-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d4a373;
+}
+
+body.crave-home .category-explorer-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 3.8vw, 2.8rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.01em;
+}
+
+body.crave-home .category-explorer-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.98rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+/* Editorial 6-Card Mosaic Grid */
+body.crave-home .category-explorer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Category Card */
+body.crave-home .category-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 280px;
+  border-radius: 22px;
+  overflow: hidden;
+  text-decoration: none;
+  background: #0d0d12;
+  border: 1px solid rgba(212, 163, 115, 0.18);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+body.crave-home .category-card--hero {
+  grid-column: span 2;
+}
+
+body.crave-home .category-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(212, 163, 115, 0.45);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(212, 163, 115, 0.15);
+}
+
+/* Image Wrap */
+body.crave-home .category-card-img-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body.crave-home .category-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+}
+
+body.crave-home .category-card:hover .category-card-img {
+  transform: scale(1.07);
+  filter: brightness(1.08);
+}
+
+body.crave-home .category-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 8, 12, 0.15) 0%, rgba(8, 8, 12, 0.7) 60%, rgba(8, 8, 12, 0.95) 100%);
+  transition: opacity 0.3s ease;
+}
+
+/* Card Content */
+body.crave-home .category-card-content {
+  position: relative;
+  z-index: 2;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+body.crave-home .category-badge {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(10, 10, 13, 0.82);
+  border: 1px solid rgba(212, 163, 115, 0.3);
+  color: #ffd700;
+  margin-bottom: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+body.crave-home .category-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  line-height: 1.25;
+}
+
+body.crave-home .category-card--hero .category-name {
+  font-size: 1.65rem;
+}
+
+body.crave-home .category-phrase {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 14px 0;
+}
+
+body.crave-home .category-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #d4a373;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+body.crave-home .category-card:hover .category-cta {
+  color: #ffd700;
+}
+
+body.crave-home .category-card:hover .category-cta i {
+  transform: translateX(4px);
+}
+
+/* Tablet & Mobile Breakpoints */
+@media (max-width: 1024px) {
+  body.crave-home .category-explorer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  body.crave-home .category-card--hero {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 767px) {
+  body.crave-home .crave-category-explorer {
+    padding: 55px 0;
+  }
+
+  body.crave-home .category-explorer-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    padding-bottom: 16px;
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    scrollbar-width: none;
+  }
+
+  body.crave-home .category-explorer-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.crave-home .category-card {
+    flex: 0 0 270px;
+    min-height: 260px;
+    scroll-snap-align: start;
+    grid-column: auto !important;
+  }
+}
+
+/* ---- Legacy Social proof fallback ---- */
 body.crave-home .social-proof {
   background: transparent !important;
 }
@@ -970,9 +1507,178 @@ body.crave-home .section-menu .btn1 {
   border-radius: 999px !important;
 }
 
-/* ---- Events swiper ---- */
-body.crave-home .section-event {
-  background: transparent !important;
+/* ---- Premium Events Section ---- */
+body.crave-home .premium-events-section {
+  position: relative;
+  padding: 85px 0;
+  background: #0a0a0d;
+  overflow: hidden;
+}
+
+body.crave-home .premium-events-background {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(212, 163, 115, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+body.crave-home .premium-events-container {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+body.crave-home .premium-events-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+body.crave-home .premium-events-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 3.8vw, 2.8rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+body.crave-home .premium-events-accent {
+  width: 70px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4a373, transparent);
+  margin: 0 auto 16px;
+}
+
+body.crave-home .premium-events-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+body.crave-home .premium-event-card {
+  position: relative;
+  background: rgba(16, 16, 22, 0.85);
+  border: 1px solid rgba(212, 163, 115, 0.2);
+  border-radius: 28px;
+  padding: 44px 36px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+body.crave-home .premium-event-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(212, 163, 115, 0.1);
+  border: 1px solid rgba(212, 163, 115, 0.25);
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+
+body.crave-home .premium-badge-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffd700;
+  letter-spacing: 0.08em;
+}
+
+body.crave-home .premium-event-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+body.crave-home .premium-event-icon {
+  font-size: 32px;
+  color: #d4a373;
+  margin-bottom: 20px;
+}
+
+body.crave-home .premium-event-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+body.crave-home .premium-event-description {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.94rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  max-width: 620px;
+  margin-bottom: 28px;
+}
+
+body.crave-home .premium-event-meta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 580px;
+  margin-bottom: 32px;
+}
+
+body.crave-home .premium-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(212, 163, 115, 0.12);
+  border-radius: 16px;
+}
+
+body.crave-home .premium-meta-icon {
+  color: #d4a373;
+  font-size: 15px;
+}
+
+body.crave-home .premium-meta-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+body.crave-home .premium-meta-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+}
+
+body.crave-home .premium-meta-value {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+body.crave-home .premium-reserve-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 50px;
+  padding: 0 32px;
+  background: linear-gradient(135deg, #d4a373 0%, #c49a6c 100%);
+  color: #111111;
+  border-radius: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+body.crave-home .premium-reserve-btn:hover {
+  background: linear-gradient(135deg, #ffd700 0%, #d4a373 100%);
+  transform: translateY(-2px);
+  color: #111111;
 }
 
 body.crave-home .section-event .blo2 {
@@ -1151,6 +1857,635 @@ body.crave-home .crave-shimmer-skeleton::after {
   animation: chShimmer 1.8s ease-in-out infinite;
 }
 
+/* ---- BRAND STORYTELLING & VALUE PILLARS (PHASE 2D) ---- */
+body.crave-home .crave-brand-story {
+  position: relative;
+  padding: 95px 0 85px;
+  background: #0a0a0d;
+  overflow: hidden;
+}
+
+body.crave-home .brand-story-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Header */
+body.crave-home .brand-story-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 56px;
+}
+
+body.crave-home .story-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: rgba(212, 163, 115, 0.08);
+  border: 1px solid rgba(212, 163, 115, 0.22);
+}
+
+body.crave-home .story-eyebrow .eyebrow-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d4a373;
+}
+
+body.crave-home .story-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.2rem, 4.2vw, 3.2rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.12;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.01em;
+}
+
+body.crave-home .story-title .title-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #d4a373 60%, #c49a6c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+body.crave-home .story-description {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.02rem;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Grid Layout */
+body.crave-home .brand-story-grid {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 48px;
+  align-items: center;
+}
+
+/* Visual Column */
+body.crave-home .story-visual-col {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+body.crave-home .story-food-frame {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 4 / 3;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 163, 115, 0.22);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  background: #0d0d12;
+}
+
+body.crave-home .story-glow-orb {
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(212, 163, 115, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+body.crave-home .story-food-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.crave-home .story-food-frame:hover .story-food-img {
+  transform: scale(1.05);
+}
+
+body.crave-home .story-img-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(10, 10, 13, 0.88);
+  border: 1px solid rgba(212, 163, 115, 0.3);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+body.crave-home .story-img-badge .badge-icon {
+  font-size: 14px;
+}
+
+body.crave-home .story-img-badge .badge-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffd700;
+  letter-spacing: 0.04em;
+}
+
+/* Value Pillars Grid */
+body.crave-home .story-pillars-col {
+  display: flex;
+  flex-direction: column;
+}
+
+body.crave-home .pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+body.crave-home .pillar-card {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 20px;
+  background: rgba(16, 16, 22, 0.85);
+  border: 1px solid rgba(212, 163, 115, 0.16);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body.crave-home .pillar-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212, 163, 115, 0.38);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.48), 0 0 20px rgba(212, 163, 115, 0.12);
+}
+
+body.crave-home .pillar-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(212, 163, 115, 0.1);
+  border: 1px solid rgba(212, 163, 115, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+body.crave-home .pillar-icon {
+  font-size: 18px;
+}
+
+body.crave-home .pillar-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+}
+
+body.crave-home .pillar-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Action CTA */
+body.crave-home .story-action-row {
+  display: flex;
+  align-items: center;
+}
+
+body.crave-home .story-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 32px;
+  background: linear-gradient(135deg, #d4a373 0%, #c49a6c 100%);
+  color: #111111;
+  border-radius: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(212, 163, 115, 0.3);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.crave-home .story-btn-primary:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, #ffd700 0%, #d4a373 100%);
+  box-shadow: 0 12px 32px rgba(255, 215, 0, 0.4);
+  color: #111111;
+}
+
+/* Tablet Layout (768px - 1024px) */
+@media (max-width: 1024px) {
+  body.crave-home .brand-story-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  body.crave-home .story-food-frame {
+    max-width: 100%;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+/* Mobile Layout (320px - 767px) */
+@media (max-width: 767px) {
+  body.crave-home .crave-brand-story {
+    padding: 55px 0;
+  }
+
+  body.crave-home .brand-story-header {
+    margin-bottom: 32px;
+  }
+
+  body.crave-home .story-food-frame {
+    aspect-ratio: 16 / 9;
+    border-radius: 20px;
+  }
+
+  body.crave-home .pillars-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  body.crave-home .pillar-card {
+    padding: 18px 16px;
+  }
+
+  body.crave-home .story-btn-primary {
+    width: 100%;
+    justify-content: center;
+    height: 50px;
+  }
+}
+
+/* ---- CRAVE REWARDS & VIP RETENTION (PHASE 2E) ---- */
+body.crave-home .crave-rewards-retention {
+  position: relative;
+  padding: 95px 0 85px;
+  background: #08080a;
+  overflow: hidden;
+}
+
+body.crave-home .rewards-retention-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+body.crave-home .rewards-retention-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 54px;
+  align-items: center;
+}
+
+/* Left Column: Info & Journey */
+body.crave-home .rewards-info-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+body.crave-home .rewards-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: rgba(212, 163, 115, 0.08);
+  border: 1px solid rgba(212, 163, 115, 0.22);
+}
+
+body.crave-home .rewards-eyebrow .eyebrow-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d4a373;
+}
+
+body.crave-home .rewards-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.2rem, 4.2vw, 3.2rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.12;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.01em;
+}
+
+body.crave-home .rewards-title .title-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #d4a373 60%, #c49a6c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+body.crave-home .rewards-description {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.02rem;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.65;
+  margin: 0 0 32px 0;
+  max-width: 540px;
+}
+
+/* Steps List */
+body.crave-home .rewards-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 36px;
+  width: 100%;
+}
+
+body.crave-home .rewards-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(16, 16, 22, 0.85);
+  border: 1px solid rgba(212, 163, 115, 0.16);
+  border-radius: 18px;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+}
+
+body.crave-home .rewards-step-item:hover {
+  transform: translateX(6px);
+  border-color: rgba(212, 163, 115, 0.38);
+}
+
+body.crave-home .step-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4a373 0%, #c49a6c 100%);
+  color: #111111;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(212, 163, 115, 0.3);
+}
+
+body.crave-home .step-body {
+  display: flex;
+  flex-direction: column;
+}
+
+body.crave-home .step-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+}
+
+body.crave-home .step-desc {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Action CTA */
+body.crave-home .rewards-action-row {
+  display: flex;
+  align-items: center;
+}
+
+body.crave-home .rewards-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 32px;
+  background: linear-gradient(135deg, #d4a373 0%, #c49a6c 100%);
+  color: #111111;
+  border-radius: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(212, 163, 115, 0.3);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.crave-home .rewards-btn-primary:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, #ffd700 0%, #d4a373 100%);
+  box-shadow: 0 12px 32px rgba(255, 215, 0, 0.4);
+  color: #111111;
+}
+
+/* Right Column: Luxury VIP Card Preview */
+body.crave-home .rewards-card-col {
+  display: flex;
+  justify-content: center;
+}
+
+body.crave-home .vip-membership-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  padding: 32px 28px;
+  background: linear-gradient(145deg, #14141d 0%, #0a0a0d 100%);
+  border: 1px solid rgba(212, 163, 115, 0.3);
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.crave-home .vip-membership-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 215, 0, 0.5);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 0 0 35px rgba(212, 163, 115, 0.2);
+}
+
+body.crave-home .vip-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+body.crave-home .vip-card-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+body.crave-home .vip-card-brand .brand-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+
+body.crave-home .vip-card-brand .brand-tag {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #d4a373;
+}
+
+body.crave-home .vip-tier-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 20px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+/* Card Body */
+body.crave-home .vip-card-body {
+  margin-bottom: 32px;
+}
+
+body.crave-home .points-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 4px;
+}
+
+body.crave-home .points-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+body.crave-home .points-number {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+body.crave-home .points-unit {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffd700;
+}
+
+body.crave-home .vip-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+body.crave-home .progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+body.crave-home .progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+body.crave-home .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4a373 0%, #ffd700 100%);
+  border-radius: 4px;
+}
+
+/* Perks Pills */
+body.crave-home .perks-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.crave-home .perk-pill {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(212, 163, 115, 0.1);
+  border: 1px solid rgba(212, 163, 115, 0.2);
+  padding: 4px 12px;
+  border-radius: 14px;
+}
+
+/* Tablet & Mobile Breakpoints */
+@media (max-width: 1024px) {
+  body.crave-home .rewards-retention-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  body.crave-home .vip-membership-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  body.crave-home .crave-rewards-retention {
+    padding: 55px 0;
+  }
+
+  body.crave-home .vip-membership-card {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  body.crave-home .points-number {
+    font-size: 2.2rem;
+  }
+
+  body.crave-home .rewards-btn-primary {
+    width: 100%;
+    justify-content: center;
+    height: 50px;
+  }
+}
+
 /* ---- Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
   body.crave-home .crave-reveal:not(.crave-reveal--static) {
@@ -1182,5 +2517,46 @@ body.crave-home .crave-shimmer-skeleton::after {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
+  }
+}
+
+/* ==========================================================================
+   PHASE 2F — COMPLETE MOBILE POLISH & RESPONSIVENESS AUDIT
+   ========================================================================== */
+body.crave-home {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+}
+
+/* Consistent Mobile Spacing Rhythm */
+@media (max-width: 767px) {
+  body.crave-home .most-craved-section,
+  body.crave-home .crave-category-explorer,
+  body.crave-home .crave-brand-story,
+  body.crave-home .crave-rewards-retention,
+  body.crave-home .premium-events-section {
+    padding: 55px 0 !important;
+  }
+
+  /* Safe Bottom Padding above Sticky Cart Bar (#stickyCartBar) */
+  body.crave-home .reservation-section,
+  body.crave-home .homepage-cta,
+  body.crave-home .premium-footer {
+    padding-bottom: calc(105px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Mobile Button Touch Targets */
+  body.crave-home button,
+  body.crave-home a.hero-btn-primary,
+  body.crave-home a.most-craved-menu-link,
+  body.crave-home a.story-btn-primary,
+  body.crave-home a.rewards-btn-primary {
+    min-height: 46px;
+  }
+
+  /* Rail Edge Breathing Room */
+  body.crave-home .most-craved-grid,
+  body.crave-home .category-explorer-grid {
+    scroll-padding-left: 16px;
   }
 }
