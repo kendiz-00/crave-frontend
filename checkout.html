@@ -225,8 +225,37 @@
                         <input type="hidden" id="deliveryAddress" name="deliveryAddress" required>
                     </div>
 
-                    <!-- Payment Method Selection -->
-                    <div class="checkout-form-group">
+                    <!-- Order Method (Delivery / Pickup) Card -->
+                    <div class="checkout-card order-type-card">
+                        <label class="checkout-label">
+                            Order Method <span class="required">*</span>
+                        </label>
+                        <div class="segmented-control">
+                            <label class="segmented-option active" id="orderTypeDeliveryLabel">
+                                <input type="radio" id="delivery" name="orderType" value="Delivery" class="order-type-radio" checked>
+                                <div class="option-content">
+                                    <i class="fas fa-truck-fast option-icon"></i>
+                                    <div class="option-text">
+                                        <span class="option-title">Delivery</span>
+                                        <span class="option-sub">GH¢ 15.00 • 30-45 min</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="segmented-option" id="orderTypePickupLabel">
+                                <input type="radio" id="pickup" name="orderType" value="Pickup" class="order-type-radio">
+                                <div class="option-content">
+                                    <i class="fas fa-store option-icon"></i>
+                                    <div class="option-text">
+                                        <span class="option-title">Pickup</span>
+                                        <span class="option-sub">Free • Ready in 15-20 min</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method Card -->
+                    <div class="checkout-card payment-card">
                         <label class="checkout-label">
                             Payment Method <span class="required">*</span>
                         </label>
@@ -234,70 +263,112 @@
                         <div id="paymentMethodForm"></div>
                     </div>
 
-                    <!-- Promo Code -->
-                    <div class="checkout-form-group">
-                        <label for="promoCode" class="checkout-label">
-                            Promo Code (Optional)
-                        </label>
-                        <div class="promo-code-group">
-                            <input 
-                                type="text" 
-                                id="promoCode" 
-                                name="promoCode" 
-                                class="checkout-input" 
-                                placeholder="Enter promo code"
-                            >
-                            <button type="button" id="applyPromoBtn" class="promo-apply-btn">
-                                Apply
-                            </button>
-                        </div>
-                        <div id="promoCodeMessage" class="promo-code-message"></div>
-                    </div>
-
-                    <!-- Reward Points -->
-                    <div class="checkout-form-group" id="rewardPointsSection">
-                        <label class="checkout-label">
-                            Reward Points
-                        </label>
-                        <div class="reward-points-info">
-                            <span id="availablePoints">0</span> points available
-                            <button type="button" id="usePointsBtn" class="use-points-btn">
-                                Use Points
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Order Type -->
-                    <div class="checkout-form-group">
-                        <label class="checkout-label">
-                            Order Type <span class="required">*</span>
-                        </label>
-                        <div class="order-type-group">
-                            <div class="order-type-option">
-                                <input type="radio" id="delivery" name="orderType" value="Delivery" class="order-type-radio" checked>
-                                <label for="delivery" class="order-type-label">
-                                    <i class="fas fa-truck"></i> Delivery
-                                </label>
+                    <!-- CRAVE Reward Points Card -->
+                    <div class="checkout-card reward-card" id="rewardPointsSection">
+                        <div class="reward-header">
+                            <div class="reward-title-group">
+                                <span class="reward-badge-icon">🎁</span>
+                                <div>
+                                    <h3 class="reward-card-title">CRAVE Rewards</h3>
+                                    <p class="reward-card-sub">Redeem your points for instant order savings</p>
+                                </div>
                             </div>
-                            <div class="order-type-option">
-                                <input type="radio" id="pickup" name="orderType" value="Pickup" class="order-type-radio">
-                                <label for="pickup" class="order-type-label">
-                                    <i class="fas fa-store"></i> Pickup
-                                </label>
+                            <div class="reward-balance-chip">
+                                <span class="chip-label">Available Points</span>
+                                <div class="chip-value"><span id="availablePoints">0</span> <small>PTS</small></div>
                             </div>
                         </div>
+
+                        <!-- Rewards Stepper & Live Preview Controls -->
+                        <div class="reward-controls" id="rewardControls">
+                            <div class="points-stepper-container">
+                                <label class="stepper-title">Points you can use on this order:</label>
+                                <div class="points-stepper-box">
+                                    <button type="button" class="stepper-btn" id="pointsMinusBtn" aria-label="Decrease points">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <div class="stepper-input-wrapper">
+                                        <input 
+                                            type="number" 
+                                            id="pointsToRedeem" 
+                                            class="stepper-input" 
+                                            placeholder="0" 
+                                            min="0" 
+                                            step="1"
+                                            value="0"
+                                        >
+                                        <span class="stepper-unit">PTS</span>
+                                    </div>
+                                    <button type="button" class="stepper-btn" id="pointsPlusBtn" aria-label="Increase points">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button type="button" class="use-max-btn" id="useMaxPointsBtn">
+                                        Use Max
+                                    </button>
+                                </div>
+                                <div class="max-limit-info" id="maxLimitInfo">
+                                    <i class="fas fa-info-circle"></i> Max available to use: <strong id="maxRedeemable">0</strong> PTS (10% of subtotal)
+                                </div>
+                            </div>
+
+                            <!-- Live Savings Preview Card -->
+                            <div class="savings-preview-card" id="savingsPreviewCard">
+                                <div class="savings-main-row">
+                                    <span class="savings-tag">Your Reward Savings</span>
+                                    <span class="savings-amount" id="rewardDiscount">GH¢ 0.00 OFF</span>
+                                </div>
+                                <div class="savings-detail-row">
+                                    <span class="savings-sparkle">✨</span>
+                                    <span>You'll save <strong id="savingsAmountText">GH₵ 0.00</strong> • Points remaining: <strong id="remainingPoints">0</strong> PTS</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guest / Zero Points Banner -->
+                        <div class="reward-guest-banner" id="rewardGuestBanner" style="display: none;">
+                            <i class="fas fa-gem guest-icon"></i>
+                            <div class="guest-text">
+                                <span id="rewardGuestText">Log in or join CRAVE Rewards to turn your points into instant discounts!</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Additional Notes -->
-                    <div class="checkout-form-group">
+                    <!-- Promo Code Card -->
+                    <div class="checkout-card promo-card">
+                        <div class="promo-header-toggle" id="togglePromoBtn">
+                            <div class="promo-header-left">
+                                <i class="fas fa-ticket-alt promo-icon"></i>
+                                <span class="promo-title">Have a promo code?</span>
+                            </div>
+                            <i class="fas fa-chevron-down promo-chevron" id="promoChevron"></i>
+                        </div>
+                        <div class="promo-body" id="promoBody">
+                            <div class="promo-code-group">
+                                <input 
+                                    type="text" 
+                                    id="promoCode" 
+                                    name="promoCode" 
+                                    class="checkout-input promo-input" 
+                                    placeholder="Enter promo code (e.g. CRAVE10)"
+                                >
+                                <button type="button" id="applyPromoBtn" class="promo-apply-btn">
+                                    Apply
+                                </button>
+                            </div>
+                            <div id="promoCodeMessage" class="promo-code-message"></div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes Card -->
+                    <div class="checkout-card notes-card">
                         <label for="additionalNotes" class="checkout-label">
-                            Additional Notes (Optional)
+                            Additional Notes <span class="optional-tag">(Optional)</span>
                         </label>
                         <textarea 
                             id="additionalNotes" 
                             name="additionalNotes" 
                             class="checkout-input checkout-textarea" 
-                            placeholder="Any special requests? (e.g., no onions, extra spicy)"
+                            placeholder="Any special requests for the kitchen or driver? (e.g. extra spicy, call on arrival)"
                         ></textarea>
                     </div>
 
@@ -326,19 +397,27 @@
                                 <span>Subtotal</span>
                                 <span id="subtotalAmount">GH¢ 0.00</span>
                             </div>
+                            <div class="checkout-summary-row promo-discount-row" id="promoDiscountRow" style="display: none;">
+                                <span>Promo Discount</span>
+                                <span id="promoDiscountSummaryValue" class="discount-value">-GH¢ 0.00</span>
+                            </div>
+                            <div class="checkout-summary-row reward-discount-row" id="rewardDiscountRow" style="display: none;">
+                                <span>Reward Points Discount</span>
+                                <span id="rewardDiscountSummaryValue" class="discount-value">-GH¢ 0.00</span>
+                            </div>
                             <div class="checkout-summary-row">
                                 <span>Delivery Fee</span>
                                 <span id="deliveryFee">GH¢ 15.00</span>
                             </div>
                             <div class="checkout-summary-row total">
-                                <span>Your Total</span>
+                                <span>Final Total</span>
                                 <span id="totalAmount">GH¢ 0.00</span>
                             </div>
                         </div>
 
                         <!-- Place Order Button -->
                         <button type="submit" class="checkout-place-order-btn" id="placeOrderBtn">
-                            <i class="fas fa-shopping-cart"></i>
+                            <i class="fas fa-lock"></i>
                             Confirm & Pay
                         </button>
                     </div>
@@ -1121,7 +1200,7 @@
         // ============================================
 
         // Check if user returned from WhatsApp
-        function checkWhatsAppReturn() {
+        async function checkWhatsAppReturn() {
             const whatsappOpened = sessionStorage.getItem('craveWhatsAppOpened');
             const orderCompletionData = sessionStorage.getItem('craveOrderCompletion');
 
@@ -1130,12 +1209,12 @@
                 sessionStorage.removeItem('craveWhatsAppOpened');
                 
                 // Show success overlay
-                showOrderSuccessOverlay(JSON.parse(orderCompletionData));
+                await showOrderSuccessOverlay(JSON.parse(orderCompletionData));
             }
         }
 
         // Show order success overlay
-        function showOrderSuccessOverlay(orderData) {
+        async function showOrderSuccessOverlay(orderData) {
             const overlay = document.getElementById('orderSuccessOverlay');
             
             // Calculate points earned
@@ -1154,10 +1233,15 @@
             let currentPoints = 0;
             
             if (typeof CraveRewardsData !== 'undefined') {
-                currentPoints = CraveRewardsData.Points.get();
-                currentTier = CraveRewardsData.Tier.get();
-                const progress = CraveRewardsEngine.getMilestoneProgress();
+                currentPoints = await CraveRewardsData.Points.get();
+                currentTier = await CraveRewardsData.Tier.get();
+                const progress = await CraveRewardsEngine.getMilestoneProgress();
                 tierProgress = progress ? Math.round(progress.progress) : 0;
+            }
+
+            // Ensure currentTier is a string
+            if (typeof currentTier !== 'string') {
+                currentTier = 'Bronze';
             }
 
             // Update overlay with data
@@ -2154,20 +2238,19 @@
     <script src="js/birthday-system.js"></script>
     
     <script>
-        // Initialize rewards on checkout page
+        // Global variables for checkout savings
+        let pointsUsed = 0;
+        let promoDiscountUsed = 0;
+        let appliedPromoCode = null;
+
+        // Initialize checkout page
         document.addEventListener('DOMContentLoaded', async function() {
-            // Initialize auth
-            AuthManager.initialize();
+            // Initialize auth first (must complete before loading rewards)
+            await AuthManager.initialize();
             AuthUI.initialize();
             
             // Initialize cart sync
             CartSync.initialize();
-            
-            // Initialize payment UI
-            initializePaymentFlow();
-            
-            // Show guest/login/account options based on auth state
-            updateCheckoutAuthUI();
             
             // Load cart items
             loadCartItems();
@@ -2186,11 +2269,169 @@
             renderPaymentForm(selectedPaymentMethod);
             
             // Handle form submission
-            document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
+            const checkoutForm = document.getElementById('checkoutForm');
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', handleCheckout);
+            }
+
+            // Setup listeners
+            setupOrderTypeListeners();
+            setupPromoListeners();
+            setupRewardListeners();
             
             // Load reward points if authenticated
             await loadRewardPoints();
         });
+
+        function setupOrderTypeListeners() {
+            const deliveryRadio = document.getElementById('delivery');
+            const pickupRadio = document.getElementById('pickup');
+            const deliveryLabel = document.getElementById('orderTypeDeliveryLabel');
+            const pickupLabel = document.getElementById('orderTypePickupLabel');
+
+            function syncOrderType() {
+                const isDelivery = deliveryRadio && deliveryRadio.checked;
+                if (deliveryLabel) deliveryLabel.classList.toggle('active', isDelivery);
+                if (pickupLabel) pickupLabel.classList.toggle('active', !isDelivery);
+
+                const deliveryFeeEl = document.getElementById('deliveryFee');
+                if (deliveryFeeEl) {
+                    deliveryFeeEl.textContent = isDelivery ? 'GH¢ 15.00' : 'GH¢ 0.00';
+                }
+
+                updateRewardDetails();
+            }
+
+            if (deliveryRadio) deliveryRadio.addEventListener('change', syncOrderType);
+            if (pickupRadio) pickupRadio.addEventListener('change', syncOrderType);
+        }
+
+        function setupPromoListeners() {
+            const togglePromoBtn = document.getElementById('togglePromoBtn');
+            const promoBody = document.getElementById('promoBody');
+            if (togglePromoBtn && promoBody) {
+                togglePromoBtn.addEventListener('click', function() {
+                    togglePromoBtn.classList.toggle('open');
+                    promoBody.style.display = (promoBody.style.display === 'none') ? 'block' : 'none';
+                });
+            }
+
+            const applyPromoBtn = document.getElementById('applyPromoBtn');
+            if (applyPromoBtn) {
+                applyPromoBtn.addEventListener('click', async function() {
+                    const inputEl = document.getElementById('promoCode');
+                    const msgEl = document.getElementById('promoCodeMessage');
+                    const code = (inputEl ? inputEl.value : '').trim().toUpperCase();
+
+                    if (!code) {
+                        if (msgEl) {
+                            msgEl.className = 'promo-code-message error';
+                            msgEl.textContent = 'Please enter a promo code';
+                        }
+                        return;
+                    }
+
+                    const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
+                    const subtotal = parseFloat(subtotalText) || 0;
+
+                    if (typeof CravePromoCodes !== 'undefined') {
+                        const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+                        const result = await CravePromoCodes.apply(code, subtotal, cart);
+
+                        if (result && result.valid) {
+                            promoDiscountUsed = result.discount || 0;
+                            appliedPromoCode = code;
+                            if (msgEl) {
+                                msgEl.className = 'promo-code-message success';
+                                msgEl.innerHTML = `<i class="fas fa-check-circle"></i> Code <strong>${code}</strong> applied! Saved GH¢ ${promoDiscountUsed.toFixed(2)}`;
+                            }
+
+                            const promoRow = document.getElementById('promoDiscountRow');
+                            const promoVal = document.getElementById('promoDiscountSummaryValue');
+                            if (promoRow && promoVal) {
+                                promoRow.style.display = 'flex';
+                                promoVal.textContent = `-GH¢ ${promoDiscountUsed.toFixed(2)}`;
+                            }
+                            recalculateTotal();
+                        } else {
+                            promoDiscountUsed = 0;
+                            appliedPromoCode = null;
+                            if (msgEl) {
+                                msgEl.className = 'promo-code-message error';
+                                msgEl.textContent = (result && result.message) ? result.message : 'Invalid or expired promo code';
+                            }
+
+                            const promoRow = document.getElementById('promoDiscountRow');
+                            if (promoRow) promoRow.style.display = 'none';
+                            recalculateTotal();
+                        }
+                    } else {
+                        if (msgEl) {
+                            msgEl.className = 'promo-code-message error';
+                            msgEl.textContent = 'Promo code system unavailable';
+                        }
+                    }
+                });
+            }
+        }
+
+        function setupRewardListeners() {
+            const minusBtn = document.getElementById('pointsMinusBtn');
+            const plusBtn = document.getElementById('pointsPlusBtn');
+            const useMaxBtn = document.getElementById('useMaxPointsBtn');
+            const pointsInput = document.getElementById('pointsToRedeem');
+
+            if (minusBtn && pointsInput) {
+                minusBtn.addEventListener('click', function() {
+                    let current = parseInt(pointsInput.value) || 0;
+                    let step = current <= 10 ? 1 : 10;
+                    let newValue = Math.max(0, current - step);
+                    pointsInput.value = newValue;
+                    updateRewardDetails();
+                });
+            }
+
+            if (plusBtn && pointsInput) {
+                plusBtn.addEventListener('click', function() {
+                    let availablePoints = parseInt(document.getElementById('availablePoints')?.textContent) || 0;
+                    let subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
+                    let subtotal = parseFloat(subtotalText) || 0;
+                    let maxRedeemable = Math.floor(subtotal * 0.10);
+                    let actualMax = Math.min(availablePoints, maxRedeemable);
+
+                    let current = parseInt(pointsInput.value) || 0;
+                    let step = 10;
+                    let newValue = Math.min(actualMax, current + step);
+                    pointsInput.value = newValue;
+                    updateRewardDetails();
+                });
+            }
+
+            if (useMaxBtn && pointsInput) {
+                useMaxBtn.addEventListener('click', function() {
+                    let availablePoints = parseInt(document.getElementById('availablePoints')?.textContent) || 0;
+                    let subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
+                    let subtotal = parseFloat(subtotalText) || 0;
+                    let maxRedeemable = Math.floor(subtotal * 0.10);
+                    let actualMax = Math.min(availablePoints, maxRedeemable);
+
+                    pointsInput.value = actualMax;
+                    updateRewardDetails();
+
+                    if (actualMax > 0 && typeof ToastNotifications !== 'undefined') {
+                        ToastNotifications.success(`Applied maximum of ${actualMax} points`);
+                    } else if (availablePoints === 0 && typeof ToastNotifications !== 'undefined') {
+                        ToastNotifications.info('No reward points available');
+                    }
+                });
+            }
+
+            if (pointsInput) {
+                pointsInput.addEventListener('input', function() {
+                    updateRewardDetails();
+                });
+            }
+        }
 
         function renderPaymentForm(method) {
             const formContainer = document.getElementById('paymentMethodForm');
@@ -2239,27 +2480,126 @@
                             x${item.quantity}
                         </div>
                         <div class="checkout-item-price">
-                            GHS ${(Number(item.price) * item.quantity).toFixed(2)}
+                            GH¢ ${(Number(item.price) * item.quantity).toFixed(2)}
                         </div>
                     </div>
                 `;
             }).join('');
             
             // Update totals
-            const deliveryFee = 15;
-            const total = subtotal + deliveryFee;
-            document.getElementById('subtotalAmount').textContent = `GHS ${subtotal.toFixed(2)}`;
-            document.getElementById('deliveryFee').textContent = `GHS ${deliveryFee.toFixed(2)}`;
-            document.getElementById('totalAmount').textContent = `GHS ${total.toFixed(2)}`;
+            const isDelivery = document.getElementById('delivery')?.checked;
+            const deliveryFee = isDelivery ? 15 : 0;
+            document.getElementById('subtotalAmount').textContent = `GH¢ ${subtotal.toFixed(2)}`;
+            document.getElementById('deliveryFee').textContent = `GH¢ ${deliveryFee.toFixed(2)}`;
+            
+            updateRewardDetails();
         }
 
         async function loadRewardPoints() {
-            if (typeof CraveRewardsData !== 'undefined' && AuthManager.isAuthenticated()) {
-                const points = await CraveRewardsData.Points.get();
-                document.getElementById('availablePoints').textContent = points;
+            const rewardControls = document.getElementById('rewardControls');
+            const guestBanner = document.getElementById('rewardGuestBanner');
+            const availablePointsEl = document.getElementById('availablePoints');
+
+            if (typeof CraveRewardsData !== 'undefined' && typeof AuthManager !== 'undefined' && AuthManager.isAuthenticated()) {
+                try {
+                    const points = await CraveRewardsData.Points.get();
+                    if (availablePointsEl) availablePointsEl.textContent = points;
+                    window.availableRewardPoints = points;
+
+                    if (points > 0) {
+                        if (rewardControls) rewardControls.style.display = 'block';
+                        if (guestBanner) guestBanner.style.display = 'none';
+                    } else {
+                        if (rewardControls) rewardControls.style.display = 'none';
+                        if (guestBanner) {
+                            guestBanner.style.display = 'flex';
+                            document.getElementById('rewardGuestText').textContent = "You currently have 0 reward points. Complete this order to earn points!";
+                        }
+                    }
+                    updateRewardDetails();
+                } catch (error) {
+                    console.error('Error loading reward points:', error);
+                    if (availablePointsEl) availablePointsEl.textContent = '0';
+                    window.availableRewardPoints = 0;
+                    if (rewardControls) rewardControls.style.display = 'none';
+                    if (guestBanner) guestBanner.style.display = 'flex';
+                }
             } else {
-                document.getElementById('rewardPointsSection').style.display = 'none';
+                if (availablePointsEl) availablePointsEl.textContent = '0';
+                if (rewardControls) rewardControls.style.display = 'none';
+                if (guestBanner) {
+                    guestBanner.style.display = 'flex';
+                    document.getElementById('rewardGuestText').innerHTML = '<a href="login.html" class="gold-link">Log in</a> or <a href="register.html" class="gold-link">Join CRAVE Rewards</a> to redeem points for instant discounts!';
+                }
             }
+        }
+
+        function updateRewardDetails() {
+            const availablePoints = parseInt(document.getElementById('availablePoints')?.textContent) || 0;
+            const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
+            const subtotal = parseFloat(subtotalText) || 0;
+            
+            // Max redeemable: 10% of subtotal
+            const maxRedeemable = Math.floor(subtotal * 0.10);
+            const actualMax = Math.min(availablePoints, maxRedeemable);
+            
+            const maxRedeemableEl = document.getElementById('maxRedeemable');
+            if (maxRedeemableEl) maxRedeemableEl.textContent = actualMax;
+            
+            const inputEl = document.getElementById('pointsToRedeem');
+            let inputValue = parseInt(inputEl ? inputEl.value : 0) || 0;
+            
+            if (isNaN(inputValue) || inputValue < 0) {
+                inputValue = 0;
+                if (inputEl) inputEl.value = 0;
+            }
+            
+            if (inputValue > actualMax) {
+                inputValue = actualMax;
+                if (inputEl) inputEl.value = actualMax;
+            }
+            
+            // 1 point = GH¢ 1.00 discount
+            const discount = inputValue;
+            
+            const rewardDiscountEl = document.getElementById('rewardDiscount');
+            if (rewardDiscountEl) rewardDiscountEl.textContent = `GH¢ ${discount.toFixed(2)} OFF`;
+            
+            const savingsAmountText = document.getElementById('savingsAmountText');
+            if (savingsAmountText) savingsAmountText.textContent = `GH¢ ${discount.toFixed(2)}`;
+            
+            const remaining = Math.max(0, availablePoints - inputValue);
+            const remainingPointsEl = document.getElementById('remainingPoints');
+            if (remainingPointsEl) remainingPointsEl.textContent = remaining;
+            
+            pointsUsed = inputValue;
+            
+            const discountRow = document.getElementById('rewardDiscountRow');
+            const summaryVal = document.getElementById('rewardDiscountSummaryValue');
+            if (discountRow && summaryVal) {
+                if (inputValue > 0) {
+                    discountRow.style.display = 'flex';
+                    summaryVal.textContent = `-GH¢ ${discount.toFixed(2)}`;
+                } else {
+                    discountRow.style.display = 'none';
+                }
+            }
+            
+            recalculateTotal();
+        }
+
+        function recalculateTotal() {
+            const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
+            const deliveryFeeText = (document.getElementById('deliveryFee')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
+            
+            const subtotal = parseFloat(subtotalText) || 0;
+            const deliveryFee = parseFloat(deliveryFeeText) || 0;
+            
+            let total = subtotal + deliveryFee - (promoDiscountUsed || 0) - (pointsUsed || 0);
+            total = Math.max(0, total);
+
+            const totalAmountEl = document.getElementById('totalAmount');
+            if (totalAmountEl) totalAmountEl.textContent = `GH¢ ${total.toFixed(2)}`;
         }
 
         async function handleCheckout(e) {
@@ -2281,7 +2621,8 @@
                 items: cart,
                 subtotal: parseFloat(document.getElementById('subtotalAmount').textContent.replace('GHS ', '')),
                 deliveryFee: parseFloat(document.getElementById('deliveryFee').textContent.replace('GHS ', '')),
-                total: parseFloat(document.getElementById('totalAmount').textContent.replace('GHS ', ''))
+                total: parseFloat(document.getElementById('totalAmount').textContent.replace('GHS ', '')),
+                rewardPointsUsed: pointsUsed || 0
             };
             
             // Show payment processing
@@ -2299,6 +2640,15 @@
                     onSuccess: function(response, verification) {
                         PaymentUI.hidePaymentProcessing(processingOverlay);
                         
+                        // Deduct redeemed reward points ONCE upon confirmed order payment success
+                        if (pointsUsed > 0 && typeof CraveRewardsData !== 'undefined' && AuthManager.isAuthenticated()) {
+                            try {
+                                CraveRewardsData.Points.subtract(pointsUsed, `Redeemed ${pointsUsed} points on order ${verification.orderId || response.reference}`);
+                            } catch (err) {
+                                console.error('Error subtracting reward points:', err);
+                            }
+                        }
+
                         // Save order details
                         localStorage.setItem('lastOrder', JSON.stringify({
                             orderNumber: verification.orderId || response.reference,

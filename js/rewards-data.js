@@ -172,6 +172,22 @@ const CraveRewardsData = (function() {
             return getStorage(keys.points, 0);
         },
 
+        getLifetimeEarned: async function() {
+            // If authenticated, use backend only
+            if (isAuthenticated()) {
+                const backendData = await fetchBackendRewards();
+                if (backendData !== null && backendData.lifetimePointsEarned !== undefined) {
+                    return backendData.lifetimePointsEarned;
+                }
+                
+                // If backend fails, fall back to available points for anonymous users
+                return await this.get();
+            }
+            
+            // Anonymous users - lifetime equals available points
+            return await this.get();
+        },
+
         set: async function(points) {
             // Points.set() is dangerous for authenticated users - should not be used
             // Only allow for anonymous users

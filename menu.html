@@ -1037,7 +1037,7 @@
                 title: 'Cupcakes',
                 description: 'Sweet treats and decadent desserts',
                 items: [
-                    { name: 'Biscoff Jar Cake', price: 35, description: 'Biscoff cookie butter layered cake in a jar', image: 'biscoff-cake.jpg', available: true, featured: true, badges: ['chef'] },
+                    { name: 'Biscoff Jar Cake', price: 35, description: 'Biscoff cookie butter layered cake in a jar', image: 'biscoff_jarcake.jpg', available: true, featured: true, badges: ['chef'] },
                     { name: 'Lemon Buttercream Jar Cake', price: 32, description: 'Zesty lemon cake with creamy buttercream', image: 'lemon-cake.jpg', available: true, featured: false, badges: [] },
                     { name: 'Vanilla Buttercream Cake Slice', price: 28, description: 'Classic vanilla cake slice with buttercream', image: 'vanilla-cake.jpg', available: true, featured: false, badges: [] },
                     { name: 'Bailey\'s Irish Cream Jar Cake', price: 38, description: 'Irish cream infused cake for adults', image: 'baileys-cake.jpg', available: true, featured: true, badges: ['chef'] },
@@ -1184,14 +1184,14 @@
             updateCartBadge();
         }
 
-        /** Premium row: success state on add (+1 flyout, button ✓, pulse). */
+        /** Premium card success animation on add to cart */
         function playFoodCardAddedSuccess(btn) {
             if (!btn) return;
             const card = btn.closest('.bolt-food-item');
-            const flyAnchor = btn.closest('.bolt-food-visual') || btn.closest('.bolt-food-right');
-            if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = '+';
+            const flyAnchor = btn.closest('.bolt-food-visual') || btn.closest('.bolt-food-card-inner');
+            if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = '<i class="fas fa-plus"></i> Add';
             btn.disabled = true;
-            btn.textContent = '\u2713 Added';
+            btn.innerHTML = '<i class="fas fa-check"></i> Added';
             btn.classList.add('bolt-food-add-btn--success');
             if (card) card.classList.add('bolt-food-item--pulse');
             if (flyAnchor) {
@@ -1204,7 +1204,7 @@
                 }, 1000);
             }
             setTimeout(function () {
-                btn.textContent = btn.dataset.defaultLabel || '+';
+                btn.innerHTML = btn.dataset.defaultLabel || '<i class="fas fa-plus"></i> Add';
                 btn.classList.remove('bolt-food-add-btn--success');
                 btn.disabled = false;
                 if (card) card.classList.remove('bolt-food-item--pulse');
@@ -1459,11 +1459,8 @@
 
         // Initialize menu
         function initializeMenu() {
-            console.log('[TRACE 6] initializeMenu ENTERED');
             const isDebugMenu = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || (window.ENV && window.ENV.APP_ENV === 'development');
             const menuContainer = document.querySelector('.bolt-menu-container');
-
-            console.log('[TRACE 11] DOM container before rendering:', menuContainer ? menuContainer.children.length : 0, 'children');
 
             if (menuContainer) {
                 menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section').forEach(function (section) {
@@ -1471,28 +1468,12 @@
                 });
             }
 
-            if (isDebugMenu) {
-                console.log('[MENU] initializeMenu() called');
-            }
-
             const categoryKeys = Object.keys(menuData || {});
-            if (isDebugMenu) {
-                console.log(`[MENU] Categories to render: ${categoryKeys.length}`);
-                categoryKeys.forEach(categoryId => {
-                    const category = menuData[categoryId];
-                    console.log(`[MENU] menuData category "${categoryId}": ${category && category.items ? category.items.length : 0} items`);
-                });
-            }
-
             categoryKeys.forEach(categoryId => {
                 const category = menuData[categoryId];
-                console.log('[TRACE 7] category being rendered:', categoryId);
                 if (!category || !Array.isArray(category.items)) {
-                    console.warn(`[MENU] Skipping category "${categoryId}": no items array`);
                     return;
                 }
-
-                console.log('[TRACE 8] items being rendered for', categoryId, ':', category.items.length);
 
                 const section = document.createElement('section');
                 section.className = 'bolt-menu-section';
@@ -1513,112 +1494,17 @@
                     menuContainer.appendChild(section);
                 }
 
-                console.log(`[MENU] Rendering ${category.items.length} items for category "${categoryId}"`);
-                console.log(`[MENU] Items array before rendering:`, category.items);
-                console.log(`[MENU] First item:`, category.items[0]);
-
                 category.items.forEach(function (menuEntry, idx) {
                     const targetContainer = document.getElementById(list.id);
-                    const itemLog = {
-                        itemName: menuEntry.name,
-                        categoryName: category.title || categoryId,
-                        categorySlug: categoryId,
-                        categoryId: categoryId,
-                        transformedCategoryKey: categoryId,
-                        targetContainerId: list.id,
-                        containerExists: !!targetContainer,
-                        inserted: false
-                    };
+                    if (!targetContainer) return;
 
-                    if (!targetContainer) {
-                        console.warn('[MENU] Missing target container for item:', itemLog);
-                        return;
-                    }
-
-                    console.log(`[TRACE 9] card renderer ENTERED for`, menuEntry.name);
-                    console.log(`[MENU] About to create card for item ${idx}:`, menuEntry);
                     const foodItem = createFoodItem(menuEntry, categoryId, idx);
-                    console.log(`[MENU] Card created for item ${idx}:`, foodItem);
                     targetContainer.appendChild(foodItem);
-                    console.log(`[TRACE 10] card appended:`, menuEntry.name);
-                    console.log(`[MENU] Card appended to DOM for item ${idx}`);
-                    itemLog.inserted = true;
-                    console.log('[MENU ITEM]', itemLog);
                 });
             });
-
-            console.log('[TRACE 11] final DOM card count:', document.querySelectorAll('.bolt-food-item').length);
-
-            // POST-RENDER DIAGNOSTIC
-            console.log('[POST-RENDER DIAGNOSTIC]');
-            const allCards = document.querySelectorAll('.bolt-food-item');
-            console.log('Total cards in DOM:', allCards.length);
-            if (allCards.length > 0) {
-                const firstCard = allCards[0];
-                const computedStyle = window.getComputedStyle(firstCard);
-                console.log('First card computed styles:');
-                console.log('  display:', computedStyle.display);
-                console.log('  visibility:', computedStyle.visibility);
-                console.log('  opacity:', computedStyle.opacity);
-                console.log('  height:', computedStyle.height);
-                console.log('  width:', computedStyle.width);
-                console.log('  overflow:', computedStyle.overflow);
-                console.log('First card classes:', firstCard.className);
-
-                const cardParent = firstCard.parentElement;
-                if (cardParent) {
-                    const parentStyle = window.getComputedStyle(cardParent);
-                    console.log('Card parent computed styles:');
-                    console.log('  display:', parentStyle.display);
-                    console.log('  visibility:', parentStyle.visibility);
-                    console.log('  opacity:', parentStyle.opacity);
-                    console.log('  height:', parentStyle.height);
-                    console.log('  width:', parentStyle.width);
-                    console.log('Card parent classes:', cardParent.className);
-                }
-
-                const menuContainer = document.querySelector('.bolt-menu-container');
-                if (menuContainer) {
-                    const containerStyle = window.getComputedStyle(menuContainer);
-                    console.log('Menu container computed styles:');
-                    console.log('  display:', containerStyle.display);
-                    console.log('  visibility:', containerStyle.visibility);
-                    console.log('  opacity:', containerStyle.opacity);
-                    console.log('  height:', containerStyle.height);
-                    console.log('  width:', containerStyle.width);
-                    console.log('Menu container classes:', menuContainer.className);
-                }
-
-                // Check for search-miss class
-                const searchMissCards = document.querySelectorAll('.bolt-food-item.bolt-menu-search-miss');
-                console.log('Cards with bolt-menu-search-miss class:', searchMissCards.length);
-
-                // Check search empty state
-                const searchEmpty = document.getElementById('boltMenuSearchEmpty');
-                if (searchEmpty) {
-                    console.log('Search empty state hidden:', searchEmpty.hidden);
-                    console.log('Search empty state display:', window.getComputedStyle(searchEmpty).display);
-                }
-
-                // Check search input value
-                const searchInput = document.getElementById('boltMenuSearchInput');
-                if (searchInput) {
-                    console.log('Search input value:', searchInput.value);
-                }
-            }
-
-            if (isDebugMenu) {
-                console.log('[MENU] === DOM VERIFICATION ===');
-                const menuRoot = document.querySelector('.bolt-menu-container');
-                if (menuRoot) {
-                    const allFoodItems = menuRoot.querySelectorAll('.food-item, .bolt-food-item');
-                    console.log(`[MENU] Total food items in bolt-menu-container: ${allFoodItems.length}`);
-                }
-                console.log('[MENU] initializeMenu() complete');
-            }
         }
 
-        // Create food item — Bolt-style listing: main column + image with floating +
+        // Create food item — World-Class Food Hero Card Architecture (Phase 2A + 2B)
         function createFoodItem(item, categoryId, indexInCategory) {
             const div = document.createElement('div');
             div.className = 'bolt-food-item';
@@ -1627,77 +1513,7 @@
             const inner = document.createElement('div');
             inner.className = 'bolt-food-card-inner';
 
-            const main = document.createElement('div');
-            main.className = 'bolt-food-main';
-
-            const nameEl = document.createElement('div');
-            nameEl.className = 'bolt-food-name';
-            nameEl.textContent = item.name;
-
-            const descEl = document.createElement('div');
-            descEl.className = 'bolt-food-description';
-            descEl.textContent = item.description;
-
-            main.appendChild(nameEl);
-            main.appendChild(descEl);
-
-            const badgeIds = inferItemBadges(item, categoryId, indexInCategory);
-            if (badgeIds.length > 0) {
-                const badgesRow = document.createElement('div');
-                badgesRow.className = 'bolt-food-badges';
-                badgeIds.forEach(function (id) {
-                    const def = MENU_BADGE_DEFS[id];
-                    if (!def) return;
-                    const b = document.createElement('span');
-                    b.className = 'bolt-food-badge ' + def.cls;
-                    b.setAttribute('role', 'presentation');
-                    b.textContent = def.icon + ' ' + def.label;
-                    badgesRow.appendChild(b);
-                });
-                main.appendChild(badgesRow);
-            }
-
-            const meta = document.createElement('div');
-            meta.className = 'bolt-food-meta';
-
-            const priceRow = document.createElement('div');
-            priceRow.className = 'bolt-food-price-row';
-            const priceEl = document.createElement('span');
-            priceEl.className = 'bolt-food-price';
-            priceEl.textContent = 'GH¢' + Number(item.price).toFixed(2);
-            priceRow.appendChild(priceEl);
-            meta.appendChild(priceRow);
-
-            if (itemHasCustomization(item.name)) {
-                const hint = document.createElement('div');
-                hint.className = 'bolt-food-customize-hint';
-                hint.textContent = 'Customize available';
-                meta.appendChild(hint);
-            }
-
-            const ratingStr = getItemRatingDisplay(item, categoryId, indexInCategory);
-            if (ratingStr) {
-                const rating = document.createElement('div');
-                rating.className = 'bolt-food-rating';
-                const star = document.createElement('span');
-                star.className = 'bolt-food-rating-star';
-                star.setAttribute('aria-hidden', 'true');
-                star.textContent = '\u2605';
-                const num = document.createElement('span');
-                num.className = 'bolt-food-rating-num';
-                num.textContent = ratingStr;
-                const muted = document.createElement('span');
-                muted.className = 'bolt-food-rating-muted';
-                muted.textContent = ' \u00b7 Guest favorite';
-                rating.appendChild(star);
-                rating.appendChild(document.createTextNode(' '));
-                rating.appendChild(num);
-                rating.appendChild(muted);
-                meta.appendChild(rating);
-            }
-
-            main.appendChild(meta);
-
+            // 1. HERO VISUAL AT TOP
             const visual = document.createElement('div');
             visual.className = 'bolt-food-visual';
 
@@ -1730,22 +1546,87 @@
 
             wrap.appendChild(shimmer);
             wrap.appendChild(img);
+            visual.appendChild(wrap);
+
+            // Badges overlay top-left
+            const badgeIds = inferItemBadges(item, categoryId, indexInCategory);
+            if (badgeIds.length > 0) {
+                const badgesRow = document.createElement('div');
+                badgesRow.className = 'bolt-food-badges';
+                badgeIds.forEach(function (id) {
+                    const def = MENU_BADGE_DEFS[id];
+                    if (!def) return;
+                    const b = document.createElement('span');
+                    b.className = 'bolt-food-badge ' + def.cls;
+                    b.setAttribute('role', 'presentation');
+                    b.textContent = def.icon + ' ' + def.label;
+                    badgesRow.appendChild(b);
+                });
+                visual.appendChild(badgesRow);
+            }
+
+            // Rating overlay top-right
+            const ratingStr = getItemRatingDisplay(item, categoryId, indexInCategory);
+            if (ratingStr) {
+                const rating = document.createElement('div');
+                rating.className = 'bolt-food-rating';
+                const star = document.createElement('span');
+                star.className = 'bolt-food-rating-star';
+                star.setAttribute('aria-hidden', 'true');
+                star.textContent = '\u2605';
+                const num = document.createElement('span');
+                num.className = 'bolt-food-rating-num';
+                num.textContent = ratingStr;
+                rating.appendChild(star);
+                rating.appendChild(num);
+                visual.appendChild(rating);
+            }
+
+            // 2. MAIN CARD BODY AT BOTTOM
+            const main = document.createElement('div');
+            main.className = 'bolt-food-main';
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'bolt-food-name';
+            nameEl.textContent = item.name;
+            main.appendChild(nameEl);
+
+            if (itemHasCustomization(item.name)) {
+                const hint = document.createElement('div');
+                hint.className = 'bolt-food-customize-hint';
+                hint.innerHTML = '<i class="fas fa-sliders-h"></i> Customize available';
+                main.appendChild(hint);
+            }
+
+            const descEl = document.createElement('div');
+            descEl.className = 'bolt-food-description';
+            descEl.textContent = item.description || '';
+            main.appendChild(descEl);
+
+            // Card Footer: Price & Add Button
+            const priceRow = document.createElement('div');
+            priceRow.className = 'bolt-food-price-row';
+            
+            const priceEl = document.createElement('span');
+            priceEl.className = 'bolt-food-price';
+            priceEl.textContent = 'GH¢ ' + Number(item.price).toFixed(2);
+            priceRow.appendChild(priceEl);
 
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'bolt-food-add-btn bolt-food-add-btn--float';
-            btn.textContent = '+';
+            btn.className = 'bolt-food-add-btn';
+            btn.innerHTML = '<i class="fas fa-plus"></i> Add';
             btn.setAttribute('data-item-name', encodeURIComponent(item.name));
             btn.setAttribute('data-item-price', String(item.price));
             btn.setAttribute('aria-label', itemHasCustomization(item.name)
                 ? ('Customize and add ' + item.name)
                 : ('Add ' + item.name + ' to cart'));
 
-            visual.appendChild(wrap);
-            visual.appendChild(btn);
+            priceRow.appendChild(btn);
+            main.appendChild(priceRow);
 
-            inner.appendChild(main);
             inner.appendChild(visual);
+            inner.appendChild(main);
             div.appendChild(inner);
 
             const catTitle = (menuData[categoryId] && menuData[categoryId].title) ? menuData[categoryId].title : '';

@@ -14,6 +14,9 @@ const CraveRewardsConfig = {
             gold: 1.5,
             diamond: 2,
             elite: 2.5
+        },
+        redemption: {
+            maxOrderPercentage: 10 // Maximum 10% of eligible subtotal can be redeemed
         }
     },
 

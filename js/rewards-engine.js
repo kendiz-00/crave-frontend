@@ -86,7 +86,8 @@ const CraveRewardsEngine = (function() {
     async function getMilestoneProgress() {
         if (!config || !data) return null;
         
-        const currentPoints = await data.Points.get();
+        // Use lifetime points earned for milestone progress (not available balance)
+        const currentPoints = await data.Points.getLifetimeEarned();
         const milestones = config.milestones;
         
         let previousMilestone = { points: 0 };

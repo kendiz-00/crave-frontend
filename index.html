@@ -242,65 +242,71 @@
 		</div>
 	</aside>
 
-	<!-- Clean Premium Hero Section -->
+	<!-- Cinematic Premium Hero Section (Phase 2A Visual Remodel) -->
 	<section class="clean-hero crave-reveal crave-reveal--static">
-		<div class="clean-hero__cinematic-streak" aria-hidden="true"></div>
-		<!-- Cinematic Background -->
-		<div class="hero-background">
-			<div class="hero-image-layer" style="background-image: url(images/loaded_fries_01.jpg);"></div>
-			<div class="hero-gradient-overlay"></div>
-			<div class="hero-vignette"></div>
+		<div class="hero-cinematic-bg">
+			<div class="hero-bg-glow" aria-hidden="true"></div>
+			<div class="hero-bg-vignette" aria-hidden="true"></div>
 		</div>
-		
-		<!-- Clean Content -->
+
 		<div class="hero-container">
-			<div class="hero-content-wrapper">
-				<!-- Main Hero Content -->
-				<div class="hero-main-content">
-					<div class="hero-pretitle">Welcome to Crave</div>
-					<h1 class="hero-headline">ACCRA'S MOST CRAVED COMFORT FOOD</h1>
-					<p class="hero-subheading">Loaded fries, crispy chicken, handcrafted smoothies & premium desserts delivered across Accra.</p>
-					
-					<!-- Clean CTA Buttons -->
-					<div class="hero-cta-section">
-						<a href="menu.html" class="cta-button cta-primary">
-							<span class="button-text">Order Your Feast</span>
+			<div class="hero-split-layout">
+				<!-- Left Column: Editorial Copy & CTAs -->
+				<div class="hero-copy-col">
+					<div class="hero-eyebrow">
+						<span class="eyebrow-icon">✦</span>
+						<span class="eyebrow-text">ACCRA'S PREMIUM COMFORT FOOD</span>
+					</div>
+
+					<h1 class="hero-headline">
+						Food Worth <br><span class="headline-gold">Craving.</span>
+					</h1>
+
+					<p class="hero-subheading">
+						Crispy fried chicken, loaded fries, handcrafted smoothies & jar cakes. Prepared fresh daily and delivered fast across Accra.
+					</p>
+
+					<div class="hero-cta-group">
+						<a href="menu.html" class="hero-btn-primary">
+							<span>Order Your Feast</span>
+							<i class="fas fa-arrow-right" aria-hidden="true"></i>
 						</a>
-						<a href="menu.html" class="cta-button cta-secondary">
-							<span class="button-text">Browse Menu</span>
+						<a href="menu.html" class="hero-btn-link">
+							<span>Explore Menu</span>
+							<i class="fas fa-chevron-right" aria-hidden="true"></i>
 						</a>
 					</div>
-					
-					<!-- Clean Trust Section -->
-					<div class="hero-trust-section">
-						<span class="trust-item">Fast Delivery</span>
-						<span class="trust-divider">•</span>
-						<span class="trust-item">Serving Accra</span>
-						<span class="trust-divider">•</span>
-						<span class="trust-item">Fresh Daily</span>
+
+					<div class="hero-trust-row">
+						<span class="trust-item"><i class="fas fa-bolt" aria-hidden="true"></i> Fast Delivery</span>
+						<span class="trust-sep">•</span>
+						<span class="trust-item"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Serving All Accra</span>
+						<span class="trust-sep">•</span>
+						<span class="trust-item"><i class="fas fa-fire" aria-hidden="true"></i> Fresh Daily</span>
 					</div>
 				</div>
-				
-				<!-- Minimal Featured Food Card -->
-				<div class="featured-food-card crave-spotlight">
-					<div class="featured-food-image">
-						<img src="images/loaded_fries_01.jpg" alt="Loaded Fries" loading="lazy">
-					</div>
-					<div class="featured-food-content">
-						<h3 class="featured-food-name">Loaded Fries</h3>
-						<div class="featured-food-price">GHS 45</div>
-						<button class="featured-food-btn" onclick="window.location.href='menu.html'">Order Loaded Fries</button>
+
+				<!-- Right Column: Mouthwatering Food Hero Centerpiece -->
+				<div class="hero-food-col">
+					<div class="hero-food-card">
+						<div class="hero-food-glow" aria-hidden="true"></div>
+						<div class="hero-food-img-wrap">
+							<img src="images/loaded_fries_01.jpg" alt="CRAVE Loaded Fries" class="hero-food-img" fetchpriority="high" decoding="async">
+						</div>
+
+						<!-- Integrated Featured Tag -->
+						<div class="hero-food-tag">
+							<div class="tag-badge">🔥 MOST CRAVED</div>
+							<div class="tag-meta">
+								<span class="tag-name">Loaded Cheese Fries</span>
+								<span class="tag-price">GH¢ 45.00</span>
+							</div>
+							<a href="menu.html" class="tag-action-btn" aria-label="Order Loaded Cheese Fries">
+								<i class="fas fa-plus" aria-hidden="true"></i>
+							</a>
+						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-		
-		<!-- Minimal Scroll Indicator -->
-		<div class="scroll-indicator">
-			<div class="scroll-arrow">
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-					<path d="M10 5V15M10 15L17 10M10 15L3 10" stroke="#d4a373" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
 			</div>
 		</div>
 	</section>

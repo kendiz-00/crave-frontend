@@ -1,6 +1,6 @@
 /**
  * CRAVE Premium Spin & Win Wheel
- * Production-quality engagement system with physics, sounds, confetti, and full integration
+ * Production-quality engagement system with physical depth, audio synthesis, confetti, and backend integration
  */
 
 const CraveSpinWheel = (function() {
@@ -21,20 +21,20 @@ const CraveSpinWheel = (function() {
     let confettiParticles = [];
     let animationFrame = null;
 
-    // Weighted prize probabilities
+    // Weighted prize probabilities (PROTECTED LOGIC - DO NOT ALTER)
     const PRIZE_PROBABILITIES = [
-        { name: '5 Points', icon: '⭐', probability: 0.40, type: 'points', value: 5 },
-        { name: '10 Points', icon: '🌟', probability: 0.25, type: 'points', value: 10 },
-        { name: '20 Points', icon: '💫', probability: 0.15, type: 'points', value: 20 },
-        { name: 'Free Drink', icon: '🥤', probability: 0.08, type: 'reward', value: 'drink' },
-        { name: 'Free Fries', icon: '🍟', probability: 0.05, type: 'reward', value: 'fries' },
-        { name: 'Free Dessert', icon: '🍰', probability: 0.03, type: 'reward', value: 'dessert' },
-        { name: 'GH₵20 Coupon', icon: '🎟️', probability: 0.02, type: 'coupon', value: 20 },
-        { name: 'Premium Combo', icon: '🍔', probability: 0.015, type: 'reward', value: 'combo' },
-        { name: 'VIP Golden Reward', icon: '👑', probability: 0.005, type: 'vip', value: 'golden' }
+        { name: '5 Points', shortLabel: '5 PTS', icon: '⭐', probability: 0.40, type: 'points', value: 5 },
+        { name: '10 Points', shortLabel: '10 PTS', icon: '🌟', probability: 0.25, type: 'points', value: 10 },
+        { name: '20 Points', shortLabel: '20 PTS', icon: '💫', probability: 0.15, type: 'points', value: 20 },
+        { name: 'Free Drink', shortLabel: 'FREE DRINK', icon: '🥤', probability: 0.08, type: 'reward', value: 'drink' },
+        { name: 'Free Fries', shortLabel: 'FREE FRIES', icon: '🍟', probability: 0.05, type: 'reward', value: 'fries' },
+        { name: 'Free Dessert', shortLabel: 'FREE DESSERT', icon: '🍰', probability: 0.03, type: 'reward', value: 'dessert' },
+        { name: 'GH₵20 Coupon', shortLabel: 'GH₵20 OFF', icon: '🎟️', probability: 0.02, type: 'coupon', value: 20 },
+        { name: 'Premium Combo', shortLabel: 'COMBO', icon: '🍔', probability: 0.015, type: 'reward', value: 'combo' },
+        { name: 'VIP Golden Reward', shortLabel: 'VIP GOLD', icon: '👑', probability: 0.005, type: 'vip', value: 'golden' }
     ];
 
-    // Spin economy rules
+    // Spin economy rules (PROTECTED LOGIC - DO NOT ALTER)
     const SPIN_ECONOMY = {
         firstOrder: 1,
         spend80: 1,
@@ -67,46 +67,56 @@ const CraveSpinWheel = (function() {
     function playTickSound() {
         if (!audioContext) return;
         
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = 800;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.1);
+        try {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 900;
+            oscillator.type = 'triangle';
+            
+            gainNode.gain.setValueAtTime(0.09, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.07);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.07);
+        } catch (e) {}
     }
 
     // Play win sound
     function playWinSound() {
         if (!audioContext) return;
         
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = 523.25;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
+        try {
+            const now = audioContext.currentTime;
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 arpeggio
+            
+            notes.forEach((freq, idx) => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+                
+                const startTime = now + idx * 0.12;
+                gain.gain.setValueAtTime(0.18, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.45);
+                
+                osc.start(startTime);
+                osc.stop(startTime + 0.45);
+            });
+        } catch (e) {}
     }
 
     // Vibrate device (mobile)
     function vibrate(pattern) {
         if (navigator.vibrate) {
-            navigator.vibrate(pattern);
+            try { navigator.vibrate(pattern); } catch (e) {}
         }
     }
 
@@ -123,7 +133,7 @@ const CraveSpinWheel = (function() {
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 10004;
+            z-index: 10005;
         `;
         document.body.appendChild(confettiCanvas);
         
@@ -144,20 +154,20 @@ const CraveSpinWheel = (function() {
         createConfetti();
         confettiParticles = [];
         
-        const colors = ['#d4a373', '#c49a6c', '#ffd700', '#ff6b6b', '#4ecdc4'];
+        const colors = ['#d4a373', '#f3d5a3', '#ffd700', '#e5c158', '#ffffff', '#c49a6c'];
         
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < 180; i++) {
             confettiParticles.push({
                 x: window.innerWidth / 2,
                 y: window.innerHeight / 2,
-                vx: (Math.random() - 0.5) * 20,
-                vy: (Math.random() - 0.5) * 20 - 10,
+                vx: (Math.random() - 0.5) * 24,
+                vy: (Math.random() - 0.5) * 24 - 10,
                 color: colors[Math.floor(Math.random() * colors.length)],
-                size: Math.random() * 10 + 5,
+                size: Math.random() * 8 + 4,
                 rotation: Math.random() * 360,
-                rotationSpeed: (Math.random() - 0.5) * 10,
-                gravity: 0.5,
-                drag: 0.99
+                rotationSpeed: (Math.random() - 0.5) * 12,
+                gravity: 0.45,
+                drag: 0.985
             });
         }
         
@@ -196,7 +206,7 @@ const CraveSpinWheel = (function() {
         animationFrame = requestAnimationFrame(animateConfetti);
     }
 
-    // Get weighted random prize
+    // Get weighted random prize (PROTECTED LOGIC - DO NOT ALTER)
     function getWeightedPrize() {
         const random = Math.random();
         let cumulative = 0;
@@ -211,7 +221,7 @@ const CraveSpinWheel = (function() {
         return PRIZE_PROBABILITIES[0];
     }
 
-    // Calculate available spins
+    // Calculate available spins (PROTECTED LOGIC - DO NOT ALTER)
     function calculateAvailableSpins() {
         if (!data) return 0;
         
@@ -259,26 +269,29 @@ const CraveSpinWheel = (function() {
         document.body.appendChild(wheelContainer);
     }
 
-    // Add wheel styles
+    // Add wheel styles (Refined Luxury Casino-Inspired Experience)
     function addWheelStyles() {
         if (document.getElementById('crave-spin-wheel-styles')) return;
         
         const style = document.createElement('style');
         style.id = 'crave-spin-wheel-styles';
         style.textContent = `
+            /* CRAVE Glassmorphism Spin Modal */
             .crave-spin-wheel-overlay {
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.9);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
+                background: rgba(5, 6, 9, 0.92);
+                backdrop-filter: blur(28px);
+                -webkit-backdrop-filter: blur(28px);
                 z-index: 10003;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 opacity: 0;
                 pointer-events: none;
-                transition: opacity 0.4s ease;
+                transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                padding: 12px;
+                box-sizing: border-box;
             }
 
             .crave-spin-wheel-overlay.show {
@@ -288,211 +301,210 @@ const CraveSpinWheel = (function() {
 
             .crave-spin-wheel-modal {
                 position: relative;
-                background: linear-gradient(135deg, rgba(20, 20, 20, 0.98), rgba(30, 30, 30, 0.98));
-                border: 2px solid rgba(212, 163, 115, 0.4);
-                border-radius: 32px;
-                padding: 48px;
-                max-width: 600px;
-                width: 95%;
+                background: radial-gradient(circle at 50% 10%, rgba(36, 29, 21, 0.98) 0%, rgba(9, 10, 15, 0.99) 100%);
+                border: 1.5px solid rgba(212, 163, 115, 0.32);
+                border-radius: 36px;
+                padding: clamp(20px, 4vw, 32px) clamp(16px, 4vw, 32px);
+                max-width: 480px;
+                width: 100%;
                 text-align: center;
                 box-shadow: 
-                    0 30px 60px rgba(0, 0, 0, 0.6),
-                    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-                    0 0 150px rgba(212, 163, 115, 0.15);
+                    0 30px 90px rgba(0, 0, 0, 0.9),
+                    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+                    0 0 140px rgba(212, 163, 115, 0.16);
+                overflow: hidden;
+                box-sizing: border-box;
             }
 
             .crave-spin-wheel-close {
                 position: absolute;
-                top: 20px;
-                right: 20px;
-                width: 44px;
-                height: 44px;
+                top: 18px;
+                right: 18px;
+                width: 40px;
+                height: 40px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                color: #888888;
-                font-size: 20px;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 18px;
                 cursor: pointer;
-                border-radius: 12px;
-                transition: all 0.3s ease;
+                border-radius: 50%;
+                transition: all 0.25s ease;
+                z-index: 35;
             }
 
             .crave-spin-wheel-close:hover {
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(212, 163, 115, 0.22);
                 color: #ffffff;
+                border-color: rgba(212, 163, 115, 0.6);
                 transform: rotate(90deg);
             }
 
-            .crave-spin-wheel-title {
-                font-size: 36px;
+            .crave-spin-wheel-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 5px 14px;
+                background: rgba(212, 163, 115, 0.12);
+                border: 1px solid rgba(212, 163, 115, 0.32);
+                border-radius: 30px;
+                font-size: 11px;
                 font-weight: 700;
-                color: #d4a373;
-                margin-bottom: 8px;
+                color: #e5c158;
                 letter-spacing: 2px;
-                text-shadow: 0 2px 20px rgba(212, 163, 115, 0.3);
+                text-transform: uppercase;
+                margin-bottom: 8px;
+            }
+
+            .crave-spin-wheel-title {
+                font-size: clamp(24px, 5.5vw, 32px);
+                font-weight: 800;
+                color: #ffffff;
+                margin: 0 0 4px 0;
+                letter-spacing: 0.5px;
+                background: linear-gradient(135deg, #ffffff 30%, #f3d5a3 70%, #d4a373 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
 
             .crave-spin-wheel-subtitle {
-                font-size: 16px;
-                color: #aaaaaa;
-                margin-bottom: 40px;
+                font-size: clamp(12px, 3vw, 14px);
+                color: rgba(255, 255, 255, 0.65);
+                margin: 0 0 clamp(16px, 3.5vw, 24px) 0;
+                font-weight: 400;
             }
 
+            /* HERO Wheel Container - Takes up 85-90% width */
             .crave-spin-wheel-wrapper {
                 position: relative;
-                width: 380px;
-                height: 380px;
-                margin: 0 auto 40px;
+                width: min(390px, 86vw);
+                height: min(390px, 86vw);
+                margin: 0 auto clamp(16px, 3.5vw, 24px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(212, 163, 115, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
             }
 
-            .crave-spin-wheel {
+            .crave-spin-wheel-svg-container {
                 width: 100%;
                 height: 100%;
                 border-radius: 50%;
                 position: relative;
-                transition: transform 6s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-                box-shadow: 
-                    0 0 0 12px rgba(212, 163, 115, 0.4),
-                    0 0 0 16px rgba(212, 163, 115, 0.15),
-                    0 30px 60px rgba(0, 0, 0, 0.5),
-                    inset 0 0 80px rgba(212, 163, 115, 0.15);
+                transition: transform 5.5s cubic-bezier(0.15, 0.85, 0.15, 0.99);
+                filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.9));
+                will-change: transform;
             }
 
-            .crave-spin-wheel-segment {
+            /* Polished 3D Mechanical Gold Pointer (12 o'clock) */
+            .crave-spin-wheel-pointer-container {
                 position: absolute;
-                width: 50%;
-                height: 50%;
-                transform-origin: 100% 100%;
-                left: 0;
-                top: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                clip-path: polygon(0 0, 100% 0, 100% 100%);
-            }
-
-            .crave-spin-wheel-segment-content {
-                position: absolute;
-                transform: rotate(45deg) translate(50%, -50%);
-                text-align: center;
-                font-size: 13px;
-                color: #ffffff;
-                font-weight: 700;
-                line-height: 1.3;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            }
-
-            .crave-spin-wheel-segment-icon {
-                font-size: 28px;
-                display: block;
-                margin-bottom: 6px;
-                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-            }
-
-            .crave-spin-wheel-pointer {
-                position: absolute;
-                top: -25px;
+                top: -14px;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 0;
-                height: 0;
-                border-left: 25px solid transparent;
-                border-right: 25px solid transparent;
-                border-top: 50px solid #d4a373;
-                filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
-                z-index: 10;
+                z-index: 30;
+                pointer-events: none;
+                filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.9));
             }
 
-            .crave-spin-wheel-center {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 80px;
-                height: 80px;
-                background: linear-gradient(135deg, #d4a373, #c49a6c);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 36px;
-                box-shadow: 
-                    0 8px 20px rgba(0, 0, 0, 0.4),
-                    inset 0 4px 8px rgba(255, 255, 255, 0.3);
-                z-index: 5;
-                animation: pulse-glow 2s ease-in-out infinite;
+            .crave-spin-wheel-pointer-container svg {
+                width: 38px;
+                height: 52px;
+                display: block;
             }
 
-            @keyframes pulse-glow {
-                0%, 100% { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 4px 8px rgba(255, 255, 255, 0.3), 0 0 30px rgba(212, 163, 115, 0.3); }
-                50% { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 4px 8px rgba(255, 255, 255, 0.3), 0 0 50px rgba(212, 163, 115, 0.5); }
+            .crave-spin-wheel-pointer-container.tick {
+                animation: pointer-bounce 0.15s ease-in-out;
             }
 
-            .crave-spin-wheel-button {
-                background: linear-gradient(135deg, #d4a373, #c49a6c);
-                color: #ffffff;
-                border: none;
-                padding: 18px 56px;
-                font-size: 20px;
-                font-weight: 700;
-                border-radius: 60px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 
-                    0 10px 30px rgba(212, 163, 115, 0.4),
-                    inset 0 2px 4px rgba(255, 255, 255, 0.3);
-                text-transform: uppercase;
-                letter-spacing: 1px;
+            @keyframes pointer-bounce {
+                0% { transform: translateX(-50%) rotate(0deg); }
+                50% { transform: translateX(-50%) rotate(-14deg); }
+                100% { transform: translateX(-50%) rotate(0deg); }
             }
 
-            .crave-spin-wheel-button:hover:not(:disabled) {
-                transform: translateY(-3px);
-                box-shadow: 
-                    0 15px 40px rgba(212, 163, 115, 0.5),
-                    inset 0 2px 4px rgba(255, 255, 255, 0.3);
-            }
-
-            .crave-spin-wheel-button:active:not(:disabled) {
-                transform: translateY(-1px);
-            }
-
-            .crave-spin-wheel-button:disabled {
-                opacity: 0.4;
-                cursor: not-allowed;
-                background: rgba(255, 255, 255, 0.1);
-            }
-
+            /* Spins indicator text */
             .crave-spin-wheel-spins-left {
-                margin-top: 20px;
-                font-size: 15px;
-                color: #888888;
-                font-weight: 500;
+                margin: 0 0 12px 0;
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.7);
+                font-weight: 600;
+                letter-spacing: 0.5px;
             }
 
             .crave-spin-wheel-spins-left strong {
-                color: #d4a373;
+                color: #e5c158;
+                font-weight: 800;
             }
 
+            /* Spin CTA Button */
+            .crave-spin-wheel-button {
+                background: linear-gradient(135deg, #f3d5a3 0%, #d4a373 50%, #996e3d 100%);
+                color: #0c0d11;
+                border: none;
+                padding: clamp(14px, 3.5vw, 18px) clamp(38px, 8vw, 60px);
+                font-size: clamp(16px, 4vw, 19px);
+                font-weight: 800;
+                border-radius: 100px;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                box-shadow: 
+                    0 12px 32px rgba(212, 163, 115, 0.38),
+                    inset 0 2px 4px rgba(255, 255, 255, 0.6);
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                width: 100%;
+                max-width: 320px;
+                margin: 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .crave-spin-wheel-button:hover:not(:disabled) {
+                transform: translateY(-2px) scale(1.03);
+                box-shadow: 
+                    0 16px 40px rgba(212, 163, 115, 0.55),
+                    inset 0 2px 4px rgba(255, 255, 255, 0.7);
+                background: linear-gradient(135deg, #ffffff 0%, #f3d5a3 50%, #c49a6c 100%);
+            }
+
+            .crave-spin-wheel-button:active:not(:disabled) {
+                transform: translateY(1px) scale(0.99);
+            }
+
+            .crave-spin-wheel-button:disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+                background: rgba(255, 255, 255, 0.1);
+                color: rgba(255, 255, 255, 0.4);
+                box-shadow: none;
+            }
+
+            /* Celebration Victory Modal (Hidden before spin) */
             .crave-spin-wheel-result {
                 display: none;
-                margin-top: 32px;
-                padding: 24px;
-                background: linear-gradient(135deg, rgba(212, 163, 115, 0.15), rgba(196, 154, 108, 0.1));
-                border: 2px solid rgba(212, 163, 115, 0.4);
-                border-radius: 20px;
+                margin-top: 18px;
+                padding: 24px 20px;
+                background: radial-gradient(circle at 50% 0%, rgba(46, 36, 25, 0.96), rgba(12, 13, 18, 0.99));
+                border: 1.5px solid rgba(212, 163, 115, 0.5);
+                border-radius: 28px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
             }
 
             .crave-spin-wheel-result.show {
-                display: block;
-                animation: result-appear 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+                display: block !important;
+                animation: result-appear 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             }
 
             @keyframes result-appear {
                 from {
                     opacity: 0;
-                    transform: translateY(20px) scale(0.9);
+                    transform: translateY(18px) scale(0.94);
                 }
                 to {
                     opacity: 1;
@@ -500,84 +512,70 @@ const CraveSpinWheel = (function() {
                 }
             }
 
-            .crave-spin-wheel-result-icon {
-                font-size: 64px;
-                margin-bottom: 16px;
-                animation: bounce-in 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-            }
-
-            @keyframes bounce-in {
-                0% { transform: scale(0); }
-                50% { transform: scale(1.2); }
-                100% { transform: scale(1); }
-            }
-
-            .crave-spin-wheel-result-title {
-                font-size: 24px;
-                font-weight: 700;
-                color: #ffffff;
+            .crave-spin-wheel-result-badge {
+                display: inline-block;
+                font-size: 11px;
+                font-weight: 800;
+                color: #e5c158;
+                text-transform: uppercase;
+                letter-spacing: 2px;
                 margin-bottom: 8px;
             }
 
+            .crave-spin-wheel-result-icon {
+                font-size: 58px;
+                margin-bottom: 10px;
+                line-height: 1;
+                display: block;
+                animation: bounce-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+            }
+
+            @keyframes bounce-in {
+                0% { transform: scale(0.3); opacity: 0; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+
+            .crave-spin-wheel-result-title {
+                font-size: 22px;
+                font-weight: 800;
+                color: #ffffff;
+                margin: 0 0 6px 0;
+            }
+
             .crave-spin-wheel-result-text {
-                font-size: 16px;
-                color: #aaaaaa;
+                font-size: 15px;
+                color: rgba(255, 255, 255, 0.75);
+                margin: 0 0 18px 0;
             }
 
             .crave-spin-wheel-claim-btn {
-                margin-top: 16px;
-                background: linear-gradient(135deg, #d4a373, #c49a6c);
-                color: #ffffff;
+                background: linear-gradient(135deg, #f3d5a3, #c49a6c);
+                color: #0c0d11;
                 border: none;
-                padding: 12px 32px;
-                font-size: 16px;
-                font-weight: 600;
-                border-radius: 50px;
+                padding: 12px 38px;
+                font-size: 15px;
+                font-weight: 800;
+                border-radius: 40px;
                 cursor: pointer;
-                transition: all 0.3s ease;
+                transition: all 0.25s ease;
+                box-shadow: 0 6px 20px rgba(212, 163, 115, 0.35);
+                text-transform: uppercase;
+                letter-spacing: 1px;
             }
 
             .crave-spin-wheel-claim-btn:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(212, 163, 115, 0.4);
+                box-shadow: 0 10px 24px rgba(212, 163, 115, 0.5);
             }
 
-            /* Responsive */
-            @media (max-width: 768px) {
-                .crave-spin-wheel-modal {
-                    padding: 32px 24px;
-                    max-width: 95%;
-                    border-radius: 24px;
-                }
-
-                .crave-spin-wheel-wrapper {
-                    width: 300px;
-                    height: 300px;
-                }
-
-                .crave-spin-wheel-title {
-                    font-size: 28px;
-                }
-
-                .crave-spin-wheel-subtitle {
-                    font-size: 14px;
-                }
-
-                .crave-spin-wheel-button {
-                    padding: 16px 40px;
-                    font-size: 18px;
-                }
-            }
-
-            /* Reduced Motion */
+            /* Accessibility Reduced Motion */
             @media (prefers-reduced-motion: reduce) {
-                .crave-spin-wheel {
-                    transition: none;
+                .crave-spin-wheel-svg-container {
+                    transition: none !important;
                 }
-                
-                .crave-spin-wheel-center,
                 .crave-spin-wheel-result-icon {
-                    animation: none;
+                    animation: none !important;
                 }
             }
         `;
@@ -585,56 +583,219 @@ const CraveSpinWheel = (function() {
         document.head.appendChild(style);
     }
 
-    // Build the wheel
+    // Build Seamless Multi-Layered Physical SVG Wheel
     function buildWheel() {
         const prizes = PRIZE_PROBABILITIES;
-        const segmentAngle = 360 / prizes.length;
-        
+        const totalPrizes = prizes.length;
+        const segmentAngle = 360 / totalPrizes; // 40 degrees per segment
+        const viewBoxSize = 400;
+        const center = viewBoxSize / 2; // 200
+        const segmentRadius = 180;
+
+        // Rich metallic obsidian / warm amber gold gradient pairs for slices
+        const segmentGradients = [
+            { id: 'slice0', c1: '#211a14', c2: '#0d0b09' },
+            { id: 'slice1', c1: '#2d1e13', c2: '#160e08' },
+            { id: 'slice2', c1: '#1b1d28', c2: '#0b0c11' },
+            { id: 'slice3', c1: '#302012', c2: '#181009' },
+            { id: 'slice4', c1: '#161924', c2: '#090a0f' },
+            { id: 'slice5', c1: '#362414', c2: '#1b110a' },
+            { id: 'slice6', c1: '#1a202d', c2: '#0b0e16' },
+            { id: 'slice7', c1: '#301f11', c2: '#170e07' },
+            { id: 'slice8', c1: '#543e18', c2: '#30220a' } // VIP Golden
+        ];
+
+        // Generate SVG Gradient Definitions
+        let svgDefsHTML = `
+            <defs>
+                <!-- Gold Metallic Sheen Gradient for Rim -->
+                <linearGradient id="goldRimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fff0cc"/>
+                    <stop offset="30%" stop-color="#e5c158"/>
+                    <stop offset="55%" stop-color="#8c633a"/>
+                    <stop offset="80%" stop-color="#f3d5a3"/>
+                    <stop offset="100%" stop-color="#7a5228"/>
+                </linearGradient>
+
+                <!-- Coin Outer Gold Gradient -->
+                <radialGradient id="coinGoldGrad" cx="35%" cy="35%" r="65%">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="30%" stop-color="#f3d5a3"/>
+                    <stop offset="70%" stop-color="#d4a373"/>
+                    <stop offset="100%" stop-color="#664624"/>
+                </radialGradient>
+
+                <!-- Coin Inner Dark Surface Gradient -->
+                <radialGradient id="coinDarkGrad" cx="40%" cy="40%" r="60%">
+                    <stop offset="0%" stop-color="#282a36"/>
+                    <stop offset="80%" stop-color="#0f1015"/>
+                    <stop offset="100%" stop-color="#050608"/>
+                </radialGradient>
+
+                <!-- Pointer Gold Gradient -->
+                <linearGradient id="pointerGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="35%" stop-color="#f3d5a3"/>
+                    <stop offset="75%" stop-color="#d4a373"/>
+                    <stop offset="100%" stop-color="#7a5228"/>
+                </linearGradient>
+
+                <radialGradient id="pointerJewelGrad" cx="35%" cy="35%" r="65%">
+                    <stop offset="0%" stop-color="#ff6b6b"/>
+                    <stop offset="60%" stop-color="#c92a2a"/>
+                    <stop offset="100%" stop-color="#721c24"/>
+                </radialGradient>
+
+                <!-- Gold Text Gradient -->
+                <linearGradient id="goldTextGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="50%" stop-color="#f3d5a3"/>
+                    <stop offset="100%" stop-color="#d4a373"/>
+                </linearGradient>
+        `;
+
+        segmentGradients.forEach(g => {
+            svgDefsHTML += `
+                <linearGradient id="${g.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="${g.c1}"/>
+                    <stop offset="100%" stop-color="${g.c2}"/>
+                </linearGradient>
+            `;
+        });
+        svgDefsHTML += `</defs>`;
+
+        let svgSegmentsHTML = '';
+        let svgElementsHTML = '';
+
+        prizes.forEach((prize, index) => {
+            // Angle calculations for top 12 o'clock alignment
+            const startAngle = index * segmentAngle - 90;
+            const endAngle = (index + 1) * segmentAngle - 90;
+            const midAngle = startAngle + segmentAngle / 2;
+
+            // Polar to Cartesian conversion
+            const radStart = (startAngle * Math.PI) / 180;
+            const radEnd = (endAngle * Math.PI) / 180;
+            const radMid = (midAngle * Math.PI) / 180;
+
+            const x1 = center + segmentRadius * Math.cos(radStart);
+            const y1 = center + segmentRadius * Math.sin(radStart);
+            const x2 = center + segmentRadius * Math.cos(radEnd);
+            const y2 = center + segmentRadius * Math.sin(radEnd);
+
+            const pathD = `M ${center} ${center} L ${x1} ${y1} A ${segmentRadius} ${segmentRadius} 0 0 1 ${x2} ${y2} Z`;
+            const gradId = segmentGradients[index % segmentGradients.length].id;
+            const isVip = prize.type === 'vip';
+
+            svgSegmentsHTML += `
+                <path d="${pathD}" 
+                      fill="url(#${gradId})" 
+                      stroke="${isVip ? '#ffd700' : 'rgba(212, 163, 115, 0.25)'}" 
+                      stroke-width="${isVip ? '2.5' : '1.2'}" />
+            `;
+
+            // Radial placement for icons & high-impact labels
+            const iconRadius = 140;
+            const textRadius = 92;
+
+            const iconX = center + iconRadius * Math.cos(radMid);
+            const iconY = center + iconRadius * Math.sin(radMid);
+
+            const textX = center + textRadius * Math.cos(radMid);
+            const textY = center + textRadius * Math.sin(radMid);
+
+            const rotationDeg = index * segmentAngle + segmentAngle / 2;
+
+            svgElementsHTML += `
+                <g transform="rotate(${rotationDeg}, ${iconX}, ${iconY})">
+                    <text x="${iconX}" y="${iconY + 6}" 
+                          text-anchor="middle" 
+                          font-size="24" 
+                          filter="drop-shadow(0 3px 6px rgba(0,0,0,0.85))">${prize.icon}</text>
+                </g>
+                <g transform="rotate(${rotationDeg}, ${textX}, ${textY})">
+                    <text x="${textX}" y="${textY + 4}" 
+                          text-anchor="middle" 
+                          font-size="12" 
+                          font-weight="900" 
+                          fill="${isVip ? '#ffd700' : '#ffffff'}" 
+                          letter-spacing="0.8"
+                          filter="drop-shadow(0 2px 4px rgba(0,0,0,0.95))">${prize.shortLabel || prize.name}</text>
+                </g>
+            `;
+        });
+
         const wheelHTML = `
             <div class="crave-spin-wheel-overlay" id="crave-spin-wheel-overlay">
                 <div class="crave-spin-wheel-modal">
                     <button class="crave-spin-wheel-close" aria-label="Close">
                         <i class="fas fa-times"></i>
                     </button>
-                    <h2 class="crave-spin-wheel-title">Spin & Win</h2>
-                    <p class="crave-spin-wheel-subtitle">Try your luck and win amazing prizes!</p>
                     
+                    <div class="crave-spin-wheel-badge">
+                        <i class="fas fa-crown"></i> CRAVE REWARDS
+                    </div>
+                    <h2 class="crave-spin-wheel-title">Spin & Win</h2>
+                    <p class="crave-spin-wheel-subtitle">Take your chance and unlock a CRAVE reward.</p>
+                    
+                    <!-- HERO Wheel Container (85-90% width) -->
                     <div class="crave-spin-wheel-wrapper">
-                        <div class="crave-spin-wheel-pointer"></div>
-                        <div class="crave-spin-wheel" id="crave-spin-wheel">
-                            ${prizes.map((prize, index) => {
-                                const rotation = index * segmentAngle;
-                                const colors = [
-                                    'rgba(212, 163, 115, 0.9)',
-                                    'rgba(196, 154, 108, 0.9)',
-                                    'rgba(184, 137, 94, 0.9)',
-                                    'rgba(168, 120, 75, 0.9)',
-                                    'rgba(212, 175, 115, 0.85)',
-                                    'rgba(180, 140, 90, 0.9)'
-                                ];
-                                const color = colors[index % colors.length];
-                                
-                                return `
-                                    <div class="crave-spin-wheel-segment" style="transform: rotate(${rotation}deg); background: ${color};">
-                                        <div class="crave-spin-wheel-segment-content">
-                                            <span class="crave-spin-wheel-segment-icon">${prize.icon}</span>
-                                            <span>${prize.name}</span>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
+                        <!-- Mechanical 3D Gold Pointer at Top (12 o'clock) -->
+                        <div class="crave-spin-wheel-pointer-container" id="crave-spin-pointer">
+                            <svg viewBox="0 0 40 52">
+                                <circle cx="20" cy="10" r="7" fill="url(#pointerGoldGrad)" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.7))" />
+                                <path d="M 20 48 L 7 12 L 20 6 L 33 12 Z" fill="url(#pointerGoldGrad)" filter="drop-shadow(0 6px 12px rgba(0,0,0,0.85))" />
+                                <circle cx="20" cy="14" r="4" fill="url(#pointerJewelGrad)" />
+                            </svg>
                         </div>
-                        <div class="crave-spin-wheel-center">🎡</div>
+                        
+                        <!-- Multi-Layered Circular SVG Wheel Graphic -->
+                        <div class="crave-spin-wheel-svg-container" id="crave-spin-wheel">
+                            <svg viewBox="0 0 ${viewBoxSize} ${viewBoxSize}" width="100%" height="100%">
+                                ${svgDefsHTML}
+                                
+                                <!-- Layer 1: Outer Ambient Rim Glow -->
+                                <circle cx="${center}" cy="${center}" r="196" fill="none" stroke="rgba(212, 163, 115, 0.16)" stroke-width="12" />
+                                
+                                <!-- Layer 2: Heavy Gold Metallic Outer Rim -->
+                                <circle cx="${center}" cy="${center}" r="192" fill="none" stroke="url(#goldRimGrad)" stroke-width="14" />
+                                
+                                <!-- Layer 3: Inner Engraved Beaded Accent Ring -->
+                                <circle cx="${center}" cy="${center}" r="184" fill="none" stroke="rgba(255, 235, 180, 0.45)" stroke-width="1.5" stroke-dasharray="4 4" />
+                                
+                                <!-- Layer 4: Deep Obsidian Inset Groove -->
+                                <circle cx="${center}" cy="${center}" r="182" fill="none" stroke="#0a0a0d" stroke-width="3" />
+                                
+                                <!-- Layer 5: Radial Prize Pie Segments & High-Contrast Labels -->
+                                ${svgSegmentsHTML}
+                                ${svgElementsHTML}
+                                
+                                <!-- Layer 6: Inner Hub Gold Boundary Ring -->
+                                <circle cx="${center}" cy="${center}" r="54" fill="none" stroke="url(#goldRimGrad)" stroke-width="4" />
+                                
+                                <!-- Layer 7: 3D CRAVE Medallion Coin Hub -->
+                                <circle cx="${center}" cy="${center}" r="52" fill="url(#coinGoldGrad)" filter="drop-shadow(0 4px 10px rgba(0,0,0,0.8))" />
+                                <circle cx="${center}" cy="${center}" r="44" fill="url(#coinDarkGrad)" />
+                                <circle cx="${center}" cy="${center}" r="42" fill="none" stroke="rgba(212, 163, 115, 0.4)" stroke-width="1" />
+                                <path d="M 200 185 L 205 192 L 212 188 L 208 198 L 192 198 L 188 188 L 195 192 Z" fill="#ffd700" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))"/>
+                                <text x="${center}" y="${center + 12}" text-anchor="middle" font-size="10" font-weight="900" letter-spacing="2" fill="url(#goldTextGrad)">CRAVE</text>
+                            </svg>
+                        </div>
                     </div>
                     
-                    <button class="crave-spin-wheel-button" id="crave-spin-button">Spin Now!</button>
                     <p class="crave-spin-wheel-spins-left" id="crave-spin-spins-left"></p>
                     
-                    <div class="crave-spin-wheel-result" id="crave-spin-result">
+                    <button class="crave-spin-wheel-button" id="crave-spin-button">
+                        <i class="fas fa-dharmachakra"></i> SPIN THE WHEEL
+                    </button>
+                    
+                    <!-- Celebration Victory State (Strictly Hidden Before Spin) -->
+                    <div class="crave-spin-wheel-result" id="crave-spin-result" style="display: none;">
+                        <span class="crave-spin-wheel-result-badge">🎉 CONGRATULATIONS!</span>
                         <div class="crave-spin-wheel-result-icon" id="crave-spin-result-icon"></div>
                         <h3 class="crave-spin-wheel-result-title" id="crave-spin-result-title"></h3>
                         <p class="crave-spin-wheel-result-text" id="crave-spin-result-text"></p>
-                        <button class="crave-spin-wheel-claim-btn" id="crave-spin-claim-btn">Claim Reward</button>
+                        <button class="crave-spin-wheel-claim-btn" id="crave-spin-claim-btn">AWESOME!</button>
                     </div>
                 </div>
             </div>
@@ -686,10 +847,15 @@ const CraveSpinWheel = (function() {
         const spinsLeft = document.getElementById('crave-spin-spins-left');
         const result = document.getElementById('crave-spin-result');
         
-        result.classList.remove('show');
+        // STRICTLY HIDE VICTORY CARD BEFORE SPINNING
+        if (result) {
+            result.style.display = 'none';
+            result.classList.remove('show');
+        }
+        
         spinBtn.disabled = false;
         
-        spinsLeft.innerHTML = `<strong>${availableSpins}</strong> spin${availableSpins !== 1 ? 's' : ''} available`;
+        spinsLeft.innerHTML = `<strong>${availableSpins}</strong> SPIN${availableSpins !== 1 ? 'S' : ''} AVAILABLE`;
         
         overlay.classList.add('show');
         
@@ -708,7 +874,7 @@ const CraveSpinWheel = (function() {
         isSpinning = false;
     }
 
-    // Spin the wheel
+    // Spin the wheel (Mathematical Alignment & Easing Preserved)
     function spin() {
         if (isSpinning) return;
         
@@ -722,16 +888,24 @@ const CraveSpinWheel = (function() {
         isSpinning = true;
         
         const spinBtn = document.getElementById('crave-spin-button');
+        const pointer = document.getElementById('crave-spin-pointer');
+        const result = document.getElementById('crave-spin-result');
+        
+        if (result) {
+            result.style.display = 'none';
+            result.classList.remove('show');
+        }
+        
         spinBtn.disabled = true;
         
-        // Get weighted random prize
+        // Get weighted random prize (PROTECTED LOGIC)
         const prize = getWeightedPrize();
         const prizes = PRIZE_PROBABILITIES;
         const prizeIndex = prizes.findIndex(p => p.name === prize.name);
-        const segmentAngle = 360 / prizes.length;
+        const segmentAngle = 360 / prizes.length; // 40 deg
         
-        // Calculate rotation with realistic physics
-        const targetRotation = 360 * 6 + (360 - (prizeIndex * segmentAngle) - segmentAngle / 2) + (Math.random() * 20 - 10);
+        // Calculate target rotation to land exactly under top pointer (12 o'clock)
+        const targetRotation = 360 * 6 + (360 - (prizeIndex * segmentAngle) - segmentAngle / 2) + (Math.random() * 18 - 9);
         currentRotation += targetRotation;
         
         wheel.style.transform = `rotate(${currentRotation}deg)`;
@@ -741,13 +915,17 @@ const CraveSpinWheel = (function() {
         const tickInterval = setInterval(() => {
             tickCount++;
             playTickSound();
-            if (tickCount > 20) clearInterval(tickInterval);
-        }, 200);
+            if (pointer) {
+                pointer.classList.add('tick');
+                setTimeout(() => pointer.classList.remove('tick'), 100);
+            }
+            if (tickCount > 22) clearInterval(tickInterval);
+        }, 220);
         
         // Vibrate on mobile
-        vibrate([50, 50, 50]);
+        vibrate([40, 40]);
         
-        // Show result after spin
+        // Show result after spin completes (5.5s animation)
         setTimeout(async () => {
             clearInterval(tickInterval);
             showResult(prize);
@@ -759,14 +937,14 @@ const CraveSpinWheel = (function() {
                 notifications.wheelPrize(prize);
             }
             
-            // Save prize to LocalStorage
+            // Save prize to backend / LocalStorage (PROTECTED DATA PERSISTENCE)
             await savePrizeToVault(prize);
             
             isSpinning = false;
-        }, 6000);
+        }, 5500);
     }
 
-    // Save prize to reward vault
+    // Save prize to reward vault (PROTECTED LOGIC - DO NOT ALTER)
     async function savePrizeToVault(prize) {
         if (!data) return;
         
@@ -807,40 +985,47 @@ const CraveSpinWheel = (function() {
 
     // Claim reward
     function claimReward() {
-        const result = document.getElementById('crave-spin-result');
-        const icon = document.getElementById('crave-spin-result-icon');
         const title = document.getElementById('crave-spin-result-title');
-        const text = document.getElementById('crave-spin-result-text');
-        
-        const prizeName = title.textContent;
+        const prizeName = title ? title.textContent : 'Your reward';
         
         if (notifications) {
             notifications.show({
                 type: 'success',
                 icon: '✅',
-                title: 'Reward Claimed!',
-                message: `${prizeName} has been added to your Reward Vault`
+                title: 'Reward Added!',
+                message: `${prizeName} has been saved to your Reward Vault`
             });
         }
         
         hideWheel();
     }
 
-    // Show result
+    // Show result (Celebration victory screen revealed ONLY AFTER SPIN)
     function showResult(prize) {
         const result = document.getElementById('crave-spin-result');
         const icon = document.getElementById('crave-spin-result-icon');
         const title = document.getElementById('crave-spin-result-title');
         const text = document.getElementById('crave-spin-result-text');
         
-        icon.textContent = prize.icon;
-        title.textContent = 'You Won!';
-        text.textContent = prize.name;
+        if (icon) icon.textContent = prize.icon;
+        if (title) title.textContent = prize.name;
+        if (text) {
+            if (prize.type === 'points') {
+                text.textContent = `+${prize.value} CRAVE Points have been added to your spendable balance!`;
+            } else if (prize.type === 'coupon') {
+                text.textContent = `A GHC${prize.value} discount voucher has been saved to your Reward Vault!`;
+            } else {
+                text.textContent = `Your ${prize.name} voucher has been saved to your Reward Vault!`;
+            }
+        }
         
-        result.classList.add('show');
+        if (result) {
+            result.style.display = 'block';
+            result.classList.add('show');
+        }
     }
 
-    // Public API
+    // Public API (PROTECTED INTERFACES)
     return {
         init,
         show: showWheel,
@@ -864,3 +1049,4 @@ const CraveSpinWheel = (function() {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = CraveSpinWheel;
 }
+
