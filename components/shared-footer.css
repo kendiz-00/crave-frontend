@@ -1,550 +1,511 @@
 /**
  * CRAVE Premium Shared Footer CSS
- * Consistent footer design across all pages
- * Modern, premium restaurant footer
+ * Primary source of truth for CRAVE footer design system across all pages.
  */
 
-/* ============================================
-   ROOT VARIABLES
-   ============================================ */
-:root {
-    --crave-gold: #d4a373;
-    --crave-gold-light: #e8c49a;
-    --crave-gold-dark: #c49a6c;
-    --crave-black: #0a0a0a;
-    --crave-dark: #111111;
-    --crave-darker: #080808;
-    --crave-white: #ffffff;
-    --crave-gray: #888888;
-    --crave-gray-light: #aaaaaa;
-    --crave-glass-bg: rgba(10, 10, 10, 0.95);
-    --crave-glass-border: rgba(212, 163, 115, 0.15);
-    --crave-shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
-    --crave-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --crave-transition-smooth: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+/* ==========================================================================
+   FOOTER BASE & CONTAINER
+   ========================================================================== */
+.crave-footer,
+.premium-footer {
+  position: relative;
+  background: #08080a;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+  border-top: 1px solid rgba(212, 163, 115, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* ============================================
-   FOOTER BASE
-   ============================================ */
-.crave-footer {
-    background: var(--crave-darker);
-    border-top: 1px solid var(--crave-glass-border);
-    margin-top: 80px;
-    position: relative;
+.crave-footer::before,
+.premium-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4a373, transparent);
+  opacity: 0.6;
 }
 
-.crave-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--crave-gold), transparent);
-    opacity: 0.5;
+.crave-footer__inner,
+.premium-footer__inner {
+  position: relative;
+  z-index: 1;
+  padding: 80px 0 0 0;
 }
 
-/* ============================================
-   FOOTER INNER
-   ============================================ */
-.crave-footer__inner {
-    padding: 80px 0 0 0;
+.crave-footer__container,
+.premium-footer__container {
+  max-width: 1240px;
+  margin: 0 auto 56px;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.1fr;
+  gap: 48px;
+  align-items: start;
 }
 
-.crave-footer__container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px;
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
-    gap: 48px;
-    margin-bottom: 48px;
+/* ==========================================================================
+   BRAND AREA
+   ========================================================================== */
+.crave-footer__brand,
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-/* ============================================
-   FOOTER BRAND
-   ============================================ */
-.crave-footer__brand {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.crave-footer__logo,
+.footer-brand__logo {
+  height: 44px;
+  width: auto;
+  margin-bottom: 16px;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(212, 163, 115, 0.25));
 }
 
-.crave-footer__logo {
-    height: 44px;
-    width: auto;
-    display: block;
-    filter: drop-shadow(0 4px 12px rgba(212, 163, 115, 0.3));
+.crave-footer__tagline,
+.footer-brand__tag {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #d4a373;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.02em;
 }
 
-.crave-footer__tagline {
-    color: var(--crave-gold);
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
-    letter-spacing: 0.5px;
+.crave-footer__description,
+.footer-brand__sub {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 320px;
 }
 
-.crave-footer__description {
-    color: var(--crave-gray-light);
-    font-size: 14px;
-    line-height: 1.6;
-    margin: 0;
+/* ==========================================================================
+   NAVIGATION
+   ========================================================================== */
+.crave-footer__nav,
+.footer-nav {
+  display: flex;
+  flex-direction: column;
 }
 
-/* ============================================
-   FOOTER NAVIGATION
-   ============================================ */
-.crave-footer__nav {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.crave-footer__heading,
+.footer-heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 20px 0;
 }
 
-.crave-footer__heading {
-    color: var(--crave-white);
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+.crave-footer__links,
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.crave-footer__links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.crave-footer__link,
+.footer-links a,
+.footer-link {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  display: inline-block;
 }
 
-.crave-footer__link {
-    color: var(--crave-gray-light);
-    text-decoration: none;
-    font-size: 14px;
-    transition: var(--crave-transition);
-    display: inline-block;
+.crave-footer__link:hover,
+.footer-links a:hover,
+.footer-link:hover {
+  color: #ffd700;
+  transform: translateX(4px);
 }
 
-.crave-footer__link:hover {
-    color: var(--crave-gold);
-    transform: translateX(4px);
+/* ==========================================================================
+   CONTACT AREA
+   ========================================================================== */
+.crave-footer__contact,
+.footer-contact {
+  display: flex;
+  flex-direction: column;
 }
 
-/* ============================================
-   FOOTER CONTACT
-   ============================================ */
-.crave-footer__contact {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.crave-footer__address,
+.footer-address {
+  font-style: normal;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
-.crave-footer__address {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-style: normal;
+.crave-footer__address-line,
+.footer-address__line {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.75);
 }
 
-.crave-footer__address-line {
-    color: var(--crave-gray-light);
-    font-size: 14px;
+.crave-footer__phone,
+.crave-footer__email {
+  font-weight: 600 !important;
 }
 
-.crave-footer__address .crave-footer__link {
-    color: var(--crave-white);
-    font-weight: 500;
-}
-
-.crave-footer__address .crave-footer__link:hover {
-    color: var(--crave-gold);
-}
-
-.crave-footer__hours {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+.crave-footer__hours,
+.footer-hours {
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
 }
 
 .crave-footer__hours-label {
-    color: var(--crave-gray);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d4a373;
+  margin-bottom: 4px;
 }
 
 .crave-footer__hours-time {
-    color: var(--crave-white);
-    font-size: 14px;
-    font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
 }
 
-/* ============================================
-   FOOTER SOCIAL
-   ============================================ */
-.crave-footer__social {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* ==========================================================================
+   SOCIAL BUTTONS
+   ========================================================================== */
+.crave-footer__social,
+.footer-social {
+  display: flex;
+  flex-direction: column;
 }
 
 .crave-footer__social-links {
-    display: flex;
-    gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.crave-footer__social-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    background: rgba(212, 163, 115, 0.1);
-    border: 1px solid rgba(212, 163, 115, 0.2);
-    border-radius: 12px;
-    color: var(--crave-gold);
-    font-size: 18px;
-    transition: var(--crave-transition);
-    text-decoration: none;
+.crave-footer__social-btn,
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(212, 163, 115, 0.25);
+  color: #d4a373;
+  font-size: 16px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.crave-footer__social-link:hover {
-    background: var(--crave-gold);
-    border-color: var(--crave-gold);
-    color: var(--crave-black);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(212, 163, 115, 0.3);
+.crave-footer__social-btn:hover,
+.social-btn:hover {
+  background: linear-gradient(135deg, #d4a373 0%, #c49a6c 100%);
+  border-color: #d4a373;
+  color: #111111;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(212, 163, 115, 0.35);
 }
 
-/* ============================================
-   FOOTER CTA
-   ============================================ */
-.crave-footer__cta {
-    max-width: 1400px;
-    margin: 0 auto 48px;
-    padding: 0 24px;
+/* ==========================================================================
+   CONVERSION VIP EXPERIENCE CARD
+   ========================================================================== */
+.crave-footer__vip-card,
+.premium-footer__cta {
+  max-width: 1240px;
+  margin: 0 auto 56px;
+  padding: 0 24px;
 }
 
-.crave-footer__cta-content {
-    text-align: center;
-    margin-bottom: 24px;
+.crave-vip-card__inner,
+.premium-footer__cta {
+  position: relative;
+  background: linear-gradient(145deg, #121218 0%, #0a0a0d 100%);
+  border: 1px solid rgba(212, 163, 115, 0.25);
+  border-radius: 24px;
+  padding: 36px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 36px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
 }
 
-.crave-footer__cta-title {
-    color: var(--crave-white);
-    font-size: 28px;
-    font-weight: 700;
-    margin: 0 0 8px 0;
-    letter-spacing: 0.5px;
+.crave-vip-card__inner::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(212, 163, 115, 0.12) 0%, transparent 70%);
+  pointer-events: none;
 }
 
-.crave-footer__cta-subtitle {
-    color: var(--crave-gray-light);
-    font-size: 16px;
-    margin: 0;
+.crave-vip-card__copy,
+.cta-copy {
+  display: flex;
+  flex-direction: column;
+  max-width: 520px;
 }
 
-.crave-footer__cta-actions {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
+.crave-vip-card__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #d4a373;
+  text-transform: uppercase;
+  margin-bottom: 6px;
 }
 
-.crave-footer__cta-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px 32px;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    border-radius: 50px;
-    text-decoration: none;
-    transition: var(--crave-transition-smooth);
+.crave-vip-card__title,
+.cta-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+  line-height: 1.25;
 }
 
-.crave-footer__cta-btn--ghost {
-    background: transparent;
-    color: var(--crave-white);
-    border: 2px solid rgba(212, 163, 115, 0.3);
+.crave-vip-card__subtitle,
+.cta-sub {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
 }
 
-.crave-footer__cta-btn--ghost:hover {
-    background: rgba(212, 163, 115, 0.1);
-    border-color: var(--crave-gold);
-    color: var(--crave-gold);
+.crave-vip-card__form,
+.vip-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 440px;
+  flex-shrink: 0;
 }
 
-.crave-footer__cta-btn--primary {
-    background: linear-gradient(135deg, var(--crave-gold), var(--crave-gold-dark));
-    color: var(--crave-black);
-    border: 2px solid var(--crave-gold);
-    box-shadow: 0 4px 16px rgba(212, 163, 115, 0.3);
+.crave-vip-card__input,
+.vip-form input {
+  flex: 1;
+  height: 48px;
+  padding: 0 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 163, 115, 0.25);
+  border-radius: 30px;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
 }
 
-.crave-footer__cta-btn--primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(212, 163, 115, 0.4);
-    background: linear-gradient(135deg, var(--crave-gold-light), var(--crave-gold));
+.crave-vip-card__input::placeholder,
+.vip-form input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
 }
 
-/* ============================================
-   FOOTER VIP
-   ============================================ */
-.crave-footer__vip {
-    max-width: 1400px;
-    margin: 0 auto 48px;
-    padding: 0 24px;
+.crave-vip-card__input:focus,
+.vip-form input:focus {
+  outline: none;
+  border-color: #ffd700;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.12);
 }
 
-.crave-footer__vip-form {
-    display: flex;
-    gap: 12px;
-    max-width: 500px;
-    margin: 0 auto;
+.crave-vip-card__btn,
+.vip-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 24px;
+  background: linear-gradient(135deg, #d4a373 0%, #c49a6c 100%);
+  color: #111111;
+  border: none;
+  border-radius: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 14px rgba(212, 163, 115, 0.3);
 }
 
-.crave-footer__vip-input {
-    flex: 1;
-    padding: 14px 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(212, 163, 115, 0.2);
-    border-radius: 50px;
-    color: var(--crave-white);
-    font-size: 14px;
-    transition: var(--crave-transition);
+.crave-vip-card__btn:hover,
+.vip-cta:hover {
+  background: linear-gradient(135deg, #ffd700 0%, #d4a373 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4);
 }
 
-.crave-footer__vip-input::placeholder {
-    color: var(--crave-gray);
+/* ==========================================================================
+   BOTTOM LEGAL BAR
+   ========================================================================== */
+.crave-footer__bottom,
+.premium-footer__bottom {
+  background: #040406;
+  border-top: 1px solid rgba(212, 163, 115, 0.12);
+  padding: 22px 0;
 }
 
-.crave-footer__vip-input:focus {
-    outline: none;
-    border-color: var(--crave-gold);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.1);
+.crave-footer__bottom-container,
+.premium-footer__bar {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 }
 
-.crave-footer__vip-btn {
-    padding: 14px 28px;
-    background: linear-gradient(135deg, var(--crave-gold), var(--crave-gold-dark));
-    color: var(--crave-black);
-    border: none;
-    border-radius: 50px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--crave-transition-smooth);
-    box-shadow: 0 4px 16px rgba(212, 163, 115, 0.3);
-}
-
-.crave-footer__vip-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(212, 163, 115, 0.4);
-    background: linear-gradient(135deg, var(--crave-gold-light), var(--crave-gold));
-}
-
-/* ============================================
-   FOOTER BOTTOM
-   ============================================ */
-.crave-footer__bottom {
-    background: rgba(0, 0, 0, 0.3);
-    border-top: 1px solid rgba(212, 163, 115, 0.1);
-    padding: 24px 0;
-}
-
-.crave-footer__bottom-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 24px;
-}
-
-.crave-footer__copyright {
-    color: var(--crave-gray);
-    font-size: 13px;
+.crave-footer__copyright,
+.footer-copyright {
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .crave-footer__legal {
-    display: flex;
-    gap: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .crave-footer__legal-link {
-    color: var(--crave-gray);
-    font-size: 13px;
-    text-decoration: none;
-    transition: var(--crave-transition);
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  transition: color 0.25s ease;
 }
 
 .crave-footer__legal-link:hover {
-    color: var(--crave-gold);
+  color: #ffd700;
 }
 
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
+.crave-footer__legal-dot {
+  color: rgba(212, 163, 115, 0.3);
+  font-size: 10px;
+}
 
-/* Tablet */
+/* ==========================================================================
+   COMPACT TRANSACTIONAL FOOTER VARIATION
+   ========================================================================== */
+.crave-footer--compact {
+  padding-top: 0;
+}
+
+.crave-footer--compact .crave-footer__inner,
+.crave-footer--compact .premium-footer__inner {
+  padding-top: 36px;
+}
+
+.crave-footer--compact .crave-footer__container,
+.crave-footer--compact .premium-footer__container {
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 28px;
+}
+
+.crave-footer--compact .crave-footer__vip-card,
+.crave-footer--compact .premium-footer__cta {
+  display: none;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
 @media (max-width: 1024px) {
-    .crave-footer__container {
-        grid-template-columns: 1fr 1fr;
-        gap: 32px;
-        padding: 0 20px;
-    }
+  .crave-footer__container,
+  .premium-footer__container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 36px;
+  }
 
-    .crave-footer__cta-actions {
-        flex-direction: column;
-        align-items: center;
-    }
+  .crave-vip-card__inner,
+  .premium-footer__cta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 30px 28px;
+  }
 
-    .crave-footer__cta-btn {
-        width: 100%;
-        max-width: 250px;
-    }
-
-    .crave-footer__bottom-inner {
-        flex-direction: column;
-        text-align: center;
-    }
+  .crave-vip-card__form,
+  .vip-form {
+    max-width: 100%;
+  }
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-    .crave-footer__inner {
-        padding: 60px 0 0 0;
-    }
+@media (max-width: 767px) {
+  .crave-footer__inner,
+  .premium-footer__inner {
+    padding-top: 55px;
+  }
 
-    .crave-footer__container {
-        grid-template-columns: 1fr;
-        gap: 32px;
-        padding: 0 16px;
-        margin-bottom: 32px;
-    }
+  .crave-footer__container,
+  .premium-footer__container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
 
-    .crave-footer__cta {
-        padding: 0 16px;
-        margin-bottom: 32px;
-    }
+  .crave-vip-card__form,
+  .vip-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-    .crave-footer__cta-title {
-        font-size: 24px;
-    }
+  .crave-vip-card__input,
+  .vip-form input,
+  .crave-vip-card__btn,
+  .vip-cta {
+    width: 100%;
+  }
 
-    .crave-footer__cta-subtitle {
-        font-size: 14px;
-    }
+  .crave-footer__bottom-container,
+  .premium-footer__bar {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
 
-    .crave-footer__vip {
-        padding: 0 16px;
-        margin-bottom: 32px;
-    }
+  .crave-footer__legal {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
-    .crave-footer__vip-form {
-        flex-direction: column;
-    }
-
-    .crave-footer__vip-input,
-    .crave-footer__vip-btn {
-        width: 100%;
-    }
-
-    .crave-footer__bottom {
-        padding: 20px 0;
-    }
-
-    .crave-footer__bottom-inner {
-        padding: 0 16px;
-    }
-
-    .crave-footer__legal {
-        flex-direction: column;
-        gap: 12px;
-    }
+  /* Safe Area Padding above Floating Cart (#stickyCartBar) */
+  .crave-footer,
+  .premium-footer {
+    padding-bottom: calc(105px + env(safe-area-inset-bottom, 0px)) !important;
+  }
 }
 
-/* Small Mobile */
-@media (max-width: 480px) {
-    .crave-footer__inner {
-        padding: 48px 0 0 0;
-    }
-
-    .crave-footer__container {
-        gap: 24px;
-        padding: 0 12px;
-    }
-
-    .crave-footer__cta-title {
-        font-size: 20px;
-    }
-
-    .crave-footer__cta-subtitle {
-        font-size: 13px;
-    }
-
-    .crave-footer__bottom-inner {
-        padding: 0 12px;
-    }
-}
-
-/* ============================================
-   ACCESSIBILITY
-   ============================================ */
-
-/* Focus styles */
-.crave-footer__link:focus,
-.crave-footer__social-link:focus,
-.crave-footer__cta-btn:focus,
-.crave-footer__vip-input:focus,
-.crave-footer__vip-btn:focus,
-.crave-footer__legal-link:focus {
-    outline: 2px solid var(--crave-gold);
-    outline-offset: 2px;
-}
-
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    .crave-footer__link,
-    .crave-footer__social-link,
-    .crave-footer__cta-btn,
-    .crave-footer__vip-input,
-    .crave-footer__vip-btn,
-    .crave-footer__legal-link {
-        transition: none;
-    }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-    .crave-footer {
-        background: var(--crave-black);
-        border-top: 2px solid var(--crave-gold);
-    }
-
-    .crave-footer__link:hover,
-    .crave-footer__social-link:hover {
-        background: var(--crave-gold);
-        color: var(--crave-black);
-    }
-
-    .crave-footer__cta-btn--primary {
-        background: var(--crave-gold);
-        border: 2px solid var(--crave-gold);
-    }
-}
-
-/* ============================================
-   PRINT STYLES
-   ============================================ */
-@media print {
-    .crave-footer {
-        display: none;
-    }
+  .crave-footer__link,
+  .crave-footer__social-btn,
+  .crave-vip-card__btn,
+  .crave-vip-card__inner {
+    transition: none !important;
+    transform: none !important;
+  }
 }
