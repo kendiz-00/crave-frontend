@@ -874,6 +874,8 @@ const CraveSpinWheel = (function() {
         isSpinning = false;
     }
 
+    let currentSpinReferenceId = null;
+
     // Spin the wheel (Mathematical Alignment & Easing Preserved)
     function spin() {
         if (isSpinning) return;
@@ -886,6 +888,8 @@ const CraveSpinWheel = (function() {
         }
         
         isSpinning = true;
+        // Generate a stable reference ID for the lifetime of this specific spin attempt
+        currentSpinReferenceId = `spin_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
         
         const spinBtn = document.getElementById('crave-spin-button');
         const pointer = document.getElementById('crave-spin-pointer');
@@ -937,17 +941,19 @@ const CraveSpinWheel = (function() {
                 notifications.wheelPrize(prize);
             }
             
-            // Save prize to backend / LocalStorage (PROTECTED DATA PERSISTENCE)
-            await savePrizeToVault(prize);
+            // Save prize to backend / LocalStorage with stable spin reference ID
+            await savePrizeToVault(prize, currentSpinReferenceId);
+            currentSpinReferenceId = null;
             
             isSpinning = false;
         }, 5500);
     }
 
     // Save prize to reward vault (PROTECTED LOGIC - DO NOT ALTER)
-    async function savePrizeToVault(prize) {
+    async function savePrizeToVault(prize, stableSpinId = null) {
         if (!data) return;
         
+        const spinRefId = stableSpinId || `spin_${Date.now()}`;
         const vault = data.RewardVault.get() || [];
         const newReward = {
             id: Date.now(),
@@ -966,9 +972,9 @@ const CraveSpinWheel = (function() {
         data.SpinStats.setLastSpinTime(Date.now());
         data.SpinStats.addSpinHistory({ prize: prize, result: 'won' });
         
-        // Add points if prize is points
+        // Add points if prize is points using stable reference ID
         if (prize.type === 'points') {
-            await data.Points.add(prize.value, { referenceId: `spin_${Date.now()}`, reason: 'Spin wheel prize' });
+            await data.Points.add(prize.value, { referenceId: spinRefId, reason: 'Spin wheel prize' });
             data.SpinStats.addPointsWon(prize.value);
         }
         

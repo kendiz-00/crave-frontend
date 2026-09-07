@@ -2560,3 +2560,111 @@ body.crave-home {
     scroll-padding-left: 16px;
   }
 }
+
+/* Dynamic Homepage Rewards Card States */
+body.crave-home .vip-tier-chip.vip-tier-chip--guest {
+  background: rgba(212, 163, 115, 0.12);
+  border-color: rgba(212, 163, 115, 0.35);
+  color: #d4a373;
+}
+
+body.crave-home .guest-card-eyebrow {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #d4a373;
+  margin-bottom: 6px;
+}
+
+body.crave-home .guest-card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  line-height: 1.25;
+}
+
+body.crave-home .guest-card-desc {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+body.crave-home .guest-benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+body.crave-home .guest-benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.crave-home .guest-benefit-item .benefit-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+/* Skeleton Loading State */
+body.crave-home .vip-membership-card--loading {
+  pointer-events: none;
+}
+
+body.crave-home .vip-card-skeleton-badge {
+  width: 90px;
+  height: 26px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  animation: craveSkeletonPulse 1.5s infinite ease-in-out;
+}
+
+body.crave-home .vip-card-skeleton-line {
+  height: 16px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  margin-bottom: 12px;
+  animation: craveSkeletonPulse 1.5s infinite ease-in-out;
+}
+
+body.crave-home .vip-card-skeleton-line.short {
+  width: 40%;
+}
+
+body.crave-home .vip-card-skeleton-line.tall {
+  width: 70%;
+  height: 38px;
+}
+
+body.crave-home .vip-card-skeleton-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  margin-top: 16px;
+  animation: craveSkeletonPulse 1.5s infinite ease-in-out;
+}
+
+body.crave-home .vip-card-skeleton-pills {
+  width: 80%;
+  height: 24px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  animation: craveSkeletonPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes craveSkeletonPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.75; }
+}
+

@@ -974,6 +974,11 @@
 
             // Check for earned spin from checkout
             checkForEarnedSpin();
+
+            // Listen for multi-device sync updates
+            document.addEventListener('rewardsStateChanged', async function() {
+                await loadRewardsData();
+            });
         });
 
         async function loadRewardsData() {

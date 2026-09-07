@@ -346,12 +346,6 @@
     }
 
     function trackPwa() {
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-                navigator.serviceWorker.register('/sw.js').catch(function () {});
-            });
-        }
-
         window.addEventListener('online', function () {
             track('pwa_online', { state: 'online' });
         });

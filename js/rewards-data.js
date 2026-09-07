@@ -107,6 +107,35 @@ const CraveRewardsData = (function() {
         cacheTimestamp = 0;
     }
 
+    // Multi-device sync handler on tab focus / visibilitychange
+    let lastFocusSync = 0;
+    const SYNC_THROTTLE_MS = 5000;
+
+    function handleTabFocusSync() {
+        if (!isAuthenticated()) return;
+        const now = Date.now();
+        if (now - lastFocusSync < SYNC_THROTTLE_MS) return;
+        lastFocusSync = now;
+
+        clearCache();
+        fetchBackendRewards().then(data => {
+            if (data) {
+                document.dispatchEvent(new CustomEvent('rewardsStateChanged', { detail: data }));
+            }
+        }).catch(() => {});
+    }
+
+    if (typeof window !== 'undefined') {
+        window.addEventListener('focus', handleTabFocusSync);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                handleTabFocusSync();
+            }
+        });
+        document.addEventListener('auth:login', () => clearCache());
+        document.addEventListener('auth:logout', () => clearCache());
+    }
+
     // Migrate localStorage points to backend (one-time)
     async function migrateLocalStoragePoints() {
         if (!isAuthenticated()) {

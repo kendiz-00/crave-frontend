@@ -420,28 +420,6 @@
 		</div>
 	</section>
 
-	<!-- CTA Section -->
-	<section class="homepage-cta crave-reveal">
-		<div class="container-fluid px-3">
-			<div class="homepage-cta-content">
-				<h2 class="homepage-cta-title">Ready to taste the difference?</h2>
-				<p class="homepage-cta-subtitle">Join us for an unforgettable culinary journey</p>
-				<div class="homepage-cta-buttons">
-					<a href="menu.html" class="btn-cta-primary">
-						<i class="fas fa-shopping-cart"></i>
-						⚡ Order Now
-					</a>
-					<a href="menu.html" class="btn-cta-secondary">
-						<i class="fas fa-utensils"></i>
-						🔥 Explore Our Menu
-					</a>
-				</div>
-				<div class="cta-microcopy">
-					<span class="highlight">⚡ Most popular choice</span> - Orders confirmed instantly via WhatsApp
-				</div>
-			</div>
-		</div>
-	</section>
 	<!-- Visual Category Explorer Section (Phase 2C Discovery Experience) -->
 	<section class="crave-category-explorer crave-reveal" id="craveCategories">
 		<div class="category-explorer-container">
@@ -698,61 +676,18 @@
 						</div>
 					</div>
 
-					<!-- Single Clear Action CTA to rewards.html -->
-					<div class="rewards-action-row">
-						<a href="rewards.html" class="rewards-btn-primary">
+					<!-- Dynamic Action CTA -->
+					<div class="rewards-action-row" id="craveRewardsActionRow">
+						<a href="register.html" class="rewards-btn-primary" id="craveRewardsPrimaryCta">
 							<span>Join CRAVE Rewards</span>
 							<i class="fas fa-arrow-right" aria-hidden="true"></i>
 						</a>
 					</div>
 				</div>
 
-				<!-- Right Column: Luxury VIP Membership Card Preview -->
-				<div class="rewards-card-col">
-					<div class="vip-membership-card">
-						<div class="card-shimmer" aria-hidden="true"></div>
-						
-						<!-- Card Header -->
-						<div class="vip-card-header">
-							<div class="vip-card-brand">
-								<span class="brand-name">CRAVE</span>
-								<span class="brand-tag">REWARDS VIP</span>
-							</div>
-							<div class="vip-tier-chip">
-								<span class="chip-star">⭐</span>
-								<span class="chip-label">GOLD TIER</span>
-							</div>
-						</div>
-
-						<!-- Card Body: Points Display -->
-						<div class="vip-card-body">
-							<div class="points-label">AVAILABLE BALANCE</div>
-							<div class="points-val-row">
-								<span class="points-number">1,250</span>
-								<span class="points-unit">PTS</span>
-							</div>
-							
-							<!-- Tier Progress Bar -->
-							<div class="vip-progress-wrap">
-								<div class="progress-info">
-									<span>Progress to Platinum VIP</span>
-									<span>75%</span>
-								</div>
-								<div class="progress-track">
-									<div class="progress-fill" style="width: 75%;"></div>
-								</div>
-							</div>
-						</div>
-
-						<!-- Card Footer -->
-						<div class="vip-card-footer">
-							<div class="perks-pills">
-								<span class="perk-pill">⚡ Free Delivery</span>
-								<span class="perk-pill">🎡 Daily Spin</span>
-								<span class="perk-pill">🎂 Birthday Treat</span>
-							</div>
-						</div>
-					</div>
+				<!-- Right Column: Dynamic VIP Membership Card Container -->
+				<div class="rewards-card-col" id="craveRewardsCardCol">
+					<!-- Dynamically rendered by js/home-rewards.js based on Auth State -->
 				</div>
 			</div>
 		</div>
@@ -1485,20 +1420,8 @@
 		});
 	</script>
 
-	<!-- PWA Service Worker Registration -->
-	<script>
-		if ('serviceWorker' in navigator) {
-			window.addEventListener('load', function() {
-				navigator.serviceWorker.register('/sw.js')
-					.then(function(registration) {
-						console.log('Service Worker registered successfully:', registration);
-					})
-					.catch(function(error) {
-						console.log('Service Worker registration failed:', error);
-					});
-			});
-		}
-	</script>
+	<!-- Centralized PWA Manager -->
+	<script src="js/pwa-manager.js"></script>
     <script src="js/analytics.js" defer></script>
     
     <!-- API Scripts -->
@@ -1519,6 +1442,7 @@
     <script src="js/rewards-data.js"></script>
     <script src="js/rewards-engine.js"></script>
     <script src="js/rewards-notifications.js"></script>
+    <script src="js/home-rewards.js"></script>
     <script src="js/promo-codes.js"></script>
     <script src="js/achievements.js"></script>
     <script src="js/recommendations.js"></script>
