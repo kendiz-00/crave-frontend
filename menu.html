@@ -1035,8 +1035,8 @@
                 title: 'Most Popular',
                 description: 'Our best-selling items loved by customers',
                 items: [
-                    { name: 'Loaded Fries', price: 35, description: 'Our signature loaded fries with cheese and toppings', image: 'loaded_fries_01.jpg', available: true, featured: true, badges: ['bestseller'] },
-                    { name: 'Jerk Chicken Shawarma', price: 45, description: 'Spicy jerk chicken wrapped in warm shawarma', image: 'jerk_shawarma.jpeg', available: true, featured: true, badges: ['hot'] },
+                    { name: 'Loaded Fries', price: 35, description: 'Our signature loaded fries with cheese and toppings', image: 'loaded_fries.jpg', available: true, featured: true, badges: ['bestseller'] },
+                    { name: 'Jerk Chicken Shawarma', price: 45, description: 'Spicy jerk chicken wrapped in warm shawarma', image: 'jerk_shawarmah.jpg', available: true, featured: true, badges: ['hot'] },
                     { name: 'Chocolate Rich Buttercream Frosting Jar Cake', price: 40, description: 'Decadent chocolate cake with rich buttercream frosting', image: 'choco_jar.jpeg', available: true, featured: true, badges: ['chef'] },
                     { name: 'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries', price: 55, description: 'Extremely spicy fried chicken for the brave', image: 'hot_chicken.jpeg', available: true, featured: true, badges: ['hot'] }
                 ]
@@ -1071,21 +1071,6 @@
                     { name: 'Salted Caramel Cake', price: 35, description: 'Rich caramel cake with sea salt', image: 'caramel-cake.jpg', available: true, featured: false, badges: [] },
                     { name: 'Pistachio Dream Jar Cake', price: 40, description: 'Nutty pistachio cake in a jar', image: 'pistachio-cake.jpg', available: true, featured: true, badges: ['chef'] },
                     { name: 'Coffee Latte Jar Cake', price: 35, description: 'Coffee-infused cake for caffeine lovers', image: 'coffee-cake.jpg', available: true, featured: false, badges: [] },
-                    { name: 'Pink Guava Buttercream Jar Cake', price: 38, description: 'Tropical guava cake with pink buttercream', image: 'guava-cake.jpg', available: true, featured: true, badges: ['chef'] }
-                ]
-            },
-            'breakfast': {
-                title: 'Breakfast',
-                description: 'Start your day right with our breakfast options',
-                items: [
-                    { name: 'Chicken and Waffles', price: 45, description: 'Crispy chicken served with fluffy waffles', image: 'waffles.jpg', available: true, featured: true, badges: ['bestseller'] },
-                    { name: 'Loaded Omelette', price: 35, description: 'Fluffy omelette loaded with your choice of fillings', image: 'omelette.jpg', available: true, featured: false, badges: [] },
-                    { name: 'Grilled Cheese Sandwich', price: 25, description: 'Classic grilled cheese with melted cheddar', image: 'grilled_sandwich.jpg', available: true, featured: false, badges: [] },
-                    { name: 'Tuna Fish Sandwich', price: 30, description: 'Fresh tuna sandwich with lettuce and mayo', image: 'tuna_sandwich.jpg', available: true, featured: false, badges: [] },
-                    { name: 'American BLT (Bacon Lettuce Tomato)', price: 32, description: 'Classic BLT with crispy bacon', image: 'blt_sandwich.jpg', available: true, featured: false, badges: [] }
-                ]
-            },
-            'smoothies': {
                 title: 'Smoothies',
                 description: 'Refreshing blends and fruit drinks',
                 items: [
@@ -1690,9 +1675,9 @@
         // Get food image based on name
         function getFoodImage(name) {
             const imageMap = {
-                'Loaded Fries': 'loaded_fries_01.jpg',
+                'Loaded Fries': 'loaded_fries.jpg',
                 'Cheese Beef Loaded Fries': 'beef_loaded.jpg',
-                'Jerk Chicken Shawarma': 'jerk_shawarma.jpeg',
+                'Jerk Chicken Shawarma': 'jerk_shawarmah.jpg',
                 'Chocolate Rich Buttercream Frosting Jar Cake': 'choco_jar.jpeg',
                 'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries': 'hot_chicken.jpeg',
                 'Loaded BBQ Chicken Cheddar Cheese Fries': 'bbq_cheddar_fries.jpg',
@@ -1701,7 +1686,7 @@
                 'Honey BBQ Wings (6) and Fries': 'honey_wings.jpg',
                 'Siracha Mayo Hot Wings (6) and Fries': 'siracha_wings_fries.jpg',
                 '2 Piece Glazed Crispy Chicken and Fries': 'glazed_chicken_fries.jpg',
-                'Grilled Cheese Sandwich': 'grilled_sandwich.jpg',
+                'Grilled Cheese Sandwich': 'grilled_cheese.jpg',
                 'Tuna Fish Sandwich': 'tuna_sandwich.jpg',
                 'American BLT (Bacon Lettuce Tomato)': 'blt_sandwich.jpg',
                 'Bacon Cheddar Fries': 'bacon_fries.jpg',
@@ -1716,7 +1701,7 @@
                 'Pistachio Dream Jar Cake': 'pistachio-cake.jpg',
                 'Coffee Latte Jar Cake': 'coffee-cake.jpg',
                 'Pink Guava Buttercream Jar Cake': 'guava-cake.jpg',
-                'Chicken and Waffles': 'waffles.jpg',
+                'Chicken and Waffles': 'waffles (2).jpg',
                 'Loaded Omelette': 'omelette.jpg',
                 'Strawberry Colada': 'strawberry_banana.jpg',
                 'Pina Colada': 'pina-colada.jpg',
@@ -2375,7 +2360,7 @@
                 recommendedAddons: [
                     { name: 'Smoothies', price: 25, image: 'tropical-smoothie.jpg' },
                     { name: 'Jar Cakes', price: 30, image: 'biscoff-cake.jpg' },
-                    { name: 'Fries', price: 15, image: 'loaded_fries_01.jpg' }
+                    { name: 'Fries', price: 15, image: 'loaded_fries.jpg' }
                 ]
             },
             'Chicken Burrito': {

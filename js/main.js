@@ -1102,7 +1102,7 @@ function initMenuCards() {
       ],
       'loaded-fries': [
         { img: 'images/tx-chick.jpeg', alt: 'Avocado Toast', title: 'Avocado Toast', desc: 'Fresh avocado on artisanal bread with poached eggs and cherry tomatoes', price: '$12.99', badge: '🔥 Popular' },
-        { img: 'images/waffles.jpg', alt: 'Fluffy Pancakes', title: 'Fluffy Pancakes', desc: 'Light and fluffy pancakes served with maple syrup and fresh berries', price: '$9.99' }
+        { img: 'images/waffles (2).jpg', alt: 'Fluffy Pancakes', title: 'Fluffy Pancakes', desc: 'Light and fluffy pancakes served with maple syrup and fresh berries', price: '$9.99' }
       ],
       'texas-chicken': [
         { img: 'images/meat.jpeg', alt: 'Grilled Chicken Salad', title: 'Grilled Chicken Salad', desc: 'Grilled chicken breast over mixed greens with balsamic vinaigrette', price: '$15.99', badge: '🔥 Popular' },
