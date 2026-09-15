@@ -88,6 +88,17 @@ const AuthAPI = (function() {
         });
     }
 
+    /**
+     * Claim milestone reward
+     * POST /api/rewards/claims
+     */
+    async function claimReward(rewardId) {
+        if (!window.APIClient) throw new Error('API client not available');
+        return await window.APIClient.post('/api/rewards/claims', { rewardId }, { 
+            useCache: false 
+        });
+    }
+
     // Public API
     return {
         login,
@@ -96,7 +107,8 @@ const AuthAPI = (function() {
         refreshToken,
         getCurrentUser,
         getRewards,
-        createRewardTransaction
+        createRewardTransaction,
+        claimReward
     };
 })();
 

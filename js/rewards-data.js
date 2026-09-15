@@ -1037,10 +1037,56 @@ const CraveRewardsData = (function() {
         }
     };
 
+    // Milestone Claims Management
+    const Claims = {
+        get: async function() {
+            if (isAuthenticated()) {
+                const backendData = await fetchBackendRewards();
+                if (backendData !== null && Array.isArray(backendData.claims)) {
+                    return backendData.claims;
+                }
+                return [];
+            }
+            return getStorage('crave_milestone_claims', []);
+        },
+
+        claim: async function(rewardId) {
+            if (isAuthenticated()) {
+                if (typeof AuthAPI !== 'undefined' && AuthAPI.claimReward) {
+                    const response = await AuthAPI.claimReward(rewardId);
+                    if (response.success && response.data) {
+                        clearCache();
+                        return { success: true, claim: response.data };
+                    } else {
+                        return { success: false, message: response.message || 'Failed to claim reward' };
+                    }
+                } else {
+                    return { success: false, message: 'AuthAPI not available' };
+                }
+            }
+
+            // Anonymous fallback
+            const claims = getStorage('crave_milestone_claims', []);
+            const existing = claims.find(c => c.rewardId === rewardId);
+            if (existing) return { success: true, claim: existing };
+
+            const newClaim = {
+                id: 'local_' + Date.now(),
+                rewardId: rewardId,
+                status: 'CLAIMED',
+                claimedAt: new Date().toISOString()
+            };
+            claims.push(newClaim);
+            setStorage('crave_milestone_claims', claims);
+            return { success: true, claim: newClaim };
+        }
+    };
+
     // Export all modules
     return {
         Points,
         Tier,
+        Claims,
         Achievements,
         PromoCodes,
         SpinWheel,

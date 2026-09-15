@@ -263,6 +263,22 @@
                         <div id="paymentMethodForm"></div>
                     </div>
 
+                    <!-- Claimed Milestone Rewards Card -->
+                    <div class="checkout-card reward-card" id="claimedMilestoneSection" style="display: none;">
+                        <div class="reward-header">
+                            <div class="reward-title-group">
+                                <span class="reward-badge-icon">👑</span>
+                                <div>
+                                    <h3 class="reward-card-title">Milestone Rewards Ready</h3>
+                                    <p class="reward-card-sub">Select a claimed milestone reward to apply to your order</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="milestone-rewards-list" id="claimedMilestoneList" style="margin-top: 16px; display: flex; flex-direction: column; gap: 10px;">
+                            <!-- Claimed milestone options loaded dynamically -->
+                        </div>
+                    </div>
+
                     <!-- CRAVE Reward Points Card -->
                     <div class="checkout-card reward-card" id="rewardPointsSection">
                         <div class="reward-header">
@@ -2201,6 +2217,8 @@
         let pointsUsed = 0;
         let promoDiscountUsed = 0;
         let appliedPromoCode = null;
+        let selectedClaimedRewardId = null;
+        let userClaimedMilestones = [];
 
         // Initialize checkout page
         document.addEventListener('DOMContentLoaded', async function() {
@@ -2240,7 +2258,96 @@
             
             // Load reward points if authenticated
             await loadRewardPoints();
+
+            // Load claimed milestone rewards if authenticated
+            await loadClaimedMilestoneRewards();
         });
+
+        async function loadClaimedMilestoneRewards() {
+            const section = document.getElementById('claimedMilestoneSection');
+            if (!section) return;
+
+            if (typeof AuthManager === 'undefined' || !AuthManager.isAuthenticated()) {
+                section.style.display = 'none';
+                return;
+            }
+
+            try {
+                const rewardsData = await CraveAuth.getRewards();
+                const claims = (rewardsData && rewardsData.claims) ? rewardsData.claims : [];
+                const activeClaims = claims.filter(c => c.status === 'CLAIMED');
+                userClaimedMilestones = activeClaims;
+
+                if (activeClaims.length === 0) {
+                    section.style.display = 'none';
+                    return;
+                }
+
+                section.style.display = 'block';
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const paramRewardId = urlParams.get('rewardId');
+                if (paramRewardId && activeClaims.some(c => c.rewardId === paramRewardId)) {
+                    const matching = activeClaims.find(c => c.rewardId === paramRewardId);
+                    selectedClaimedRewardId = matching ? matching.id : null;
+                }
+
+                renderClaimedMilestoneList();
+            } catch (err) {
+                console.error('Error loading claimed milestone rewards:', err);
+                section.style.display = 'none';
+            }
+        }
+
+        function renderClaimedMilestoneList() {
+            const listEl = document.getElementById('claimedMilestoneList');
+            if (!listEl) return;
+
+            if (userClaimedMilestones.length === 0) {
+                listEl.innerHTML = '';
+                return;
+            }
+
+            const rewardTitles = {
+                'milestone_free_drink_100': 'Free Signature Drink',
+                'milestone_free_dessert_250': 'Free Sweet Treat / Dessert',
+                'milestone_free_loaded_fries_500': 'Free Loaded Fries',
+                'milestone_premium_combo_750': 'Free Premium Combo Upgrade',
+                'milestone_vip_reward_1000': 'VIP Craver Meal'
+            };
+
+            let html = `
+                <div class="milestone-claim-option ${!selectedClaimedRewardId ? 'selected' : ''}" onclick="selectClaimedReward(null)" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: ${!selectedClaimedRewardId ? 'rgba(212, 165, 116, 0.12)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${!selectedClaimedRewardId ? '#e5a93b' : 'rgba(255, 255, 255, 0.1)'}; border-radius: 8px; cursor: pointer;">
+                    <input type="radio" name="claimedRewardSelect" value="" ${!selectedClaimedRewardId ? 'checked' : ''}>
+                    <div class="option-details">
+                        <div style="font-weight: 600; color: #fff;">Do Not Use Milestone Reward</div>
+                        <div style="font-size: 12px; color: #a0a0a0;">Save your claimed reward for a future order</div>
+                    </div>
+                </div>
+            `;
+
+            userClaimedMilestones.forEach(claim => {
+                const isSelected = selectedClaimedRewardId === claim.id;
+                const title = rewardTitles[claim.rewardId] || claim.rewardId;
+                html += `
+                    <div class="milestone-claim-option ${isSelected ? 'selected' : ''}" onclick="selectClaimedReward('${claim.id}')" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: ${isSelected ? 'rgba(212, 165, 116, 0.15)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${isSelected ? '#e5a93b' : 'rgba(255, 255, 255, 0.1)'}; border-radius: 8px; cursor: pointer;">
+                        <input type="radio" name="claimedRewardSelect" value="${claim.id}" ${isSelected ? 'checked' : ''}>
+                        <div class="option-details" style="flex: 1;">
+                            <div style="font-weight: 600; color: #fff;">${title}</div>
+                            <div style="font-size: 12px; color: #e5a93b;">✓ UNLOCKED & READY (Server-verified discount at checkout)</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+        }
+
+        function selectClaimedReward(claimId) {
+            selectedClaimedRewardId = claimId;
+            renderClaimedMilestoneList();
+            recalculateTotal();
+        }
 
         function setupOrderTypeListeners() {
             const deliveryRadio = document.getElementById('delivery');
@@ -2578,10 +2685,11 @@
                 orderType: document.querySelector('input[name="orderType"]:checked').value,
                 additionalNotes: document.getElementById('additionalNotes').value,
                 items: cart,
-                subtotal: parseFloat(document.getElementById('subtotalAmount').textContent.replace('GHS ', '')),
-                deliveryFee: parseFloat(document.getElementById('deliveryFee').textContent.replace('GHS ', '')),
-                total: parseFloat(document.getElementById('totalAmount').textContent.replace('GHS ', '')),
-                rewardPointsUsed: pointsUsed || 0
+                subtotal: parseFloat(document.getElementById('subtotalAmount').textContent.replace('GHS ', '').replace('GH¢ ', '')),
+                deliveryFee: parseFloat(document.getElementById('deliveryFee').textContent.replace('GHS ', '').replace('GH¢ ', '')),
+                total: parseFloat(document.getElementById('totalAmount').textContent.replace('GHS ', '').replace('GH¢ ', '')),
+                rewardPointsUsed: pointsUsed || 0,
+                claimedRewardId: selectedClaimedRewardId || null
             };
             
             // Show payment processing

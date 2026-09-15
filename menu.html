@@ -3375,6 +3375,15 @@
             // Initialize cart sync
             CartSync.initialize();
 
+            // Check if use_reward URL parameter is present
+            const urlParams = new URLSearchParams(window.location.search);
+            const useReward = urlParams.get('use_reward');
+            if (useReward && typeof ToastNotifications !== 'undefined') {
+                setTimeout(() => {
+                    ToastNotifications.info('Choose an item from the menu for your claimed reward, then proceed to checkout!');
+                }, 500);
+            }
+
             // Track menu views for recommendations
             if (CraveRecommendations) {
                 // Personalized recommendations could be shown here
