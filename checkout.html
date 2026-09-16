@@ -237,7 +237,7 @@
                                     <i class="fas fa-truck-fast option-icon"></i>
                                     <div class="option-text">
                                         <span class="option-title">Delivery</span>
-                                        <span class="option-sub">GH¢ 15.00 • 30-45 min</span>
+                                        <span class="option-sub">30-45 min</span>
                                     </div>
                                 </div>
                             </label>
@@ -421,10 +421,7 @@
                                 <span>Reward Points Discount</span>
                                 <span id="rewardDiscountSummaryValue" class="discount-value">-GH¢ 0.00</span>
                             </div>
-                            <div class="checkout-summary-row">
-                                <span>Delivery Fee</span>
-                                <span id="deliveryFee">GH¢ 15.00</span>
-                            </div>
+
                             <div class="checkout-summary-row total">
                                 <span>Final Total</span>
                                 <span id="totalAmount">GH¢ 0.00</span>
@@ -505,7 +502,7 @@
         let marker;
         let selectedCoordinates = { lat: 5.6037, lng: -0.1870 }; // Accra, Ghana
         let cartItems = [];
-        let deliveryFee = 15.00;
+        let deliveryFee = 0.00;
         
         // Initialize map on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -701,12 +698,11 @@
             });
 
             // Update totals
-            const orderType = document.querySelector('input[name="orderType"]:checked').value;
-            const deliveryFeeAmount = orderType === 'Delivery' ? deliveryFee : 0;
-            const total = subtotal + deliveryFeeAmount;
+            const total = subtotal;
 
             document.getElementById('subtotalAmount').textContent = `GH¢ ${subtotal.toFixed(2)}`;
-            document.getElementById('deliveryFee').textContent = `GH¢ ${deliveryFeeAmount.toFixed(2)}`;
+            const deliveryFeeEl = document.getElementById('deliveryFee');
+            if (deliveryFeeEl) deliveryFeeEl.textContent = `GH¢ 0.00`;
             document.getElementById('totalAmount').textContent = `GH¢ ${total.toFixed(2)}`;
         }
 
@@ -1005,9 +1001,7 @@
                 const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
                 total += itemTotal;
             });
-            const orderType = document.querySelector('input[name="orderType"]:checked')?.value || 'Pickup';
-            const deliveryFeeAmount = orderType === 'Delivery' ? deliveryFee : 0;
-            total += deliveryFeeAmount;
+
 
             // Store order data for success screen
             const orderCompletionData = {
@@ -1122,14 +1116,7 @@
             // Add total with separator
             message += `━━━━━━━━━━━━━━━━━━\n`;
             
-            // Add delivery fee if applicable
-            const orderType = document.querySelector('input[name="orderType"]:checked')?.value || 'Pickup';
-            const deliveryFeeAmount = orderType === 'Delivery' ? deliveryFee : 0;
-            if (deliveryFeeAmount > 0) {
-                message += `Subtotal: GHS ${total.toFixed(2)}\n`;
-                message += `Delivery: GHS ${deliveryFeeAmount.toFixed(2)}\n`;
-                total += deliveryFeeAmount;
-            }
+
             
             message += `TOTAL: GHS ${total.toFixed(2)}\n\n\n`;
             
@@ -2093,9 +2080,7 @@
                 subtotal += unitPrice * (item.quantity || 1);
             });
             
-            const orderType = document.querySelector('input[name="orderType"]:checked').value;
-            const deliveryFee = orderType === 'Delivery' ? 15 : 0;
-            const total = subtotal + deliveryFee;
+            const total = subtotal;
             
             return total;
         }
@@ -2371,7 +2356,7 @@
 
                 const deliveryFeeEl = document.getElementById('deliveryFee');
                 if (deliveryFeeEl) {
-                    deliveryFeeEl.textContent = isDelivery ? 'GH¢ 15.00' : 'GH¢ 0.00';
+                    deliveryFeeEl.textContent = 'GH¢ 0.00';
                 }
 
                 updateRewardDetails();
@@ -2562,10 +2547,9 @@
             }).join('');
             
             // Update totals
-            const isDelivery = document.getElementById('delivery')?.checked;
-            const deliveryFee = isDelivery ? 15 : 0;
             document.getElementById('subtotalAmount').textContent = `GH¢ ${subtotal.toFixed(2)}`;
-            document.getElementById('deliveryFee').textContent = `GH¢ ${deliveryFee.toFixed(2)}`;
+            const deliveryFeeEl = document.getElementById('deliveryFee');
+            if (deliveryFeeEl) deliveryFeeEl.textContent = 'GH¢ 0.00';
             
             updateRewardDetails();
         }
@@ -2665,12 +2649,9 @@
 
         function recalculateTotal() {
             const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
-            const deliveryFeeText = (document.getElementById('deliveryFee')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
-            
             const subtotal = parseFloat(subtotalText) || 0;
-            const deliveryFee = parseFloat(deliveryFeeText) || 0;
             
-            let total = subtotal + deliveryFee - (promoDiscountUsed || 0) - (pointsUsed || 0);
+            let total = subtotal - (promoDiscountUsed || 0) - (pointsUsed || 0);
             total = Math.max(0, total);
 
             const totalAmountEl = document.getElementById('totalAmount');
@@ -2695,7 +2676,7 @@
                 additionalNotes: document.getElementById('additionalNotes').value,
                 items: cart,
                 subtotal: parseFloat(document.getElementById('subtotalAmount').textContent.replace('GHS ', '').replace('GH¢ ', '')),
-                deliveryFee: parseFloat(document.getElementById('deliveryFee').textContent.replace('GHS ', '').replace('GH¢ ', '')),
+                deliveryFee: 0,
                 total: parseFloat(document.getElementById('totalAmount').textContent.replace('GHS ', '').replace('GH¢ ', '')),
                 rewardPointsUsed: pointsUsed || 0,
                 claimedRewardId: selectedClaimedRewardId || null
