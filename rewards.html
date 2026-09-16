@@ -1135,8 +1135,8 @@
                         statusText = '✓ REDEEMED';
                         actionBtn = `<div class="milestone-action-btn redeemed">✓ REDEEMED</div>`;
                     } else {
-                        statusText = 'REWARD READY';
-                        actionBtn = `<button class="milestone-action-btn ready" onclick="handleUseReward('${rewardId}')">USE REWARD</button>`;
+                        statusText = '🎁 REWARD READY';
+                        actionBtn = `<button class="milestone-action-btn ready" onclick="handleUseReward('${rewardId}', '${claim.id}')">🎁 USE REWARD</button>`;
                     }
                 } else if (unlocked) {
                     statusText = 'Reward Unlocked';
@@ -1173,7 +1173,7 @@
                 const result = await CraveRewardsData.Claims.claim(rewardId);
                 if (result && result.success) {
                     if (typeof ToastNotifications !== 'undefined') {
-                        ToastNotifications.success('Reward claimed successfully! Ready to use on your next order.');
+                        ToastNotifications.success('Reward claimed successfully! Choose an eligible item on the menu to use it.');
                     } else if (window.CraveSound) {
                         window.CraveSound.success();
                     }
@@ -1194,8 +1194,9 @@
             }
         }
 
-        function handleUseReward(rewardId) {
-            window.location.href = `menu.html?use_reward=${rewardId}`;
+        function handleUseReward(rewardId, claimId) {
+            const claimParam = claimId ? `&claimId=${encodeURIComponent(claimId)}` : '';
+            window.location.href = `menu.html?use_reward=${encodeURIComponent(rewardId)}${claimParam}`;
         }
 
         function loadAchievements() {

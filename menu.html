@@ -3103,6 +3103,13 @@
                 specialRequests: specialRequests,
                 timestamp: new Date().toISOString()
             };
+
+            // Attach UI reward context metadata if eligible
+            if (window.activeRewardContext && typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility({ name: currentFoodItem }, window.activeRewardContext.rewardId)) {
+                cartItem.appliedRewardClaimId = window.activeRewardContext.claimId;
+                cartItem.rewardTitle = window.activeRewardContext.rewardName;
+                cartItem.isRewardItem = true;
+            }
             
             // Add to cart - always read from localStorage first to ensure sync
             let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
@@ -3366,23 +3373,165 @@
     <script src="js/birthday-system.js"></script>
     
     <script>
+        const MilestoneEligibilityMap = {
+            'milestone_free_drink_100': {
+                name: 'Free Signature Drink',
+                categories: ['smoothies', 'drinks', 'fresh-juices-smoothies', 'beverages'],
+                names: ['strawberry colada', 'pina colada', 'watermelon mint ice', 'green glow', 'tropical fruit blend', 'pineapple strawberry', 'strawberries and cream', 'lemonade ice', 'banana peanut butter chocolate']
+            },
+            'milestone_free_dessert_250': {
+                name: 'Free Dessert',
+                categories: ['cupcakes', 'desserts-pastries'],
+                names: ['chocolate rich buttercream frosting jar cake', 'biscoff jar cake', 'lemon buttercream jar cake', 'vanilla buttercream cake slice', 'bailey\'s irish cream jar cake', 'salted caramel cake', 'pistachio dream jar cake', 'coffee latte jar cake']
+            },
+            'milestone_free_loaded_fries_500': {
+                name: 'Free Loaded Fries',
+                categories: ['loaded-fries', 'sides-extras'],
+                names: ['loaded fries', 'cheese beef loaded fries', 'loaded bbq chicken cheddar cheese fries', 'bacon cheddar fries']
+            },
+            'milestone_premium_combo_750': {
+                name: 'Premium Combo Upgrade',
+                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'burgers-combos']
+            },
+            'milestone_vip_reward_1000': {
+                name: 'VIP Craver Reward',
+                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'mexican-food', 'breakfast', 'smoothies', 'cupcakes', 'loaded-fries']
+            }
+        };
+
+        function checkMenuItemEligibility(item, rewardId) {
+            if (!rewardId) return false;
+            const config = MilestoneEligibilityMap[rewardId];
+            if (!config) return false;
+
+            const catSlug = ((item.category && item.category.slug) || item.categoryName || '').toLowerCase();
+            const catName = ((item.category && item.category.name) || item.categoryName || '').toLowerCase();
+            const itemName = (item.name || '').toLowerCase();
+
+            const catMatches = config.categories && config.categories.some(c => catSlug.includes(c) || catName.includes(c));
+            const nameMatches = config.names && config.names.some(n => n === itemName);
+
+            return !!(catMatches || nameMatches);
+        }
+
+        window.activeRewardContext = null;
+
+        async function initRewardContextOnMenu() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const useReward = urlParams.get('use_reward');
+            const claimId = urlParams.get('claimId');
+
+            if (typeof AuthManager === 'undefined' || !AuthManager.isAuthenticated()) {
+                if (useReward && typeof ToastNotifications !== 'undefined') {
+                    ToastNotifications.info('Please log in to use your claimed milestone reward');
+                }
+                return;
+            }
+
+            try {
+                const rewardsData = await CraveAuth.getRewards();
+                const claims = (rewardsData && rewardsData.claims) ? rewardsData.claims : [];
+                const activeClaims = claims.filter(c => c.status === 'CLAIMED');
+
+                if (activeClaims.length === 0) return;
+
+                let targetClaim = null;
+                if (claimId) {
+                    targetClaim = activeClaims.find(c => c.id === claimId);
+                }
+                if (!targetClaim && useReward) {
+                    targetClaim = activeClaims.find(c => c.rewardId === useReward);
+                }
+                if (!targetClaim) {
+                    targetClaim = activeClaims[0];
+                }
+
+                if (targetClaim) {
+                    const config = MilestoneEligibilityMap[targetClaim.rewardId] || { name: 'Milestone Reward' };
+                    window.activeRewardContext = {
+                        claimId: targetClaim.id,
+                        rewardId: targetClaim.rewardId,
+                        rewardName: config.name,
+                        claim: targetClaim
+                    };
+                    showActiveRewardBanner();
+                    setTimeout(highlightEligibleMenuItems, 600);
+                }
+            } catch (err) {
+                console.error('Error initializing reward context on menu:', err);
+            }
+        }
+
+        function showActiveRewardBanner() {
+            if (!window.activeRewardContext) return;
+            let banner = document.getElementById('craveRewardActiveBanner');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'craveRewardActiveBanner';
+                document.body.prepend(banner);
+            }
+
+            banner.innerHTML = `
+                <div style="background: linear-gradient(135deg, rgba(229, 169, 59, 0.98), rgba(184, 131, 35, 0.98)); color: #111; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 15px; position: sticky; top: 0; z-index: 99999; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px);">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 24px;">🎁</span>
+                        <div>
+                            <strong style="font-size: 14px; color: #000; text-transform: uppercase; letter-spacing: 0.5px;">REWARD READY: ${window.activeRewardContext.rewardName}</strong>
+                            <div style="font-size: 13px; color: #111; font-weight: 500;">Select any item marked <strong>🎁 FREE WITH YOUR REWARD</strong> to claim it!</div>
+                        </div>
+                    </div>
+                    <button onclick="clearActiveRewardContext()" style="background: rgba(0, 0, 0, 0.25); color: #fff; border: 1px solid rgba(0, 0, 0, 0.3); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600;">Dismiss Banner</button>
+                </div>
+            `;
+        }
+
+        function clearActiveRewardContext() {
+            window.activeRewardContext = null;
+            const banner = document.getElementById('craveRewardActiveBanner');
+            if (banner) banner.remove();
+            highlightEligibleMenuItems();
+        }
+
+        function highlightEligibleMenuItems() {
+            if (!window.activeRewardContext) {
+                document.querySelectorAll('.reward-eligible-badge').forEach(el => el.remove());
+                return;
+            }
+
+            const rewardId = window.activeRewardContext.rewardId;
+            const cards = document.querySelectorAll('.food-card, .bolt-food-card, .menu-card, [data-item-name]');
+
+            cards.forEach(card => {
+                const itemName = card.getAttribute('data-item-name') || card.querySelector('.food-title, .food-name, .card-title')?.textContent || '';
+                const itemCat = card.getAttribute('data-category') || '';
+
+                const dummyItem = { name: itemName.trim(), categoryName: itemCat, category: { slug: itemCat, name: itemCat } };
+                if (checkMenuItemEligibility(dummyItem, rewardId)) {
+                    card.style.border = '2px solid #e5a93b';
+                    card.style.borderRadius = '16px';
+                    
+                    if (!card.querySelector('.reward-eligible-badge')) {
+                        const badge = document.createElement('div');
+                        badge.className = 'reward-eligible-badge';
+                        badge.style.cssText = 'background: linear-gradient(135deg, #e5a93b, #b88323); color: #000; font-weight: 700; font-size: 11px; padding: 4px 10px; border-radius: 12px; margin: 8px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(229, 169, 59, 0.4);';
+                        badge.innerHTML = '🎁 FREE WITH YOUR REWARD';
+                        card.prepend(badge);
+                    }
+                }
+            });
+        }
+
         // Initialize rewards on menu page
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // Initialize auth
-            AuthManager.initialize();
+            await AuthManager.initialize();
             AuthUI.initialize();
             
             // Initialize cart sync
             CartSync.initialize();
 
-            // Check if use_reward URL parameter is present
-            const urlParams = new URLSearchParams(window.location.search);
-            const useReward = urlParams.get('use_reward');
-            if (useReward && typeof ToastNotifications !== 'undefined') {
-                setTimeout(() => {
-                    ToastNotifications.info('Choose an item from the menu for your claimed reward, then proceed to checkout!');
-                }, 500);
-            }
+            // Initialize reward context and banner
+            await initRewardContextOnMenu();
 
             // Track menu views for recommendations
             if (CraveRecommendations) {

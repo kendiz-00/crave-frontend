@@ -806,10 +806,10 @@
             emptyCart.style.display = 'none';
             cartItemsContainer.style.display = 'block';
             checkoutSection.style.display = 'block';
-            
-            // Display individual cart items with customizations (don't group)
+                   // Display individual cart items with customizations (don't group)
             cartItemsContainer.innerHTML = '';
             let subtotal = 0;
+            let totalRewardDiscount = 0;
             
             cart.forEach((item, index) => {
                 // Use unitPrice which includes customizations and add-ons
@@ -817,6 +817,12 @@
                 const itemTotal = unitPrice * (item.quantity || 1);
                 subtotal += itemTotal;
                 
+                const isReward = !!(item.isRewardItem || item.appliedRewardClaimId);
+                if (isReward) {
+                    // Reward applies to 1 unit of eligible item
+                    totalRewardDiscount += unitPrice;
+                }
+
                 const itemElement = document.createElement('div');
                 itemElement.className = 'cart-item';
                 
@@ -852,6 +858,21 @@
                     specialRequestsHtml = `<div class="cart-special-requests">📝 ${item.specialRequests}</div>`;
                 }
                 
+                let rewardCalloutHtml = '';
+                let priceDisplayHtml = `GH¢ ${itemTotal.toFixed(2)}`;
+
+                if (isReward) {
+                    rewardCalloutHtml = `
+                        <div class="cart-reward-callout-box" style="margin-top: 10px; padding: 10px 14px; background: rgba(229, 169, 59, 0.12); border: 1px solid #e5a93b; border-radius: 10px;">
+                            <div style="font-size: 12px; font-weight: 700; color: #e5a93b; text-transform: uppercase;">🎁 ${item.rewardTitle || 'MILESTONE REWARD'} APPLIED</div>
+                            <div style="font-size: 12px; color: #a0a0a0; margin-top: 2px;">Regular price: GH¢ ${unitPrice.toFixed(2)}</div>
+                            <div style="font-size: 12px; color: #4caf50; font-weight: 600;">Reward discount: -GH¢ ${unitPrice.toFixed(2)}</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #e5a93b; margin-top: 4px;">TOTAL FOR THIS ITEM: FREE</div>
+                        </div>
+                    `;
+                    priceDisplayHtml = `<span style="text-decoration: line-through; color: #888; font-size: 13px;">GH¢ ${itemTotal.toFixed(2)}</span> <span style="color: #e5a93b; font-weight: 700; font-size: 15px;">FREE</span>`;
+                }
+
                 itemElement.innerHTML = `
                     <div class="cart-left">
                         <img src="images/${getFoodImage(item.name)}" alt="${item.name}" class="cart-item-image" onerror="this.src='images/placeholder.jpg'">
@@ -861,6 +882,7 @@
                             ${customizationsHtml}
                             ${addonsHtml}
                             ${specialRequestsHtml}
+                            ${rewardCalloutHtml}
                         </div>
                     </div>
                     <div class="cart-right">
@@ -873,7 +895,7 @@
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
-                        <div class="cart-price">GH¢ ${itemTotal.toFixed(2)}</div>
+                        <div class="cart-price">${priceDisplayHtml}</div>
                         <button class="cart-delete" onclick="removeItem(${index})">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -884,10 +906,11 @@
             });
             
             // Update totals
-            document.getElementById('subtotal').textContent = `GH¢ ${subtotal.toFixed(2)}`;
-            document.getElementById('total').textContent = `GH¢ ${subtotal.toFixed(2)}`;
+            const netSubtotal = Math.max(0, subtotal - totalRewardDiscount);
+            document.getElementById('subtotal').textContent = `GH¢ ${netSubtotal.toFixed(2)}`;
+            document.getElementById('total').textContent = `GH¢ ${netSubtotal.toFixed(2)}`;
             
-            // Update cart badge
+            // Update cart badge Update cart badge
             updateCartBadge();
         }
 
