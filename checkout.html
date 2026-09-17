@@ -2230,10 +2230,10 @@
             
             renderPaymentForm(selectedPaymentMethod);
             
-            // Handle form submission
+            // Handle form submission - redirect to WhatsApp with order details
             const checkoutForm = document.getElementById('checkoutForm');
             if (checkoutForm) {
-                checkoutForm.addEventListener('submit', handleCheckout);
+                checkoutForm.addEventListener('submit', handleFormSubmit);
             }
 
             // Setup listeners
@@ -2258,9 +2258,8 @@
             }
 
             try {
-                const rewardsData = await CraveAuth.getRewards();
-                const claims = (rewardsData && rewardsData.claims) ? rewardsData.claims : [];
-                const activeClaims = claims.filter(c => c.status === 'CLAIMED');
+                const claims = await CraveRewardsData.Claims.get();
+                const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => c.status === 'CLAIMED');
                 userClaimedMilestones = activeClaims;
 
                 if (activeClaims.length === 0) {

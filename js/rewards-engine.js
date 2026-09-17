@@ -66,15 +66,41 @@ const CraveRewardsEngine = (function() {
     async function getNextMilestone() {
         if (!config || !data) return null;
         
-        const currentPoints = await data.Points.get();
+        const pointsBalance = await data.Points.get();
+        const lifetimeEarned = await data.Points.getLifetimeEarned();
+        const currentPoints = Math.max(pointsBalance, lifetimeEarned);
         const milestones = config.milestones;
         
+        let claims = [];
+        try {
+            claims = await data.Claims.get();
+        } catch (e) {
+            console.error('Error fetching claims in getNextMilestone:', e);
+        }
+        
+        const claimMap = {};
+        if (Array.isArray(claims)) {
+            claims.forEach(c => { claimMap[c.rewardId] = c; });
+        }
+        
+        const rewardIdMap = {
+            100: 'milestone_free_drink_100',
+            250: 'milestone_free_dessert_250',
+            500: 'milestone_free_loaded_fries_500',
+            750: 'milestone_premium_combo_750',
+            1000: 'milestone_vip_reward_1000'
+        };
+        
         for (const milestone of milestones) {
-            if (currentPoints < milestone.points) {
+            const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
+            const claim = claimMap[rewardId];
+            const isCompleted = claim && (claim.status === 'CLAIMED' || claim.status === 'REDEEMED');
+
+            if (!isCompleted && currentPoints < milestone.points) {
                 return {
                     ...milestone,
-                    remaining: milestone.points - currentPoints,
-                    progress: (currentPoints / milestone.points) * 100
+                    remaining: Math.max(0, milestone.points - currentPoints),
+                    progress: Math.min(100, (currentPoints / milestone.points) * 100)
                 };
             }
         }
@@ -86,19 +112,56 @@ const CraveRewardsEngine = (function() {
     async function getMilestoneProgress() {
         if (!config || !data) return null;
         
-        // Use lifetime points earned for milestone progress (not available balance)
-        const currentPoints = await data.Points.getLifetimeEarned();
+        const pointsBalance = await data.Points.get();
+        const lifetimeEarned = await data.Points.getLifetimeEarned();
+        const currentPoints = Math.max(pointsBalance, lifetimeEarned);
         const milestones = config.milestones;
+
+        let claims = [];
+        try {
+            claims = await data.Claims.get();
+        } catch (e) {
+            console.error('Error fetching claims in getMilestoneProgress:', e);
+        }
+
+        const claimMap = {};
+        if (Array.isArray(claims)) {
+            claims.forEach(c => { claimMap[c.rewardId] = c; });
+        }
+
+        const rewardIdMap = {
+            100: 'milestone_free_drink_100',
+            250: 'milestone_free_dessert_250',
+            500: 'milestone_free_loaded_fries_500',
+            750: 'milestone_premium_combo_750',
+            1000: 'milestone_vip_reward_1000'
+        };
         
         let previousMilestone = { points: 0 };
         let nextMilestone = null;
         
         for (const milestone of milestones) {
-            if (currentPoints < milestone.points) {
+            const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
+            const claim = claimMap[rewardId];
+            const isCompleted = claim && (claim.status === 'CLAIMED' || claim.status === 'REDEEMED');
+
+            if (!isCompleted && currentPoints < milestone.points) {
                 nextMilestone = milestone;
                 break;
             }
             previousMilestone = milestone;
+        }
+
+        if (!nextMilestone) {
+            for (const milestone of milestones) {
+                const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
+                const claim = claimMap[rewardId];
+                const isCompleted = claim && (claim.status === 'CLAIMED' || claim.status === 'REDEEMED');
+                if (!isCompleted) {
+                    nextMilestone = milestone;
+                    break;
+                }
+            }
         }
         
         if (!nextMilestone) {
@@ -111,14 +174,16 @@ const CraveRewardsEngine = (function() {
             };
         }
         
-        const range = nextMilestone.points - previousMilestone.points;
-        const progress = ((currentPoints - previousMilestone.points) / range) * 100;
+        const range = Math.max(1, nextMilestone.points - previousMilestone.points);
+        const earnedInRange = Math.max(0, currentPoints - previousMilestone.points);
+        const progress = (earnedInRange / range) * 100;
+        const remaining = Math.max(0, nextMilestone.points - currentPoints);
         
         return {
             current: previousMilestone,
             next: nextMilestone,
             progress: Math.min(100, Math.max(0, progress)),
-            remaining: nextMilestone.points - currentPoints
+            remaining: remaining
         };
     }
 

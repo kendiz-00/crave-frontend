@@ -1748,6 +1748,13 @@
                 timestamp: new Date().toISOString()
             };
             
+            // Attach UI reward context metadata if eligible
+            if (window.activeRewardContext && typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility({ name: itemName }, window.activeRewardContext.rewardId)) {
+                item.appliedRewardClaimId = window.activeRewardContext.claimId;
+                item.rewardTitle = window.activeRewardContext.rewardName;
+                item.isRewardItem = true;
+            }
+
             // Always read from localStorage first to ensure sync
             let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
             cart.push(item);
@@ -2033,6 +2040,13 @@
                         timestamp: new Date().toISOString()
                     };
                     
+                    // Attach UI reward context metadata if eligible
+                    if (window.activeRewardContext && typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility({ name: itemName }, window.activeRewardContext.rewardId)) {
+                        cartItem.appliedRewardClaimId = window.activeRewardContext.claimId;
+                        cartItem.rewardTitle = window.activeRewardContext.rewardName;
+                        cartItem.isRewardItem = true;
+                    }
+
                     // Always read from localStorage first to ensure sync
                     var cart = JSON.parse(localStorage.getItem('craveCart')) || [];
                     cart.push(cartItem);
@@ -3429,9 +3443,8 @@
             }
 
             try {
-                const rewardsData = await CraveAuth.getRewards();
-                const claims = (rewardsData && rewardsData.claims) ? rewardsData.claims : [];
-                const activeClaims = claims.filter(c => c.status === 'CLAIMED');
+                const claims = await CraveRewardsData.Claims.get();
+                const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => c.status === 'CLAIMED');
 
                 if (activeClaims.length === 0) return;
 
