@@ -413,6 +413,14 @@
                                 <span>Subtotal</span>
                                 <span id="subtotalAmount">GH¢ 0.00</span>
                             </div>
+                            <div class="checkout-summary-row milestone-reward-info-row" id="milestoneRewardInfoRow" style="display: none; color: #e5a93b; font-weight: 500;">
+                                <span>Selected Reward</span>
+                                <span id="milestoneRewardNameValue" style="font-weight: 600;">🎁 Free Reward</span>
+                            </div>
+                            <div class="checkout-summary-row milestone-reward-discount-row" id="milestoneRewardDiscountRow" style="display: none;">
+                                <span>Reward Discount</span>
+                                <span id="milestoneRewardDiscountSummaryValue" class="discount-value">-GH¢ 0.00</span>
+                            </div>
                             <div class="checkout-summary-row promo-discount-row" id="promoDiscountRow" style="display: none;">
                                 <span>Promo Discount</span>
                                 <span id="promoDiscountSummaryValue" class="discount-value">-GH¢ 0.00</span>
@@ -1070,20 +1078,22 @@
 
             // Re-enable the button
             const button = document.getElementById('placeOrderBtn');
-            button.disabled = false;
-            button.innerHTML = 'Place Order';
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = 'Place Order';
+            }
         }
 
         // Generate ultra-clean WhatsApp message
         function generateWhatsAppMessage(orderData) {
             // Iterate over ALL cart items individually (no grouping - preserve customizations per item)
-            let total = 0;
+            let subtotal = 0;
             let message = `Hello Crave 👋\n\nI'd like to place an order:\n\n`;
             
             cartItems.forEach((item, index) => {
                 // Use unitPrice which includes customizations and add-ons
                 const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
-                total += itemTotal;
+                subtotal += itemTotal;
                 
                 // Add item header with emoji
                 const itemEmoji = getItemEmoji(item.name);
@@ -1127,9 +1137,30 @@
             // Add total with separator
             message += `━━━━━━━━━━━━━━━━━━\n`;
             
+            const rewardInfo = typeof getSelectedMilestoneRewardInfo === 'function' ? getSelectedMilestoneRewardInfo() : null;
+            const milestoneDiscount = (rewardInfo && rewardInfo.discount) ? rewardInfo.discount : 0;
+            const hasMilestoneReward = rewardInfo && milestoneDiscount > 0;
+            const hasPromoDiscount = typeof promoDiscountUsed !== 'undefined' && promoDiscountUsed > 0;
+            const hasPointsDiscount = typeof pointsUsed !== 'undefined' && pointsUsed > 0;
 
-            
-            message += `TOTAL: GHS ${total.toFixed(2)}\n\n\n`;
+            if (hasMilestoneReward || hasPromoDiscount || hasPointsDiscount) {
+                message += `Order Summary\n`;
+                message += `Subtotal: GH¢${subtotal.toFixed(2)}\n`;
+                if (hasMilestoneReward) {
+                    message += `🎁 Milestone Reward: ${rewardInfo.title}\n`;
+                    message += `Reward Discount: -GH¢${milestoneDiscount.toFixed(2)}\n`;
+                }
+                if (hasPromoDiscount) {
+                    message += `Promo Discount: -GH¢${promoDiscountUsed.toFixed(2)}\n`;
+                }
+                if (hasPointsDiscount) {
+                    message += `Points Discount: -GH¢${pointsUsed.toFixed(2)}\n`;
+                }
+                const amountPayable = Math.max(0, subtotal - milestoneDiscount - (promoDiscountUsed || 0) - (pointsUsed || 0));
+                message += `Amount Payable: GH¢${amountPayable.toFixed(2)}\n\n\n`;
+            } else {
+                message += `TOTAL: GH¢${subtotal.toFixed(2)}\n\n\n`;
+            }
             
             // Add customer details
             message += `👤 ${orderData.fullName}\n`;
@@ -2216,6 +2247,94 @@
         let selectedClaimedRewardId = null;
         let userClaimedMilestones = [];
 
+        const MilestoneEligibilityMap = {
+            'milestone_free_drink_100': {
+                name: 'Free Signature Drink',
+                categories: ['smoothies', 'drinks', 'fresh-juices-smoothies', 'beverages'],
+                names: ['strawberry colada', 'pina colada', 'watermelon mint ice', 'green glow', 'tropical fruit blend', 'pineapple strawberry', 'strawberries and cream', 'lemonade ice', 'banana peanut butter chocolate']
+            },
+            'milestone_free_dessert_250': {
+                name: 'Free Sweet Treat / Dessert',
+                categories: ['cupcakes', 'desserts-pastries'],
+                names: ['chocolate rich buttercream frosting jar cake', 'biscoff jar cake', 'lemon buttercream jar cake', 'vanilla buttercream cake slice', 'bailey\'s irish cream jar cake', 'salted caramel cake', 'pistachio dream jar cake', 'coffee latte jar cake']
+            },
+            'milestone_free_loaded_fries_500': {
+                name: 'Free Loaded Fries',
+                categories: ['loaded-fries', 'sides-extras'],
+                names: ['loaded fries', 'cheese beef loaded fries', 'loaded bbq chicken cheddar cheese fries', 'bacon cheddar fries']
+            },
+            'milestone_premium_combo_750': {
+                name: 'Free Premium Combo Upgrade',
+                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'burgers-combos']
+            },
+            'milestone_vip_reward_1000': {
+                name: 'VIP Craver Meal',
+                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'mexican-food', 'breakfast', 'smoothies', 'cupcakes', 'loaded-fries']
+            }
+        };
+
+        function checkMenuItemEligibility(item, rewardId) {
+            if (!rewardId || !item) return false;
+            const config = MilestoneEligibilityMap[rewardId];
+            if (!config) return false;
+
+            const catSlug = ((item.category && item.category.slug) || item.categoryName || '').toLowerCase();
+            const catName = ((item.category && item.category.name) || item.categoryName || '').toLowerCase();
+            const itemName = (item.name || '').toLowerCase();
+
+            const catMatches = config.categories && config.categories.some(c => catSlug.includes(c) || catName.includes(c));
+            const nameMatches = config.names && config.names.some(n => n === itemName);
+
+            return !!(catMatches || nameMatches);
+        }
+
+        function getSelectedMilestoneRewardInfo() {
+            if (!selectedClaimedRewardId || !userClaimedMilestones || userClaimedMilestones.length === 0) {
+                return null;
+            }
+
+            const claim = userClaimedMilestones.find(c => c.id === selectedClaimedRewardId);
+            if (!claim) return null;
+
+            const rewardTitles = {
+                'milestone_free_drink_100': 'Free Signature Drink',
+                'milestone_free_dessert_250': 'Free Sweet Treat / Dessert',
+                'milestone_free_loaded_fries_500': 'Free Loaded Fries',
+                'milestone_premium_combo_750': 'Free Premium Combo Upgrade',
+                'milestone_vip_reward_1000': 'VIP Craver Meal'
+            };
+
+            const title = rewardTitles[claim.rewardId] || 'Milestone Reward';
+            const cart = (typeof cartItems !== 'undefined' && cartItems.length > 0) ? cartItems : (JSON.parse(localStorage.getItem('craveCart')) || []);
+
+            if (!cart || cart.length === 0) {
+                return { claim, title, discount: 0, eligibleItem: null };
+            }
+
+            // 1. Check if an item in cart was explicitly tagged with this claimId
+            let eligibleItem = cart.find(item => item.appliedRewardClaimId === claim.id);
+
+            // 2. If not found by claimId, check if any item matches eligibility rules for claim.rewardId
+            if (!eligibleItem && typeof checkMenuItemEligibility === 'function') {
+                eligibleItem = cart.find(item => checkMenuItemEligibility(item, claim.rewardId));
+            }
+
+            // 3. Fallback: if no specific eligibility check matched, pick the first item in cart
+            if (!eligibleItem) {
+                eligibleItem = cart[0];
+            }
+
+            // Base price of eligible item (excluding add-ons)
+            const basePrice = Number(eligibleItem.price || 0);
+
+            return {
+                claim,
+                title,
+                discount: basePrice,
+                eligibleItem
+            };
+        }
+
         // Initialize checkout page
         document.addEventListener('DOMContentLoaded', async function() {
             // Initialize auth first (must complete before loading rewards)
@@ -2297,6 +2416,7 @@
                 }
 
                 renderClaimedMilestoneList();
+                recalculateTotal();
             } catch (err) {
                 console.error('Error loading claimed milestone rewards:', err);
                 section.style.display = 'none';
@@ -2661,7 +2781,25 @@
             const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
             const subtotal = parseFloat(subtotalText) || 0;
             
-            let total = subtotal - (promoDiscountUsed || 0) - (pointsUsed || 0);
+            const rewardInfo = typeof getSelectedMilestoneRewardInfo === 'function' ? getSelectedMilestoneRewardInfo() : null;
+            const milestoneDiscount = (rewardInfo && rewardInfo.discount) ? rewardInfo.discount : 0;
+
+            const infoRow = document.getElementById('milestoneRewardInfoRow');
+            const discountRow = document.getElementById('milestoneRewardDiscountRow');
+            const nameVal = document.getElementById('milestoneRewardNameValue');
+            const summaryVal = document.getElementById('milestoneRewardDiscountSummaryValue');
+
+            if (rewardInfo && milestoneDiscount > 0 && infoRow && discountRow) {
+                infoRow.style.display = 'flex';
+                discountRow.style.display = 'flex';
+                if (nameVal) nameVal.textContent = `🎁 ${rewardInfo.title}`;
+                if (summaryVal) summaryVal.textContent = `-GH¢ ${milestoneDiscount.toFixed(2)}`;
+            } else if (infoRow && discountRow) {
+                infoRow.style.display = 'none';
+                discountRow.style.display = 'none';
+            }
+
+            let total = subtotal - milestoneDiscount - (promoDiscountUsed || 0) - (pointsUsed || 0);
             total = Math.max(0, total);
 
             const totalAmountEl = document.getElementById('totalAmount');
