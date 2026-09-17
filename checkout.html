@@ -529,6 +529,25 @@
             renderOrderSummary();
             updateCopyrightYear();
             validateFormReady(); // Initialize button state
+
+            // Global form submission & input event bindings
+            const form = document.getElementById('checkoutForm');
+            if (form) {
+                form.addEventListener('submit', handleFormSubmit);
+            }
+
+            const fullNameInput = document.getElementById('fullName');
+            const phoneInput = document.getElementById('phoneNumber');
+            if (fullNameInput) fullNameInput.addEventListener('input', validateFormReady);
+            if (phoneInput) phoneInput.addEventListener('input', validateFormReady);
+
+            const orderTypeRadios = document.querySelectorAll('input[name="orderType"]');
+            orderTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    renderOrderSummary();
+                    validateFormReady();
+                });
+            });
         }
 
         // Get food image based on name
@@ -941,13 +960,13 @@
         function validateFormReady() {
             const form = document.getElementById('checkoutForm');
             const button = document.getElementById('placeOrderBtn');
+            if (!form || !button) return;
             const formData = new FormData(form);
             
             const isReady = 
                 cartItems.length > 0 &&
                 formData.get('fullName')?.trim() &&
-                formData.get('phoneNumber')?.trim() &&
-                formData.get('deliveryCoordinates')?.trim();
+                formData.get('phoneNumber')?.trim();
             
             button.disabled = !isReady;
             
@@ -989,8 +1008,10 @@
             const successModal = document.getElementById('checkoutSuccess');
 
             // Show loading state
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
+            }
 
             // Generate WhatsApp message immediately
             const message = generateWhatsAppMessage(orderData);
@@ -1002,45 +1023,35 @@
                 total += itemTotal;
             });
 
-
             // Store order data for success screen
             const orderCompletionData = {
                 total: total,
-                orderType: orderType,
+                orderType: orderData ? orderData.orderType : 'Delivery',
                 items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
                 timestamp: Date.now()
             };
             sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
 
-            // Use official WhatsApp API endpoint for better Safari compatibility
+            // Use official WhatsApp API endpoint for maximum compatibility
             const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
 
-            // Show success feedback
-            setTimeout(() => {
-                button.innerHTML = '<i class="fas fa-check"></i> Opening WhatsApp...';
-                if (window.CraveSound) window.CraveSound.success();
+            if (window.CraveSound) window.CraveSound.success();
 
-                // Open WhatsApp synchronously for Safari compatibility
-                // Use window.location.href instead of window.open to avoid popup blockers
-                try {
-                    window.location.href = whatsappUrl;
+            // Set flag to detect return from WhatsApp
+            sessionStorage.setItem('craveWhatsAppOpened', 'true');
 
-                    // Set flag to detect return from WhatsApp
-                    sessionStorage.setItem('craveWhatsAppOpened', 'true');
+            // Clear cart & reset form before redirect
+            if (form) form.reset();
+            cartItems = [];
+            if (typeof saveCartToStorage === 'function') saveCartToStorage();
+            localStorage.removeItem('craveCart');
 
-                    // Reset form and clear cart after a short delay
-                    setTimeout(() => {
-                        form.reset();
-                        cartItems = [];
-                        saveCartToStorage();
-                        localStorage.removeItem('craveCart');
-                        successModal.classList.remove('show');
-                    }, 500);
-                } catch (error) {
-                    // Fallback: Show modal if direct navigation fails
-                    showWhatsAppFallback(whatsappUrl);
-                }
-            }, 500);
+            // Synchronous redirect to WhatsApp to prevent mobile browser pop-up blocking
+            try {
+                window.location.href = whatsappUrl;
+            } catch (error) {
+                showWhatsAppFallback(whatsappUrl);
+            }
         }
 
         // Show WhatsApp fallback modal
