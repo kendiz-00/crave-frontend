@@ -1046,6 +1046,10 @@
         });
 
         async function loadRewardsData() {
+            if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                CraveRewardsData.clearCache();
+            }
+
             // Load points
             const points = await CraveRewardsData.Points.get();
             document.getElementById('pointsValue').textContent = points;
@@ -1117,7 +1121,10 @@
             const claimsByRewardId = {};
             if (Array.isArray(claims)) {
                 claims.forEach(c => {
-                    claimsByRewardId[c.rewardId] = c;
+                    const existing = claimsByRewardId[c.rewardId];
+                    if (!existing || c.status === 'REDEEMED' || (c.status === 'CLAIMED' && existing.status !== 'REDEEMED')) {
+                        claimsByRewardId[c.rewardId] = c;
+                    }
                 });
             }
 

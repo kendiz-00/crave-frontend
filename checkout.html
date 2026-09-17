@@ -1048,7 +1048,10 @@
             // Set flag to detect return from WhatsApp
             sessionStorage.setItem('craveWhatsAppOpened', 'true');
 
-            // Clear cart & reset form before redirect
+            // Clear cart, reset form & clear rewards cache before redirect
+            if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                CraveRewardsData.clearCache();
+            }
             if (form) form.reset();
             cartItems = [];
             if (typeof saveCartToStorage === 'function') saveCartToStorage();
@@ -2657,20 +2660,41 @@
             
             let subtotal = 0;
             cartItemsContainer.innerHTML = cart.map((item, index) => {
-                subtotal += Number(item.price) * item.quantity;
+                const itemUnitPrice = Number(item.unitPrice || item.price || 0);
+                const itemTotal = itemUnitPrice * (item.quantity || 1);
+                subtotal += itemTotal;
+
+                let customizationsHtml = '';
+                if (item.customizations && typeof item.customizations === 'object') {
+                    customizationsHtml = renderCustomizations(item.customizations);
+                }
+
+                let addonsHtml = '';
+                if (item.addons && Array.isArray(item.addons) && item.addons.length > 0) {
+                    addonsHtml = '<div class="checkout-item-addons">';
+                    item.addons.forEach(addon => {
+                        if (addon && addon.name) {
+                            const addonPrice = addon.price > 0 ? ` (+GH₵${addon.price})` : '';
+                            addonsHtml += `<div class="checkout-addon">+ ${addon.name}${addonPrice}</div>`;
+                        }
+                    });
+                    addonsHtml += '</div>';
+                }
+
                 return `
                     <div class="checkout-cart-item">
                         <div class="checkout-item-info">
                             <div class="checkout-item-name">${item.name}</div>
                             <div class="checkout-item-details">
-                                ${item.customizations ? `<div class="checkout-item-customizations">${item.customizations}</div>` : ''}
+                                ${customizationsHtml}
+                                ${addonsHtml}
                             </div>
                         </div>
                         <div class="checkout-item-quantity">
-                            x${item.quantity}
+                            x${item.quantity || 1}
                         </div>
                         <div class="checkout-item-price">
-                            GH¢ ${(Number(item.price) * item.quantity).toFixed(2)}
+                            GH¢ ${itemTotal.toFixed(2)}
                         </div>
                     </div>
                 `;
