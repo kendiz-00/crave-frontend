@@ -1040,7 +1040,17 @@ const CraveRewardsData = (function() {
     // Milestone Claims Management
     const Claims = {
         get: async function() {
-            const localClaims = getStorage('crave_milestone_claims', []);
+            const legacyClaims = (() => {
+                try {
+                    const value = localStorage.getItem('crave_milestone_claims');
+                    return value ? JSON.parse(value) : [];
+                } catch (e) {
+                    return [];
+                }
+            })();
+            const currentClaims = getStorage('crave_milestone_claims', []);
+            const localClaims = Array.isArray(legacyClaims) ? [...legacyClaims, ...currentClaims] : [...currentClaims];
+
             if (isAuthenticated()) {
                 const backendData = await fetchBackendRewards();
                 const backendClaims = (backendData !== null && Array.isArray(backendData.claims)) ? backendData.claims : [];
@@ -1063,18 +1073,38 @@ const CraveRewardsData = (function() {
 
                 return merged;
             }
+
             return localClaims;
+        },
+
+        saveLocalClaims: function(claims) {
+            if (!Array.isArray(claims)) return;
+            setStorage('crave_milestone_claims', claims);
+            try {
+                localStorage.setItem('crave_milestone_claims', JSON.stringify(claims));
+            } catch (e) {
+                console.warn('Unable to persist legacy milestone claims key:', e);
+            }
         },
 
         markUsed: function(rewardIdOrClaimId) {
             const claims = getStorage('crave_milestone_claims', []);
-            const matchIndex = claims.findIndex(c => c.id === rewardIdOrClaimId || c.rewardId === rewardIdOrClaimId);
+            const legacyClaims = (() => {
+                try {
+                    const value = localStorage.getItem('crave_milestone_claims');
+                    return value ? JSON.parse(value) : [];
+                } catch (e) {
+                    return [];
+                }
+            })();
+            const merged = [...legacyClaims, ...claims];
+            const matchIndex = merged.findIndex(c => c.id === rewardIdOrClaimId || c.rewardId === rewardIdOrClaimId);
             const normalizedStatus = 'USED';
 
             if (matchIndex >= 0) {
-                claims[matchIndex].status = normalizedStatus;
-                setStorage('crave_milestone_claims', claims);
-                return { success: true, claim: claims[matchIndex] };
+                merged[matchIndex].status = normalizedStatus;
+                this.saveLocalClaims(merged);
+                return { success: true, claim: merged[matchIndex] };
             }
 
             const newClaim = {
@@ -1083,20 +1113,29 @@ const CraveRewardsData = (function() {
                 status: normalizedStatus,
                 claimedAt: new Date().toISOString()
             };
-            claims.push(newClaim);
-            setStorage('crave_milestone_claims', claims);
+            merged.push(newClaim);
+            this.saveLocalClaims(merged);
             return { success: true, claim: newClaim };
         },
 
         markRedeemed: function(rewardIdOrClaimId) {
             const claims = getStorage('crave_milestone_claims', []);
-            const matchIndex = claims.findIndex(c => c.id === rewardIdOrClaimId || c.rewardId === rewardIdOrClaimId);
+            const legacyClaims = (() => {
+                try {
+                    const value = localStorage.getItem('crave_milestone_claims');
+                    return value ? JSON.parse(value) : [];
+                } catch (e) {
+                    return [];
+                }
+            })();
+            const merged = [...legacyClaims, ...claims];
+            const matchIndex = merged.findIndex(c => c.id === rewardIdOrClaimId || c.rewardId === rewardIdOrClaimId);
             const normalizedStatus = 'REDEEMED';
 
             if (matchIndex >= 0) {
-                claims[matchIndex].status = normalizedStatus;
-                setStorage('crave_milestone_claims', claims);
-                return { success: true, claim: claims[matchIndex] };
+                merged[matchIndex].status = normalizedStatus;
+                this.saveLocalClaims(merged);
+                return { success: true, claim: merged[matchIndex] };
             }
 
             const newClaim = {
@@ -1105,8 +1144,8 @@ const CraveRewardsData = (function() {
                 status: normalizedStatus,
                 claimedAt: new Date().toISOString()
             };
-            claims.push(newClaim);
-            setStorage('crave_milestone_claims', claims);
+            merged.push(newClaim);
+            this.saveLocalClaims(merged);
             return { success: true, claim: newClaim };
         },
 
