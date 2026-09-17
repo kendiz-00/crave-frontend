@@ -1141,8 +1141,19 @@
             message += `━━━━━━━━━━━━━━━━━━\n`;
             
             const rewardInfo = typeof getSelectedMilestoneRewardInfo === 'function' ? getSelectedMilestoneRewardInfo() : null;
+            const selectedClaim = (selectedClaimedRewardId && Array.isArray(userClaimedMilestones))
+                ? userClaimedMilestones.find(c => c.id === selectedClaimedRewardId)
+                : null;
+            const rewardTitleMap = {
+                'milestone_free_drink_100': 'Free Signature Drink',
+                'milestone_free_dessert_250': 'Free Sweet Treat / Dessert',
+                'milestone_free_loaded_fries_500': 'Free Loaded Fries',
+                'milestone_premium_combo_750': 'Free Premium Combo Upgrade',
+                'milestone_vip_reward_1000': 'VIP Craver Meal'
+            };
+            const selectedMilestoneTitle = rewardInfo && rewardInfo.title ? rewardInfo.title : (selectedClaim && selectedClaim.rewardId ? rewardTitleMap[selectedClaim.rewardId] || 'Milestone Reward' : null);
             const milestoneDiscount = (rewardInfo && rewardInfo.discount) ? rewardInfo.discount : 0;
-            const hasMilestoneReward = rewardInfo && milestoneDiscount > 0;
+            const hasMilestoneReward = !!(selectedClaim || rewardInfo || selectedMilestoneTitle);
             const hasPromoDiscount = typeof promoDiscountUsed !== 'undefined' && promoDiscountUsed > 0;
             const hasPointsDiscount = typeof pointsUsed !== 'undefined' && pointsUsed > 0;
 
@@ -1150,7 +1161,8 @@
                 message += `Order Summary\n`;
                 message += `Subtotal: GH¢${subtotal.toFixed(2)}\n`;
                 if (hasMilestoneReward) {
-                    message += `🎁 Milestone Reward: ${rewardInfo.title}\n`;
+                    const rewardText = selectedMilestoneTitle || 'Milestone Reward';
+                    message += `🎁 Milestone Reward: ${rewardText}\n`;
                     message += `Reward Discount: -GH¢${milestoneDiscount.toFixed(2)}\n`;
                 }
                 if (hasPromoDiscount) {
@@ -2298,7 +2310,9 @@
 
             const claim = userClaimedMilestones.find(c => c.id === selectedClaimedRewardId);
             if (!claim) return null;
-            if ((claim.status || '').toString().toUpperCase().trim() !== 'CLAIMED') {
+
+            const normalizedStatus = (claim.status || '').toString().toUpperCase().trim();
+            if (normalizedStatus !== 'CLAIMED' && normalizedStatus !== 'USED' && normalizedStatus !== 'REDEEMED') {
                 return null;
             }
 
@@ -2331,20 +2345,16 @@
                 }
             }
 
-            if (!eligibleItem) {
-                return null;
-            }
-
-            const basePrice = Number(eligibleItem.basePrice ?? eligibleItem.price ?? eligibleItem.unitPrice ?? 0);
-            if (!Number.isFinite(basePrice) || basePrice <= 0) {
-                return null;
+            const basePrice = eligibleItem ? Number(eligibleItem.basePrice ?? eligibleItem.price ?? eligibleItem.unitPrice ?? 0) : 0;
+            if (eligibleItem && (!Number.isFinite(basePrice) || basePrice <= 0)) {
+                return { claim, title, discount: 0, eligibleItem: null };
             }
 
             return {
                 claim,
                 title,
-                discount: basePrice,
-                eligibleItem
+                discount: eligibleItem ? basePrice : 0,
+                eligibleItem: eligibleItem || null
             };
         }
 
@@ -2814,8 +2824,24 @@
         function recalculateTotal() {
             const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
             const subtotal = parseFloat(subtotalText) || 0;
-            
+
             const rewardInfo = typeof getSelectedMilestoneRewardInfo === 'function' ? getSelectedMilestoneRewardInfo() : null;
+            const selectedClaim = (selectedClaimedRewardId && Array.isArray(userClaimedMilestones))
+                ? userClaimedMilestones.find(c => c.id === selectedClaimedRewardId)
+                : null;
+            const selectedClaimStatus = (selectedClaim && selectedClaim.status ? String(selectedClaim.status).toUpperCase().trim() : '');
+            const hasSelectedReward = !!selectedClaim && ['CLAIMED', 'USED', 'REDEEMED'].includes(selectedClaimStatus);
+            const rewardTitle = (rewardInfo && rewardInfo.title) || (
+                selectedClaim
+                    ? {
+                        'milestone_free_drink_100': 'Free Signature Drink',
+                        'milestone_free_dessert_250': 'Free Sweet Treat / Dessert',
+                        'milestone_free_loaded_fries_500': 'Free Loaded Fries',
+                        'milestone_premium_combo_750': 'Free Premium Combo Upgrade',
+                        'milestone_vip_reward_1000': 'VIP Craver Meal'
+                    }[selectedClaim.rewardId] || 'Milestone Reward'
+                    : 'Milestone Reward'
+            );
             const milestoneDiscount = (rewardInfo && rewardInfo.discount) ? rewardInfo.discount : 0;
 
             const infoRow = document.getElementById('milestoneRewardInfoRow');
@@ -2823,10 +2849,10 @@
             const nameVal = document.getElementById('milestoneRewardNameValue');
             const summaryVal = document.getElementById('milestoneRewardDiscountSummaryValue');
 
-            if (rewardInfo && milestoneDiscount > 0 && infoRow && discountRow) {
+            if (hasSelectedReward && infoRow && discountRow) {
                 infoRow.style.display = 'flex';
                 discountRow.style.display = 'flex';
-                if (nameVal) nameVal.textContent = `🎁 ${rewardInfo.title}`;
+                if (nameVal) nameVal.textContent = `🎁 ${rewardTitle}`;
                 if (summaryVal) summaryVal.textContent = `-GH¢ ${milestoneDiscount.toFixed(2)}`;
             } else if (infoRow && discountRow) {
                 infoRow.style.display = 'none';
@@ -2885,6 +2911,26 @@
                                 CraveRewardsData.Points.subtract(pointsUsed, `Redeemed ${pointsUsed} points on order ${verification.orderId || response.reference}`);
                             } catch (err) {
                                 console.error('Error subtracting reward points:', err);
+                            }
+                        }
+
+                        if (selectedClaimedRewardId && userClaimedMilestones && userClaimedMilestones.length > 0) {
+                            const rewardClaim = userClaimedMilestones.find(c => c.id === selectedClaimedRewardId);
+                            if (rewardClaim) {
+                                const claimStorageKey = 'crave_milestone_claims';
+                                const storedClaims = JSON.parse(localStorage.getItem(claimStorageKey) || '[]');
+                                const localIndex = storedClaims.findIndex(c => c.id === rewardClaim.id);
+                                if (localIndex >= 0) {
+                                    storedClaims[localIndex].status = 'USED';
+                                } else {
+                                    storedClaims.push({ ...rewardClaim, status: 'USED' });
+                                }
+                                localStorage.setItem(claimStorageKey, JSON.stringify(storedClaims));
+
+                                const claimIndex = userClaimedMilestones.findIndex(c => c.id === selectedClaimedRewardId);
+                                if (claimIndex >= 0) {
+                                    userClaimedMilestones[claimIndex].status = 'USED';
+                                }
                             }
                         }
 

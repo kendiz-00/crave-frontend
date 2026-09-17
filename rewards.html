@@ -1142,9 +1142,9 @@
                 const normalizedStatus = claim ? (claim.status || '').toString().toUpperCase().trim() : '';
 
                 if (claim) {
-                    if (normalizedStatus === 'REDEEMED') {
-                        statusText = '✓ REDEEMED';
-                        actionBtn = `<div class="milestone-action-btn redeemed">✓ REDEEMED</div>`;
+                    if (normalizedStatus === 'REDEEMED' || normalizedStatus === 'USED') {
+                        statusText = normalizedStatus === 'USED' ? '✓ USED' : '✓ REDEEMED';
+                        actionBtn = `<div class="milestone-action-btn redeemed">${statusText}</div>`;
                     } else if (normalizedStatus === 'CLAIMED') {
                         statusText = '🎁 REWARD READY';
                         actionBtn = `<button class="milestone-action-btn ready" onclick="handleUseReward('${rewardId}', '${claim.id}')">🎁 USE REWARD</button>`;
