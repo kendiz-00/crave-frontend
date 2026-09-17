@@ -1066,6 +1066,50 @@ const CraveRewardsData = (function() {
             return localClaims;
         },
 
+        markUsed: function(rewardIdOrClaimId) {
+            const claims = getStorage('crave_milestone_claims', []);
+            const matchIndex = claims.findIndex(c => c.id === rewardIdOrClaimId || c.rewardId === rewardIdOrClaimId);
+            const normalizedStatus = 'USED';
+
+            if (matchIndex >= 0) {
+                claims[matchIndex].status = normalizedStatus;
+                setStorage('crave_milestone_claims', claims);
+                return { success: true, claim: claims[matchIndex] };
+            }
+
+            const newClaim = {
+                id: 'local_' + Date.now(),
+                rewardId: rewardIdOrClaimId,
+                status: normalizedStatus,
+                claimedAt: new Date().toISOString()
+            };
+            claims.push(newClaim);
+            setStorage('crave_milestone_claims', claims);
+            return { success: true, claim: newClaim };
+        },
+
+        markRedeemed: function(rewardIdOrClaimId) {
+            const claims = getStorage('crave_milestone_claims', []);
+            const matchIndex = claims.findIndex(c => c.id === rewardIdOrClaimId || c.rewardId === rewardIdOrClaimId);
+            const normalizedStatus = 'REDEEMED';
+
+            if (matchIndex >= 0) {
+                claims[matchIndex].status = normalizedStatus;
+                setStorage('crave_milestone_claims', claims);
+                return { success: true, claim: claims[matchIndex] };
+            }
+
+            const newClaim = {
+                id: 'local_' + Date.now(),
+                rewardId: rewardIdOrClaimId,
+                status: normalizedStatus,
+                claimedAt: new Date().toISOString()
+            };
+            claims.push(newClaim);
+            setStorage('crave_milestone_claims', claims);
+            return { success: true, claim: newClaim };
+        },
+
         claim: async function(rewardId) {
             if (isAuthenticated()) {
                 if (typeof AuthAPI !== 'undefined' && AuthAPI.claimReward) {

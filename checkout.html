@@ -2917,15 +2917,19 @@
                         if (selectedClaimedRewardId && userClaimedMilestones && userClaimedMilestones.length > 0) {
                             const rewardClaim = userClaimedMilestones.find(c => c.id === selectedClaimedRewardId);
                             if (rewardClaim) {
-                                const claimStorageKey = 'crave_milestone_claims';
-                                const storedClaims = JSON.parse(localStorage.getItem(claimStorageKey) || '[]');
-                                const localIndex = storedClaims.findIndex(c => c.id === rewardClaim.id);
-                                if (localIndex >= 0) {
-                                    storedClaims[localIndex].status = 'USED';
+                                if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.Claims && CraveRewardsData.Claims.markUsed) {
+                                    CraveRewardsData.Claims.markUsed(rewardClaim.rewardId);
                                 } else {
-                                    storedClaims.push({ ...rewardClaim, status: 'USED' });
+                                    const claimStorageKey = 'crave_milestone_claims';
+                                    const storedClaims = JSON.parse(localStorage.getItem(claimStorageKey) || '[]');
+                                    const localIndex = storedClaims.findIndex(c => c.id === rewardClaim.id || c.rewardId === rewardClaim.rewardId);
+                                    if (localIndex >= 0) {
+                                        storedClaims[localIndex].status = 'USED';
+                                    } else {
+                                        storedClaims.push({ ...rewardClaim, status: 'USED' });
+                                    }
+                                    localStorage.setItem(claimStorageKey, JSON.stringify(storedClaims));
                                 }
-                                localStorage.setItem(claimStorageKey, JSON.stringify(storedClaims));
 
                                 const claimIndex = userClaimedMilestones.findIndex(c => c.id === selectedClaimedRewardId);
                                 if (claimIndex >= 0) {
