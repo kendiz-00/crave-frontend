@@ -1748,12 +1748,7 @@
                 timestamp: new Date().toISOString()
             };
             
-            // Attach UI reward context metadata if eligible
-            if (window.activeRewardContext && typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility({ name: itemName }, window.activeRewardContext.rewardId)) {
-                item.appliedRewardClaimId = window.activeRewardContext.claimId;
-                item.rewardTitle = window.activeRewardContext.rewardName;
-                item.isRewardItem = true;
-            }
+            applyRewardMetadataIfEligible(item);
 
             // Always read from localStorage first to ensure sync
             let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
@@ -2040,12 +2035,7 @@
                         timestamp: new Date().toISOString()
                     };
                     
-                    // Attach UI reward context metadata if eligible
-                    if (window.activeRewardContext && typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility({ name: itemName }, window.activeRewardContext.rewardId)) {
-                        cartItem.appliedRewardClaimId = window.activeRewardContext.claimId;
-                        cartItem.rewardTitle = window.activeRewardContext.rewardName;
-                        cartItem.isRewardItem = true;
-                    }
+                    applyRewardMetadataIfEligible(cartItem);
 
                     // Always read from localStorage first to ensure sync
                     var cart = JSON.parse(localStorage.getItem('craveCart')) || [];
@@ -3118,12 +3108,7 @@
                 timestamp: new Date().toISOString()
             };
 
-            // Attach UI reward context metadata if eligible
-            if (window.activeRewardContext && typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility({ name: currentFoodItem }, window.activeRewardContext.rewardId)) {
-                cartItem.appliedRewardClaimId = window.activeRewardContext.claimId;
-                cartItem.rewardTitle = window.activeRewardContext.rewardName;
-                cartItem.isRewardItem = true;
-            }
+            applyRewardMetadataIfEligible(cartItem);
             
             // Add to cart - always read from localStorage first to ensure sync
             let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
@@ -3418,14 +3403,36 @@
             const config = MilestoneEligibilityMap[rewardId];
             if (!config) return false;
 
-            const catSlug = ((item.category && item.category.slug) || item.categoryName || '').toLowerCase();
-            const catName = ((item.category && item.category.name) || item.categoryName || '').toLowerCase();
-            const itemName = (item.name || '').toLowerCase();
+            const catSlug = ((item && item.category && item.category.slug) || item?.categoryName || '').toLowerCase();
+            const catName = ((item && item.category && item.category.name) || item?.categoryName || '').toLowerCase();
+            const itemName = (item && item.name ? item.name : '').toLowerCase();
 
             const catMatches = config.categories && config.categories.some(c => catSlug.includes(c) || catName.includes(c));
             const nameMatches = config.names && config.names.some(n => n === itemName);
 
             return !!(catMatches || nameMatches);
+        }
+
+        function applyRewardMetadataIfEligible(item) {
+            if (!item || !window.activeRewardContext) {
+                delete item?.appliedRewardClaimId;
+                delete item?.rewardTitle;
+                delete item?.isRewardItem;
+                return item;
+            }
+
+            const eligible = typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility(item, window.activeRewardContext.rewardId);
+            if (eligible) {
+                item.appliedRewardClaimId = window.activeRewardContext.claimId;
+                item.rewardTitle = window.activeRewardContext.rewardName;
+                item.isRewardItem = true;
+            } else {
+                delete item.appliedRewardClaimId;
+                delete item.rewardTitle;
+                delete item.isRewardItem;
+            }
+
+            return item;
         }
 
         window.activeRewardContext = null;
@@ -3444,7 +3451,7 @@
 
             try {
                 const claims = await CraveRewardsData.Claims.get();
-                const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => c.status === 'CLAIMED');
+                const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => ((c.status||'').toString().toUpperCase().trim() === 'CLAIMED'));
 
                 if (activeClaims.length === 0) return;
 

@@ -94,7 +94,8 @@ const CraveRewardsEngine = (function() {
         for (const milestone of milestones) {
             const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
             const claim = claimMap[rewardId];
-            const isCompleted = claim && (claim.status === 'CLAIMED' || claim.status === 'REDEEMED');
+            const status = (claim && claim.status) ? claim.status.toString().toUpperCase().trim() : '';
+            const isCompleted = claim && (status === 'CLAIMED' || status === 'REDEEMED');
 
             if (!isCompleted && currentPoints < milestone.points) {
                 return {
@@ -143,7 +144,8 @@ const CraveRewardsEngine = (function() {
         for (const milestone of milestones) {
             const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
             const claim = claimMap[rewardId];
-            const isCompleted = claim && (claim.status === 'CLAIMED' || claim.status === 'REDEEMED');
+            const status = (claim && claim.status) ? claim.status.toString().toUpperCase().trim() : '';
+            const isCompleted = claim && (status === 'CLAIMED' || status === 'REDEEMED');
 
             if (!isCompleted && currentPoints < milestone.points) {
                 nextMilestone = milestone;
@@ -156,7 +158,8 @@ const CraveRewardsEngine = (function() {
             for (const milestone of milestones) {
                 const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
                 const claim = claimMap[rewardId];
-                const isCompleted = claim && (claim.status === 'CLAIMED' || claim.status === 'REDEEMED');
+                const status = (claim && claim.status) ? claim.status.toString().toUpperCase().trim() : '';
+                const isCompleted = claim && (status === 'CLAIMED' || status === 'REDEEMED');
                 if (!isCompleted) {
                     nextMilestone = milestone;
                     break;

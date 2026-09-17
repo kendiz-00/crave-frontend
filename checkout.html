@@ -2298,6 +2298,9 @@
 
             const claim = userClaimedMilestones.find(c => c.id === selectedClaimedRewardId);
             if (!claim) return null;
+            if ((claim.status || '').toString().toUpperCase().trim() !== 'CLAIMED') {
+                return null;
+            }
 
             const rewardTitles = {
                 'milestone_free_drink_100': 'Free Signature Drink',
@@ -2314,21 +2317,28 @@
                 return { claim, title, discount: 0, eligibleItem: null };
             }
 
-            // 1. Check if an item in cart was explicitly tagged with this claimId
-            let eligibleItem = cart.find(item => item.appliedRewardClaimId === claim.id);
+            let eligibleItem = null;
 
-            // 2. If not found by claimId, check if any item matches eligibility rules for claim.rewardId
-            if (!eligibleItem && typeof checkMenuItemEligibility === 'function') {
-                eligibleItem = cart.find(item => checkMenuItemEligibility(item, claim.rewardId));
+            if (typeof checkMenuItemEligibility === 'function') {
+                eligibleItem = cart.find(item => {
+                    const hasClaimMatch = item && item.appliedRewardClaimId === claim.id;
+                    const isEligible = checkMenuItemEligibility(item, claim.rewardId);
+                    return hasClaimMatch && isEligible;
+                });
+
+                if (!eligibleItem) {
+                    eligibleItem = cart.find(item => checkMenuItemEligibility(item, claim.rewardId));
+                }
             }
 
-            // 3. Fallback: if no specific eligibility check matched, pick the first item in cart
             if (!eligibleItem) {
-                eligibleItem = cart[0];
+                return null;
             }
 
-            // Base price of eligible item (excluding add-ons)
-            const basePrice = Number(eligibleItem.price || 0);
+            const basePrice = Number(eligibleItem.basePrice ?? eligibleItem.price ?? eligibleItem.unitPrice ?? 0);
+            if (!Number.isFinite(basePrice) || basePrice <= 0) {
+                return null;
+            }
 
             return {
                 claim,
@@ -2392,7 +2402,7 @@
 
             try {
                 const claims = await CraveRewardsData.Claims.get();
-                const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => c.status === 'CLAIMED');
+                const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => ((c.status||'').toString().toUpperCase().trim() === 'CLAIMED'));
                 userClaimedMilestones = activeClaims;
 
                 if (activeClaims.length === 0) {

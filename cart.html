@@ -812,15 +812,18 @@
             let totalRewardDiscount = 0;
             
             cart.forEach((item, index) => {
-                // Use unitPrice which includes customizations and add-ons
+                // Use unitPrice which includes customizations and add-ons for subtotal
                 const unitPrice = Number(item.unitPrice ?? item.price ?? 0);
                 const itemTotal = unitPrice * (item.quantity || 1);
                 subtotal += itemTotal;
-                
+
+                // Determine basePrice (explicit base price without addons/customizations)
+                const basePrice = Number(item.basePrice ?? item.price ?? item.unitPrice ?? 0);
+
                 const isReward = !!(item.isRewardItem || item.appliedRewardClaimId);
                 if (isReward) {
-                    // Reward applies to 1 unit of eligible item
-                    totalRewardDiscount += unitPrice;
+                    // Reward discount should only remove the base item price (one unit)
+                    totalRewardDiscount += basePrice;
                 }
 
                 const itemElement = document.createElement('div');
@@ -862,15 +865,22 @@
                 let priceDisplayHtml = `GH¢ ${itemTotal.toFixed(2)}`;
 
                 if (isReward) {
+                    const rewardDiscount = basePrice;
+                    const remainingForItem = Math.max(0, itemTotal - rewardDiscount);
+
                     rewardCalloutHtml = `
                         <div class="cart-reward-callout-box" style="margin-top: 10px; padding: 10px 14px; background: rgba(229, 169, 59, 0.12); border: 1px solid #e5a93b; border-radius: 10px;">
                             <div style="font-size: 12px; font-weight: 700; color: #e5a93b; text-transform: uppercase;">🎁 ${item.rewardTitle || 'MILESTONE REWARD'} APPLIED</div>
                             <div style="font-size: 12px; color: #a0a0a0; margin-top: 2px;">Regular price: GH¢ ${unitPrice.toFixed(2)}</div>
-                            <div style="font-size: 12px; color: #4caf50; font-weight: 600;">Reward discount: -GH¢ ${unitPrice.toFixed(2)}</div>
-                            <div style="font-size: 13px; font-weight: 700; color: #e5a93b; margin-top: 4px;">TOTAL FOR THIS ITEM: FREE</div>
+                            <div style="font-size: 12px; color: #4caf50; font-weight: 600;">Reward discount: -GH¢ ${rewardDiscount.toFixed(2)}</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #e5a93b; margin-top: 4px;">TOTAL FOR THIS ITEM: ${remainingForItem > 0 ? 'GH¢ ' + remainingForItem.toFixed(2) : 'FREE'}</div>
                         </div>
                     `;
-                    priceDisplayHtml = `<span style="text-decoration: line-through; color: #888; font-size: 13px;">GH¢ ${itemTotal.toFixed(2)}</span> <span style="color: #e5a93b; font-weight: 700; font-size: 15px;">FREE</span>`;
+                    if (remainingForItem > 0) {
+                        priceDisplayHtml = `<span style="text-decoration: line-through; color: #888; font-size: 13px;">GH¢ ${itemTotal.toFixed(2)}</span> <span style="color: #e5a93b; font-weight: 700; font-size: 15px;">GH¢ ${remainingForItem.toFixed(2)}</span>`;
+                    } else {
+                        priceDisplayHtml = `<span style="text-decoration: line-through; color: #888; font-size: 13px;">GH¢ ${itemTotal.toFixed(2)}</span> <span style="color: #e5a93b; font-weight: 700; font-size: 15px;">FREE</span>`;
+                    }
                 }
 
                 itemElement.innerHTML = `

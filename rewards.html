@@ -1122,7 +1122,10 @@
             if (Array.isArray(claims)) {
                 claims.forEach(c => {
                     const existing = claimsByRewardId[c.rewardId];
-                    if (!existing || c.status === 'REDEEMED' || (c.status === 'CLAIMED' && existing.status !== 'REDEEMED')) {
+                    const status = (c.status || '').toString().toUpperCase().trim();
+                    const existingStatus = (existing && existing.status) ? existing.status.toString().toUpperCase().trim() : '';
+                    // Prefer REDEEMED over CLAIMED, otherwise keep most relevant
+                    if (!existing || status === 'REDEEMED' || (status === 'CLAIMED' && existingStatus !== 'REDEEMED')) {
                         claimsByRewardId[c.rewardId] = c;
                     }
                 });
@@ -1136,14 +1139,18 @@
 
                 let statusText = 'Locked';
                 let actionBtn = '';
+                const normalizedStatus = claim ? (claim.status || '').toString().toUpperCase().trim() : '';
 
                 if (claim) {
-                    if (claim.status === 'REDEEMED') {
+                    if (normalizedStatus === 'REDEEMED') {
                         statusText = '✓ REDEEMED';
                         actionBtn = `<div class="milestone-action-btn redeemed">✓ REDEEMED</div>`;
-                    } else {
+                    } else if (normalizedStatus === 'CLAIMED') {
                         statusText = '🎁 REWARD READY';
                         actionBtn = `<button class="milestone-action-btn ready" onclick="handleUseReward('${rewardId}', '${claim.id}')">🎁 USE REWARD</button>`;
+                    } else {
+                        statusText = String(claim.status || 'Locked');
+                        actionBtn = `<div class="milestone-action-btn locked">${statusText}</div>`;
                     }
                 } else if (unlocked) {
                     statusText = 'Reward Unlocked';
@@ -1155,7 +1162,7 @@
                 }
 
                 return `
-                    <div class="milestone-card ${claim ? (claim.status === 'REDEEMED' ? 'redeemed' : 'ready') : (unlocked ? 'unlocked' : isNext ? 'current' : '')}">
+                    <div class="milestone-card ${claim ? (normalizedStatus === 'REDEEMED' ? 'redeemed' : 'ready') : (unlocked ? 'unlocked' : isNext ? 'current' : '')}">
                         <div class="milestone-icon">${milestone.icon}</div>
                         <div class="milestone-points">${milestone.points} pts</div>
                         <div class="milestone-reward">${milestone.reward}</div>
