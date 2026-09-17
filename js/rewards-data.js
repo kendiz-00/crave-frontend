@@ -1040,14 +1040,30 @@ const CraveRewardsData = (function() {
     // Milestone Claims Management
     const Claims = {
         get: async function() {
+            const localClaims = getStorage('crave_milestone_claims', []);
             if (isAuthenticated()) {
                 const backendData = await fetchBackendRewards();
-                if (backendData !== null && Array.isArray(backendData.claims)) {
-                    return backendData.claims;
-                }
-                return [];
+                const backendClaims = (backendData !== null && Array.isArray(backendData.claims)) ? backendData.claims : [];
+                const merged = [...backendClaims];
+                const statusPriority = { 'REDEEMED': 3, 'USED': 2, 'CLAIMED': 1 };
+
+                localClaims.forEach(localClaim => {
+                    const existingIndex = merged.findIndex(c => c.id === localClaim.id || c.rewardId === localClaim.rewardId);
+                    if (existingIndex >= 0) {
+                        const existing = merged[existingIndex];
+                        const currentStatus = String(localClaim.status || '').toUpperCase().trim();
+                        const existingStatus = String(existing.status || '').toUpperCase().trim();
+                        if ((statusPriority[currentStatus] || 0) >= (statusPriority[existingStatus] || 0)) {
+                            merged[existingIndex] = { ...existing, ...localClaim, status: currentStatus };
+                        }
+                    } else {
+                        merged.push({ ...localClaim, status: String(localClaim.status || '').toUpperCase().trim() });
+                    }
+                });
+
+                return merged;
             }
-            return getStorage('crave_milestone_claims', []);
+            return localClaims;
         },
 
         claim: async function(rewardId) {

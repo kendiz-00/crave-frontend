@@ -1119,13 +1119,16 @@
             };
 
             const claimsByRewardId = {};
+            const statusPriority = { 'REDEEMED': 3, 'USED': 2, 'CLAIMED': 1 };
             if (Array.isArray(claims)) {
                 claims.forEach(c => {
                     const existing = claimsByRewardId[c.rewardId];
                     const status = (c.status || '').toString().toUpperCase().trim();
                     const existingStatus = (existing && existing.status) ? existing.status.toString().toUpperCase().trim() : '';
-                    // Prefer REDEEMED over CLAIMED, otherwise keep most relevant
-                    if (!existing || status === 'REDEEMED' || (status === 'CLAIMED' && existingStatus !== 'REDEEMED')) {
+                    const currentPriority = statusPriority[status] || 0;
+                    const existingPriority = statusPriority[existingStatus] || 0;
+
+                    if (!existing || currentPriority > existingPriority) {
                         claimsByRewardId[c.rewardId] = c;
                     }
                 });
@@ -1162,7 +1165,7 @@
                 }
 
                 return `
-                    <div class="milestone-card ${claim ? (normalizedStatus === 'REDEEMED' ? 'redeemed' : 'ready') : (unlocked ? 'unlocked' : isNext ? 'current' : '')}">
+                    <div class="milestone-card ${claim ? ((normalizedStatus === 'REDEEMED' || normalizedStatus === 'USED') ? 'redeemed' : 'ready') : (unlocked ? 'unlocked' : isNext ? 'current' : '')}">
                         <div class="milestone-icon">${milestone.icon}</div>
                         <div class="milestone-points">${milestone.points} pts</div>
                         <div class="milestone-reward">${milestone.reward}</div>
