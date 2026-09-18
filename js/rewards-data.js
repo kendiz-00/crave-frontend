@@ -74,14 +74,13 @@ const CraveRewardsData = (function() {
     }
 
     // Fetch rewards from backend
-    async function fetchBackendRewards() {
+    async function fetchBackendRewards(forceRefresh = false) {
         if (!isAuthenticated()) {
             return null;
         }
 
-        // Check cache
         const now = Date.now();
-        if (backendCache && (now - cacheTimestamp) < CACHE_DURATION) {
+        if (!forceRefresh && backendCache && (now - cacheTimestamp) < CACHE_DURATION) {
             return backendCache;
         }
 

@@ -1054,6 +1054,9 @@
             const points = await CraveRewardsData.Points.get();
             document.getElementById('pointsValue').textContent = points;
 
+            // Force a fresh server read so redeemed claims are not hidden by cached reward state
+            await CraveRewardsData.Claims.get({ forceRefresh: true });
+
             // Load tier
             const tier = await CraveRewardsData.Tier.get();
             const tierInfo = CraveRewardsData.Tier.getInfo(tier);
@@ -1107,7 +1110,7 @@
         async function loadMilestones() {
             const milestones = CraveRewardsConfig.milestones;
             const points = await CraveRewardsData.Points.get();
-            const claims = await CraveRewardsData.Claims.get();
+            const claims = await CraveRewardsData.Claims.get({ forceRefresh: true });
             const grid = document.getElementById('milestonesGrid');
 
             const rewardIdMap = {

@@ -3450,7 +3450,7 @@
             }
 
             try {
-                const claims = await CraveRewardsData.Claims.get();
+                const claims = await CraveRewardsData.Claims.get({ forceRefresh: true });
                 const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => ((c.status||'').toString().toUpperCase().trim() === 'CLAIMED'));
 
                 if (activeClaims.length === 0) return;
