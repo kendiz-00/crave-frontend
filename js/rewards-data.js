@@ -1038,7 +1038,8 @@ const CraveRewardsData = (function() {
 
     // Milestone Claims Management
     const Claims = {
-        get: async function() {
+        get: async function(options = {}) {
+            const forceRefresh = !!(options && options.forceRefresh);
             const legacyClaims = (() => {
                 try {
                     const value = localStorage.getItem('crave_milestone_claims');
@@ -1051,26 +1052,24 @@ const CraveRewardsData = (function() {
             const localClaims = Array.isArray(legacyClaims) ? [...legacyClaims, ...currentClaims] : [...currentClaims];
 
             if (isAuthenticated()) {
-                const backendData = await fetchBackendRewards();
+                const backendData = await fetchBackendRewards(forceRefresh);
                 const backendClaims = (backendData !== null && Array.isArray(backendData.claims)) ? backendData.claims : [];
-                const merged = [...backendClaims];
-                const statusPriority = { 'REDEEMED': 3, 'USED': 2, 'CLAIMED': 1 };
 
-                localClaims.forEach(localClaim => {
-                    const existingIndex = merged.findIndex(c => c.id === localClaim.id || c.rewardId === localClaim.rewardId);
-                    if (existingIndex >= 0) {
-                        const existing = merged[existingIndex];
-                        const currentStatus = String(localClaim.status || '').toUpperCase().trim();
-                        const existingStatus = String(existing.status || '').toUpperCase().trim();
-                        if ((statusPriority[currentStatus] || 0) >= (statusPriority[existingStatus] || 0)) {
-                            merged[existingIndex] = { ...existing, ...localClaim, status: currentStatus };
-                        }
-                    } else {
-                        merged.push({ ...localClaim, status: String(localClaim.status || '').toUpperCase().trim() });
-                    }
-                });
+                if (backendData && Array.isArray(backendData.claims)) {
+                    return backendClaims.map(claim => ({
+                        ...claim,
+                        status: String(claim.status || '').trim().toUpperCase()
+                    }));
+                }
 
-                return merged;
+                if (forceRefresh) {
+                    return [];
+                }
+
+                return localClaims.map(claim => ({
+                    ...claim,
+                    status: String(claim.status || '').trim().toUpperCase()
+                }));
             }
 
             return localClaims;
@@ -1087,6 +1086,11 @@ const CraveRewardsData = (function() {
         },
 
         markUsed: function(rewardIdOrClaimId) {
+            if (isAuthenticated()) {
+                clearCache();
+                return { success: true, claim: { rewardId: rewardIdOrClaimId, status: 'USED' } };
+            }
+
             const claims = getStorage('crave_milestone_claims', []);
             const legacyClaims = (() => {
                 try {
@@ -1118,6 +1122,11 @@ const CraveRewardsData = (function() {
         },
 
         markRedeemed: function(rewardIdOrClaimId) {
+            if (isAuthenticated()) {
+                clearCache();
+                return { success: true, claim: { rewardId: rewardIdOrClaimId, status: 'REDEEMED' } };
+            }
+
             const claims = getStorage('crave_milestone_claims', []);
             const legacyClaims = (() => {
                 try {
