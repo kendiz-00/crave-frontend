@@ -770,7 +770,7 @@
 
         function contactSupport() {
             // In production, this would open a support chat or dial a phone number
-            alert('Support: +233 50 000 0000\nEmail: support@crave.com');
+            const msg = encodeURIComponent('Hello Crave Support (+233 55 002 0788), I need assistance with my order.'); window.open('https://wa.me/233550020788?text=' + msg, '_blank');
         }
     </script>
     <script src="js/analytics.js" defer></script>
@@ -863,8 +863,8 @@
 
 				<!-- Contact Info -->
 				<div class="crave-footer__contact">
-					<div class="crave-footer__address-line">📍 Accra, Ghana • 📞 +233 55 002 0788</div>
-					<div class="crave-footer__hours-time">⏰ Open Daily • 11:00 AM – 10:00 PM</div>
+					<div class="crave-footer__address-line"><i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #e53935;"></i> Accra, Ghana</div>
+					<div class="crave-footer__hours-time"><i class="fa-solid fa-clock" style="margin-right: 6px; color: #e53935;"></i> Open Daily • 11:00 AM – 10:00 PM</div>
 				</div>
 			</div>
 

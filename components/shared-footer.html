@@ -25,13 +25,13 @@
 			<div class="crave-footer__contact">
 				<h4 class="crave-footer__heading">Get in Touch</h4>
 				<address class="crave-footer__address">
-					<div class="crave-footer__address-line">📍 Accra, Ghana</div>
-					<a href="tel:+233550020788" class="crave-footer__link crave-footer__phone">📞 +233 55 002 0788</a>
-					<a href="mailto:hello@crave.com" class="crave-footer__link crave-footer__email">✉️ hello@crave.com</a>
+					<div class="crave-footer__address-line"><i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #e53935;"></i> Accra, Ghana</div>
+					<a href="tel:+233550020788" class="crave-footer__link crave-footer__phone"><i class="fa-solid fa-phone" style="margin-right: 6px; color: #e53935;"></i> +233 55 002 0788</a>
+					<a href="mailto:hello@crave.com" class="crave-footer__link crave-footer__email"><i class="fa-solid fa-envelope" style="margin-right: 6px; color: #e53935;"></i> hello@crave.com</a>
 				</address>
 				<div class="crave-footer__hours">
 					<span class="crave-footer__hours-label">Opening Hours</span>
-					<span class="crave-footer__hours-time">⏰ Open Daily • 11:00 AM – 10:00 PM</span>
+					<span class="crave-footer__hours-time"><i class="fa-solid fa-clock" style="margin-right: 6px; color: #e53935;"></i> Open Daily • 11:00 AM – 10:00 PM</span>
 				</div>
 			</div>
 
@@ -39,15 +39,6 @@
 			<div class="crave-footer__social">
 				<h4 class="crave-footer__heading">Follow CRAVE</h4>
 				<div class="crave-footer__social-links">
-					<a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="crave-footer__social-btn" aria-label="Instagram">
-						<i class="fa-brands fa-instagram"></i>
-					</a>
-					<a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="crave-footer__social-btn" aria-label="Facebook">
-						<i class="fa-brands fa-facebook"></i>
-					</a>
-					<a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="crave-footer__social-btn" aria-label="X (Twitter)">
-						<i class="fa-brands fa-x-twitter"></i>
-					</a>
 					<a href="https://wa.me/233550020788" target="_blank" rel="noopener noreferrer" class="crave-footer__social-btn" aria-label="WhatsApp">
 						<i class="fa-brands fa-whatsapp"></i>
 					</a>
@@ -63,7 +54,7 @@
 					<h3 class="crave-vip-card__title">Your Next Craving Starts Here.</h3>
 					<p class="crave-vip-card__subtitle">Get exclusive offers, new menu drops, and CRAVE VIP perks straight to your inbox.</p>
 				</div>
-				<form class="crave-vip-card__form" onsubmit="event.preventDefault(); alert('Thanks for joining Crave VIP!');">
+				<form class="crave-vip-card__form" onsubmit="event.preventDefault(); if (window.ToastNotifications) { ToastNotifications.success('Thanks for joining Crave VIP!'); } else { alert('Thanks for joining Crave VIP!'); } this.reset();">
 					<input type="email" name="vip_email" placeholder="Enter your email address..." class="crave-vip-card__input" aria-label="Email for VIP signup" required>
 					<button type="submit" class="crave-vip-card__btn">
 						<span>Join CRAVE VIP</span>
@@ -80,11 +71,11 @@
 					© <span id="craveFooterYear">2026</span> CRAVE Restaurant. All rights reserved.
 				</div>
 				<div class="crave-footer__legal">
-					<a href="#" class="crave-footer__legal-link">Privacy Policy</a>
+					<a href="javascript:void(0)" onclick="if(window.ToastNotifications) ToastNotifications.info('Privacy Policy details available upon request.');" class="crave-footer__legal-link">Privacy Policy</a>
 					<span class="crave-footer__legal-dot">•</span>
-					<a href="#" class="crave-footer__legal-link">Terms of Service</a>
+					<a href="javascript:void(0)" onclick="if(window.ToastNotifications) ToastNotifications.info('Terms of Service available upon request.');" class="crave-footer__legal-link">Terms of Service</a>
 					<span class="crave-footer__legal-dot">•</span>
-					<a href="#" class="crave-footer__legal-link">Cookie Preferences</a>
+					<a href="javascript:void(0)" onclick="if(window.ToastNotifications) ToastNotifications.info('Essential cookies only are used.');" class="crave-footer__legal-link">Cookie Preferences</a>
 				</div>
 			</div>
 		</div>

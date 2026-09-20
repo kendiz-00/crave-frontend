@@ -470,8 +470,8 @@
 
 				<!-- Contact Info -->
 				<div class="crave-footer__contact">
-					<div class="crave-footer__address-line">📍 Accra, Ghana • 📞 +233 55 002 0788</div>
-					<div class="crave-footer__hours-time">⏰ Open Daily • 11:00 AM – 10:00 PM</div>
+					<div class="crave-footer__address-line"><i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #e53935;"></i> Accra, Ghana</div>
+					<div class="crave-footer__hours-time"><i class="fa-solid fa-clock" style="margin-right: 6px; color: #e53935;"></i> Open Daily • 11:00 AM – 10:00 PM</div>
 				</div>
 			</div>
 
@@ -509,6 +509,7 @@
         let map;
         let marker;
         let selectedCoordinates = { lat: 5.6037, lng: -0.1870 }; // Accra, Ghana
+        let hasUserSelectedLocation = false;
         let cartItems = [];
         let deliveryFee = 0.00;
         
@@ -540,7 +541,8 @@
 
             // Global form submission & input event bindings
             const form = document.getElementById('checkoutForm');
-            if (form) {
+            if (form && !form.dataset.bound) {
+                form.dataset.bound = 'true';
                 form.addEventListener('submit', handleFormSubmit);
             }
 
@@ -921,9 +923,7 @@
             fullNameInput.addEventListener('input', validateFormReady);
             phoneInput.addEventListener('input', validateFormReady);
 
-            // Form submission
-            const form = document.getElementById('checkoutForm');
-            form.addEventListener('submit', handleFormSubmit);
+            // Form submission listener handled in initializeCheckout
         }
 
         // Handle form submission
@@ -2383,11 +2383,7 @@
             
             renderPaymentForm(selectedPaymentMethod);
             
-            // Handle form submission - redirect to WhatsApp with order details
-            const checkoutForm = document.getElementById('checkoutForm');
-            if (checkoutForm) {
-                checkoutForm.addEventListener('submit', handleFormSubmit);
-            }
+            // Form submission listener handled in initializeCheckout
 
             // Setup listeners
             setupOrderTypeListeners();

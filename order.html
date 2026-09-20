@@ -221,13 +221,13 @@
 				<div class="crave-footer__contact">
 					<h4 class="crave-footer__heading">Get in Touch</h4>
 					<address class="crave-footer__address">
-						<div class="crave-footer__address-line">📍 Accra, Ghana</div>
-						<a href="tel:+233550020788" class="crave-footer__link crave-footer__phone">📞 +233 55 002 0788</a>
-						<a href="mailto:hello@crave.com" class="crave-footer__link crave-footer__email">✉️ hello@crave.com</a>
+						<div class="crave-footer__address-line"><i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #e53935;"></i> Accra, Ghana</div>
+						<a href="tel:+233550020788" class="crave-footer__link crave-footer__phone"><i class="fa-solid fa-phone" style="margin-right: 6px; color: #e53935;"></i> +233 55 002 0788</a>
+						<a href="mailto:hello@crave.com" class="crave-footer__link crave-footer__email"><i class="fa-solid fa-envelope" style="margin-right: 6px; color: #e53935;"></i> hello@crave.com</a>
 					</address>
 					<div class="crave-footer__hours">
 						<span class="crave-footer__hours-label">Opening Hours</span>
-						<span class="crave-footer__hours-time">⏰ Open Daily • 11:00 AM – 10:00 PM</span>
+						<span class="crave-footer__hours-time"><i class="fa-solid fa-clock" style="margin-right: 6px; color: #e53935;"></i> Open Daily • 11:00 AM – 10:00 PM</span>
 					</div>
 				</div>
 
@@ -259,7 +259,7 @@
 						<h3 class="crave-vip-card__title">Your Next Craving Starts Here.</h3>
 						<p class="crave-vip-card__subtitle">Get exclusive offers, new menu drops, and CRAVE VIP perks straight to your inbox.</p>
 					</div>
-					<form class="crave-vip-card__form" onsubmit="event.preventDefault(); alert('Thanks for joining Crave VIP!');">
+					<form class="crave-vip-card__form" onsubmit="event.preventDefault(); if (window.ToastNotifications) { ToastNotifications.success('Thanks for joining Crave VIP!'); } else { alert('Thanks for joining Crave VIP!'); } this.reset();">
 						<input type="email" name="vip_email" placeholder="Enter your email address..." class="crave-vip-card__input" aria-label="Email for VIP signup" required>
 						<button type="submit" class="crave-vip-card__btn">
 							<span>Join CRAVE VIP</span>
