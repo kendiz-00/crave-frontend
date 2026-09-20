@@ -1,0 +1,136 @@
+name: CRAVE Frontend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Build and Test Job
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        if: hashFiles('package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: ${{ hashFiles('package-lock.json') != '' && 'npm' || '' }}
+
+      - name: Install dependencies
+        if: hashFiles('package.json') != ''
+        run: npm ci
+
+      - name: Lint
+        if: hashFiles('package.json') != ''
+        run: |
+          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.lint ? 0 : 1)"; then
+            npm run lint
+          else
+            echo "No lint script defined in package.json. Skipping lint."
+          fi
+
+      - name: Build
+        if: hashFiles('package.json') != ''
+        run: |
+          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.build ? 0 : 1)"; then
+            npm run build
+          else
+            echo "No build script defined in package.json. Skipping build."
+          fi
+
+      - name: Validate static site assets
+        run: |
+          echo "Validating core static site assets..."
+          test -f index.html || (echo "ERROR: index.html missing" && exit 1)
+          test -f manifest.json || (echo "ERROR: manifest.json missing" && exit 1)
+          test -f sw.js || (echo "ERROR: sw.js missing" && exit 1)
+          echo "Core static site assets validated successfully."
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: .
+          retention-days: 7
+
+  # Deploy to Staging (on push to develop)
+  deploy-staging:
+    name: Deploy to Staging
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    environment:
+      name: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to Vercel
+        id: deploy-staging
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_STAGING }}
+
+  # Deploy to Production (on push to main)
+  deploy-production:
+    name: Deploy to Production
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to Vercel
+        id: deploy-prod
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_PRODUCTION }}
+          vercel-args: '--prod'
+      
+      - name: Verify deployment
+        run: |
+          echo "Verifying deployment output..."
+          DEPLOY_URL="${{ steps.deploy-prod.outputs.preview-url }}"
+          if [ -n "$DEPLOY_URL" ]; then
+            echo "Vercel deployment URL: $DEPLOY_URL"
+            curl -f "$DEPLOY_URL" || exit 1
+            echo "Deployment verified successfully."
+          else
+            echo "Vercel deployment completed successfully."
+          fi
+      
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Frontend Production Deployment Failed',
+              body: `Deployment failed for commit ${context.sha}`,
+              labels: ['deployment', 'critical']
+            })
