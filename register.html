@@ -473,6 +473,12 @@
             <p>Join Crave and start earning rewards</p>
         </div>
 
+        <div id="craveFirstOrderSignupNotice" class="auth-promo-box" style="display: none; margin-bottom: 20px; padding: 16px 18px; border-radius: 14px; background: rgba(212,163,115,0.12); border: 1px solid rgba(212,163,115,0.28); color: #f8efdf; font-family: 'Poppins', sans-serif;">
+            <div style="font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: #ffd88d; font-weight: 700; margin-bottom: 8px;">FREE DRINK</div>
+            <div style="font-size: 1.05rem; font-weight: 700; margin-bottom: 6px;">Create your Crave account to unlock your FREE drink.</div>
+            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.8);">Your reward will be saved to your account, so you can use it when you place your first order.</div>
+        </div>
+
         <div class="auth-card">
             <form id="registerForm">
                 <div class="form-group">
@@ -605,6 +611,14 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shouldShowFirstOrderPrompt = urlParams.get('firstOrder') === 'true' || sessionStorage.getItem('crave_first_order_claim_pending') === '1';
+            if (shouldShowFirstOrderPrompt) {
+                sessionStorage.setItem('crave_first_order_claim_pending', '1');
+                const notice = document.getElementById('craveFirstOrderSignupNotice');
+                if (notice) notice.style.display = 'block';
+            }
+
             // Initialize auth manager
             AuthManager.initialize();
             AuthUI.initialize();

@@ -1338,6 +1338,157 @@ form button:hover {
 }
 
 
+.crave-first-order-bar {
+  position: sticky;
+  top: 0;
+  z-index: 120;
+  background: linear-gradient(135deg, rgba(17, 12, 8, 0.96), rgba(42, 27, 16, 0.96));
+  border-bottom: 1px solid rgba(212, 163, 115, 0.26);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.crave-first-order-bar__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 10px 18px;
+  color: #f4ead8;
+  font-family: 'Poppins', sans-serif;
+}
+
+.crave-first-order-bar__copy {
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.crave-first-order-bar__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #d4a373 0%, #f4d08a 100%);
+  color: #1b120a;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 20px rgba(212, 163, 115, 0.2);
+}
+
+.crave-first-order-bar__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(212, 163, 115, 0.35);
+}
+
+.crave-first-order-bar__close {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.crave-first-order-reminder {
+  margin: 18px auto 26px;
+  max-width: 1280px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(212, 163, 115, 0.18), rgba(34, 24, 16, 0.9));
+  border: 1px solid rgba(212, 163, 115, 0.28);
+  box-shadow: 0 14px 28px rgba(46, 30, 18, 0.18);
+}
+
+.crave-first-order-reminder__content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  color: #f9f0dc;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.crave-first-order-reminder__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 215, 0, 0.12);
+  font-size: 1.2rem;
+}
+
+.crave-first-order-reminder__close {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.crave-first-order-cart-card {
+  margin: 0 0 20px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(212, 163, 115, 0.18), rgba(24, 19, 16, 0.92));
+  border: 1px solid rgba(212, 163, 115, 0.28);
+  box-shadow: 0 12px 26px rgba(32, 22, 16, 0.12);
+  color: #f9f0dc;
+  font-family: 'Poppins', sans-serif;
+}
+
+.crave-first-order-cart-card__header {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.crave-first-order-cart-card__body {
+  font-size: 0.92rem;
+  opacity: 0.92;
+}
+
+@media (max-width: 768px) {
+  .crave-first-order-bar__inner {
+    gap: 10px;
+    padding: 9px 14px;
+    flex-wrap: wrap;
+    min-height: 52px;
+  }
+
+  .crave-first-order-bar__copy {
+    font-size: 0.83rem;
+    text-align: center;
+  }
+
+  .crave-first-order-bar__cta {
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 0.72rem;
+  }
+
+  .crave-first-order-reminder__content {
+    padding: 14px 15px;
+    font-size: 0.9rem;
+  }
+}
+
 @media (max-width: 480px) {
   .hero-headline {
     font-size: 2rem;
@@ -1348,6 +1499,23 @@ form button:hover {
   .btn-hero {
     width: 180px;
     padding: 0.8rem 1.5rem;
+  }
+
+  .crave-first-order-bar__inner {
+    justify-content: space-between;
+  }
+
+  .crave-first-order-bar__copy {
+    width: 100%;
+    order: 1;
+  }
+
+  .crave-first-order-bar__cta {
+    order: 2;
+  }
+
+  .crave-first-order-bar__close {
+    order: 3;
   }
 }
 

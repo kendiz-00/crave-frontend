@@ -369,6 +369,7 @@ const AuthUI = (function() {
         const confirmPassword = form.querySelector('[name="confirmPassword"]').value;
         let phone = form.querySelector('[name="phone"]')?.value || '';
         const submitBtn = form.querySelector('button[type="submit"]');
+        const shouldClaimFirstOrder = sessionStorage.getItem('crave_first_order_claim_pending') === '1';
         
         // Normalize Ghana phone numbers (convert 0550030877 to +233550030877)
         if (phone && phone.startsWith('0') && phone.length === 10) {
@@ -403,14 +404,22 @@ const AuthUI = (function() {
             const result = await window.AuthManager.register({ firstName, lastName, email, password, phone });
             
             if (result.success) {
+                if (shouldClaimFirstOrder && typeof window.AuthAPI !== 'undefined' && window.AuthAPI.claimReward) {
+                    try {
+                        const claimResult = await window.AuthAPI.claimReward('first_order_free_drink');
+                        if (claimResult && claimResult.success) {
+                            sessionStorage.setItem('crave_first_order_claim_pending', '0');
+                        }
+                    } catch (error) {
+                        console.warn('First-order reward claim after registration was rejected by backend:', error);
+                    }
+                }
+
                 showSuccess('Registration successful!');
-                
-                // Update navbar
                 updateNavbar();
-                
-                // Redirect to home
+                sessionStorage.setItem('redirectAfterLogin', 'index.html?firstOrderReward=claimed');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'index.html?firstOrderReward=claimed';
                 }, 500);
             } else {
                 showError(result.error || 'Registration failed');

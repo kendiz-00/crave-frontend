@@ -622,6 +622,223 @@ function initCravePwaLayer() {
   }
 }
 
+async function getFirstOrderPromoState() {
+  const orderHistory = (() => {
+    const candidates = ['crave_orders', 'crave_order_history', 'crave_completed_orders'];
+
+    for (const key of candidates) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+        if (parsed && Array.isArray(parsed.orders)) return parsed.orders;
+      } catch (e) {
+        // ignore malformed local storage entries
+      }
+    }
+
+    if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.Orders && typeof CraveRewardsData.Orders.get === 'function') {
+      const orders = CraveRewardsData.Orders.get();
+      if (Array.isArray(orders)) return orders;
+    }
+
+    return [];
+  })();
+
+  const hasPlacedOrder = Array.isArray(orderHistory) && orderHistory.length > 0;
+  const user = (typeof AuthManager !== 'undefined' && typeof AuthManager.getUserData === 'function') ? AuthManager.getUserData() : null;
+  const isAuthenticated = (typeof AuthManager !== 'undefined' && typeof AuthManager.isAuthenticated === 'function') ? AuthManager.isAuthenticated() : Boolean(user && localStorage.getItem('crave_access_token'));
+
+  if (hasPlacedOrder) {
+    return { state: 'ineligible', headline: 'Offer unavailable', cta: 'Explore Menu' };
+  }
+
+  if (!isAuthenticated || !user) {
+    return { state: 'guest', headline: 'New to Crave? Enjoy a FREE drink with your first order.', cta: 'Claim My Free Drink' };
+  }
+
+  try {
+    if (typeof AuthAPI !== 'undefined' && AuthAPI.getRewards) {
+      const response = await AuthAPI.getRewards();
+      const claims = response && response.success && Array.isArray(response.data && response.data.claims) ? response.data.claims : [];
+      const firstOrderClaim = claims.find(claim => claim && claim.rewardId === 'first_order_free_drink');
+
+      if (firstOrderClaim && String(firstOrderClaim.status).toUpperCase() === 'REDEEMED') {
+        return { state: 'ineligible', headline: 'Offer unavailable', cta: 'Explore Menu' };
+      }
+
+      if (firstOrderClaim && String(firstOrderClaim.status).toUpperCase() === 'CLAIMED') {
+        return { state: 'claimed', headline: 'Your FREE drink is waiting 🥤', cta: 'Choose Your Drink' };
+      }
+    }
+  } catch (error) {
+    console.warn('Unable to fetch first-order reward state from backend:', error);
+  }
+
+  return { state: 'eligible', headline: '🎉 Your FREE drink is unlocked!', cta: 'Claim My Free Drink' };
+}
+
+function trackFirstOrderPromoEvent(action, location) {
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', action, {
+      promotion_name: 'first_order_drink',
+      promotion_id: 'first_order_drink',
+      promotion_location: location || 'site',
+      page_location: window.location.pathname,
+      event_category: 'promotion'
+    });
+  }
+}
+
+function shouldHideFirstOrderSurface(key) {
+  const dismissed = sessionStorage.getItem('crave_first_order_dismissed_' + key);
+  return dismissed === '1';
+}
+
+function dismissFirstOrderSurface(key) {
+  sessionStorage.setItem('crave_first_order_dismissed_' + key, '1');
+}
+
+async function renderFirstOrderPromoBar() {
+  if (document.getElementById('craveFirstOrderBar')) return;
+  if (window.location.pathname.includes('checkout.html')) return;
+  const status = await getFirstOrderPromoState();
+  if (status.state === 'ineligible' || shouldHideFirstOrderSurface('bar')) return;
+
+  const bar = document.createElement('div');
+  bar.id = 'craveFirstOrderBar';
+  bar.className = 'crave-first-order-bar';
+  const copy = status.state === 'guest'
+    ? 'First order? Get a FREE drink 🥤'
+    : status.state === 'claimed'
+      ? 'Your FREE drink is waiting 🥤'
+      : '🎉 Your FREE drink is unlocked!';
+  bar.innerHTML = `
+    <div class="crave-first-order-bar__inner">
+      <span class="crave-first-order-bar__copy">${copy}</span>
+      <a href="${status.state === 'guest' ? 'register.html' : 'menu.html'}" class="crave-first-order-bar__cta">${status.cta}</a>
+      <button type="button" class="crave-first-order-bar__close" aria-label="Dismiss first-order offer">×</button>
+    </div>
+  `;
+
+  const closeBtn = bar.querySelector('.crave-first-order-bar__close');
+  closeBtn.addEventListener('click', function() {
+    dismissFirstOrderSurface('bar');
+    bar.remove();
+  });
+
+  const cta = bar.querySelector('.crave-first-order-bar__cta');
+  cta.addEventListener('click', function(event) {
+    if (status.state === 'guest') {
+      event.preventDefault();
+      sessionStorage.setItem('redirectAfterLogin', 'index.html?firstOrderReward=claimed');
+      sessionStorage.setItem('crave_first_order_claim_pending', '1');
+      window.location.href = 'register.html?firstOrder=true';
+      return;
+    }
+    trackFirstOrderPromoEvent('first_order_cta_click', 'sticky_bar');
+  });
+
+  const firstNode = document.body.firstChild;
+  document.body.insertBefore(bar, firstNode || null);
+  trackFirstOrderPromoEvent('promotion_view', 'sticky_bar');
+}
+
+async function renderHomeHeroOffer() {
+  const hero = document.querySelector('.hero-copy-col');
+  if (!hero || document.getElementById('craveFirstOrderHeroPromo')) return;
+
+  const status = await getFirstOrderPromoState();
+  if (status.state === 'ineligible' || shouldHideFirstOrderSurface('hero')) return;
+
+  const promo = document.createElement('div');
+  promo.id = 'craveFirstOrderHeroPromo';
+  promo.className = 'crave-first-order-hero-promo';
+  const badge = status.state === 'guest' ? 'NEW TO CRAVE?' : status.state === 'claimed' ? 'YOUR DRINK' : 'FIRST ORDER';
+  const text = status.state === 'guest'
+    ? 'Enjoy a FREE drink with your first order.'
+    : status.state === 'claimed'
+      ? 'Your FREE drink is waiting 🥤'
+      : 'Your first order is on us 🥤';
+  promo.innerHTML = `
+    <span class="crave-first-order-hero-promo__badge">${badge}</span>
+    <span class="crave-first-order-hero-promo__text">${text}</span>
+  `;
+
+  const ctaGroup = hero.querySelector('.hero-cta-group');
+  if (ctaGroup) {
+    hero.insertBefore(promo, ctaGroup);
+  } else {
+    hero.appendChild(promo);
+  }
+
+  trackFirstOrderPromoEvent('promotion_view', 'hero');
+}
+
+async function renderMenuOrderReminder() {
+  const menuRoot = document.querySelector('.bolt-menu-container');
+  if (!menuRoot || document.getElementById('craveFirstOrderReminder')) return;
+
+  const status = await getFirstOrderPromoState();
+  if (status.state === 'ineligible' || shouldHideFirstOrderSurface('menu')) return;
+
+  const reminder = document.createElement('div');
+  reminder.id = 'craveFirstOrderReminder';
+  reminder.className = 'crave-first-order-reminder';
+  const message = status.state === 'guest'
+    ? 'You’re eligible for a FREE drink with your first order.'
+    : '🎉 Your FREE drink is waiting! Choose your complimentary drink before checking out.';
+  reminder.innerHTML = `
+    <div class="crave-first-order-reminder__content">
+      <span class="crave-first-order-reminder__icon">🥤</span>
+      <span>${message}</span>
+      <button type="button" class="crave-first-order-reminder__close" aria-label="Dismiss reminder">×</button>
+    </div>
+  `;
+
+  const closeBtn = reminder.querySelector('.crave-first-order-reminder__close');
+  closeBtn.addEventListener('click', function() {
+    dismissFirstOrderSurface('menu');
+    reminder.remove();
+  });
+
+  if (menuRoot.parentNode) {
+    menuRoot.parentNode.insertBefore(reminder, menuRoot);
+  }
+
+  trackFirstOrderPromoEvent('promotion_view', 'menu_reminder');
+}
+
+async function renderCartCheckoutRewardNote() {
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  const isCartPage = page === 'cart.html';
+  const isCheckoutPage = page === 'checkout.html';
+
+  if (!isCartPage && !isCheckoutPage) return;
+
+  const status = await getFirstOrderPromoState();
+  if (status.state === 'ineligible' || shouldHideFirstOrderSurface('cart')) return;
+
+  const target = isCartPage ? document.querySelector('.cart-content, .cart-container') : document.querySelector('.checkout-summary-section');
+  if (!target || document.querySelector('.crave-first-order-cart-card')) return;
+
+  const card = document.createElement('div');
+  card.className = 'crave-first-order-cart-card';
+  card.innerHTML = `
+    <div class="crave-first-order-cart-card__header">🎉 First-order reward unlocked!</div>
+    <div class="crave-first-order-cart-card__body">Choose your complimentary drink before checking out.</div>
+  `;
+
+  if (isCartPage) {
+    target.insertBefore(card, target.firstChild);
+  } else {
+    target.insertBefore(card, target.firstChild);
+  }
+
+  trackFirstOrderPromoEvent('promotion_view', isCartPage ? 'cart' : 'checkout');
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', async function() {
   // Initialize authentication system
@@ -629,6 +846,11 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (typeof AuthUI !== 'undefined') {
     AuthUI.initialize();
   }
+
+  await renderHomeHeroOffer();
+  await renderFirstOrderPromoBar();
+  await renderMenuOrderReminder();
+  await renderCartCheckoutRewardNote();
 
   initCravePremiumTactileCapture();
   initCravePwaLayer();
