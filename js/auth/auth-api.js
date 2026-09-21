@@ -67,6 +67,28 @@ const AuthAPI = (function() {
     }
 
     /**
+     * Send OTP to phone number
+     * POST /api/auth/phone/send-otp
+     */
+    async function sendOtp(phoneNumber) {
+        if (!window.APIClient) throw new Error('API client not available');
+        return await window.APIClient.post('/api/auth/phone/send-otp', { phoneNumber }, {
+            useCache: false
+        });
+    }
+
+    /**
+     * Verify OTP for phone number
+     * POST /api/auth/phone/verify-otp
+     */
+    async function verifyOtp(phoneNumber, otp) {
+        if (!window.APIClient) throw new Error('API client not available');
+        return await window.APIClient.post('/api/auth/phone/verify-otp', { phoneNumber, otp }, {
+            useCache: false
+        });
+    }
+
+    /**
      * Get user's full reward state
      * GET /api/rewards
      */
@@ -106,6 +128,8 @@ const AuthAPI = (function() {
         logout,
         refreshToken,
         getCurrentUser,
+        sendOtp,
+        verifyOtp,
         getRewards,
         createRewardTransaction,
         claimReward

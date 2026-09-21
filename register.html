@@ -380,6 +380,21 @@
                 font-size: 2rem;
             }
         }
+
+        .registration-step {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -481,105 +496,149 @@
 
         <div class="auth-card">
             <form id="registerForm">
-                <div class="form-group">
-                    <label class="form-label" for="firstName">First Name</label>
-                    <input 
-                        type="text" 
-                        id="firstName" 
-                        name="firstName" 
-                        class="form-input" 
-                        placeholder="Enter your first name"
-                        required
-                        autocomplete="given-name"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="lastName">Last Name</label>
-                    <input 
-                        type="text" 
-                        id="lastName" 
-                        name="lastName" 
-                        class="form-input" 
-                        placeholder="Enter your last name"
-                        required
-                        autocomplete="family-name"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="email">Email Address</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        class="form-input" 
-                        placeholder="Enter your email"
-                        required
-                        autocomplete="email"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="phone">Phone Number (Optional)</label>
-                    <input 
-                        type="tel" 
-                        id="phone" 
-                        name="phone" 
-                        class="form-input" 
-                        placeholder="Enter your phone number"
-                        autocomplete="tel"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="password">Password</label>
-                    <div class="password-wrapper">
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            class="form-input" 
-                            placeholder="Create a password"
+                <!-- Step 1: Phone Number -->
+                <div id="step1" class="registration-step">
+                    <div class="form-group">
+                        <label class="form-label" for="phone">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            class="form-input"
+                            placeholder="024 XXX XXXX"
                             required
-                            autocomplete="new-password"
+                            autocomplete="tel"
                         >
-                        <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 6px;">
+                            Enter your Ghana phone number (e.g., 0241234567)
+                        </div>
                     </div>
-                    <div class="password-strength-bar"></div>
-                    <div class="password-strength-text"></div>
+
+                    <button type="button" class="btn-auth" id="sendOtpBtn">
+                        Send Verification Code
+                    </button>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="confirmPassword">Confirm Password</label>
-                    <div class="password-wrapper">
-                        <input 
-                            type="password" 
-                            id="confirmPassword" 
-                            name="confirmPassword" 
-                            class="form-input" 
-                            placeholder="Confirm your password"
+                <!-- Step 2: OTP Verification -->
+                <div id="step2" class="registration-step" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label" for="otp">Verification Code</label>
+                        <input
+                            type="text"
+                            id="otp"
+                            name="otp"
+                            class="form-input"
+                            placeholder="6-digit code"
+                            maxlength="6"
+                            style="letter-spacing: 0.5em; text-align: center; font-size: 1.2rem;"
                             required
-                            autocomplete="new-password"
+                            autocomplete="one-time-code"
                         >
-                        <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                            <i class="fa-solid fa-eye"></i>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 6px;">
+                            Enter the 6-digit code sent to your phone
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-auth" id="verifyOtpBtn">
+                        Verify Phone Number
+                    </button>
+
+                    <div style="text-align: center; margin-top: 16px;">
+                        <button type="button" id="resendOtpBtn" style="background: none; border: none; color: #d4a574; font-size: 0.9rem; cursor: pointer; text-decoration: underline;">
+                            Resend code
                         </button>
                     </div>
                 </div>
 
-                <div class="form-options">
-                    <input type="checkbox" id="terms" class="terms-checkbox" required>
-                    <label for="terms" class="terms-label">
-                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-                    </label>
-                </div>
+                <!-- Step 3: Account Details -->
+                <div id="step3" class="registration-step" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label" for="firstName">First Name</label>
+                        <input
+                            type="text"
+                            id="firstName"
+                            name="firstName"
+                            class="form-input"
+                            placeholder="Enter your first name"
+                            required
+                            autocomplete="given-name"
+                        >
+                    </div>
 
-                <button type="submit" class="btn-auth" id="registerBtn">
-                    Create Account
-                </button>
+                    <div class="form-group">
+                        <label class="form-label" for="lastName">Last Name</label>
+                        <input
+                            type="text"
+                            id="lastName"
+                            name="lastName"
+                            class="form-input"
+                            placeholder="Enter your last name"
+                            required
+                            autocomplete="family-name"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address (Optional)</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-input"
+                            placeholder="Enter your email (optional)"
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="password-wrapper">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-input"
+                                placeholder="Create a password"
+                                required
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength-bar"></div>
+                        <div class="password-strength-text"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <div class="password-wrapper">
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                class="form-input"
+                                placeholder="Confirm your password"
+                                required
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <input type="checkbox" id="terms" class="terms-checkbox" required>
+                        <label for="terms" class="terms-label">
+                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-auth" id="registerBtn">
+                        Create Account
+                    </button>
+                </div>
             </form>
 
             <div class="auth-divider">
@@ -629,6 +688,19 @@
                 return;
             }
 
+            // Registration flow state
+            let currentStep = 1;
+            let verifiedPhoneNumber = null;
+            let resendCooldown = false;
+
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const phoneInput = document.getElementById('phone');
+            const otpInput = document.getElementById('otp');
+            const sendOtpBtn = document.getElementById('sendOtpBtn');
+            const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+            const resendOtpBtn = document.getElementById('resendOtpBtn');
             const registerForm = document.getElementById('registerForm');
             const passwordInput = document.getElementById('password');
             const confirmPasswordInput = document.getElementById('confirmPassword');
@@ -647,7 +719,66 @@
                 AuthUI.showPasswordStrength(this.value, this.parentElement.parentElement);
             });
 
-            // Form submission
+            // Step 1: Send OTP
+            sendOtpBtn.addEventListener('click', async function() {
+                const result = await AuthUI.handleSendOtp(phoneInput, sendOtpBtn);
+                if (result.success) {
+                    verifiedPhoneNumber = result.phoneNumber;
+                    currentStep = 2;
+                    step1.style.display = 'none';
+                    step2.style.display = 'block';
+                    otpInput.focus();
+                    startResendCooldown();
+                }
+            });
+
+            // Step 2: Verify OTP
+            verifyOtpBtn.addEventListener('click', async function() {
+                const result = await AuthUI.handleVerifyOtp(verifiedPhoneNumber, otpInput, verifyOtpBtn);
+                if (result.success) {
+                    currentStep = 3;
+                    step2.style.display = 'none';
+                    step3.style.display = 'block';
+                }
+            });
+
+            // Resend OTP
+            resendOtpBtn.addEventListener('click', async function() {
+                if (resendCooldown) return;
+
+                const result = await AuthUI.handleSendOtp(phoneInput, resendOtpBtn);
+                if (result.success) {
+                    otpInput.value = '';
+                    otpInput.focus();
+                    startResendCooldown();
+                }
+            });
+
+            function startResendCooldown() {
+                resendCooldown = true;
+                resendOtpBtn.disabled = true;
+                resendOtpBtn.style.opacity = '0.5';
+                resendOtpBtn.style.cursor = 'not-allowed';
+
+                let seconds = 60;
+                resendOtpBtn.textContent = `Resend code (${seconds}s)`;
+
+                const interval = setInterval(() => {
+                    seconds--;
+                    resendOtpBtn.textContent = `Resend code (${seconds}s)`;
+
+                    if (seconds <= 0) {
+                        clearInterval(interval);
+                        resendCooldown = false;
+                        resendOtpBtn.disabled = false;
+                        resendOtpBtn.style.opacity = '1';
+                        resendOtpBtn.style.cursor = 'pointer';
+                        resendOtpBtn.textContent = 'Resend code';
+                    }
+                }, 1000);
+            }
+
+            // Step 3: Form submission
             registerForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 await AuthUI.handleRegisterForm(registerForm);

@@ -377,12 +377,12 @@ const AuthUI = (function() {
         }
         
         // Validation
-        if (!firstName || !lastName || !email || !password || !confirmPassword) {
+        if (!firstName || !lastName || !phone || !password || !confirmPassword) {
             showError('Please fill in all required fields');
             return;
         }
         
-        if (!validateEmail(email)) {
+        if (email && !validateEmail(email)) {
             showError('Please enter a valid email address');
             return;
         }
@@ -401,7 +401,7 @@ const AuthUI = (function() {
         showLoading(submitBtn);
         
         try {
-            const result = await window.AuthManager.register({ firstName, lastName, email, password, phone });
+            const result = await window.AuthManager.register({ firstName, lastName, email, phone, password });
             
             if (result.success) {
                 if (shouldClaimFirstOrder && typeof window.AuthAPI !== 'undefined' && window.AuthAPI.claimReward) {
@@ -433,6 +433,76 @@ const AuthUI = (function() {
     }
 
     /**
+     * Handle phone verification - send OTP
+     */
+    async function handleSendOtp(phoneInput, submitBtn) {
+        const phoneNumber = phoneInput.value.trim();
+
+        if (!phoneNumber) {
+            showError('Please enter your phone number');
+            return;
+        }
+
+        // Normalize Ghana phone numbers
+        let normalizedPhone = phoneNumber;
+        if (phoneNumber.startsWith('0') && phoneNumber.length === 10) {
+            normalizedPhone = '+233' + phoneNumber.substring(1);
+        }
+
+        showLoading(submitBtn);
+
+        try {
+            const result = await window.AuthAPI.sendOtp(normalizedPhone);
+
+            if (result.success) {
+                showSuccess('Verification code sent to ' + normalizedPhone);
+                return { success: true, phoneNumber: normalizedPhone };
+            } else {
+                showError(result.message || 'Failed to send verification code');
+                hideLoading(submitBtn);
+                return { success: false };
+            }
+        } catch (error) {
+            console.error('Send OTP error:', error);
+            showError('Failed to send verification code. Please try again.');
+            hideLoading(submitBtn);
+            return { success: false };
+        }
+    }
+
+    /**
+     * Handle OTP verification
+     */
+    async function handleVerifyOtp(phoneNumber, otpInput, submitBtn) {
+        const otp = otpInput.value.trim();
+
+        if (!otp || otp.length !== 6) {
+            showError('Please enter the 6-digit verification code');
+            return;
+        }
+
+        showLoading(submitBtn);
+
+        try {
+            const result = await window.AuthAPI.verifyOtp(phoneNumber, otp);
+
+            if (result.success && result.data.verified) {
+                showSuccess('Phone number verified successfully!');
+                return { success: true };
+            } else {
+                showError(result.message || 'Invalid verification code');
+                hideLoading(submitBtn);
+                return { success: false };
+            }
+        } catch (error) {
+            console.error('Verify OTP error:', error);
+            showError('Invalid verification code. Please try again.');
+            hideLoading(submitBtn);
+            return { success: false };
+        }
+    }
+
+    /**
      * Initialize auth UI listeners
      */
     function initialize() {
@@ -460,6 +530,8 @@ const AuthUI = (function() {
         togglePasswordVisibility,
         handleLoginForm,
         handleRegisterForm,
+        handleSendOtp,
+        handleVerifyOtp,
         initialize
     };
 })();
