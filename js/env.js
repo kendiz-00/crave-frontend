@@ -15,7 +15,7 @@
 
     const defaultApiUrl = isLocalhost
         ? 'http://localhost:3000'
-        : 'https://crave-backend.onrender.com';
+        : 'https://crave-backend-oie3.onrender.com';
 
     const defaultAppUrl = isLocalhost 
         ? 'http://localhost:3000' 
@@ -43,7 +43,7 @@
 
     // Force production API base URL if using legacy staging URL or on remote host
     if (!isLocalhost && (!window.ENV.API_BASE_URL || window.ENV.API_BASE_URL.includes('staging') || window.ENV.API_BASE_URL.includes('crave-backend-staging.onrender.com'))) {
-        window.ENV.API_BASE_URL = 'https://crave-backend.onrender.com';
+        window.ENV.API_BASE_URL = 'https://crave-backend-oie3.onrender.com';
     }
 
     // 🔍 DIAGNOSTIC: Log final state
