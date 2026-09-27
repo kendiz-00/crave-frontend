@@ -1265,18 +1265,11 @@
                     return;
                 }
             } catch (e) {
-                console.warn('[MENU] Local cache parse failed, using fallback:', e);
+                console.warn('[MENU] Local cache parse failed:', e);
             }
 
-            // Fallback rendering for first visit before API response
-            menuData = fallbackMenuData;
-            const fallbackCategories = Object.keys(fallbackMenuData).map(key => ({
-                slug: key,
-                name: fallbackMenuData[key].title
-            }));
-            renderCategoryNavigation(fallbackCategories);
-            initializeMenu();
-            console.log('[MENU] Instantly rendered fallback menu');
+            // Don't use fallback - just wait for API to prevent switching
+            console.log('[MENU] No cache available, waiting for API data...');
         }
 
         // Load categories and menu from API in parallel
