@@ -1976,7 +1976,7 @@
         }
 
         // Initialize everything on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             console.log('Menu page initializing...');
 
             // Hide search empty state on page load
@@ -1996,7 +1996,28 @@
                 initBoltMenuSearch();
             } catch (eSearch) {
                 console.error('Menu search init failed:', eSearch);
-            }            
+            }
+            
+            // Initialize auth
+            if (typeof AuthManager !== 'undefined') {
+                await AuthManager.initialize();
+                AuthUI.initialize();
+            }
+            
+            // Initialize cart sync
+            if (typeof CartSync !== 'undefined') {
+                CartSync.initialize();
+            }
+
+            // Initialize reward context and banner
+            await initRewardContextOnMenu();
+
+            // Track menu views for recommendations
+            if (CraveRecommendations) {
+                const recommendations = CraveRecommendations.getPersonalized();
+                console.log('Personalized recommendations loaded:', recommendations);
+            }
+            
             // Delegated add-to-cart (premium cards)
             const menuRoot = document.querySelector('.bolt-menu-container');
             if (menuRoot) {
@@ -3541,25 +3562,6 @@
             });
         }
 
-        // Initialize rewards on menu page
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Initialize auth
-            await AuthManager.initialize();
-            AuthUI.initialize();
-            
-            // Initialize cart sync
-            CartSync.initialize();
-
-            // Initialize reward context and banner
-            await initRewardContextOnMenu();
-
-            // Track menu views for recommendations
-            if (CraveRecommendations) {
-                // Personalized recommendations could be shown here
-                const recommendations = CraveRecommendations.getPersonalized();
-                console.log('Personalized recommendations loaded:', recommendations);
-            }
-            
             // Show combo suggestions when items are added to cart
             const originalAddToCart = window.addToCartWithCustomizations;
             if (originalAddToCart && CraveRewardsEngine) {
