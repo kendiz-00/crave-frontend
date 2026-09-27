@@ -1031,14 +1031,14 @@
 
         // Fallback menu dataset for when API is unavailable
         const fallbackMenuData = {
-            'most-popular': {
-                title: 'Most Popular',
-                description: 'Our best-selling items loved by customers',
+            'loaded-fries': {
+                title: 'Loaded Fries',
+                description: 'Our signature loaded fries with your choice of toppings',
                 items: [
                     { name: 'Loaded Fries', price: 35, description: 'Our signature loaded fries with cheese and toppings', image: 'loaded_fries.jpg', available: true, featured: true, badges: ['bestseller'] },
-                    { name: 'Jerk Chicken Shawarma', price: 45, description: 'Spicy jerk chicken wrapped in warm shawarma', image: 'jerk_shawarmah.jpg', available: true, featured: true, badges: ['hot'] },
-                    { name: 'Chocolate Rich Buttercream Frosting Jar Cake', price: 40, description: 'Decadent chocolate cake with rich buttercream frosting', image: 'choco_jar.jpeg', available: true, featured: true, badges: ['chef'] },
-                    { name: 'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries', price: 55, description: 'Extremely spicy fried chicken for the brave', image: 'hot_chicken.jpeg', available: true, featured: true, badges: ['hot'] }
+                    { name: 'Cheese Beef Loaded Fries', price: 42, description: 'Loaded fries with seasoned beef and melted cheese', image: 'beef_laodedfries.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Loaded BBQ Chicken Cheddar Cheese Fries', price: 40, description: 'Crispy chicken with BBQ sauce and melted cheddar', image: 'bbq_cheddar_fries.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Bacon Cheddar Fries', price: 38, description: 'Loaded fries with crispy bacon and cheddar cheese', image: 'bacon_fries (2).jpg', available: true, featured: false, badges: [] }
                 ]
             },
             'texas-chicken': {
@@ -1673,7 +1673,7 @@
 
         function categorySearchKeywords(categoryId) {
             const map = {
-                'most-popular': 'popular trending bestseller',
+                'loaded-fries': 'loaded fries cheese beef bacon cheddar bbq chicken popular trending bestseller',
                 'texas-chicken': 'chicken wings burger sandwich fries crispy texas bbq hot spicy',
                 'mexican-food': 'mexican burrito taco tacos beef',
                 'cupcakes': 'dessert cake jar sweet cupcake pastry',
