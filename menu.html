@@ -2010,26 +2010,30 @@
                 console.log('Personalized recommendations loaded:', recommendations);
             }
             
-            // Delegated add-to-cart (premium cards)
+            // Delegated add-to-cart & card click (premium cards)
             const menuRoot = document.querySelector('.bolt-menu-container');
             if (menuRoot) {
                 menuRoot.addEventListener('click', function (e) {
-                    const btn = e.target.closest('.bolt-food-add-btn');
+                    const card = e.target.closest('.bolt-food-item');
+                    if (!card) return;
+
+                    // If user clicked an interactive element inside card that isn't the add button or card body, ignore
+                    if (e.target.closest('a') || (e.target.closest('button') && !e.target.closest('.bolt-food-add-btn'))) return;
+
+                    const btn = card.querySelector('.bolt-food-add-btn');
                     if (!btn || btn.disabled) return;
+
                     e.preventDefault();
                     e.stopPropagation();
-                    
-                    console.log('Add button clicked:', btn);
-                    
-                    const enc = btn.getAttribute('data-item-name');
+
+                    const enc = btn.getAttribute('data-item-name') || card.dataset.itemRef;
                     const priceStr = btn.getAttribute('data-item-price');
-                    console.log('Item name:', enc, 'Price:', priceStr);
-                    
+
                     if (!enc || priceStr == null) {
                         console.error('Missing item data:', { enc, priceStr });
                         return;
                     }
-                    
+
                     var itemName;
                     try {
                         itemName = decodeURIComponent(enc);
@@ -2064,20 +2068,21 @@
                         addons: [],
                         timestamp: new Date().toISOString()
                     };
-                    
+
                     applyRewardMetadataIfEligible(cartItem);
 
                     // Always read from localStorage first to ensure sync
                     var cart = JSON.parse(localStorage.getItem('craveCart')) || [];
                     cart.push(cartItem);
                     localStorage.setItem('craveCart', JSON.stringify(cart));
-                    
+
                     // Sync global state
                     cartItems = cart;
                     cartCount = cartItems.length;
-                    
+
                     if (window.CraveSound) window.CraveSound.tap();
                     if (window.CraveHaptic) window.CraveHaptic.softDouble();
+                    document.dispatchEvent(new CustomEvent('cartChanged', { detail: cart }));
                     updateCartBadge({ bump: true });
                     updateStickyCartBar();
                     showCartFeedback(itemName);
@@ -3084,37 +3089,57 @@
         // Update Total Price
         function updateTotalPrice() {
             const totalPrice = calculateItemPrice();
-            document.getElementById('totalPrice').textContent = totalPrice.toFixed(2);
+            const totalPriceEl = document.getElementById('totalPrice');
+            if (totalPriceEl) totalPriceEl.textContent = totalPrice.toFixed(2);
             
             // Enable/disable add to cart button based on required options
             const addToCartBtn = document.getElementById('addToCartBtn');
-            const customization = foodCustomizations[currentFoodItem];
+            if (!addToCartBtn) return;
+
+            const customization = (currentFoodItem && typeof foodCustomizations !== 'undefined') ? foodCustomizations[currentFoodItem] : null;
             
-            if (customization) {
+            if (customization && Array.isArray(customization.options)) {
                 const requiredSections = customization.options.filter(section => section.required);
                 const allRequiredSelected = requiredSections.every(section => {
                     const sectionIndex = customization.options.indexOf(section);
-                    return selectedOptions[sectionIndex];
+                    const sel = selectedOptions[sectionIndex];
+                    if (!sel) return false;
+                    if (Array.isArray(sel)) return sel.length > 0;
+                    return true;
                 });
                 
                 addToCartBtn.disabled = !allRequiredSelected;
+            } else {
+                addToCartBtn.disabled = false;
             }
         }
         
         // Add to Cart with Customizations
         function addToCartWithCustomizations() {
-            const customization = foodCustomizations[currentFoodItem];
+            if (!currentFoodItem) {
+                console.warn('No food item currently selected');
+                return;
+            }
+
+            const customization = (typeof foodCustomizations !== 'undefined') ? foodCustomizations[currentFoodItem] : null;
             
             // Check required options
-            if (customization) {
+            if (customization && Array.isArray(customization.options)) {
                 const requiredSections = customization.options.filter(section => section.required);
                 const allRequiredSelected = requiredSections.every(section => {
                     const sectionIndex = customization.options.indexOf(section);
-                    return selectedOptions[sectionIndex];
+                    const sel = selectedOptions[sectionIndex];
+                    if (!sel) return false;
+                    if (Array.isArray(sel)) return sel.length > 0;
+                    return true;
                 });
                 
                 if (!allRequiredSelected) {
-                    alert('Please select all required options');
+                    if (typeof showToast === 'function') {
+                        showToast('Please select all required options before adding to cart', 'warning');
+                    } else {
+                        alert('Please select all required options');
+                    }
                     return;
                 }
             }
@@ -3122,8 +3147,9 @@
             const totalPrice = calculateItemPrice();
             const unitPrice = Number(totalPrice) / Math.max(Number(currentQuantity) || 1, 1);
 
-            // Get special requests
-            const specialRequests = document.getElementById('specialRequests').value;
+            // Get special requests safely
+            const specialReqEl = document.getElementById('specialRequests');
+            const specialRequests = specialReqEl ? specialReqEl.value : '';
             
             // Prepare cart item with customizations and calculated price
             const cartItem = {
@@ -3131,9 +3157,9 @@
                 price: unitPrice,
                 unitPrice: unitPrice,
                 basePrice: basePrice,
-                quantity: currentQuantity,
-                customizations: selectedOptions,
-                addons: selectedAddons,
+                quantity: currentQuantity || 1,
+                customizations: selectedOptions || {},
+                addons: selectedAddons || [],
                 specialRequests: specialRequests,
                 timestamp: new Date().toISOString()
             };
@@ -3152,7 +3178,8 @@
             if (window.CraveSound) window.CraveSound.tap();
             if (window.CraveHaptic) window.CraveHaptic.softDouble();
 
-            // Update cart badge + row success (same UX as quick-add)
+            // Notify cart sync listeners & update UI
+            document.dispatchEvent(new CustomEvent('cartChanged', { detail: cart }));
             updateCartBadge({ bump: true });
             updateStickyCartBar();
             showCartFeedback(currentFoodItem);
@@ -3167,6 +3194,11 @@
                 });
             }
         }
+
+        window.openFoodModal = openFoodModal;
+        window.closeFoodModal = closeFoodModal;
+        window.updateTotalPrice = updateTotalPrice;
+        window.addToCartWithCustomizations = addToCartWithCustomizations;
         
         // Show Cart Feedback
         function showCartFeedback(itemName) {
