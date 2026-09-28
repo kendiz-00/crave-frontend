@@ -2010,18 +2010,26 @@
             
             // Delegated add-to-cart listener on menu container (covers dynamically rendered cards)
             const menuRoot = document.querySelector('.bolt-menu-container');
+            console.log('[Cart] Setting up event listener on menu container:', !!menuRoot);
+            
             if (menuRoot) {
                 menuRoot.addEventListener('click', function (e) {
+                    console.log('[Cart] Menu container clicked, target:', e.target);
+                    
                     // Must have clicked the add button (or an icon inside it like <i class="fas fa-plus">)
                     const btn = e.target.closest('.bolt-food-add-btn');
+                    console.log('[Cart] Add button found:', !!btn);
+                    
                     if (!btn) return;
                     if (btn.disabled || btn.getAttribute('data-claiming') === 'true') return;
 
+                    console.log('[Cart] Processing add to cart for button:', btn);
                     e.preventDefault();
                     e.stopPropagation();
 
                     const enc = btn.getAttribute('data-item-name');
                     const priceStr = btn.getAttribute('data-item-price');
+                    console.log('[Cart] Item data - name:', enc, 'price:', priceStr);
 
                     if (!enc || priceStr == null) {
                         console.error('[Cart] Missing item data on button:', btn);
@@ -2042,8 +2050,11 @@
                         return;
                     }
 
+                    console.log('[Cart] Adding item to cart:', itemName, price);
+
                     // Items with customizations open the modal
                     if (typeof foodCustomizations !== 'undefined' && foodCustomizations[itemName]) {
+                        console.log('[Cart] Opening customization modal for:', itemName);
                         btn.classList.add('bolt-food-add-btn--press');
                         setTimeout(function () { btn.classList.remove('bolt-food-add-btn--press'); }, 220);
                         openFoodModal(itemName, price);
