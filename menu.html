@@ -1637,6 +1637,8 @@
             btn.setAttribute('aria-label', itemHasCustomization(item.name)
                 ? ('Customize and add ' + item.name)
                 : ('Add ' + item.name + ' to cart'));
+            
+            console.log('Created add button for:', item.name, 'Price:', item.price);
 
             priceRow.appendChild(btn);
             main.appendChild(priceRow);
@@ -2002,9 +2004,6 @@
                 CartSync.initialize();
             }
 
-            // Initialize reward context and banner
-            await initRewardContextOnMenu();
-
             // Track menu views for recommendations
             if (CraveRecommendations) {
                 const recommendations = CraveRecommendations.getPersonalized();
@@ -2018,19 +2017,36 @@
                     const btn = e.target.closest('.bolt-food-add-btn');
                     if (!btn || btn.disabled) return;
                     e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('Add button clicked:', btn);
+                    
                     const enc = btn.getAttribute('data-item-name');
                     const priceStr = btn.getAttribute('data-item-price');
-                    if (!enc || priceStr == null) return;
+                    console.log('Item name:', enc, 'Price:', priceStr);
+                    
+                    if (!enc || priceStr == null) {
+                        console.error('Missing item data:', { enc, priceStr });
+                        return;
+                    }
+                    
                     var itemName;
                     try {
                         itemName = decodeURIComponent(enc);
                     } catch (err) {
+                        console.error('Decode error:', err);
                         return;
                     }
                     var price = parseFloat(priceStr, 10);
-                    if (Number.isNaN(price)) return;
+                    if (Number.isNaN(price)) {
+                        console.error('Invalid price:', priceStr);
+                        return;
+                    }
+
+                    console.log('Adding to cart:', itemName, price);
 
                     if (typeof foodCustomizations !== 'undefined' && foodCustomizations[itemName]) {
+                        console.log('Opening customization modal for:', itemName);
                         btn.classList.add('bolt-food-add-btn--press');
                         setTimeout(function () {
                             btn.classList.remove('bolt-food-add-btn--press');
@@ -3575,6 +3591,8 @@
                     return result;
                 };
             }
+            
+            console.log('Menu page initialization complete');
         });
     </script>
 
