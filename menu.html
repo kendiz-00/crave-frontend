@@ -1637,8 +1637,6 @@
             btn.setAttribute('aria-label', itemHasCustomization(item.name)
                 ? ('Customize and add ' + item.name)
                 : ('Add ' + item.name + ' to cart'));
-            
-            console.log('Created add button for:', item.name, 'Price:', item.price);
 
             priceRow.appendChild(btn);
             main.appendChild(priceRow);
@@ -2010,27 +2008,23 @@
                 console.log('Personalized recommendations loaded:', recommendations);
             }
             
-            // Delegated add-to-cart & card click (premium cards)
+            // Delegated add-to-cart listener on menu container (covers dynamically rendered cards)
             const menuRoot = document.querySelector('.bolt-menu-container');
             if (menuRoot) {
                 menuRoot.addEventListener('click', function (e) {
-                    const card = e.target.closest('.bolt-food-item');
-                    if (!card) return;
-
-                    // If user clicked an interactive element inside card that isn't the add button or card body, ignore
-                    if (e.target.closest('a') || (e.target.closest('button') && !e.target.closest('.bolt-food-add-btn'))) return;
-
-                    const btn = card.querySelector('.bolt-food-add-btn');
-                    if (!btn || btn.disabled) return;
+                    // Must have clicked the add button (or an icon inside it like <i class="fas fa-plus">)
+                    const btn = e.target.closest('.bolt-food-add-btn');
+                    if (!btn) return;
+                    if (btn.disabled || btn.getAttribute('data-claiming') === 'true') return;
 
                     e.preventDefault();
                     e.stopPropagation();
 
-                    const enc = btn.getAttribute('data-item-name') || card.dataset.itemRef;
+                    const enc = btn.getAttribute('data-item-name');
                     const priceStr = btn.getAttribute('data-item-price');
 
                     if (!enc || priceStr == null) {
-                        console.error('Missing item data:', { enc, priceStr });
+                        console.error('[Cart] Missing item data on button:', btn);
                         return;
                     }
 
@@ -2038,27 +2032,25 @@
                     try {
                         itemName = decodeURIComponent(enc);
                     } catch (err) {
-                        console.error('Decode error:', err);
-                        return;
-                    }
-                    var price = parseFloat(priceStr, 10);
-                    if (Number.isNaN(price)) {
-                        console.error('Invalid price:', priceStr);
+                        console.error('[Cart] Decode error:', err);
                         return;
                     }
 
-                    console.log('Adding to cart:', itemName, price);
+                    var price = parseFloat(priceStr);
+                    if (!isFinite(price) || price < 0) {
+                        console.error('[Cart] Invalid price:', priceStr);
+                        return;
+                    }
 
+                    // Items with customizations open the modal
                     if (typeof foodCustomizations !== 'undefined' && foodCustomizations[itemName]) {
-                        console.log('Opening customization modal for:', itemName);
                         btn.classList.add('bolt-food-add-btn--press');
-                        setTimeout(function () {
-                            btn.classList.remove('bolt-food-add-btn--press');
-                        }, 220);
+                        setTimeout(function () { btn.classList.remove('bolt-food-add-btn--press'); }, 220);
                         openFoodModal(itemName, price);
                         return;
                     }
 
+                    // Items WITHOUT customizations go straight to cart
                     var cartItem = {
                         name: itemName,
                         price: price,
@@ -2071,12 +2063,10 @@
 
                     applyRewardMetadataIfEligible(cartItem);
 
-                    // Always read from localStorage first to ensure sync
                     var cart = JSON.parse(localStorage.getItem('craveCart')) || [];
                     cart.push(cartItem);
                     localStorage.setItem('craveCart', JSON.stringify(cart));
 
-                    // Sync global state
                     cartItems = cart;
                     cartCount = cartItems.length;
 
@@ -2187,6 +2177,99 @@
         // Food Customization Data Structure - Complete Implementation
         const foodCustomizations = {
             'Loaded Fries': {
+                description: 'Our signature loaded fries with your choice of protein and toppings',
+                options: [
+                    {
+                        title: 'Choose Style',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Loaded Fries', price: 0 },
+                            { name: 'Spicy Loaded Fries', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Cheese', price: 8 },
+                            { name: 'Add Crispy Chicken', price: 15 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Lemonade Ice', price: 20, image: 'brazilian_lemonade.jpg' },
+                    { name: 'Biscoff Jar Cake', price: 30, image: 'biscoff.jpg' }
+                ]
+            },
+            'Cheese Beef Loaded Fries': {
+                description: 'Loaded fries with seasoned beef and melted cheese',
+                options: [
+                    {
+                        title: 'Choose Spice Level',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Mild', price: 0 },
+                            { name: 'Spicy', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Cheese', price: 8 },
+                            { name: 'Extra Beef', price: 12 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Watermelon Mint Ice', price: 22, image: 'watermelon_mint.jpg' },
+                    { name: 'Chocolate Rich Buttercream Jar Cake', price: 35, image: 'choco_jar.jpeg' }
+                ]
+            },
+            'Loaded BBQ Chicken Cheddar Cheese Fries': {
+                description: 'Smoky BBQ chicken, melted sharp cheddar and crunchy fries — crave-worthy and shareable. Add a smoothie or jar cake for a delightful combo.',
+                options: [
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra BBQ Sauce', price: 0 },
+                            { name: 'Extra Chicken', price: 12 },
+                            { name: 'Double Cheese', price: 8 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Chocolate Rich Buttercream Jar Cake', price: 35, image: 'choco_jar.jpeg' },
+                    { name: 'Biscoff Jar Cake', price: 30, image: 'biscoff.jpg' }
+                ]
+            },
+            'Bacon Cheddar Fries': {
+                description: 'Loaded fries with crispy bacon and cheddar cheese',
+                options: [
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Bacon', price: 10 },
+                            { name: 'Extra Cheese', price: 8 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Pineapple Strawberry', price: 24, image: 'pineapple_stawberry.jpg' }
+                ]
+            },
+            'Jerk Chicken Shawarma': {
                 description: 'Our signature loaded fries with your choice of protein and toppings',
                 options: [
                     {
@@ -2817,15 +2900,19 @@
             
             // Update modal content
             document.getElementById('modalFoodTitle').textContent = foodName;
-            document.getElementById('modalFoodPrice').textContent = `GHS ${foodPrice.toFixed(2)}`;
+            document.getElementById('modalFoodPrice').textContent = `GHS ${Number(foodPrice).toFixed(2)}`;
             document.getElementById('modalFoodImage').src = `images/${getFoodImage(foodName)}`;
-            document.getElementById('modalFoodDescription').textContent = foodCustomizations[foodName]?.description || '';
+            document.getElementById('modalFoodDescription').textContent = (foodCustomizations && foodCustomizations[foodName] && foodCustomizations[foodName].description) || '';
             document.getElementById('quantity').textContent = currentQuantity;
+
+            // Always reset the Add to Cart button so it's never stuck disabled from a previous modal
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            if (addToCartBtn) addToCartBtn.disabled = false;
             
             // Generate customization options
             generateCustomizationOptions(foodName);
             
-            // Update total price
+            // Update total price (will set button disabled correctly if required options exist)
             updateTotalPrice();
             
             // Show modal and lock background scroll
