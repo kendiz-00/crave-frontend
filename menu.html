@@ -1637,6 +1637,51 @@
             btn.setAttribute('aria-label', itemHasCustomization(item.name)
                 ? ('Customize and add ' + item.name)
                 : ('Add ' + item.name + ' to cart'));
+            
+            // Add direct onclick handler
+            btn.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const itemName = item.name;
+                const price = item.price;
+                
+                console.log('[Cart] Direct button click handler:', itemName, price);
+                
+                if (typeof foodCustomizations !== 'undefined' && foodCustomizations[itemName]) {
+                    console.log('[Cart] Opening customization modal for:', itemName);
+                    openFoodModal(itemName, price);
+                    return;
+                }
+                
+                // Add directly to cart
+                var cartItem = {
+                    name: itemName,
+                    price: price,
+                    unitPrice: price,
+                    quantity: 1,
+                    customizations: {},
+                    addons: [],
+                    timestamp: new Date().toISOString()
+                };
+                
+                var cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+                cart.push(cartItem);
+                localStorage.setItem('craveCart', JSON.stringify(cart));
+                
+                cartItems = cart;
+                cartCount = cartItems.length;
+                
+                if (window.CraveSound) window.CraveSound.tap();
+                if (window.CraveHaptic) window.CraveHaptic.softDouble();
+                document.dispatchEvent(new CustomEvent('cartChanged', { detail: cart }));
+                updateCartBadge({ bump: true });
+                updateStickyCartBar();
+                showCartFeedback(itemName);
+                playFoodCardAddedSuccess(btn);
+                
+                console.log('[Cart] Item added to cart successfully:', itemName);
+            };
 
             priceRow.appendChild(btn);
             main.appendChild(priceRow);
