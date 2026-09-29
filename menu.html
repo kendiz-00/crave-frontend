@@ -2008,6 +2008,22 @@
                 console.log('Personalized recommendations loaded:', recommendations);
             }
             
+            // Wait for menu to be rendered before setting up event listeners
+            setTimeout(function() {
+                setupAddToCartListeners();
+            }, 2000);
+            
+            // Initialize sticky cart bar
+            updateStickyCartBar();
+            
+            // Copyright year
+            const yearSpan = document.getElementById('copyright-year');
+            if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+            
+            console.log('Menu page initialization complete');
+        });
+
+        function setupAddToCartListeners() {
             // Delegated add-to-cart listener on menu container (covers dynamically rendered cards)
             const menuRoot = document.querySelector('.bolt-menu-container');
             console.log('[Cart] Setting up event listener on menu container:', !!menuRoot);
@@ -2089,17 +2105,10 @@
                     showCartFeedback(itemName);
                     playFoodCardAddedSuccess(btn);
                 });
+            } else {
+                console.error('[Cart] Menu container not found, cannot setup event listeners');
             }
-
-            // Initialize sticky cart bar
-            updateStickyCartBar();
-            
-            // Copyright year
-            const yearSpan = document.getElementById('copyright-year');
-            if (yearSpan) yearSpan.textContent = new Date().getFullYear();
-            
-            console.log('Menu page initialization complete');
-        });
+        }
 
     </script>
     
