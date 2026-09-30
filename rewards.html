@@ -35,45 +35,108 @@
         body {
             margin: 0;
             padding: 0;
-            background: #0a0a0a;
+            background: #0B0B0B;
+            color: #FFFFFF;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         .rewards-page {
             min-height: 100vh;
-            background: linear-gradient(135deg, #0a0a0a 0%, #111 100%);
-            padding: 100px 0 50px;
+            background: radial-gradient(circle at 50% 0%, rgba(212, 165, 116, 0.08) 0%, transparent 60%), #0B0B0B;
+            padding: 120px 0 60px;
         }
 
-        .rewards-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .rewards-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 48px;
+        .section-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 26px;
             font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 16px;
+            color: #FFFFFF;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(212, 165, 116, 0.3) 0%, transparent 100%);
+        }
+
+        /* Hero Section */
+        .rewards-hero {
+            text-align: center;
+            margin-bottom: 46px;
+            padding: 0 16px;
+        }
+
+        .rewards-hero__eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            background: rgba(212, 165, 116, 0.08);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
             letter-spacing: 2px;
+            color: #D4A574;
+            text-transform: uppercase;
+            margin-bottom: 16px;
         }
 
-        .rewards-header p {
-            color: #aaaaaa;
+        .rewards-hero__title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 44px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+            margin-bottom: 14px;
+        }
+
+        .rewards-hero__subtitle {
+            color: #A0A0A0;
             font-size: 16px;
+            max-width: 620px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
         }
 
-        /* Points Card */
+        .rewards-hero__tier-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 22px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 165, 116, 0.25);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #E2E2E2;
+        }
+
+        .rewards-hero__tier-pill .tier-highlight {
+            color: #D4A574;
+            font-weight: 600;
+        }
+
+        /* Luxury Points Card */
         .points-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 163, 115, 0.3);
+            background: linear-gradient(135deg, rgba(26, 26, 28, 0.9) 0%, rgba(16, 16, 18, 0.95) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(212, 165, 116, 0.28);
             border-radius: 24px;
-            padding: 32px;
-            margin-bottom: 32px;
+            padding: 36px;
+            margin-bottom: 48px;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
 
         .points-card::before {
@@ -82,76 +145,106 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, rgba(212, 163, 115, 0.8), transparent);
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, rgba(212, 165, 116, 0.8) 50%, transparent 100%);
         }
 
-        .points-display {
-            text-align: center;
+        .points-card__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 24px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .points-display .points-value {
-            font-family: 'Playfair Display', serif;
-            font-size: 64px;
-            font-weight: 700;
-            color: #d4a373;
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-
-        .points-display .points-label {
-            color: #aaaaaa;
-            font-size: 14px;
-            text-transform: uppercase;
+        .points-card__brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 13px;
             letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #D4A574;
         }
 
         .tier-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 20px;
-            background: rgba(212, 163, 115, 0.15);
-            border: 1px solid rgba(212, 163, 115, 0.3);
+            padding: 6px 18px;
+            background: rgba(212, 165, 116, 0.12);
+            border: 1px solid rgba(212, 165, 116, 0.35);
             border-radius: 50px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            color: #d4a373;
+            color: #D4A574;
+            letter-spacing: 0.5px;
         }
 
-        /* Progress Bar */
+        .points-display {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .points-display .points-value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 72px;
+            font-weight: 700;
+            color: #D4A574;
+            line-height: 1;
+            margin-bottom: 6px;
+            letter-spacing: -1px;
+        }
+
+        .points-display .points-label {
+            color: #8E8E93;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 500;
+        }
+
         .progress-section {
-            margin-top: 24px;
+            margin-top: 10px;
         }
 
         .progress-label {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            color: #ffffff;
-            font-size: 14px;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #C0C0C0;
+            font-size: 13px;
+            font-weight: 500;
         }
 
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+        .progress-label span:last-child {
+            color: #D4A574;
+            font-weight: 600;
+        }
+
+        .progress-bar-container {
+            height: 7px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
             overflow: hidden;
+            margin-bottom: 20px;
         }
 
-        .progress-fill {
+        .progress-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #d4a373, #c49a6c);
-            border-radius: 4px;
-            transition: width 0.5s ease;
+            background: linear-gradient(90deg, #C49A6C 0%, #D4A574 50%, #E6C29A 100%);
+            border-radius: 100px;
+            transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .next-reward {
-            margin-top: 16px;
-            padding: 16px;
-            background: rgba(212, 163, 115, 0.1);
-            border-radius: 12px;
+        .next-reward-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 165, 116, 0.18);
+            border-radius: 14px;
+            padding: 16px 20px;
             display: flex;
             align-items: center;
             gap: 16px;
@@ -159,521 +252,600 @@
 
         .next-reward-icon {
             font-size: 32px;
+            line-height: 1;
         }
 
         .next-reward-info h4 {
-            color: #ffffff;
-            font-size: 16px;
-            margin-bottom: 4px;
+            color: #FFFFFF;
+            font-size: 15px;
+            font-weight: 600;
+            margin: 0 0 2px;
         }
 
         .next-reward-info p {
-            color: #aaaaaa;
+            color: #8E8E93;
             font-size: 13px;
             margin: 0;
         }
 
-        /* Milestones */
+        /* Milestones Grid */
         .milestones-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-bottom: 48px;
         }
 
         .milestone-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
+            background: rgba(22, 22, 25, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
             text-align: center;
-            transition: all 0.3s ease;
+            position: relative;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
         }
 
         .milestone-card:hover {
-            border-color: rgba(212, 163, 115, 0.3);
             transform: translateY(-4px);
         }
 
-        .milestone-card.unlocked {
-            border-color: rgba(76, 175, 80, 0.4);
-            background: rgba(76, 175, 80, 0.05);
+        .milestone-card__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
         }
 
-        .milestone-card.current {
-            border-color: rgba(212, 163, 115, 0.5);
-            background: rgba(212, 163, 115, 0.1);
-        }
-
-        .milestone-icon {
-            font-size: 40px;
-            margin-bottom: 12px;
-        }
-
-        .milestone-points {
-            font-size: 20px;
+        .milestone-card__badge {
+            font-size: 10px;
             font-weight: 700;
-            color: #d4a373;
-            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 100px;
         }
 
-        .milestone-reward {
-            color: #ffffff;
-            font-size: 14px;
+        .badge-locked {
+            background: rgba(255, 255, 255, 0.06);
+            color: #7A7A80;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .badge-available {
+            background: rgba(212, 165, 116, 0.15);
+            color: #D4A574;
+            border: 1px solid rgba(212, 165, 116, 0.4);
+        }
+
+        .badge-claimed {
+            background: rgba(76, 175, 80, 0.15);
+            color: #66BB6A;
+            border: 1px solid rgba(76, 175, 80, 0.35);
+        }
+
+        .badge-redeemed {
+            background: rgba(255, 255, 255, 0.05);
+            color: #8E8E93;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .badge-unavailable {
+            background: rgba(255, 255, 255, 0.04);
+            color: #555555;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .milestone-card__points {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #D4A574;
+        }
+
+        .milestone-card__icon {
+            font-size: 42px;
+            margin: 10px 0 14px;
+            line-height: 1;
+        }
+
+        .milestone-card__title {
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 4px;
+            color: #FFFFFF;
+            margin: 0 0 6px;
         }
 
-        .milestone-status {
-            color: #888888;
+        .milestone-card__desc {
+            color: #7E7E85;
             font-size: 12px;
-            margin-bottom: 8px;
+            line-height: 1.4;
+            margin: 0 0 14px;
+            min-height: 34px;
         }
 
-        .milestone-card.ready {
-            border-color: rgba(212, 163, 115, 0.6);
-            background: rgba(212, 163, 115, 0.12);
+        .milestone-card__subtext {
+            color: #9E9EA5;
+            font-size: 12px;
+            margin-bottom: 16px;
+            margin-top: auto;
         }
 
-        .milestone-card.redeemed {
-            border-color: rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.02);
+        .milestone-card__action {
+            margin-top: auto;
+        }
+
+        /* Card State Variations */
+        .milestone-card.state-locked {
+            opacity: 0.65;
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .milestone-card.state-locked:hover {
+            transform: none;
+        }
+
+        .milestone-card.state-available {
+            border-color: rgba(212, 165, 116, 0.45);
+            box-shadow: 0 8px 24px rgba(212, 165, 116, 0.08);
+        }
+
+        .milestone-card.state-available:hover {
+            border-color: rgba(212, 165, 116, 0.7);
+            box-shadow: 0 12px 32px rgba(212, 165, 116, 0.16);
+        }
+
+        .milestone-card.state-claimed {
+            border-color: rgba(76, 175, 80, 0.35);
+            background: linear-gradient(180deg, rgba(76, 175, 80, 0.05) 0%, rgba(22, 22, 25, 0.9) 100%);
+            box-shadow: 0 8px 24px rgba(76, 175, 80, 0.08);
+        }
+
+        .milestone-card.state-claimed:hover {
+            border-color: rgba(76, 175, 80, 0.6);
+            box-shadow: 0 12px 32px rgba(76, 175, 80, 0.14);
+        }
+
+        .milestone-card.state-redeemed {
             opacity: 0.7;
+            border-color: rgba(255, 255, 255, 0.06);
+            background: rgba(18, 18, 20, 0.6);
         }
 
-        .milestone-action {
-            margin-top: 8px;
+        .milestone-card.state-redeemed:hover {
+            transform: none;
         }
 
+        .milestone-card.state-unavailable {
+            opacity: 0.45;
+        }
+
+        /* Action Buttons */
         .milestone-action-btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 12px;
+            min-height: 44px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.2s ease;
             border: none;
+            text-decoration: none;
         }
 
-        .milestone-action-btn.claim {
-            background: linear-gradient(135deg, #4caf50, #45a049);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        .milestone-action-btn:focus-visible {
+            outline: 2px solid #D4A574;
+            outline-offset: 2px;
         }
 
-        .milestone-action-btn.claim:hover {
+        .milestone-action-btn--available {
+            background: linear-gradient(135deg, #D4A574 0%, #C49A6C 100%);
+            color: #0A0A0A;
+            box-shadow: 0 4px 14px rgba(212, 165, 116, 0.25);
+        }
+
+        .milestone-action-btn--available:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.35);
+            background: linear-gradient(135deg, #E2BA8E 0%, #D4A574 100%);
+            color: #0A0A0A;
         }
 
-        .milestone-action-btn.ready {
-            background: linear-gradient(135deg, #d4a373, #c49a6c);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(212, 163, 115, 0.3);
+        .milestone-action-btn--available:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .milestone-action-btn.ready:hover {
+        .milestone-action-btn--claimed {
+            background: rgba(212, 165, 116, 0.12);
+            border: 1px solid rgba(212, 165, 116, 0.45);
+            color: #D4A574;
+        }
+
+        .milestone-action-btn--claimed:hover {
+            background: rgba(212, 165, 116, 0.22);
+            border-color: rgba(212, 165, 116, 0.7);
+            color: #FFFFFF;
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(212, 163, 115, 0.4);
         }
 
-        .milestone-action-btn.redeemed {
-            background: rgba(255, 255, 255, 0.1);
-            color: #888888;
-            cursor: default;
-        }
-
-        .milestone-action-btn.locked {
-            background: rgba(255, 255, 255, 0.05);
-            color: #555555;
-            cursor: default;
-        }
-
-        /* Achievements */
-        .achievements-section {
-            margin-bottom: 32px;
-        }
-
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 24px;
-        }
-
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 16px;
-        }
-
-        .achievement-badge {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .achievement-badge.unlocked {
-            border-color: rgba(212, 163, 115, 0.4);
-            background: rgba(212, 163, 115, 0.1);
-        }
-
-        .achievement-badge.locked {
-            opacity: 0.5;
-        }
-
-        .achievement-icon {
-            font-size: 36px;
-            margin-bottom: 12px;
-        }
-
-        .achievement-name {
-            color: #ffffff;
+        .milestone-action-status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 16px;
+            border-radius: 12px;
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: 4px;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            user-select: none;
         }
 
-        .achievement-points {
-            color: #d4a373;
-            font-size: 11px;
-        }
-
-        /* Promo Codes */
-        .promo-codes-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .promo-code-item {
+        .milestone-action-status--locked {
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #55555A;
+            cursor: default;
+        }
+
+        .milestone-action-status--redeemed {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #888890;
+            cursor: default;
+        }
+
+        .milestone-action-status--unavailable {
+            background: rgba(255, 255, 255, 0.02);
+            color: #444448;
+            cursor: default;
+        }
+
+        /* Daily Reward Card */
+        .daily-reward-card {
+            background: linear-gradient(135deg, rgba(28, 28, 30, 0.7) 0%, rgba(20, 20, 22, 0.8) 100%);
+            border: 1px solid rgba(212, 165, 116, 0.25);
+            border-radius: 20px;
+            padding: 26px 30px;
+            margin-bottom: 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
         }
 
-        .promo-code-info h4 {
-            color: #ffffff;
+        .daily-reward-info h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            color: #FFFFFF;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 6px;
+        }
+
+        .daily-reward-info p {
+            color: #A0A0A0;
             font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .promo-code-info p {
-            color: #aaaaaa;
-            font-size: 12px;
             margin: 0;
         }
 
-        .promo-code-btn {
-            padding: 8px 16px;
-            background: rgba(212, 163, 115, 0.15);
-            border: 1px solid rgba(212, 163, 115, 0.3);
-            border-radius: 8px;
-            color: #d4a373;
-            font-size: 12px;
-            font-weight: 600;
+        .claim-daily-btn {
+            min-height: 44px;
+            padding: 10px 24px;
+            background: rgba(212, 165, 116, 0.15);
+            border: 1px solid rgba(212, 165, 116, 0.4);
+            border-radius: 12px;
+            color: #D4A574;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
             cursor: pointer;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
-        .promo-code-btn:hover {
-            background: rgba(212, 163, 115, 0.25);
+        .claim-daily-btn:hover:not(:disabled) {
+            background: rgba(212, 165, 116, 0.25);
+            border-color: rgba(212, 165, 116, 0.6);
+            color: #FFFFFF;
+        }
+
+        .claim-daily-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* Spin Wheel Button */
         .spin-wheel-section {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 48px;
         }
 
         .spin-wheel-btn {
-            background: linear-gradient(135deg, #d4a373, #c49a6c);
-            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #D4A574 0%, #B88958 100%);
+            color: #0A0A0A;
             border: none;
-            padding: 20px 48px;
-            font-size: 18px;
-            font-weight: 600;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 24px rgba(212, 163, 115, 0.3);
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 24px rgba(212, 165, 116, 0.25);
         }
 
         .spin-wheel-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(212, 163, 115, 0.4);
+            box-shadow: 0 12px 32px rgba(212, 165, 116, 0.35);
+            background: linear-gradient(135deg, #E2BA8E 0%, #D4A574 100%);
         }
 
-        /* Daily Reward */
-        .daily-reward-card {
-            background: linear-gradient(135deg, rgba(212, 163, 115, 0.15), rgba(196, 154, 108, 0.1));
-            border: 1px solid rgba(212, 163, 115, 0.3);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-       }
-
-        .daily-reward-info h3 {
-            color: #ffffff;
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-
-        .daily-reward-info p {
-            color: #aaaaaa;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .claim-btn {
-            padding: 12px 24px;
-            background: rgba(212, 163, 115, 0.2);
-            border: 1px solid rgba(212, 163, 115, 0.4);
-            border-radius: 8px;
-            color: #d4a373;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .claim-btn:hover:not(:disabled) {
-            background: rgba(212, 163, 115, 0.3);
-        }
-
-        .claim-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Promo Codes List */
-        .promo-codes-list {
-            margin-bottom: 32px;
-        }
-
-        .promo-code-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            margin-bottom: 12px;
-        }
-
-        .promo-code-info h4 {
-            color: #d4a373;
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .promo-code-info p {
-            color: #aaaaaa;
-            font-size: 12px;
-            margin: 0;
-        }
-
-        /* Achievements Grid */
-        .achievements-section {
-            margin-bottom: 32px;
-        }
-
+        /* Achievements */
         .achievements-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 16px;
+            margin-bottom: 48px;
         }
 
         .achievement-badge {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
+            background: rgba(22, 22, 25, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 20px 16px;
             text-align: center;
-            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.25s ease;
         }
 
         .achievement-badge.unlocked {
-            border-color: rgba(76, 175, 80, 0.4);
-            background: rgba(76, 175, 80, 0.05);
+            border-color: rgba(212, 165, 116, 0.35);
+            background: linear-gradient(180deg, rgba(212, 165, 116, 0.06) 0%, rgba(22, 22, 25, 0.9) 100%);
         }
 
         .achievement-badge.locked {
-            opacity: 0.5;
+            opacity: 0.55;
         }
 
         .achievement-icon {
-            font-size: 40px;
-            margin-bottom: 12px;
+            font-size: 36px;
+            margin-bottom: 10px;
+            line-height: 1;
         }
 
         .achievement-name {
-            color: #ffffff;
+            color: #FFFFFF;
             font-size: 14px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            color: #8E8E93;
+            font-size: 11px;
+            margin-bottom: 10px;
+            line-height: 1.35;
+            min-height: 28px;
         }
 
         .achievement-points {
-            color: #d4a373;
+            color: #D4A574;
             font-size: 12px;
-        }
-
-        /* Reward Vault */
-        .reward-vault-section {
-            margin-bottom: 32px;
-        }
-
-        .reward-vault-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-        }
-
-        .reward-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .reward-card:hover {
-            border-color: rgba(212, 163, 115, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .reward-card.redeemed {
-            opacity: 0.5;
-            border-color: rgba(76, 175, 80, 0.3);
-        }
-
-        .reward-card.expired {
-            opacity: 0.3;
-            border-color: rgba(244, 67, 54, 0.3);
-        }
-
-        .reward-icon {
-            font-size: 40px;
-            margin-bottom: 12px;
-        }
-
-        .reward-name {
-            color: #ffffff;
-            font-size: 16px;
             font-weight: 600;
             margin-bottom: 8px;
         }
 
-        .reward-expiry {
-            color: #888888;
-            font-size: 12px;
-            margin-bottom: 12px;
+        .achievement-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 100px;
         }
 
-        .reward-status {
+        .achievement-status.unlocked {
+            color: #66BB6A;
+            background: rgba(76, 175, 80, 0.12);
+        }
+
+        .achievement-status.locked {
+            color: #7E7E85;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Promo Codes (Luxury Voucher Cards) */
+        .promo-codes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .promo-code-card {
+            background: rgba(22, 22, 25, 0.85);
+            border: 1px solid rgba(212, 165, 116, 0.22);
+            border-radius: 16px;
+            padding: 20px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .promo-code-card:hover {
+            border-color: rgba(212, 165, 116, 0.45);
+            transform: translateY(-2px);
+        }
+
+        .promo-code-card__left {
+            flex: 1;
+        }
+
+        .promo-code-card__badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            background: rgba(212, 165, 116, 0.12);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            color: #D4A574;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .promo-code-card__code {
+            font-family: 'Courier New', monospace;
+            font-size: 17px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+        }
+
+        .promo-code-card__desc {
+            color: #8E8E93;
             font-size: 12px;
-            font-weight: 600;
+            margin: 0;
+            line-height: 1.4;
         }
 
-        .reward-status.active {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4caf50;
-        }
-
-        .reward-status.expiring {
-            background: rgba(255, 152, 0, 0.2);
-            color: #ff9800;
-        }
-
-        .reward-status.redeemed {
-            background: rgba(212, 163, 115, 0.2);
-            color: #d4a373;
-        }
-
-        .reward-status.expired {
-            background: rgba(244, 67, 54, 0.2);
-            color: #f44336;
-        }
-
-        .redeem-btn {
-            margin-top: 12px;
+        .promo-code-copy-btn {
+            min-height: 40px;
+            min-width: 90px;
             padding: 8px 16px;
-            background: rgba(212, 163, 115, 0.2);
-            border: 1px solid rgba(212, 163, 115, 0.4);
-            border-radius: 8px;
-            color: #d4a373;
-            font-size: 14px;
-            font-weight: 600;
+            background: rgba(212, 165, 116, 0.12);
+            border: 1px solid rgba(212, 165, 116, 0.35);
+            border-radius: 10px;
+            color: #D4A574;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .redeem-btn:hover:not(:disabled) {
-            background: rgba(212, 163, 115, 0.3);
+        .promo-code-copy-btn:hover {
+            background: rgba(212, 165, 116, 0.22);
+            color: #FFFFFF;
         }
 
-        .redeem-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .promo-code-copy-btn.copied {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: rgba(76, 175, 80, 0.5);
+            color: #66BB6A;
+        }
+
+        /* Reward Vault (Luxury Membership Collection) */
+        .reward-vault-section {
+            margin-bottom: 48px;
+        }
+
+        .empty-vault-card {
+            background: rgba(22, 22, 25, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .empty-vault-icon {
+            font-size: 40px;
+            color: #D4A574;
+            opacity: 0.6;
+            margin-bottom: 16px;
+        }
+
+        .empty-vault-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .empty-vault-text {
+            color: #A0A0A0;
+            font-size: 14px;
+            margin: 0 0 6px;
+        }
+
+        .empty-vault-hint {
+            color: #6E6E75;
+            font-size: 13px;
+            font-style: italic;
         }
 
         /* Spin Stats */
         .spin-stats-section {
-            margin-bottom: 32px;
+            margin-bottom: 48px;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 16px;
             margin-bottom: 24px;
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
+            background: rgba(22, 22, 25, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 22px 18px;
             text-align: center;
         }
 
         .stat-value {
+            font-family: 'Playfair Display', Georgia, serif;
             font-size: 32px;
             font-weight: 700;
-            color: #d4a373;
-            margin-bottom: 8px;
+            color: #D4A574;
+            margin-bottom: 6px;
         }
 
         .stat-label {
-            color: #aaaaaa;
-            font-size: 14px;
+            color: #8E8E93;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
         }
 
-        .spin-history {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
+        .spin-history-card {
+            background: rgba(22, 22, 25, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .spin-history-card h4 {
+            font-family: 'Playfair Display', Georgia, serif;
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 16px;
         }
 
         .spin-history-item {
@@ -690,7 +862,7 @@
 
         .spin-history-icon {
             font-size: 24px;
-            margin-right: 16px;
+            margin-right: 14px;
         }
 
         .spin-history-info {
@@ -698,43 +870,83 @@
         }
 
         .spin-history-prize {
-            color: #ffffff;
+            color: #FFFFFF;
             font-size: 14px;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .spin-history-date {
-            color: #888888;
+            color: #7E7E85;
             font-size: 12px;
         }
 
-        .empty-vault,
-        .empty-history {
-            text-align: center;
-            padding: 40px;
-            color: #888888;
+        /* Responsive Rules */
+        @media (max-width: 992px) {
+            .rewards-hero__title {
+                font-size: 38px;
+            }
+            .points-card {
+                padding: 28px 24px;
+            }
+            .points-display .points-value {
+                font-size: 58px;
+            }
         }
 
-        .empty-vault i,
-        .empty-history i {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .rewards-header h1 {
+            .rewards-page {
+                padding: 100px 0 40px;
+            }
+            .rewards-hero__title {
                 font-size: 32px;
             }
-
+            .rewards-hero__subtitle {
+                font-size: 14px;
+            }
             .points-display .points-value {
                 font-size: 48px;
             }
-
+            .points-card {
+                padding: 24px 18px;
+                border-radius: 20px;
+            }
             .milestones-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 14px;
+            }
+            .milestone-card {
+                padding: 18px 14px;
+            }
+            .milestone-card__icon {
+                font-size: 36px;
+            }
+            .milestone-card__title {
+                font-size: 15px;
+            }
+            .daily-reward-card {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+            }
+            .claim-daily-btn {
+                width: 100%;
+            }
+            .promo-codes-list {
+                grid-template-columns: 1fr;
+            }
+            .promo-code-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .promo-code-copy-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .milestones-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -827,86 +1039,110 @@
     <!-- Rewards Page -->
     <div class="rewards-page">
         <div class="container">
-            <!-- Header -->
-            <div class="rewards-header">
-                <h1>CRAVE Rewards</h1>
-                <p>Earn points with every order and unlock exclusive rewards</p>
+            <!-- Header / Hero -->
+            <div class="rewards-hero">
+                <span class="rewards-hero__tag">✦ CRAVE PRIVILEGE CLUB</span>
+                <h1 class="rewards-hero__title">Loyalty & Rewards</h1>
+                <p class="rewards-hero__subtitle">Earn tasting points with every artisan dish and unlock handcrafted dining privileges</p>
             </div>
 
-            <!-- Points Card -->
+            <!-- Points Balance Card -->
             <div class="points-card">
+                <div class="points-card__header">
+                    <span class="points-card__title">MEMBERSHIP BALANCE</span>
+                    <div class="tier-badge" id="tierBadge">
+                        <span class="tier-badge__icon" id="tierIcon">🥉</span>
+                        <span class="tier-badge__name" id="tierName">Bronze</span>
+                    </div>
+                </div>
                 <div class="points-display">
                     <div class="points-value" id="pointsValue">0</div>
-                    <div class="points-label">Crave Points</div>
-                </div>
-                <div class="tier-badge" id="tierBadge">
-                    <span id="tierIcon">🥉</span>
-                    <span id="tierName">Bronze</span>
+                    <div class="points-label">Available Points</div>
                 </div>
                 
                 <!-- Progress -->
                 <div class="progress-section">
                     <div class="progress-label">
-                        <span id="progressLabel">Progress to next reward</span>
+                        <span id="progressLabel">Progress to Next Privilege</span>
                         <span id="progressPercent">0%</span>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                     </div>
                     <div class="next-reward" id="nextReward">
-                        <div class="next-reward-icon">🥤</div>
-                        <div class="next-reward-info">
-                            <h4>Free Drink</h4>
-                            <p>100 points needed</p>
+                        <div class="next-reward__icon">🥤</div>
+                        <div class="next-reward__info">
+                            <div class="next-reward__name">Free Drink</div>
+                            <div class="next-reward__points">100 points needed</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Milestones -->
-            <h2 class="section-title">Reward Milestones</h2>
+            <!-- Milestones Section -->
+            <div class="section-header">
+                <span class="section-header__tag">✦ EXCLUSIVE TIERS</span>
+                <h2 class="section-title">Milestone Privileges</h2>
+                <p class="section-subtitle">Redeem your accumulated points for signature CRAVE offerings</p>
+            </div>
             <div class="milestones-grid" id="milestonesGrid">
                 <!-- Milestones will be loaded dynamically -->
             </div>
 
-            <!-- Daily Reward -->
+            <!-- Daily Reward Section -->
             <div class="daily-reward-card" id="dailyRewardCard">
                 <div class="daily-reward-info">
-                    <h3>Daily Reward</h3>
-                    <p id="dailyRewardText">Claim your daily bonus points!</p>
+                    <h3>Daily Tasting Credit</h3>
+                    <p id="dailyRewardText">Check in daily to build your streak and earn bonus points</p>
                 </div>
-                <button class="claim-btn" id="claimDailyBtn">Claim Now</button>
+                <button class="claim-daily-btn" id="claimDailyBtn">Claim Today's Bonus</button>
             </div>
 
-            <!-- Spin Wheel -->
+            <!-- Spin Wheel Section -->
             <div class="spin-wheel-section">
                 <button class="spin-wheel-btn" id="spinWheelBtn">
-                    <i class="fas fa-dharmachakra"></i> Spin & Win
+                    <i class="fas fa-dharmachakra"></i> ✦ Spin The Wheel of Privileges
                 </button>
             </div>
 
-            <!-- Achievements -->
-            <h2 class="section-title">Achievements</h2>
+            <!-- Member Accolades / Achievements -->
+            <div class="section-header">
+                <span class="section-header__tag">✦ ACCOLADES</span>
+                <h2 class="section-title">Member Accolades</h2>
+                <p class="section-subtitle">Celebrate your culinary journey with exclusive milestone achievements</p>
+            </div>
             <div class="achievements-section">
                 <div class="achievements-grid" id="achievementsGrid">
                     <!-- Achievements will be loaded dynamically -->
                 </div>
             </div>
 
-            <!-- Promo Codes -->
-            <h2 class="section-title">Available Promo Codes</h2>
+            <!-- Promo Codes / Vouchers -->
+            <div class="section-header">
+                <span class="section-header__tag">✦ PRIVILEGE CODES</span>
+                <h2 class="section-title">Available Vouchers</h2>
+                <p class="section-subtitle">Apply these exclusive promotional codes at checkout</p>
+            </div>
             <div class="promo-codes-list" id="promoCodesList">
                 <!-- Promo codes will be loaded dynamically -->
             </div>
 
             <!-- Reward Vault -->
-            <h2 class="section-title">Reward Vault</h2>
+            <div class="section-header">
+                <span class="section-header__tag">✦ YOUR COLLECTION</span>
+                <h2 class="section-title">Member Vault</h2>
+                <p class="section-subtitle">Your claimed and won rewards ready to be enjoyed</p>
+            </div>
             <div class="reward-vault-section" id="rewardVaultSection">
                 <!-- Rewards will be loaded dynamically -->
             </div>
 
             <!-- Spin Stats -->
-            <h2 class="section-title">Spin Statistics</h2>
+            <div class="section-header">
+                <span class="section-header__tag">✦ ACTIVITY LOG</span>
+                <h2 class="section-title">Fortune Records</h2>
+                <p class="section-subtitle">A summary of your wins and tasting fortunes at CRAVE</p>
+            </div>
             <div class="spin-stats-section" id="spinStatsSection">
                 <!-- Stats will be loaded dynamically -->
             </div>
@@ -1007,9 +1243,36 @@
 		</div>
 	</footer>
 
-    <!-- Scripts -->
+    <!-- Bootstrap & Vendor Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/toast-notifications.js"></script>
     
+    <!-- API Scripts -->
+    <script src="js/env.js"></script>
+    <script src="js/vendor-setup.js"></script>
+    <script src="js/api/config.js"></script>
+    <script src="js/api/api.js"></script>
+    
+    <!-- Authentication System -->
+    <script src="js/auth/auth-api.js"></script>
+    <script src="js/auth/auth-manager.js"></script>
+    <script src="js/auth/auth-ui.js"></script>
+    
+    <!-- CRAVE Rewards System -->
+    <script src="js/rewards-config.js"></script>
+    <script src="js/rewards-data.js"></script>
+    <script src="js/rewards-engine.js"></script>
+    <script src="js/rewards-notifications.js"></script>
+    <script src="js/promo-codes.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/recommendations.js"></script>
+    <script src="js/spin-wheel.js"></script>
+    <script src="js/referral-system.js"></script>
+    <script src="js/flash-deals.js"></script>
+    <script src="js/combo-builder.js"></script>
+    <script src="js/birthday-system.js"></script>
+
+    <!-- Main Rewards Page Logic -->
     <script>
         // Initialize rewards page
         document.addEventListener('DOMContentLoaded', async function() {
@@ -1051,40 +1314,57 @@
             }
 
             // Load points
-            const points = await CraveRewardsData.Points.get();
-            document.getElementById('pointsValue').textContent = points;
+            const points = (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.Points)
+                ? await CraveRewardsData.Points.get()
+                : 0;
+            const pointsElem = document.getElementById('pointsValue');
+            if (pointsElem) pointsElem.textContent = points;
 
             // Force a fresh server read so redeemed claims are not hidden by cached reward state
-            await CraveRewardsData.Claims.get({ forceRefresh: true });
+            if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.Claims) {
+                await CraveRewardsData.Claims.get({ forceRefresh: true });
+            }
 
             // Load tier
-            const tier = await CraveRewardsData.Tier.get();
-            const tierInfo = CraveRewardsData.Tier.getInfo(tier);
-            document.getElementById('tierIcon').textContent = tierInfo.icon;
-            document.getElementById('tierName').textContent = tierInfo.name;
+            if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.Tier) {
+                const tier = await CraveRewardsData.Tier.get();
+                const tierInfo = CraveRewardsData.Tier.getInfo(tier);
+                const tierIconElem = document.getElementById('tierIcon');
+                const tierNameElem = document.getElementById('tierName');
+                if (tierIconElem) tierIconElem.textContent = tierInfo.icon;
+                if (tierNameElem) tierNameElem.textContent = tierInfo.name;
+            }
 
             // Load progress
-            const progress = await CraveRewardsEngine.getMilestoneProgress();
-            if (progress) {
-                document.getElementById('progressFill').style.width = progress.progress + '%';
-                document.getElementById('progressPercent').textContent = Math.round(progress.progress) + '%';
-                
-                if (progress.next) {
-                    document.getElementById('nextReward').innerHTML = `
-                        <div class="next-reward-icon">${progress.next.icon}</div>
-                        <div class="next-reward-info">
-                            <h4>${progress.next.reward}</h4>
-                            <p>${progress.remaining} points needed</p>
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('nextReward').innerHTML = `
-                        <div class="next-reward-icon">🏆</div>
-                        <div class="next-reward-info">
-                            <h4>All Milestones Reached!</h4>
-                            <p>You're a true legend!</p>
-                        </div>
-                    `;
+            if (typeof CraveRewardsEngine !== 'undefined' && CraveRewardsEngine.getMilestoneProgress) {
+                const progress = await CraveRewardsEngine.getMilestoneProgress();
+                if (progress) {
+                    const fillElem = document.getElementById('progressFill');
+                    const percentElem = document.getElementById('progressPercent');
+                    const nextRewardElem = document.getElementById('nextReward');
+
+                    if (fillElem) fillElem.style.width = progress.progress + '%';
+                    if (percentElem) percentElem.textContent = Math.round(progress.progress) + '%';
+                    
+                    if (nextRewardElem) {
+                        if (progress.next) {
+                            nextRewardElem.innerHTML = `
+                                <div class="next-reward__icon">${progress.next.icon || '🥤'}</div>
+                                <div class="next-reward__info">
+                                    <div class="next-reward__name">${progress.next.reward}</div>
+                                    <div class="next-reward__points">${progress.remaining} points needed</div>
+                                </div>
+                            `;
+                        } else {
+                            nextRewardElem.innerHTML = `
+                                <div class="next-reward__icon">🏆</div>
+                                <div class="next-reward__info">
+                                    <div class="next-reward__name">All Milestones Achieved!</div>
+                                    <div class="next-reward__points">You're a CRAVE culinary legend</div>
+                                </div>
+                            `;
+                        }
+                    }
                 }
             }
 
@@ -1108,10 +1388,17 @@
         }
 
         async function loadMilestones() {
-            const milestones = CraveRewardsConfig.milestones;
-            const points = await CraveRewardsData.Points.get();
-            const claims = await CraveRewardsData.Claims.get({ forceRefresh: true });
+            const milestones = (typeof CraveRewardsConfig !== 'undefined' && CraveRewardsConfig.milestones)
+                ? CraveRewardsConfig.milestones
+                : [];
+            const points = (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.Points)
+                ? await CraveRewardsData.Points.get()
+                : 0;
+            const claims = (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.Claims)
+                ? await CraveRewardsData.Claims.get({ forceRefresh: true })
+                : [];
             const grid = document.getElementById('milestonesGrid');
+            if (!grid) return;
 
             const rewardIdMap = {
                 100: 'milestone_free_drink_100',
@@ -1121,65 +1408,59 @@
                 1000: 'milestone_vip_reward_1000'
             };
 
-            const claimsByRewardId = {};
-            const statusPriority = { 'REDEEMED': 3, 'USED': 2, 'CLAIMED': 1 };
-            if (Array.isArray(claims)) {
-                claims.forEach(c => {
-                    const existing = claimsByRewardId[c.rewardId];
-                    const status = (c.status || '').toString().toUpperCase().trim();
-                    const existingStatus = (existing && existing.status) ? existing.status.toString().toUpperCase().trim() : '';
-                    const currentPriority = statusPriority[status] || 0;
-                    const existingPriority = statusPriority[existingStatus] || 0;
-
-                    if (!existing || currentPriority > existingPriority) {
-                        claimsByRewardId[c.rewardId] = c;
-                    }
-                });
-            }
-
-            grid.innerHTML = milestones.map((milestone, index) => {
+            grid.innerHTML = milestones.map(milestone => {
                 const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
-                const claim = claimsByRewardId[rewardId];
-                const unlocked = points >= milestone.points;
-                const isNext = !unlocked && !claim && (index === 0 || points >= milestones[index - 1].points);
+                const displayState = (typeof CraveRewardsEngine !== 'undefined' && CraveRewardsEngine.getRewardDisplayState)
+                    ? CraveRewardsEngine.getRewardDisplayState(
+                        {
+                            points: milestone.points,
+                            requiredPoints: milestone.points,
+                            rewardId: rewardId,
+                            id: rewardId
+                        },
+                        points,
+                        claims
+                    )
+                    : {
+                        state: points >= milestone.points ? 'AVAILABLE' : 'LOCKED',
+                        label: points >= milestone.points ? 'CLAIM REWARD' : 'LOCKED',
+                        action: points >= milestone.points ? 'CLAIM' : null,
+                        claim: null,
+                        rewardId: rewardId,
+                        requiredPoints: milestone.points,
+                        remainingPoints: Math.max(0, milestone.points - points),
+                        badge: points >= milestone.points ? 'AVAILABLE' : 'LOCKED',
+                        subtext: points >= milestone.points ? 'Available to claim' : `${Math.max(0, milestone.points - points)} points needed`
+                    };
 
-                let statusText = 'Locked';
-                let actionBtn = '';
-                const normalizedStatus = claim ? (claim.status || '').toString().toUpperCase().trim() : '';
-
-                if (claim) {
-                    if (normalizedStatus === 'REDEEMED' || normalizedStatus === 'USED') {
-                        statusText = normalizedStatus === 'USED' ? '✓ USED' : '✓ REDEEMED';
-                        actionBtn = `<div class="milestone-action-btn redeemed">${statusText}</div>`;
-                    } else if (normalizedStatus === 'CLAIMED') {
-                        statusText = '🎁 REWARD READY';
-                        actionBtn = `<button class="milestone-action-btn ready" onclick="handleUseReward('${rewardId}', '${claim.id}')">🎁 USE REWARD</button>`;
-                    } else {
-                        statusText = String(claim.status || 'Locked');
-                        actionBtn = `<div class="milestone-action-btn locked">${statusText}</div>`;
-                    }
-                } else if (unlocked) {
-                    statusText = 'Reward Unlocked';
-                    actionBtn = `<button class="milestone-action-btn claim" onclick="handleClaimReward('${rewardId}')">CLAIM REWARD</button>`;
+                let actionMarkup = '';
+                if (displayState.action === 'CLAIM') {
+                    actionMarkup = `<button class="milestone-action-btn milestone-action-btn--claim" onclick="handleClaimReward('${rewardId}', this)">CLAIM REWARD</button>`;
+                } else if (displayState.action === 'USE') {
+                    const claimId = displayState.claim ? displayState.claim.id : '';
+                    actionMarkup = `<button class="milestone-action-btn milestone-action-btn--use" onclick="handleUseReward('${rewardId}', '${claimId}')"><span>READY TO USE</span><i class="fas fa-arrow-right" style="font-size: 11px;"></i></button>`;
+                } else if (displayState.state === 'REDEEMED') {
+                    actionMarkup = `<div class="milestone-action-status milestone-action-status--redeemed">REDEEMED ✓</div>`;
+                } else if (displayState.state === 'LOCKED') {
+                    actionMarkup = `<div class="milestone-action-status milestone-action-status--locked">${displayState.remainingPoints} PTS NEEDED</div>`;
                 } else {
-                    const remaining = milestone.points - points;
-                    statusText = `${remaining} points needed`;
-                    actionBtn = `<div class="milestone-action-btn locked">LOCKED</div>`;
+                    actionMarkup = `<div class="milestone-action-status milestone-action-status--unavailable">UNAVAILABLE</div>`;
                 }
 
                 return `
-                    <div class="milestone-card ${claim ? ((normalizedStatus === 'REDEEMED' || normalizedStatus === 'USED') ? 'redeemed' : 'ready') : (unlocked ? 'unlocked' : isNext ? 'current' : '')}">
-                        <div class="milestone-icon">${milestone.icon}</div>
-                        <div class="milestone-points">${milestone.points} pts</div>
-                        <div class="milestone-reward">${milestone.reward}</div>
-                        <div class="milestone-status">${statusText}</div>
-                        <div class="milestone-action">${actionBtn}</div>
+                    <div class="milestone-card state-${displayState.state.toLowerCase()}" data-reward-id="${rewardId}">
+                        <div class="milestone-card__badge">${displayState.badge}</div>
+                        <div class="milestone-card__icon">${milestone.icon || '🎁'}</div>
+                        <div class="milestone-card__points">${milestone.points} PTS</div>
+                        <div class="milestone-card__title">${milestone.reward}</div>
+                        <div class="milestone-card__desc">${milestone.description || displayState.subtext}</div>
+                        <div class="milestone-card__action">${actionMarkup}</div>
                     </div>
                 `;
             }).join('');
         }
 
-        async function handleClaimReward(rewardId) {
+        async function handleClaimReward(rewardId, btnElement) {
             if (typeof AuthManager !== 'undefined' && !AuthManager.isAuthenticated()) {
                 if (typeof ToastNotifications !== 'undefined') {
                     ToastNotifications.error('Please log in to claim milestone rewards');
@@ -1189,13 +1470,23 @@
                 return;
             }
 
+            // Prevent double-click & display loading state immediately
+            if (btnElement) {
+                if (btnElement.disabled) return;
+                btnElement.disabled = true;
+                btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Claiming...';
+            }
+
             try {
                 const result = await CraveRewardsData.Claims.claim(rewardId);
                 if (result && result.success) {
                     if (typeof ToastNotifications !== 'undefined') {
-                        ToastNotifications.success('Reward claimed successfully! Choose an eligible item on the menu to use it.');
+                        ToastNotifications.success('Privilege claimed successfully! Ready to use on menu.');
                     } else if (window.CraveSound) {
                         window.CraveSound.success();
+                    }
+                    if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                        CraveRewardsData.clearCache();
                     }
                     await loadRewardsData();
                 } else {
@@ -1205,11 +1496,19 @@
                     } else {
                         alert(msg);
                     }
+                    if (btnElement) {
+                        btnElement.disabled = false;
+                        btnElement.textContent = 'CLAIM REWARD';
+                    }
                 }
             } catch (err) {
                 console.error('Error claiming reward:', err);
                 if (typeof ToastNotifications !== 'undefined') {
                     ToastNotifications.error('Error claiming reward: ' + (err.message || 'Server error'));
+                }
+                if (btnElement) {
+                    btnElement.disabled = false;
+                    btnElement.textContent = 'CLAIM REWARD';
                 }
             }
         }
@@ -1220,59 +1519,98 @@
         }
 
         function loadAchievements() {
-            const achievements = CraveAchievements.getAll();
             const grid = document.getElementById('achievementsGrid');
+            if (!grid) return;
 
+            if (typeof CraveAchievements === 'undefined' || !CraveAchievements.getAll) {
+                return;
+            }
+
+            const achievements = CraveAchievements.getAll();
             grid.innerHTML = achievements.map(achievement => `
                 <div class="achievement-badge ${achievement.unlocked ? 'unlocked' : 'locked'}">
-                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-icon">${achievement.icon || '🏅'}</div>
                     <div class="achievement-name">${achievement.name}</div>
-                    <div class="achievement-points">${achievement.points} pts</div>
+                    <div class="achievement-desc">${achievement.description || ''}</div>
+                    <div class="achievement-points">+${achievement.points} pts</div>
+                    <div class="achievement-status ${achievement.unlocked ? 'unlocked' : 'locked'}">
+                        ${achievement.unlocked ? 'UNLOCKED ✓' : 'LOCKED'}
+                    </div>
                 </div>
             `).join('');
         }
 
         async function loadPromoCodes() {
-            const promoCodes = await CravePromoCodes.getAvailable();
             const list = document.getElementById('promoCodesList');
+            if (!list) return;
 
-            list.innerHTML = promoCodes.filter(pc => pc.available).map(promo => `
-                <div class="promo-code-item">
-                    <div class="promo-code-info">
-                        <h4>${promo.code}</h4>
-                        <p>${promo.description} - ${promo.type === 'percentage' ? promo.value + '%' : promo.type === 'fixed' ? 'GHS ' + promo.value : promo.type}</p>
+            if (typeof CravePromoCodes === 'undefined' || !CravePromoCodes.getAvailable) {
+                list.innerHTML = '<p style="color: #7E7E85; grid-column: 1 / -1; text-align: center;">No promo codes currently available.</p>';
+                return;
+            }
+
+            const promoCodes = await CravePromoCodes.getAvailable();
+            const availablePromos = Array.isArray(promoCodes) ? promoCodes.filter(pc => pc.available) : [];
+
+            if (availablePromos.length === 0) {
+                list.innerHTML = '<p style="color: #7E7E85; text-align: center; grid-column: 1 / -1;">No active promo vouchers at this time.</p>';
+                return;
+            }
+
+            list.innerHTML = availablePromos.map(promo => {
+                const discountText = promo.type === 'percentage' 
+                    ? `${promo.value}% OFF` 
+                    : promo.type === 'fixed' 
+                        ? `GH₵ ${promo.value} OFF` 
+                        : (promo.type || 'SPECIAL');
+                return `
+                    <div class="promo-code-card">
+                        <div class="promo-code-card__left">
+                            <span class="promo-code-card__badge">${discountText}</span>
+                            <div class="promo-code-card__code">${promo.code}</div>
+                            <p class="promo-code-card__desc">${promo.description || 'Exclusive culinary privilege'}</p>
+                        </div>
+                        <button class="promo-code-copy-btn" onclick="copyPromoCode('${promo.code}', this)">COPY</button>
                     </div>
-                    <button class="promo-code-btn" onclick="copyPromoCode('${promo.code}')">Copy</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function loadDailyReward() {
+            if (typeof CraveRewardsData === 'undefined' || !CraveRewardsData.DailyRewards) return;
             const canClaim = CraveRewardsData.DailyRewards.canClaim();
             const streak = CraveRewardsData.DailyRewards.getStreak();
             const btn = document.getElementById('claimDailyBtn');
             const text = document.getElementById('dailyRewardText');
 
-            if (canClaim) {
-                btn.disabled = false;
-                btn.textContent = 'Claim Now';
-                text.textContent = `Day ${streak + 1} streak ready to claim!`;
-            } else {
-                btn.disabled = true;
-                btn.textContent = 'Claimed';
-                text.textContent = `Current streak: ${streak} days`;
+            if (btn && text) {
+                if (canClaim) {
+                    btn.disabled = false;
+                    btn.textContent = "Claim Today's Bonus";
+                    text.textContent = `Day ${streak + 1} streak ready! Build your daily tasting credit.`;
+                } else {
+                    btn.disabled = true;
+                    btn.textContent = 'Claimed Today ✓';
+                    text.textContent = `Current streak: ${streak} days • Check back tomorrow!`;
+                }
             }
         }
 
         function loadRewardVault() {
-            const vault = CraveRewardsData.RewardVault.getActive();
             const section = document.getElementById('rewardVaultSection');
+            if (!section) return;
 
-            if (vault.length === 0) {
+            const vault = (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.RewardVault)
+                ? CraveRewardsData.RewardVault.getActive()
+                : [];
+
+            if (!vault || vault.length === 0) {
                 section.innerHTML = `
-                    <div class="empty-vault">
-                        <i class="fas fa-gift"></i>
-                        <p>No rewards in your vault yet. Spin the wheel to win prizes!</p>
+                    <div class="empty-vault-card">
+                        <div class="empty-vault-icon"><i class="fas fa-gem"></i></div>
+                        <div class="empty-vault-title">Vault is Currently Empty</div>
+                        <p class="empty-vault-text">You have no active rewards stored in your vault right now.</p>
+                        <div class="empty-vault-hint">Reach milestone tiers or spin the wheel to earn tasting rewards.</div>
                     </div>
                 `;
                 return;
@@ -1287,9 +1625,9 @@
                         
                         return `
                         <div class="reward-card">
-                            <div class="reward-icon">${reward.prize.icon}</div>
-                            <div class="reward-name">${reward.prize.name}</div>
-                            <div class="reward-expiry">Expires: ${new Date(reward.expiresAt).toLocaleDateString()}</div>
+                            <div class="reward-icon">${reward.prize ? reward.prize.icon : '🎁'}</div>
+                            <div class="reward-name">${reward.prize ? reward.prize.name : 'Exclusive Reward'}</div>
+                            <div class="reward-expiry">Expires: ${reward.expiresAt ? new Date(reward.expiresAt).toLocaleDateString() : 'N/A'}</div>
                             <span class="reward-status ${statusClass}">${statusText}</span>
                             <button class="redeem-btn" onclick="redeemReward(${reward.id})">Redeem</button>
                         </div>
@@ -1299,8 +1637,10 @@
         }
 
         function loadSpinStats() {
+            if (typeof CraveRewardsData === 'undefined' || !CraveRewardsData.SpinStats) return;
             const stats = CraveRewardsData.SpinStats;
             const section = document.getElementById('spinStatsSection');
+            if (!section) return;
             const history = stats.getSpinHistory();
 
             section.innerHTML = `
@@ -1322,13 +1662,10 @@
                         <div class="stat-label">Total Savings</div>
                     </div>
                 </div>
-                <div class="spin-history">
-                    <h4>Recent Spins</h4>
+                <div class="spin-history-card">
+                    <h4>Recent Fortune History</h4>
                     ${history.length === 0 ? `
-                        <div class="empty-history">
-                            <i class="fas fa-history"></i>
-                            <p>No spin history yet</p>
-                        </div>
+                        <p style="color: #7E7E85; font-size: 13px; margin: 0;">No spins recorded yet. Spin the wheel to test your fortune!</p>
                     ` : history.slice(0, 5).map(spin => `
                         <div class="spin-history-item">
                             <span class="spin-history-icon">${spin.prize.icon}</span>
@@ -1348,12 +1685,16 @@
 
             CraveRewardsData.RewardVault.markRedeemed(rewardId);
             
-            CraveRewardsNotifications.show({
-                type: 'success',
-                icon: '✅',
-                title: 'Reward Redeemed!',
-                message: `${reward.prize.name} has been redeemed`
-            });
+            if (typeof ToastNotifications !== 'undefined') {
+                ToastNotifications.success(`${reward.prize ? reward.prize.name : 'Reward'} has been redeemed!`);
+            } else if (typeof CraveRewardsNotifications !== 'undefined' && CraveRewardsNotifications.show) {
+                CraveRewardsNotifications.show({
+                    type: 'success',
+                    icon: '✅',
+                    title: 'Reward Redeemed!',
+                    message: `${reward.prize ? reward.prize.name : 'Reward'} has been redeemed`
+                });
+            }
 
             loadRewardVault();
             loadRewardsData();
@@ -1361,34 +1702,52 @@
 
         function setupEventListeners() {
             // Claim daily reward
-            document.getElementById('claimDailyBtn').addEventListener('click', async function() {
-                const result = await CraveRewardsEngine.claimDailyReward();
-                if (result.success) {
-                    CraveRewardsNotifications.dailyRewardClaimed(result.streak, result.reward);
-                    loadDailyReward();
-                    loadRewardsData();
-                }
-            });
+            const claimDailyBtn = document.getElementById('claimDailyBtn');
+            if (claimDailyBtn) {
+                claimDailyBtn.addEventListener('click', async function() {
+                    const result = await CraveRewardsEngine.claimDailyReward();
+                    if (result && result.success) {
+                        if (typeof CraveRewardsNotifications !== 'undefined' && CraveRewardsNotifications.dailyRewardClaimed) {
+                            CraveRewardsNotifications.dailyRewardClaimed(result.streak, result.reward);
+                        } else if (typeof ToastNotifications !== 'undefined') {
+                            ToastNotifications.success(`Daily bonus claimed! Day ${result.streak} streak.`);
+                        }
+                        loadDailyReward();
+                        loadRewardsData();
+                    }
+                });
+            }
 
             // Spin wheel
-            document.getElementById('spinWheelBtn').addEventListener('click', function() {
-                CraveSpinWheel.show();
-            });
+            const spinWheelBtn = document.getElementById('spinWheelBtn');
+            if (spinWheelBtn) {
+                spinWheelBtn.addEventListener('click', function() {
+                    if (typeof CraveSpinWheel !== 'undefined' && CraveSpinWheel.show) {
+                        CraveSpinWheel.show();
+                    }
+                });
+            }
 
             // Listen for rewards events
-            CraveRewardsEngine.on('points_earned', function(data) {
-                loadRewardsData();
-            });
+            if (typeof CraveRewardsEngine !== 'undefined') {
+                CraveRewardsEngine.on('points_earned', function() {
+                    loadRewardsData();
+                });
 
-            CraveRewardsEngine.on('tier_upgraded', function(data) {
-                loadRewardsData();
-                CraveRewardsNotifications.tierUpgraded(data.from, data.to);
-            });
+                CraveRewardsEngine.on('tier_upgraded', function(data) {
+                    loadRewardsData();
+                    if (typeof CraveRewardsNotifications !== 'undefined' && CraveRewardsNotifications.tierUpgraded) {
+                        CraveRewardsNotifications.tierUpgraded(data.from, data.to);
+                    }
+                });
 
-            CraveRewardsEngine.on('achievement_unlocked', function(data) {
-                loadAchievements();
-                CraveRewardsNotifications.achievementUnlocked(data.achievement);
-            });
+                CraveRewardsEngine.on('achievement_unlocked', function(data) {
+                    loadAchievements();
+                    if (typeof CraveRewardsNotifications !== 'undefined' && CraveRewardsNotifications.achievementUnlocked) {
+                        CraveRewardsNotifications.achievementUnlocked(data.achievement);
+                    }
+                });
+            }
         }
 
         // Check for earned spin from checkout
@@ -1406,7 +1765,6 @@
             if (popup) {
                 popup.style.display = 'flex';
                 
-                // Setup event listeners
                 const spinNowBtn = document.getElementById('spinNowBtn');
                 const spinPopupClose = document.getElementById('spinPopupClose');
                 
@@ -1427,15 +1785,53 @@
             }
         }
 
-        function copyPromoCode(code) {
-            navigator.clipboard.writeText(code).then(() => {
-                CraveRewardsNotifications.show({
-                    type: 'success',
-                    icon: '📋',
-                    title: 'Copied!',
-                    message: `Promo code ${code} copied to clipboard`
+        function copyPromoCode(code, btnElement) {
+            function onCopied() {
+                if (btnElement) {
+                    const origText = btnElement.textContent;
+                    btnElement.classList.add('copied');
+                    btnElement.textContent = 'COPIED ✓';
+                    setTimeout(() => {
+                        btnElement.classList.remove('copied');
+                        btnElement.textContent = origText;
+                    }, 2000);
+                }
+                if (typeof ToastNotifications !== 'undefined') {
+                    ToastNotifications.success(`Voucher code ${code} copied to clipboard!`);
+                } else if (typeof CraveRewardsNotifications !== 'undefined' && CraveRewardsNotifications.show) {
+                    CraveRewardsNotifications.show({
+                        type: 'success',
+                        icon: '📋',
+                        title: 'Copied!',
+                        message: `Promo code ${code} copied to clipboard`
+                    });
+                }
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(onCopied).catch(() => {
+                    fallbackCopy(code);
+                    onCopied();
                 });
-            });
+            } else {
+                fallbackCopy(code);
+                onCopied();
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {}
+            document.body.removeChild(textArea);
         }
     </script>
 
@@ -1550,31 +1946,6 @@
             color: rgba(255, 255, 255, 0.9);
         }
     </style>
-    
-    <!-- API Scripts -->
-    <script src="js/env.js"></script>
-    <script src="js/vendor-setup.js"></script>
-    <script src="js/api/config.js"></script>
-    <script src="js/api/api.js"></script>
-    
-    <!-- Authentication System -->
-    <script src="js/auth/auth-api.js"></script>
-    <script src="js/auth/auth-manager.js"></script>
-    <script src="js/auth/auth-ui.js"></script>
-    
-    <!-- CRAVE Rewards System -->
-    <script src="js/rewards-config.js"></script>
-    <script src="js/rewards-data.js"></script>
-    <script src="js/rewards-engine.js"></script>
-    <script src="js/rewards-notifications.js"></script>
-    <script src="js/promo-codes.js"></script>
-    <script src="js/achievements.js"></script>
-    <script src="js/recommendations.js"></script>
-    <script src="js/spin-wheel.js"></script>
-    <script src="js/referral-system.js"></script>
-    <script src="js/flash-deals.js"></script>
-    <script src="js/combo-builder.js"></script>
-    <script src="js/birthday-system.js"></script>
     
 	<!-- Shared Navbar & Footer JavaScript -->
 	<script>

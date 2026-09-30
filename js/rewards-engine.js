@@ -190,6 +190,114 @@ const CraveRewardsEngine = (function() {
         };
     }
 
+    /**
+     * Determine display state for a reward milestone based on point balance and server claims.
+     * Single source of truth across all reward cards.
+     *
+     * @param {Object} reward - Milestone definition
+     * @param {number} userPoints - User's current points balance
+     * @param {Array} claims - Active claims array from backend
+     * @returns {Object} { state: 'LOCKED'|'AVAILABLE'|'CLAIMED'|'REDEEMED'|'UNAVAILABLE', label: string, action: string|null, claim: Object|null, rewardId: string, requiredPoints: number, remainingPoints: number, badge: string, subtext: string }
+     */
+    function getRewardDisplayState(reward, userPoints, claims) {
+        const points = typeof userPoints === 'number' && !isNaN(userPoints) ? userPoints : 0;
+        const requiredPoints = typeof reward.requiredPoints === 'number'
+            ? reward.requiredPoints
+            : (typeof reward.points === 'number' ? reward.points : 0);
+
+        const rewardIdMap = {
+            100: 'milestone_free_drink_100',
+            250: 'milestone_free_dessert_250',
+            500: 'milestone_free_loaded_fries_500',
+            750: 'milestone_premium_combo_750',
+            1000: 'milestone_vip_reward_1000'
+        };
+        const rewardId = reward.rewardId || reward.id || rewardIdMap[requiredPoints] || `milestone_${requiredPoints}`;
+
+        if (reward.unavailable || reward.isAvailable === false || reward.status === 'UNAVAILABLE') {
+            return {
+                state: 'UNAVAILABLE',
+                label: 'UNAVAILABLE',
+                action: null,
+                claim: null,
+                rewardId,
+                requiredPoints,
+                remainingPoints: 0,
+                badge: 'UNAVAILABLE',
+                subtext: 'Offer not available'
+            };
+        }
+
+        const claimsList = Array.isArray(claims) ? claims : [];
+        const matchingClaims = claimsList.filter(c => c && (c.rewardId === rewardId || c.id === rewardId));
+
+        let claim = null;
+        if (matchingClaims.length > 0) {
+            const redeemed = matchingClaims.find(c => {
+                const st = String(c.status || '').toUpperCase().trim();
+                return st === 'REDEEMED' || st === 'USED';
+            });
+            claim = redeemed || matchingClaims[0];
+        }
+
+        const claimStatus = claim ? String(claim.status || '').toUpperCase().trim() : '';
+
+        if (claim && (claimStatus === 'REDEEMED' || claimStatus === 'USED')) {
+            return {
+                state: 'REDEEMED',
+                label: 'REDEEMED ✓',
+                action: null,
+                claim,
+                rewardId,
+                requiredPoints,
+                remainingPoints: 0,
+                badge: 'REDEEMED ✓',
+                subtext: 'Already used'
+            };
+        }
+
+        if (claim && claimStatus === 'CLAIMED') {
+            return {
+                state: 'CLAIMED',
+                label: 'READY TO USE',
+                action: 'USE',
+                claim,
+                rewardId,
+                requiredPoints,
+                remainingPoints: 0,
+                badge: 'CLAIMED ✓',
+                subtext: 'Ready to use on menu'
+            };
+        }
+
+        if (points >= requiredPoints) {
+            return {
+                state: 'AVAILABLE',
+                label: 'CLAIM REWARD',
+                action: 'CLAIM',
+                claim: null,
+                rewardId,
+                requiredPoints,
+                remainingPoints: 0,
+                badge: 'AVAILABLE',
+                subtext: 'Available to claim'
+            };
+        }
+
+        const remaining = Math.max(0, requiredPoints - points);
+        return {
+            state: 'LOCKED',
+            label: 'LOCKED',
+            action: null,
+            claim: null,
+            rewardId,
+            requiredPoints,
+            remainingPoints: remaining,
+            badge: 'LOCKED',
+            subtext: `${remaining} points needed`
+        };
+    }
+
     // Redeem reward milestone
     async function redeemMilestone(pointsRequired, rewardType = 'points') {
         if (!data) return { success: false, message: 'Data system not available' };
@@ -786,6 +894,7 @@ const CraveRewardsEngine = (function() {
         // Milestones
         getNextMilestone,
         getMilestoneProgress,
+        getRewardDisplayState,
         redeemMilestone,
         
         // Orders
