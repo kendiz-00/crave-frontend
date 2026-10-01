@@ -1268,8 +1268,18 @@
                 console.warn('[MENU] Local cache parse failed:', e);
             }
 
-            // Don't use fallback - just wait for API to prevent switching
-            console.log('[MENU] No cache available, waiting for API data...');
+            // If no cache exists, immediately render fallback menu so customers scanning QR code see cards in 0ms
+            if (typeof fallbackMenuData !== 'undefined' && fallbackMenuData && Object.keys(fallbackMenuData).length > 0) {
+                console.log('[MENU] Rendering initial fallback menu data while awaiting API response...');
+                menuData = fallbackMenuData;
+                const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
+                    id: slug,
+                    slug: slug,
+                    name: fallbackMenuData[slug].title
+                }));
+                renderCategoryNavigation(fallbackCategories);
+                initializeMenu();
+            }
         }
 
         // Load categories and menu from API in parallel
@@ -1289,23 +1299,46 @@
 
                 console.log('[TRACE 4] extracted menu items:', menuItems.length);
 
-                const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
-                menuData = freshMenuData;
+                if (menuItems.length > 0) {
+                    const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
+                    menuData = freshMenuData;
 
-                try {
-                    localStorage.setItem('crave_cached_menu_data', JSON.stringify(freshMenuData));
-                    localStorage.setItem('crave_cached_categories', JSON.stringify(categories));
-                } catch (e) {
-                    console.warn('[MENU] Could not cache API menu data:', e);
+                    try {
+                        localStorage.setItem('crave_cached_menu_data', JSON.stringify(freshMenuData));
+                        localStorage.setItem('crave_cached_categories', JSON.stringify(categories));
+                    } catch (e) {
+                        console.warn('[MENU] Could not cache API menu data:', e);
+                    }
+
+                    renderCategoryNavigation(categories);
+                    initializeMenu();
+
+                    console.log('[MENU] API menu rendered successfully');
+                } else if (!menuData || Object.keys(menuData).length === 0) {
+                    console.warn('[MENU] API returned 0 items, using fallback data');
+                    menuData = fallbackMenuData;
+                    const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
+                        id: slug,
+                        slug: slug,
+                        name: fallbackMenuData[slug].title
+                    }));
+                    renderCategoryNavigation(fallbackCategories);
+                    initializeMenu();
                 }
-
-                renderCategoryNavigation(categories);
-                initializeMenu();
-
-                console.log('[MENU] API menu rendered successfully');
 
             } catch (error) {
                 console.error('[MENU] Error loading menu from API:', error);
+                if (!menuData || Object.keys(menuData).length === 0) {
+                    console.warn('[MENU] Using fallback menu data due to API error');
+                    menuData = fallbackMenuData;
+                    const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
+                        id: slug,
+                        slug: slug,
+                        name: fallbackMenuData[slug].title
+                    }));
+                    renderCategoryNavigation(fallbackCategories);
+                    initializeMenu();
+                }
             }
         }
 

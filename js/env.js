@@ -19,7 +19,7 @@
 
     const defaultAppUrl = isLocalhost 
         ? 'http://localhost:3000' 
-        : (typeof window !== 'undefined' ? window.location.origin : 'https://crave-frontend.vercel.app');
+        : (typeof window !== 'undefined' ? window.location.origin : 'https://craveghana.com');
 
     // Default environment variables
     const defaultEnv = {
