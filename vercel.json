@@ -86,6 +86,11 @@
       "source": "/r/co",
       "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_corporate&utm_content=corporate_office",
       "permanent": false
+    },
+    {
+      "source": "/r/ev",
+      "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_events&utm_content=event_venue",
+      "permanent": false
     }
   ],
   "rewrites": [
