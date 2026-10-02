@@ -81,6 +81,11 @@
       "source": "/r/ht",
       "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_hospitality&utm_content=hotel",
       "permanent": false
+    },
+    {
+      "source": "/r/co",
+      "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_corporate&utm_content=corporate_office",
+      "permanent": false
     }
   ],
   "rewrites": [
