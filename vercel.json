@@ -51,6 +51,11 @@
       "source": "/r/rw",
       "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_outdoor&utm_content=street_wall",
       "permanent": false
+    },
+    {
+      "source": "/r/rw2",
+      "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_outdoor&utm_content=restaurant_wall",
+      "permanent": false
     }
   ],
   "rewrites": [
