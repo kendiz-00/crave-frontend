@@ -66,6 +66,11 @@
       "source": "/r/bc",
       "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_business&utm_content=business_card",
       "permanent": false
+    },
+    {
+      "source": "/r/dp",
+      "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_delivery&utm_content=delivery_packaging",
+      "permanent": false
     }
   ],
   "rewrites": [
