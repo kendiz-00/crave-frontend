@@ -1,8 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8CVWBJESV"></script>
-    <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-F8CVWBJESV', { send_page_view: false });</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQFGTJDPKJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZQFGTJDPKJ');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Reserve your table at Crave Restaurant">
@@ -326,7 +332,7 @@
                                         </button>
                                         
                                         <p class="cta-microcopy">
-                                            <span class="highlight">⚡ Takes less than 30 seconds</span> - 💬 Instant WhatsApp confirmation
+                                            <span class="highlight">âš¡ Takes less than 30 seconds</span> - ðŸ’¬ Instant WhatsApp confirmation
                                         </p>
                                     </form>
 
@@ -395,7 +401,7 @@
 					</address>
 					<div class="crave-footer__hours">
 						<span class="crave-footer__hours-label">Opening Hours</span>
-						<span class="crave-footer__hours-time"><i class="fa-solid fa-clock" style="margin-right: 6px; color: #e53935;"></i> Open Daily • 11:00 AM – 10:00 PM</span>
+						<span class="crave-footer__hours-time"><i class="fa-solid fa-clock" style="margin-right: 6px; color: #e53935;"></i> Open Daily â€¢ 11:00 AM â€“ 10:00 PM</span>
 					</div>
 				</div>
 
@@ -423,7 +429,7 @@
 			<div class="crave-footer__vip-card">
 				<div class="crave-vip-card__inner">
 					<div class="crave-vip-card__copy">
-						<div class="crave-vip-card__eyebrow">✦ CRAVE INNER CIRCLE</div>
+						<div class="crave-vip-card__eyebrow">âœ¦ CRAVE INNER CIRCLE</div>
 						<h3 class="crave-vip-card__title">Your Next Craving Starts Here.</h3>
 						<p class="crave-vip-card__subtitle">Get exclusive offers, new menu drops, and CRAVE VIP perks straight to your inbox.</p>
 					</div>
@@ -441,13 +447,13 @@
 			<div class="crave-footer__bottom">
 				<div class="crave-footer__bottom-container">
 					<div class="crave-footer__copyright">
-						© <span id="craveFooterYear">2026</span> CRAVE Restaurant. All rights reserved.
+						Â© <span id="craveFooterYear">2026</span> CRAVE Restaurant. All rights reserved.
 					</div>
 					<div class="crave-footer__legal">
 						<a href="#" class="crave-footer__legal-link">Privacy Policy</a>
-						<span class="crave-footer__legal-dot">•</span>
+						<span class="crave-footer__legal-dot">â€¢</span>
 						<a href="#" class="crave-footer__legal-link">Terms of Service</a>
-						<span class="crave-footer__legal-dot">•</span>
+						<span class="crave-footer__legal-dot">â€¢</span>
 						<a href="#" class="crave-footer__legal-link">Cookie Preferences</a>
 					</div>
 				</div>
@@ -563,7 +569,7 @@
             }
 
             function sendWhatsAppMessage(date, time, people, name) {
-                const requests = document.getElementById('requests') ? document.getElementById('requests').value : ''; const message = `Hello Crave 🍷\n\nI'd like to request a table reservation:\n\n📅 Date: ${date}\n⏰ Time: ${time}\n👥 Guests: ${people}\n👤 Name: ${name}\n📞 Phone: ${document.getElementById('phone').value}\n✉️ Email: ${document.getElementById('email').value}${requests ? '\n📝 Special Requests: ' + requests : ''}\n\nPlease confirm table availability. Thank you!`;
+                const requests = document.getElementById('requests') ? document.getElementById('requests').value : ''; const message = `Hello Crave ðŸ·\n\nI'd like to request a table reservation:\n\nðŸ“… Date: ${date}\nâ° Time: ${time}\nðŸ‘¥ Guests: ${people}\nðŸ‘¤ Name: ${name}\nðŸ“ž Phone: ${document.getElementById('phone').value}\nâœ‰ï¸ Email: ${document.getElementById('email').value}${requests ? '\nðŸ“ Special Requests: ' + requests : ''}\n\nPlease confirm table availability. Thank you!`;
                 const whatsappUrl = `https://wa.me/233550020788?text=${encodeURIComponent(message)}`;
                 window.open(whatsappUrl, '_blank');
             }
