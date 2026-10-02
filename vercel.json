@@ -76,6 +76,11 @@
       "source": "/r/fl",
       "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_print&utm_content=flyer",
       "permanent": false
+    },
+    {
+      "source": "/r/ht",
+      "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_hospitality&utm_content=hotel",
+      "permanent": false
     }
   ],
   "rewrites": [
