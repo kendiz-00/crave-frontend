@@ -91,6 +91,16 @@
       "source": "/r/ev",
       "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_events&utm_content=event_venue",
       "permanent": false
+    },
+    {
+      "source": "/r/gm",
+      "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_community&utm_content=gym",
+      "permanent": false
+    },
+    {
+      "source": "/r/ae",
+      "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_community&utm_content=apartment_estate",
+      "permanent": false
     }
   ],
   "rewrites": [
