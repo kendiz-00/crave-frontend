@@ -61,6 +61,11 @@
       "source": "/r/tc",
       "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_indoor&utm_content=table_card",
       "permanent": false
+    },
+    {
+      "source": "/r/bc",
+      "destination": "/?utm_source=qr&utm_medium=offline&utm_campaign=qr_business&utm_content=business_card",
+      "permanent": false
     }
   ],
   "rewrites": [
