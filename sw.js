@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'crave-pwa-v5';
+const CACHE_VERSION = 'crave-pwa-v6';
 const STATIC_CACHE = `crave-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `crave-runtime-${CACHE_VERSION}`;
 const OFFLINE_URL = 'offline.html';

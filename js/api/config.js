@@ -10,7 +10,7 @@ const getFallbackApiUrl = () => {
             return 'https://crave-backend-oie3.onrender.com';
         }
     }
-    return 'http://localhost:4000';
+    return 'http://localhost:3000';
 };
 
 // Get API base URL from environment variable or use dynamic default

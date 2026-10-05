@@ -1030,6 +1030,47 @@
         // Menu Data Structure (will be populated from API)
         let menuData = {};
 
+        // Image Override Mapping - Maps product names to specific image files
+        const imageOverrideMap = {
+            'Bacon Cheddar Fries': 'bacon_fries (2).jpg',
+            'Loaded BBQ Chicken Cheddar Cheese Fries': 'bbq_cheddar_fries.jpg',
+            'Cheese Beef Loaded Fries': 'beef_laodedfries.jpg',
+            'Loaded Fries': 'loaded_fries.jpg',
+            '2 Piece Glazed Crispy Chicken and Fries': 'glazed_chicken.jpg',
+            'Siracha Mayo Hot Wings (6) and Fries': 'sriracha_mayo_wings.jpg',
+            'Honey BBQ Wings (6) and Fries': 'honey_wings.jpg',
+            'Melted Cheddar Burger': 'melted_burger (2).jpg',
+            'Ultimate Bacon Cheddar Burger': 'ultimate_chicken_cheddar_burger.jpg',
+            'American BLT (Bacon Lettuce Tomato)': 'blt.jpg',
+            'Tuna Fish Sandwich': 'tuna_sandwich (2).jpg',
+            'Grilled Cheese Sandwich': 'grilled_cheese.jpg',
+            '2 Chicken Crispy Tacos': 'chicken_tacos.jpg',
+            'Chicken Burrito': 'chicken_burrito.jpg',
+            'French Toast, Maple Syrup and Buttery Eggs': 'french_toast (2).jpg',
+            'Chicken and Waffles': 'waffles (2).jpg',
+            'Pink Guava Buttercream Jar Cake': 'guava.jpg',
+            'Coffee Latte Jar Cake': 'coffe_latte.jpg',
+            'Pistachio Dream Jar Cake': 'pistachio.jpg',
+            'Salted Caramel Cake': 'salted_caramel.jpg',
+            'Bailey\'s Irish Cream Jar Cake': 'bailey.jpg',
+            'Vanilla Buttercream Cake Slice': 'vanilla.jpg',
+            'Lemon Buttercream Jar Cake': 'lemon.jpg',
+            'Biscoff Jar Cake': 'biscoff.jpg',
+            'Strawberry Bliss Shake': 'strawberry_cream.jpg',
+            'Vanilla Bean Shake': 'vanilla_shake.jpg',
+            'Classic Chocolate Shake': 'choco_shake.jpg',
+            'Banana Peanut Butter Chocolate': 'peanut.jpg',
+            'Strawberry Pineapple Tang Smoothie': 'strawberry_tang.jpg',
+            'Exotic Tropical Fruit Blend Smoothie': 'tropical (2).jpg',
+            'Sexy Pina Colada': 'pina_colada.jpg',
+            'Strawberry Colada Blast Smoothie': 'strawberry_colada (2).jpg'
+        };
+
+        // Function to get overridden image path for a product
+        function getOverrideImage(productName) {
+            return imageOverrideMap[productName] || null;
+        }
+
         // Fallback menu dataset for when API is unavailable
         const fallbackMenuData = {
             'loaded-fries': {
@@ -1257,8 +1298,22 @@
             try {
                 const cachedMenu = localStorage.getItem('crave_cached_menu_data');
                 const cachedCategories = localStorage.getItem('crave_cached_categories');
+                
+                // Check if cache is stale (missing Phase 2B products)
                 if (cachedMenu && cachedCategories) {
-                    menuData = JSON.parse(cachedMenu);
+                    const menuDataParsed = JSON.parse(cachedMenu);
+                    const totalCachedItems = Object.values(menuDataParsed).reduce((sum, cat) => sum + (cat.items?.length || 0), 0);
+                    
+                    // If cache has significantly fewer items than expected (e.g., < 40), it's stale
+                    if (totalCachedItems < 40) {
+                        console.log('[MENU] Cache appears stale (only ' + totalCachedItems + ' items), clearing and will fetch fresh data');
+                        localStorage.removeItem('crave_cached_menu_data');
+                        localStorage.removeItem('crave_cached_categories');
+                        return; // Don't render stale cache
+                    }
+                    
+                    console.log('[MENU] Using cached menu data from localStorage');
+                    menuData = menuDataParsed;
                     const categories = JSON.parse(cachedCategories);
                     renderCategoryNavigation(categories);
                     initializeMenu();
@@ -1285,20 +1340,17 @@
 
         // Load categories and menu from API in parallel
         async function loadMenuFromAPI() {
-            console.log('[TRACE 1] loadMenuFromAPI ENTERED');
+            console.log('[MENU] Loading fresh menu from API...');
             try {
                 const [categoryResponse, menuResponse] = await Promise.all([
                     MenuAPI.getCategories(),
                     MenuAPI.getAll()
                 ]);
 
-                console.log('[TRACE 2] categories received:', categoryResponse);
-                console.log('[TRACE 3] menu response received');
-
                 const categories = extractApiArray(categoryResponse);
                 const menuItems = extractApiArray(menuResponse);
 
-                console.log('[TRACE 4] extracted menu items:', menuItems.length);
+                console.log('[MENU] API menu received:', menuItems.length, 'items');
 
                 if (menuItems.length > 0) {
                     const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
@@ -1307,8 +1359,17 @@
                     try {
                         localStorage.setItem('crave_cached_menu_data', JSON.stringify(freshMenuData));
                         localStorage.setItem('crave_cached_categories', JSON.stringify(categories));
+                        console.log('[MENU] Updated localStorage cache with fresh API data');
                     } catch (e) {
                         console.warn('[MENU] Could not cache API menu data:', e);
+                    }
+
+                    // Clear and re-render to ensure fresh data replaces any stale render
+                    const menuContainer = document.querySelector('.bolt-menu-container');
+                    if (menuContainer) {
+                        menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section').forEach(function (section) {
+                            section.remove();
+                        });
                     }
 
                     renderCategoryNavigation(categories);
@@ -1348,7 +1409,6 @@
             const apiCategories = extractApiArray(categories);
             const apiMenuItems = extractApiArray(menuItems);
             const transformed = {};
-            let totalTransformedItems = 0;
             const unmatchedItems = [];
 
             apiCategories.forEach(category => {
@@ -1400,8 +1460,6 @@
                         preparationTime: item.preparationTime
                     }))
                 };
-
-                totalTransformedItems += categoryItems.length;
             });
 
             apiMenuItems.forEach(item => {
@@ -1425,12 +1483,6 @@
                 console.warn('[MENU] Unmatched items:', unmatchedItems);
             }
 
-            console.log('[TRACE 5] transformed categories:');
-            console.log('  loaded-fries:', transformed['loaded-fries']?.items?.length || 0);
-            console.log('  texas-crispy-chicken:', transformed['texas-crispy-chicken']?.items?.length || 0);
-            console.log('  jamaican-kitchen:', transformed['jamaican-kitchen']?.items?.length || 0);
-            console.log('  smoothies:', transformed['smoothies']?.items?.length || 0);
-
             return transformed;
         }
 
@@ -1440,7 +1492,14 @@
             if (!navList) return;
 
             const apiCategories = extractApiArray(categories);
-            navList.innerHTML = apiCategories.map((category, index) => {
+            // Filter out the Extras category from navigation
+            const visibleCategories = apiCategories.filter(category => {
+                const slug = normalizeCategorySlug(category.slug || category.name);
+                const name = (category.name || '').toLowerCase();
+                return slug !== 'extras' && name !== 'extras';
+            });
+            
+            navList.innerHTML = visibleCategories.map((category, index) => {
                 const slug = normalizeCategorySlug(category.slug || category.name);
                 const isActive = index === 0 ? 'active' : '';
                 return `<a href="#${slug}" class="bolt-category-nav-item ${isActive}">${category.name}</a>`;
@@ -1519,7 +1578,15 @@
             }
 
             const categoryKeys = Object.keys(menuData || {});
-            categoryKeys.forEach(categoryId => {
+            // Filter out the Extras category from rendering
+            const visibleCategoryKeys = categoryKeys.filter(categoryId => {
+                const category = menuData[categoryId];
+                const slug = normalizeCategorySlug(categoryId);
+                const name = (category.title || '').toLowerCase();
+                return slug !== 'extras' && name !== 'extras';
+            });
+            
+            visibleCategoryKeys.forEach(categoryId => {
                 const category = menuData[categoryId];
                 if (!category || !Array.isArray(category.items)) {
                     return;
@@ -1580,7 +1647,16 @@
             img.loading = 'lazy';
             img.decoding = 'async';
             img.fetchPriority = 'low';
-            img.src = 'images/' + getFoodImage(item.name);
+            // Normalize image path to be root-relative
+            const normalizeImagePath = function(path) {
+                if (!path) return path;
+                if (path.startsWith('/')) return path; // Already absolute
+                if (path.startsWith('images/')) return '/' + path; // Relative to root
+                return '/images/' + path; // Assume filename, prepend /images/
+            };
+            // Use override image if available, otherwise use API image or fallback to getFoodImage
+            const overrideImage = getOverrideImage(item.name);
+            img.src = overrideImage ? '/images/' + overrideImage : (normalizeImagePath(item.image) || ('/images/' + getFoodImage(item.name)));
             img.addEventListener('load', function onImgLoad() {
                 wrap.classList.add('is-loaded');
                 img.removeEventListener('load', onImgLoad);
@@ -1668,6 +1744,7 @@
             btn.innerHTML = '<i class="fas fa-plus"></i> Add';
             btn.setAttribute('data-item-name', encodeURIComponent(item.name));
             btn.setAttribute('data-item-price', String(item.price));
+            btn.setAttribute('data-item-image', item.image || '');
             btn.setAttribute('aria-label', itemHasCustomization(item.name)
                 ? ('Customize and add ' + item.name)
                 : ('Add ' + item.name + ' to cart'));
@@ -1681,10 +1758,10 @@
                 const price = item.price;
                 
                 console.log('[Cart] Direct button click handler:', itemName, price);
-                
+
                 if (typeof foodCustomizations !== 'undefined' && foodCustomizations[itemName]) {
                     console.log('[Cart] Opening customization modal for:', itemName);
-                    openFoodModal(itemName, price);
+                    openFoodModal(itemName, price, item.image);
                     return;
                 }
                 
@@ -2103,7 +2180,28 @@
             // Copyright year
             const yearSpan = document.getElementById('copyright-year');
             if (yearSpan) yearSpan.textContent = new Date().getFullYear();
-            
+
+            // Show combo suggestions when items are added to cart
+            const originalAddToCart = window.addToCartWithCustomizations;
+            if (originalAddToCart && CraveRewardsEngine) {
+                window.addToCartWithCustomizations = function() {
+                    const result = originalAddToCart.apply(this, arguments);
+
+                    // Check for combo recommendations
+                    const cart = JSON.parse(localStorage.getItem('craveCart') || '[]');
+                    if (cart.length > 0) {
+                        const combos = CraveRewardsEngine.getComboRecommendations(cart);
+                        if (combos.length > 0) {
+                            setTimeout(() => {
+                                CraveRewardsNotifications.comboAvailable(combos[0]);
+                            }, 1000);
+                        }
+                    }
+
+                    return result;
+                };
+            }
+
             console.log('Menu page initialization complete');
         });
 
@@ -2129,7 +2227,8 @@
 
                     const enc = btn.getAttribute('data-item-name');
                     const priceStr = btn.getAttribute('data-item-price');
-                    console.log('[Cart] Item data - name:', enc, 'price:', priceStr);
+                    const imageStr = btn.getAttribute('data-item-image');
+                    console.log('[Cart] Item data - name:', enc, 'price:', priceStr, 'image:', imageStr);
 
                     if (!enc || priceStr == null) {
                         console.error('[Cart] Missing item data on button:', btn);
@@ -2157,7 +2256,7 @@
                         console.log('[Cart] Opening customization modal for:', itemName);
                         btn.classList.add('bolt-food-add-btn--press');
                         setTimeout(function () { btn.classList.remove('bolt-food-add-btn--press'); }, 220);
-                        openFoodModal(itemName, price);
+                        openFoodModal(itemName, price, imageStr);
                         return;
                     }
 
@@ -2995,17 +3094,27 @@
         let basePrice = 0;
         
         // Open Food Customization Modal
-        function openFoodModal(foodName, foodPrice) {
+        function openFoodModal(foodName, foodPrice, foodImage) {
             currentFoodItem = foodName;
             basePrice = foodPrice;
             currentQuantity = 1;
             selectedOptions = {};
             selectedAddons = [];
-            
+
+            // Normalize image path to be root-relative
+            const normalizeImagePath = function(path) {
+                if (!path) return path;
+                if (path.startsWith('/')) return path; // Already absolute
+                if (path.startsWith('images/')) return '/' + path; // Relative to root
+                return '/images/' + path; // Assume filename, prepend /images/
+            };
+
             // Update modal content
             document.getElementById('modalFoodTitle').textContent = foodName;
             document.getElementById('modalFoodPrice').textContent = `GHS ${Number(foodPrice).toFixed(2)}`;
-            document.getElementById('modalFoodImage').src = `images/${getFoodImage(foodName)}`;
+            // Use override image if available, otherwise use API image or fallback to getFoodImage
+            const overrideImage = getOverrideImage(foodName);
+            document.getElementById('modalFoodImage').src = overrideImage ? '/images/' + overrideImage : (normalizeImagePath(foodImage) || `/images/${getFoodImage(foodName)}`);
             document.getElementById('modalFoodDescription').textContent = (foodCustomizations && foodCustomizations[foodName] && foodCustomizations[foodName].description) || '';
             document.getElementById('quantity').textContent = currentQuantity;
 
@@ -3138,10 +3247,17 @@
                     const resolvedAddonImg = (typeof getFoodImage === 'function' && getFoodImage(addon.name) !== 'placeholder.jpg')
                         ? getFoodImage(addon.name)
                         : (addon.image || 'placeholder.jpg');
-                    addonImage.src = `images/${resolvedAddonImg}`;
+                    // Normalize to root-relative path
+                    const normalizeImagePath = function(path) {
+                        if (!path) return path;
+                        if (path.startsWith('/')) return path;
+                        if (path.startsWith('images/')) return '/' + path;
+                        return '/images/' + path;
+                    };
+                    addonImage.src = normalizeImagePath(resolvedAddonImg);
                     addonImage.alt = addon.name;
                     addonImage.onerror = function () {
-                        addonImage.src = 'images/placeholder.jpg';
+                        addonImage.src = '/images/placeholder.jpg';
                     };
 
                     const addonName = document.createElement('div');
@@ -3863,30 +3979,6 @@
                 }
             });
         }
-
-            // Show combo suggestions when items are added to cart
-            const originalAddToCart = window.addToCartWithCustomizations;
-            if (originalAddToCart && CraveRewardsEngine) {
-                window.addToCartWithCustomizations = function() {
-                    const result = originalAddToCart.apply(this, arguments);
-                    
-                    // Check for combo recommendations
-                    const cart = JSON.parse(localStorage.getItem('craveCart') || '[]');
-                    if (cart.length > 0) {
-                        const combos = CraveRewardsEngine.getComboRecommendations(cart);
-                        if (combos.length > 0) {
-                            setTimeout(() => {
-                                CraveRewardsNotifications.comboAvailable(combos[0]);
-                            }, 1000);
-                        }
-                    }
-                    
-                    return result;
-                };
-            }
-            
-            console.log('Menu page initialization complete');
-        });
     </script>
 
 	<!-- Shared Navbar & Footer JavaScript -->
