@@ -1295,47 +1295,10 @@
 
         // Instant initial menu render from local cache or fallback
         function renderInitialMenu() {
-            try {
-                const cachedMenu = localStorage.getItem('crave_cached_menu_data');
-                const cachedCategories = localStorage.getItem('crave_cached_categories');
-                
-                // Check if cache is stale (missing Phase 2B products)
-                if (cachedMenu && cachedCategories) {
-                    const menuDataParsed = JSON.parse(cachedMenu);
-                    const totalCachedItems = Object.values(menuDataParsed).reduce((sum, cat) => sum + (cat.items?.length || 0), 0);
-                    
-                    // If cache has significantly fewer items than expected (e.g., < 40), it's stale
-                    if (totalCachedItems < 40) {
-                        console.log('[MENU] Cache appears stale (only ' + totalCachedItems + ' items), clearing and will fetch fresh data');
-                        localStorage.removeItem('crave_cached_menu_data');
-                        localStorage.removeItem('crave_cached_categories');
-                        return; // Don't render stale cache
-                    }
-                    
-                    console.log('[MENU] Using cached menu data from localStorage');
-                    menuData = menuDataParsed;
-                    const categories = JSON.parse(cachedCategories);
-                    renderCategoryNavigation(categories);
-                    initializeMenu();
-                    console.log('[MENU] Instantly rendered menu from local cache');
-                    return;
-                }
-            } catch (e) {
-                console.warn('[MENU] Local cache parse failed:', e);
-            }
-
-            // If no cache exists, immediately render fallback menu so customers scanning QR code see cards in 0ms
-            if (typeof fallbackMenuData !== 'undefined' && fallbackMenuData && Object.keys(fallbackMenuData).length > 0) {
-                console.log('[MENU] Rendering initial fallback menu data while awaiting API response...');
-                menuData = fallbackMenuData;
-                const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
-                    id: slug,
-                    slug: slug,
-                    name: fallbackMenuData[slug].title
-                }));
-                renderCategoryNavigation(fallbackCategories);
-                initializeMenu();
-            }
+            // Clear any stale cache to ensure fresh API data is always displayed
+            localStorage.removeItem('crave_cached_menu_data');
+            localStorage.removeItem('crave_cached_categories');
+            console.log('[MENU] Cleared stale cache, loading fresh API data...');
         }
 
         // Load categories and menu from API in parallel
