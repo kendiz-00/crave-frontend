@@ -1,0 +1,4046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Order delicious food from Crave Restaurant">
+    <meta name="keywords" content="menu, food, restaurant, accra, ghana">
+    <meta name="author" content="Crave Restaurant">
+    <link rel="stylesheet" type="text/css" href="./css/util.css">
+    <link rel="stylesheet" href="components/shared-navbar.css">
+    <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <link rel="stylesheet" type="text/css" href="./css/crave-home.css">
+    <link rel="stylesheet" href="components/shared-footer.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQFGTJDPKJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZQFGTJDPKJ');
+    </script>
+        <style>
+        /* Page-level styles to prevent white screen */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #111 100%) !important;
+            min-height: 100vh;
+        }
+        
+        .food-customization-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+            pointer-events: none;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .food-customization-modal.active {
+            display: block;
+            pointer-events: auto;
+            touch-action: auto;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 10000;
+            touch-action: none;
+        }
+
+        .modal-content {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            max-height: 100%;
+            background: rgba(8, 8, 8, 0.98);
+            border-radius: 24px 24px 0 0;
+            transform: translateY(100%);
+            transition: transform 0.28s ease;
+            overflow: hidden;
+            box-shadow: 0 -14px 40px rgba(0, 0, 0, 0.35);
+            z-index: 10001;
+            touch-action: auto;
+        }
+
+        .food-customization-modal.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        /* Modal Header */
+        .modal-header {
+            position: relative;
+            padding: 20px 20px 0;
+            background: linear-gradient(180deg, rgba(212, 165, 116, 0.1) 0%, transparent 100%);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: rgba(212, 165, 116, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .modal-close:active {
+            transform: scale(0.95);
+        }
+        
+        .modal-food-image {
+            width: 100%;
+            height: 220px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .modal-food-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-food-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        .modal-food-info {
+            padding: 0 10px 20px;
+        }
+        
+        .modal-food-title {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 0 12px 0;
+            line-height: 1.2;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+        
+        .modal-food-price-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+        
+        .modal-food-price {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #d4a373;
+            text-shadow: 0 2px 4px rgba(212, 165, 116, 0.3);
+        }
+        
+        .modal-food-description {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+            flex: 1;
+            text-align: right;
+        }
+        
+        /* Modal Body */
+        .modal-body {
+            padding: 0 20px 140px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .customization-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .customization-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(212, 165, 116, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .customization-section:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(212, 165, 116, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+        }
+        
+        .required-badge {
+            background: linear-gradient(135deg, #ff6b6b, #d4a373);
+            color: #fff;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .option-item:last-child {
+            border-bottom: none;
+        }
+        
+        .option-item:hover {
+            background: rgba(212, 165, 116, 0.08);
+            margin: 0 -10px;
+            padding: 16px 10px;
+            border-radius: 12px;
+        }
+        
+        .option-item:active {
+            transform: scale(0.98);
+        }
+        
+        .option-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .custom-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+        
+        .custom-radio.selected {
+            border-color: #d4a373;
+            background: #d4a373;
+            box-shadow: 0 0 0 6px rgba(212, 165, 116, 0.2);
+            animation: radioSelect 0.3s ease;
+        }
+        
+        @keyframes radioSelect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .custom-radio.selected::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        
+        .custom-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+        
+        .custom-checkbox.selected {
+            border-color: #d4a373;
+            background: #d4a373;
+            box-shadow: 0 0 0 6px rgba(212, 165, 116, 0.2);
+            animation: checkboxSelect 0.3s ease;
+        }
+        
+        @keyframes checkboxSelect {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        .custom-checkbox.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .option-name {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 15px;
+            color: #fff;
+            font-weight: 500;
+            line-height: 1.3;
+            word-wrap: break-word;
+            hyphens: auto;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .option-price {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 15px;
+            color: #d4a373;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        /* Special Requests Section */
+        .special-requests-section {
+            margin-top: 20px;
+            background: rgba(212, 165, 116, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(212, 165, 116, 0.1);
+        }
+        
+        .special-requests-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            color: #fff;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.3s ease;
+        }
+        
+        .special-requests-input:focus {
+            outline: none;
+            border-color: #d4a373;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.1);
+        }
+        
+        .special-requests-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Recommended Addons Section */
+        .recommended-addons-section {
+            margin-top: 20px;
+        }
+        
+        .addons-title {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .addons-title::before {
+            content: '⭐';
+            font-size: 16px;
+        }
+        
+        .addons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        
+        .addon-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 165, 116, 0.15);
+            border-radius: 16px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+        
+        .addon-item:hover {
+            background: rgba(212, 165, 116, 0.15);
+            border-color: #d4a373;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(212, 165, 116, 0.2);
+        }
+        
+        .addon-item.selected {
+            background: rgba(212, 165, 116, 0.2);
+            border-color: #d4a373;
+        }
+        
+        .addon-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 8px;
+        }
+        
+        .addon-name {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            color: #fff;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .addon-price {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            color: #d4a373;
+            font-weight: 600;
+        }
+        
+        /* Modal Footer */
+        .modal-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(180deg, #0a0a0a 0%, rgba(10, 10, 10, 0.95) 100%);
+            padding: 16px 20px;
+            border-top: 1px solid rgba(212, 165, 116, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 100;
+        }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 6px;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: space-between;
+        }
+        
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quantity-btn:hover {
+            background: rgba(212, 165, 116, 0.25);
+            transform: scale(1.1);
+        }
+        
+        .quantity-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .quantity {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            min-width: 32px;
+            text-align: center;
+        }
+        
+        .add-to-cart-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #d4a373, #b8935f);
+            border: none;
+            border-radius: 25px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 24px rgba(212, 165, 116, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .add-to-cart-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .add-to-cart-btn:hover::before {
+            left: 100%;
+        }
+        
+        .add-to-cart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 165, 116, 0.4);
+        }
+        
+        .add-to-cart-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .add-to-cart-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .add-to-cart-btn:disabled::before {
+            display: none;
+        }
+        
+        .btn-text {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .btn-price {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 480px) {
+            .modal-content {
+                max-height: 95vh;
+            }
+            
+            .modal-food-image {
+                height: 180px;
+            }
+            
+            .modal-food-title {
+                font-size: 20px;
+            }
+            
+            .modal-food-price {
+                font-size: 18px;
+            }
+            
+            .modal-food-description {
+                font-size: 13px;
+            }
+            
+            .modal-body {
+                padding: 0 16px 130px;
+            }
+            
+            .customization-section {
+                padding: 16px;
+            }
+            
+            .section-title {
+                font-size: 15px;
+            }
+            
+            .option-item {
+                padding: 14px 0;
+            }
+            
+            .option-name {
+                font-size: 14px;
+            }
+            
+            .option-price {
+                font-size: 14px;
+            }
+            
+            .modal-footer {
+                padding: 14px 16px;
+                gap: 12px;
+            }
+            
+            .quantity-selector {
+                min-width: 110px;
+                padding: 5px;
+            }
+            
+            .quantity-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+            
+            .quantity {
+                font-size: 15px;
+                min-width: 28px;
+            }
+            
+            .add-to-cart-btn {
+                padding: 14px 20px;
+            }
+            
+            .btn-text,
+            .btn-price {
+                font-size: 15px;
+            }
+            
+            .addons-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+            }
+            
+            .addon-image {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .addon-name {
+                font-size: 12px;
+            }
+            
+            .addon-price {
+                font-size: 13px;
+            }
+        }
+        
+        /* Large Mobile */
+        @media (max-width: 414px) {
+            .modal-food-title {
+                font-size: 18px;
+            }
+            
+            .modal-body {
+                padding: 0 14px 125px;
+            }
+        }
+        
+        /* Small Mobile */
+        @media (max-width: 375px) {
+            .modal-food-title {
+                font-size: 17px;
+            }
+            
+            .modal-food-price {
+                font-size: 16px;
+            }
+            
+            .modal-body {
+                padding: 0 12px 120px;
+            }
+            
+            .customization-section {
+                padding: 14px;
+            }
+            
+            .modal-footer {
+                padding: 12px 14px;
+            }
+        }
+        
+        /* Bolt Menu Container Styles - Prevent white screen */
+        .bolt-menu-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #111 100%);
+            padding: 100px 16px 80px;
+            position: relative;
+        }
+        
+        .bolt-menu-section {
+            margin-bottom: 40px;
+        }
+        
+        .bolt-food-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        /* Very Small Mobile */
+        @media (max-width: 320px) {
+            .modal-food-title {
+                font-size: 16px;
+            }
+            
+            .section-title {
+                font-size: 14px;
+            }
+            
+            .option-name {
+                font-size: 13px;
+            }
+            
+            .addons-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Tablet and Desktop */
+        @media (min-width: 768px) {
+            .modal-content {
+                max-width: 500px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100%);
+                border-radius: 30px;
+                margin: 20px;
+            }
+            
+            .food-customization-modal.active .modal-content {
+                transform: translateX(-50%) translateY(0);
+            }
+            
+            .modal-food-image {
+                height: 250px;
+            }
+            
+            .modal-body {
+                padding: 0 24px 140px;
+            }
+            
+            .addons-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            }
+        }
+        
+        /* Large Desktop */
+        @media (min-width: 1024px) {
+            .modal-content {
+                max-width: 600px;
+            }
+            
+            .modal-food-image {
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Shared Navbar -->
+    <header id="craveNavbar" class="crave-navbar">
+        <nav class="crave-navbar__inner">
+            <div class="crave-navbar__container">
+                <!-- Logo -->
+                <div class="crave-navbar__logo">
+                    <a href="index.html" class="crave-navbar__logo-link" aria-label="CRAVE Home">
+                        <img src="images/logo.png" alt="CRAVE" class="crave-navbar__logo-img" width="160" height="44">
+                    </a>
+                </div>
+
+                <!-- Primary Navigation - Always Visible -->
+                <div class="crave-navbar__menu" id="craveNavbarMenu">
+                    <ul class="crave-navbar__list">
+                        <li class="crave-navbar__item">
+                            <a href="index.html" class="crave-navbar__link" data-page="home">Home</a>
+                        </li>
+                        <li class="crave-navbar__item">
+                            <a href="menu.html" class="crave-navbar__link" data-page="menu">Menu</a>
+                        </li>
+                        <li class="crave-navbar__item">
+                            <a href="rewards.html" class="crave-navbar__link" data-page="rewards">Rewards</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Auth Section -->
+                <div class="crave-navbar__auth" id="craveNavbarAuth">
+                    <!-- Will be populated by AuthUI -->
+                    <div class="crave-navbar__auth-guest">
+                        <a href="login.html" class="crave-navbar__auth-link">Login</a>
+                        <a href="register.html" class="crave-navbar__auth-btn">Join CRAVE</a>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="crave-navbar__toggle" id="craveNavbarToggle" aria-label="Toggle menu" aria-expanded="false">
+                    <span class="crave-navbar__toggle-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu - Secondary Navigation Only -->
+        <div class="crave-navbar__mobile" id="craveNavbarMobile">
+            <div class="crave-navbar__mobile-inner">
+                <ul class="crave-navbar__mobile-list">
+                    <li class="crave-navbar__mobile-item">
+                        <a href="about.html" class="crave-navbar__mobile-link" data-page="about">About</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item">
+                        <a href="reservation.html" class="crave-navbar__mobile-link" data-page="reservation">Reservation</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item">
+                        <a href="vip.html" class="crave-navbar__mobile-link" data-page="vip">VIP</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item">
+                        <a href="contact.html" class="crave-navbar__mobile-link" data-page="contact">Contact</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item">
+                        <a href="tracking.html" class="crave-navbar__mobile-link" data-page="tracking">Tracking</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item mobile-profile-link">
+                        <a href="profile.html" class="crave-navbar__mobile-link" data-page="profile">Profile</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item mobile-auth-links">
+                        <a href="login.html" class="crave-navbar__mobile-link" data-page="login">Login</a>
+                    </li>
+                    <li class="crave-navbar__mobile-item mobile-auth-links">
+                        <a href="register.html" class="crave-navbar__mobile-link" data-page="register">Register</a>
+                    </li>
+                </ul>
+                <div class="crave-navbar__mobile-auth" id="craveNavbarMobileAuth">
+                    <!-- Will be populated by AuthUI -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Bolt Menu Container -->
+    <div class="bolt-menu-container" id="boltMenuContainer">
+        <!-- Sticky Category Navigation -->
+        <nav class="bolt-category-nav" aria-label="Menu Categories">
+            <div class="bolt-category-nav-list" aria-live="polite"></div>
+        </nav>
+
+        <!-- Premium app-style menu search -->
+        <div class="bolt-menu-search-wrap" id="boltMenuSearchWrap">
+            <div class="bolt-menu-search" role="search">
+                <span class="bolt-menu-search-icon-wrap" aria-hidden="true"><i class="fas fa-search"></i></span>
+                <input type="search" id="boltMenuSearchInput" class="bolt-menu-search-input"
+                    placeholder="Search burgers, fries, smoothies…"
+                    autocomplete="off" autocorrect="off" spellcheck="false"
+                    enterkeyhint="search" aria-label="Search menu items and categories">
+                <button type="button" class="bolt-menu-search-clear" id="boltMenuSearchClear" aria-label="Clear search" hidden>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="bolt-menu-search-empty" id="boltMenuSearchEmpty" hidden role="status" aria-live="polite">
+                <p class="bolt-menu-search-empty-title">No delicious matches found <span aria-hidden="true">🍴</span></p>
+                <p class="bolt-menu-search-empty-sub">Try a trending pick or scroll the categories above.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <a href="cart.html" class="bolt-floating-cart" id="floatingCartBtn">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="bolt-cart-badge" id="cartBadge">0</span>
+    </a>
+
+    <!-- Footer (Same as Homepage) -->
+    	<!-- CRAVE Premium Shared Footer -->
+	<footer class="crave-footer premium-footer crave-reveal" role="contentinfo">
+		<div class="crave-footer__inner">
+			<div class="crave-footer__container">
+				<!-- Brand Area -->
+				<div class="crave-footer__brand">
+					<img src="images/logo.png" alt="CRAVE Restaurant" class="crave-footer__logo" width="160" height="44">
+					<p class="crave-footer__tagline">Comfort food, elevated.</p>
+					<p class="crave-footer__description">Accra's premier comfort food experience. Bold flavours, fresh daily ingredients, and unforgettable meals.</p>
+				</div>
+
+				<!-- Explore Navigation -->
+				<nav class="crave-footer__nav" aria-label="Footer Navigation">
+					<h4 class="crave-footer__heading">Explore</h4>
+					<ul class="crave-footer__links">
+						<li><a href="menu.html" class="crave-footer__link">Menu</a></li>
+						<li><a href="rewards.html" class="crave-footer__link">Rewards</a></li>
+						<li><a href="about.html" class="crave-footer__link">About Us</a></li>
+						<li><a href="contact.html" class="crave-footer__link">Contact</a></li>
+						<li><a href="reservation.html" class="crave-footer__link">Reservations</a></li>
+					</ul>
+				</nav>
+
+				<!-- Contact Info -->
+				<div class="crave-footer__contact">
+					<h4 class="crave-footer__heading">Get in Touch</h4>
+					<address class="crave-footer__address">
+						<div class="crave-footer__address-line"><i class="fa-solid fa-location-dot" style="margin-right: 6px; color: #e53935;"></i> Accra, Ghana</div>
+						<a href="tel:+233550020788" class="crave-footer__link crave-footer__phone"><i class="fa-solid fa-phone" style="margin-right: 6px; color: #e53935;"></i> +233 55 002 0788</a>
+						<a href="mailto:hello@crave.com" class="crave-footer__link crave-footer__email"><i class="fa-solid fa-envelope" style="margin-right: 6px; color: #e53935;"></i> hello@crave.com</a>
+					</address>
+					<div class="crave-footer__hours">
+						<span class="crave-footer__hours-label">Opening Hours</span>
+						<span class="crave-footer__hours-time"><i class="fa-solid fa-clock" style="margin-right: 6px; color: #e53935;"></i> Open Daily • 11:00 AM – 10:00 PM</span>
+					</div>
+				</div>
+
+				<!-- Social Links Area -->
+				<div class="crave-footer__social">
+					<h4 class="crave-footer__heading">Follow CRAVE</h4>
+					<div class="crave-footer__social-links">
+						<a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="crave-footer__social-btn" aria-label="Instagram">
+							<i class="fa-brands fa-instagram"></i>
+						</a>
+						<a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="crave-footer__social-btn" aria-label="Facebook">
+							<i class="fa-brands fa-facebook"></i>
+						</a>
+						<a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="crave-footer__social-btn" aria-label="X (Twitter)">
+							<i class="fa-brands fa-x-twitter"></i>
+						</a>
+						<a href="https://wa.me/233550020788" target="_blank" rel="noopener noreferrer" class="crave-footer__social-btn" aria-label="WhatsApp">
+							<i class="fa-brands fa-whatsapp"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Premium VIP / Newsletter Experience Card -->
+			<div class="crave-footer__vip-card">
+				<div class="crave-vip-card__inner">
+					<div class="crave-vip-card__copy">
+						<div class="crave-vip-card__eyebrow">✦ CRAVE INNER CIRCLE</div>
+						<h3 class="crave-vip-card__title">Your Next Craving Starts Here.</h3>
+						<p class="crave-vip-card__subtitle">Get exclusive offers, new menu drops, and CRAVE VIP perks straight to your inbox.</p>
+					</div>
+					<form class="crave-vip-card__form" onsubmit="event.preventDefault(); if (window.ToastNotifications) { ToastNotifications.success('Thanks for joining Crave VIP!'); } else { alert('Thanks for joining Crave VIP!'); } this.reset();">
+						<input type="email" name="vip_email" placeholder="Enter your email address..." class="crave-vip-card__input" aria-label="Email for VIP signup" required>
+						<button type="submit" class="crave-vip-card__btn">
+							<span>Join CRAVE VIP</span>
+							<i class="fas fa-arrow-right" aria-hidden="true"></i>
+						</button>
+					</form>
+				</div>
+			</div>
+
+			<!-- Bottom Legal Bar -->
+			<div class="crave-footer__bottom">
+				<div class="crave-footer__bottom-container">
+					<div class="crave-footer__copyright">
+						© <span id="craveFooterYear">2026</span> CRAVE Restaurant. All rights reserved.
+					</div>
+					<div class="crave-footer__legal">
+						<a href="#" class="crave-footer__legal-link">Privacy Policy</a>
+						<span class="crave-footer__legal-dot">•</span>
+						<a href="#" class="crave-footer__legal-link">Terms of Service</a>
+						<span class="crave-footer__legal-dot">•</span>
+						<a href="#" class="crave-footer__legal-link">Cookie Preferences</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- API & Auth Scripts (must load before main.js) -->
+    <script src="js/env.js"></script>
+    <script src="js/vendor-setup.js"></script>
+    <script src="js/api/config.js"></script>
+    <script src="js/api/api.js"></script>
+    <script src="js/api/menu.js"></script>
+    <script src="js/auth/auth-api.js"></script>
+    <script src="js/auth/auth-manager.js"></script>
+    <script src="js/auth/auth-ui.js"></script>
+    
+    <!-- Main application script (must load after API scripts) -->
+    <script src="js/main.js"></script>
+    <script src="js/analytics.js" defer></script>
+    
+    <!-- Bolt Menu JavaScript -->
+    <script>
+        // Menu Data Structure (will be populated from API)
+        let menuData = {};
+
+        // Image Override Mapping - Maps product names to specific image files
+        const imageOverrideMap = {
+            'Bacon Cheddar Fries': 'bacon_fries (2).jpg',
+            'Loaded BBQ Chicken Cheddar Cheese Fries': 'bbq_cheddar_fries.jpg',
+            'Cheese Beef Loaded Fries': 'beef_laodedfries.jpg',
+            'Loaded Fries': 'loaded_fries.jpg',
+            '2 Piece Glazed Crispy Chicken and Fries': 'glazed_chicken.jpg',
+            'Siracha Mayo Hot Wings (6) and Fries': 'sriracha_mayo_wings.jpg',
+            'Honey BBQ Wings (6) and Fries': 'honey_wings.jpg',
+            'Melted Cheddar Burger': 'melted_burger (2).jpg',
+            'Ultimate Bacon Cheddar Burger': 'ultimate_chicken_cheddar_burger.jpg',
+            'American BLT (Bacon Lettuce Tomato)': 'blt.jpg',
+            'Tuna Fish Sandwich': 'tuna_sandwich (2).jpg',
+            'Grilled Cheese Sandwich': 'grilled_cheese.jpg',
+            '2 Chicken Crispy Tacos': 'chicken_tacos.jpg',
+            'Chicken Burrito': 'chicken_burrito.jpg',
+            'French Toast, Maple Syrup and Buttery Eggs': 'french_toast (2).jpg',
+            'Chicken and Waffles': 'waffles (2).jpg',
+            'Pink Guava Buttercream Jar Cake': 'guava.jpg',
+            'Coffee Latte Jar Cake': 'coffe_latte.jpg',
+            'Pistachio Dream Jar Cake': 'pistachio.jpg',
+            'Salted Caramel Cake': 'salted_caramel.jpg',
+            'Bailey\'s Irish Cream Jar Cake': 'bailey.jpg',
+            'Vanilla Buttercream Cake Slice': 'vanilla.jpg',
+            'Lemon Buttercream Jar Cake': 'lemon.jpg',
+            'Biscoff Jar Cake': 'biscoff.jpg',
+            'Strawberry Bliss Shake': 'strawberry_banana.jpg',
+            'Vanilla Bean Shake': 'vanilla_shake.jpg',
+            'Classic Chocolate Shake': 'choco_shake.jpg',
+            'Banana Peanut Butter Chocolate': 'peanut.jpg',
+            'Strawberry Pineapple Tang Smoothie': 'pineapple_stawberry.jpg',
+            'Exotic Tropical Fruit Blend Smoothie': 'tropical.jpg',
+            'Sexy Pina Colada': 'pina_colada.jpg',
+            'Strawberry Colada Blast Smoothie': 'strawberry_colada (2).jpg'
+        };
+
+        // Function to get overridden image path for a product
+        function getOverrideImage(productName) {
+            return imageOverrideMap[productName] || null;
+        }
+
+        // Fallback menu dataset for when API is unavailable
+        const fallbackMenuData = {
+            'loaded-fries': {
+                title: 'Loaded Fries',
+                description: 'Our signature loaded fries with your choice of toppings',
+                items: [
+                    { name: 'Loaded Fries', price: 35, description: 'Our signature loaded fries with cheese and toppings', image: 'loaded_fries.jpg', available: true, featured: true, badges: ['bestseller'] },
+                    { name: 'Cheese Beef Loaded Fries', price: 42, description: 'Loaded fries with seasoned beef and melted cheese', image: 'beef_laodedfries.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Loaded BBQ Chicken Cheddar Cheese Fries', price: 40, description: 'Crispy chicken with BBQ sauce and melted cheddar', image: 'bbq_cheddar_fries.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Bacon Cheddar Fries', price: 38, description: 'Loaded fries with crispy bacon and cheddar cheese', image: 'bacon_fries (2).jpg', available: true, featured: false, badges: [] }
+                ]
+            },
+            'texas-chicken': {
+                title: 'Texas Crispy Fried Chicken',
+                description: 'Crispy, juicy chicken with Texas-style seasoning',
+                items: [
+                    { name: 'Loaded BBQ Chicken Cheddar Cheese Fries', price: 40, description: 'Crispy chicken with BBQ sauce and melted cheddar', image: 'bbq_cheddar_fries.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Honey BBQ Wings (6) and Fries', price: 38, description: '6 honey BBQ wings served with crispy fries', image: 'honey_wings.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Siracha Mayo Hot Wings (6) and Fries', price: 38, description: '6 spicy sriracha wings with fries', image: 'sriracha_mayo_wings.jpg', available: true, featured: false, badges: ['hot'] },
+                    { name: '2 Piece Glazed Crispy Chicken and Fries', price: 35, description: '2 pieces of glazed crispy chicken with fries', image: 'glazed_chicken_fries.jpg', available: true, featured: false, badges: [] }
+                ]
+            },
+            'mexican-food': {
+                title: 'Mexican Food & Dish',
+                description: 'Authentic Mexican flavors with a CRAVE twist',
+                items: [
+                    { name: 'Chicken Burrito', price: 42, description: 'Flour tortilla filled with seasoned chicken and toppings', image: 'chicken_burrito.jpg', available: true, featured: false, badges: [] },
+                    { name: '2 Chicken Crispy Tacos', price: 35, description: '2 crispy chicken tacos with fresh toppings', image: 'chicken_tacos.jpg', available: true, featured: false, badges: [] },
+                    { name: '2 Beef Crispy Tacos', price: 38, description: '2 crispy beef tacos with cheese and salsa', image: 'beef_tacos.jpg', available: true, featured: false, badges: [] }
+                ]
+            },
+            'cupcakes': {
+                title: 'Cupcakes',
+                description: 'Sweet treats and decadent desserts',
+                items: [
+                    { name: 'Biscoff Jar Cake', price: 35, description: 'Biscoff cookie butter layered cake in a jar', image: 'biscoff.jpg', available: true, featured: true, badges: ['chef'] },
+                    { name: 'Lemon Buttercream Jar Cake', price: 32, description: 'Zesty lemon cake with creamy buttercream', image: 'lemon.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Vanilla Buttercream Cake Slice', price: 28, description: 'Classic vanilla cake slice with buttercream', image: 'vanilla.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Bailey\'s Irish Cream Jar Cake', price: 38, description: 'Irish cream infused cake for adults', image: 'bailey.jpg', available: true, featured: true, badges: ['chef'] },
+                    { name: 'Salted Caramel Cake', price: 35, description: 'Rich caramel cake with sea salt', image: 'salted_caramel.jpg', available: true, featured: false, badges: [] },
+                    { name: 'Pistachio Dream Jar Cake', price: 40, description: 'Nutty pistachio cake in a jar', image: 'pistachio.jpg', available: true, featured: true, badges: ['chef'] },
+                    { name: 'Coffee Latte Jar Cake', price: 35, description: 'Coffee-infused cake for caffeine lovers', image: 'coffe_latte.jpg', available: true, featured: false, badges: [] }
+                ]
+            },
+            'breakfast': {
+                title: 'Breakfast & Sandwiches',
+                description: 'Start your day with our delicious breakfast items',
+                items: [
+                    { name: 'Chicken and Waffles', price: 45, description: 'Crispy fried chicken served with waffles and syrup', image: 'waffles (2).jpg', available: true, featured: true, badges: [] },
+                    { name: 'Grilled Cheese Sandwich', price: 30, description: 'Melted cheese between toasted bread slices', image: 'grilled_cheese.jpg', available: true, featured: false, badges: [] }
+                ]
+            },
+            'smoothies': {
+                title: 'Smoothies',
+                description: 'Refreshing blends and fruit drinks',
+                items: [
+                    { name: 'Strawberry Colada', price: 25, description: 'Strawberry and coconut blend', image: 'strawberry_colada.jpg', available: true, featured: true, badges: ['refresh'] },
+                    { name: 'Pina Colada', price: 25, description: 'Classic pineapple and coconut smoothie', image: 'pina_colada.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Watermelon Mint Ice', price: 22, description: 'Refreshing watermelon with mint', image: 'watermelon_mint.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Green Glow', price: 28, description: 'Healthy green smoothie blend', image: 'green_glow.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Tropical Fruit Blend', price: 30, description: 'Mix of tropical fruits', image: 'tropical.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Pineapple Strawberry', price: 26, description: 'Pineapple and strawberry combination', image: 'pineapple_stawberry.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Strawberries and Cream', price: 28, description: 'Creamy strawberry smoothie', image: 'strawberry_cream.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Lemonade Ice', price: 20, description: 'Refreshing Brazilian lemonade', image: 'brazilian_lemonade.jpg', available: true, featured: false, badges: ['refresh'] },
+                    { name: 'Banana Peanut Butter Chocolate', price: 30, description: 'Rich banana peanut butter chocolate blend', image: 'banana_peanut.jpg', available: true, featured: true, badges: [] }
+                ]
+            }
+        };
+
+        const MENU_BADGE_DEFS = {
+            bestseller: { label: 'Bestseller', icon: '🔥', cls: 'bolt-badge--gold' },
+            hot: { label: 'Extra Hot', icon: '🌶', cls: 'bolt-badge--ember' },
+            chef: { label: 'Chef Favorite', icon: '🧁', cls: 'bolt-badge--chef' },
+            fast: { label: 'Fast Selling', icon: '⚡', cls: 'bolt-badge--fast' },
+            refresh: { label: 'Refreshing', icon: '🥤', cls: 'bolt-badge--cool' }
+        };
+
+        function inferItemBadges(item, categoryId, indexInCategory) {
+            const seen = new Set();
+            const out = [];
+            function push(id) {
+                if (!MENU_BADGE_DEFS[id] || seen.has(id)) return;
+                seen.add(id);
+                out.push(id);
+            }
+            if (Array.isArray(item.badges)) item.badges.forEach(push);
+            if (categoryId === 'most-popular' && typeof indexInCategory === 'number' && indexInCategory < 4) {
+                push('bestseller');
+            }
+            const n = item.name;
+            if (/Insanity|insanity|Siracha|Hot Wings/i.test(n)) push('hot');
+            if (/Jar Cake|Buttercream|Cake Slice|Biscoff|Pistachio|Guava|Bailey/i.test(n)) push('chef');
+            if (/smoothie|Colada|Watermelon|Lemonade|Blend|Glow|Strawberries and Cream|Banana Peanut|Pineapple Strawberry/i.test(n)) push('refresh');
+            if (/Loaded Fries|Shawarma|BBQ Chicken Cheddar|Ultimate Bacon|Jerk Chicken/i.test(n)) push('fast');
+            return out.slice(0, 3);
+        }
+
+        function getItemRatingDisplay(item, categoryId, indexInCategory) {
+            if (item.rating != null && item.rating !== '') return String(item.rating);
+            const ids = inferItemBadges(item, categoryId, indexInCategory);
+            if (ids.includes('bestseller') || ids.includes('fast')) return '4.9';
+            return null;
+        }
+
+        function itemHasCustomization(name) {
+            return typeof foodCustomizations !== 'undefined' && !!foodCustomizations[name];
+        }
+
+        // Cart functionality
+        let cartItems = [];
+        let cartCount = 0;
+        let stickyCartPrevSig = '';
+
+        /** Sticky cart bar — glass pill CTA; syncs with craveCart in localStorage */
+        function updateStickyCartBar() {
+            let raw;
+            try {
+                raw = JSON.parse(localStorage.getItem('craveCart')) || [];
+            } catch (e) {
+                raw = [];
+            }
+            const cart = Array.isArray(raw) ? raw : [];
+            const stickyCartBar = document.getElementById('stickyCartBar');
+            const stickyCartItems = document.getElementById('stickyCartItems');
+            const stickyCartTotal = document.getElementById('stickyCartTotal');
+            const stickyCartUpdateDot = document.getElementById('stickyCartUpdateDot');
+
+            if (!stickyCartBar) return;
+
+            const cartCountVal = cart.length;
+            let total = 0;
+            cart.forEach(item => {
+                const unit = typeof item.price === 'number' ? item.price : parseFloat(String(item.price).replace(/[^\d.]/g, '')) || 0;
+                total += unit * (item.quantity || 1);
+            });
+
+            if (stickyCartItems) {
+                stickyCartItems.textContent = `${cartCountVal} ${cartCountVal === 1 ? 'item' : 'items'}`;
+            }
+            if (stickyCartTotal) {
+                stickyCartTotal.textContent = total.toFixed(2);
+            }
+            stickyCartBar.setAttribute('aria-hidden', cartCountVal === 0 ? 'true' : 'false');
+
+            const sig = `${cartCountVal}:${total.toFixed(2)}`;
+            if (stickyCartPrevSig && stickyCartPrevSig !== sig) {
+                stickyCartBar.classList.add('sticky-cart--updated');
+                setTimeout(() => stickyCartBar.classList.remove('sticky-cart--updated'), 480);
+                if (stickyCartUpdateDot) {
+                    stickyCartUpdateDot.classList.add('is-on');
+                    setTimeout(() => stickyCartUpdateDot.classList.remove('is-on'), 720);
+                }
+            }
+            stickyCartPrevSig = cartCountVal > 0 ? sig : '';
+
+            if (cartCountVal > 0) {
+                stickyCartBar.classList.add('active');
+            } else {
+                stickyCartBar.classList.remove('active');
+            }
+        }
+
+        // Load cart from localStorage on page load
+        function loadCartFromStorage() {
+            const storedCart = localStorage.getItem('craveCart');
+            if (storedCart) {
+                try {
+                    cartItems = JSON.parse(storedCart);
+                    cartCount = cartItems.length;
+                } catch (e) {
+                    cartItems = [];
+                    cartCount = 0;
+                    localStorage.removeItem('craveCart');
+                }
+            }
+            updateCartBadge();
+        }
+
+        /** Premium card success animation on add to cart */
+        function playFoodCardAddedSuccess(btn) {
+            if (!btn) return;
+            const card = btn.closest('.bolt-food-item');
+            const flyAnchor = btn.closest('.bolt-food-visual') || btn.closest('.bolt-food-card-inner');
+            if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = '<i class="fas fa-plus"></i> Add';
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-check"></i> Added';
+            btn.classList.add('bolt-food-add-btn--success');
+            if (card) card.classList.add('bolt-food-item--pulse');
+            if (flyAnchor) {
+                const fly = document.createElement('span');
+                fly.className = 'bolt-food-flyout';
+                fly.textContent = '+1';
+                flyAnchor.appendChild(fly);
+                setTimeout(function () {
+                    if (fly.parentNode) fly.parentNode.removeChild(fly);
+                }, 1000);
+            }
+            setTimeout(function () {
+                btn.innerHTML = btn.dataset.defaultLabel || '<i class="fas fa-plus"></i> Add';
+                btn.classList.remove('bolt-food-add-btn--success');
+                btn.disabled = false;
+                if (card) card.classList.remove('bolt-food-item--pulse');
+            }, 1000);
+        }
+
+        function normalizeCategorySlug(value) {
+            if (value === null || value === undefined) return '';
+            return String(value)
+                .trim()
+                .toLowerCase()
+                .replace(/&/g, 'and')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .replace(/-+/g, '-');
+        }
+
+        function extractApiArray(payload) {
+            if (Array.isArray(payload)) return payload;
+            if (payload && Array.isArray(payload.data)) return payload.data;
+            return [];
+        }
+
+        // Instant initial menu render from local cache or fallback
+        function renderInitialMenu() {
+            // Clear any stale cache to ensure fresh API data is always displayed
+            localStorage.removeItem('crave_cached_menu_data');
+            localStorage.removeItem('crave_cached_categories');
+            console.log('[MENU] Cleared stale cache, loading fresh API data...');
+        }
+
+        // Load categories and menu from API in parallel
+        async function loadMenuFromAPI() {
+            console.log('[MENU] Loading fresh menu from API...');
+            try {
+                const [categoryResponse, menuResponse] = await Promise.all([
+                    MenuAPI.getCategories(),
+                    MenuAPI.getAll()
+                ]);
+
+                const categories = extractApiArray(categoryResponse);
+                const menuItems = extractApiArray(menuResponse);
+
+                console.log('[MENU] API menu received:', menuItems.length, 'items');
+
+                if (menuItems.length > 0) {
+                    const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
+                    menuData = freshMenuData;
+
+                    try {
+                        localStorage.setItem('crave_cached_menu_data', JSON.stringify(freshMenuData));
+                        localStorage.setItem('crave_cached_categories', JSON.stringify(categories));
+                        console.log('[MENU] Updated localStorage cache with fresh API data');
+                    } catch (e) {
+                        console.warn('[MENU] Could not cache API menu data:', e);
+                    }
+
+                    // Clear and re-render to ensure fresh data replaces any stale render
+                    const menuContainer = document.querySelector('.bolt-menu-container');
+                    if (menuContainer) {
+                        menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section').forEach(function (section) {
+                            section.remove();
+                        });
+                    }
+
+                    renderCategoryNavigation(categories);
+                    initializeMenu();
+
+                    console.log('[MENU] API menu rendered successfully');
+                } else if (!menuData || Object.keys(menuData).length === 0) {
+                    console.warn('[MENU] API returned 0 items, using fallback data');
+                    menuData = fallbackMenuData;
+                    const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
+                        id: slug,
+                        slug: slug,
+                        name: fallbackMenuData[slug].title
+                    }));
+                    renderCategoryNavigation(fallbackCategories);
+                    initializeMenu();
+                }
+
+            } catch (error) {
+                console.error('[MENU] Error loading menu from API:', error);
+                if (!menuData || Object.keys(menuData).length === 0) {
+                    console.warn('[MENU] Using fallback menu data due to API error');
+                    menuData = fallbackMenuData;
+                    const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
+                        id: slug,
+                        slug: slug,
+                        name: fallbackMenuData[slug].title
+                    }));
+                    renderCategoryNavigation(fallbackCategories);
+                    initializeMenu();
+                }
+            }
+        }
+
+        // Transform API data to menuData format
+        function transformAPIDataToMenuData(categories, menuItems) {
+            const apiCategories = extractApiArray(categories);
+            const apiMenuItems = extractApiArray(menuItems);
+            const transformed = {};
+            const unmatchedItems = [];
+
+            apiCategories.forEach(category => {
+                const slug = normalizeCategorySlug(category.slug || category.name);
+                
+                const categoryItems = apiMenuItems.filter(item => {
+                    // Try all possible field paths for category ID
+                    const itemCategoryId = item.categoryId || item.category?.id || item.category_id || item.CategoryId || item.category?.categoryId;
+                    if (itemCategoryId && category.id && String(itemCategoryId) === String(category.id)) {
+                        return true;
+                    }
+                    
+                    // Try all possible field paths for category slug
+                    const itemCategorySlug = item.category?.slug || item.category_slug || item.categorySlug || item.CategorySlug || item.category?.categorySlug;
+                    const normalizedItemSlug = normalizeCategorySlug(itemCategorySlug || '');
+                    if (normalizedItemSlug === slug) {
+                        return true;
+                    }
+                    
+                    // Try all possible field paths for category name
+                    const itemCategoryName = item.category?.name || item.category_name || item.categoryName || item.CategoryName || item.category?.categoryName;
+                    const normalizedItemName = normalizeCategorySlug(itemCategoryName || '');
+                    if (normalizedItemName === slug) {
+                        return true;
+                    }
+                    
+                    // Try matching against category name directly
+                    if (itemCategoryName && category.name && normalizeCategorySlug(itemCategoryName) === normalizeCategorySlug(category.name)) {
+                        return true;
+                    }
+                    
+                    return false;
+                });
+
+                // Always create the category even if no items matched
+                transformed[slug] = {
+                    title: category.name,
+                    description: category.description || '',
+                    items: categoryItems.map(item => ({
+                        name: item.name,
+                        price: item.price,
+                        description: item.description,
+                        image: item.imageUrl,
+                        available: item.isAvailable,
+                        featured: item.isFeatured,
+                        badges: item.badges || [],
+                        addOns: item.addOns || [],
+                        calories: item.calories,
+                        preparationTime: item.preparationTime
+                    }))
+                };
+            });
+
+            apiMenuItems.forEach(item => {
+                const itemCategorySlug = normalizeCategorySlug(item.category?.slug || item.category?.name || '');
+                const itemCategoryId = item.categoryId || item.category?.id;
+                const isMatched = apiCategories.some(category => {
+                    const slug = normalizeCategorySlug(category.slug || category.name);
+                    return itemCategoryId === category.id || itemCategorySlug === slug || normalizeCategorySlug(item.category?.name) === slug;
+                });
+
+                if (!isMatched) {
+                    unmatchedItems.push({
+                        name: item.name,
+                        categoryId: item.categoryId,
+                        category: item.category
+                    });
+                }
+            });
+
+            if (unmatchedItems.length > 0) {
+                console.warn('[MENU] Unmatched items:', unmatchedItems);
+            }
+
+            return transformed;
+        }
+
+        // Render category navigation dynamically
+        function renderCategoryNavigation(categories) {
+            const navList = document.querySelector('.bolt-category-nav-list');
+            if (!navList) return;
+
+            const apiCategories = extractApiArray(categories);
+            // Filter out the Extras category from navigation
+            const visibleCategories = apiCategories.filter(category => {
+                const slug = normalizeCategorySlug(category.slug || category.name);
+                const name = (category.name || '').toLowerCase();
+                return slug !== 'extras' && name !== 'extras';
+            });
+            
+            navList.innerHTML = visibleCategories.map((category, index) => {
+                const slug = normalizeCategorySlug(category.slug || category.name);
+                const isActive = index === 0 ? 'active' : '';
+                return `<a href="#${slug}" class="bolt-category-nav-item ${isActive}">${category.name}</a>`;
+            }).join('');
+        }
+
+        // Show loading state
+        function showLoadingState() {
+            const menuContainer = document.querySelector('.bolt-menu-container');
+            if (menuContainer) {
+                menuContainer.classList.add('loading');
+                
+                // Add loading skeleton if not exists
+                if (!document.getElementById('menuLoadingSkeleton')) {
+                    const skeleton = document.createElement('div');
+                    skeleton.id = 'menuLoadingSkeleton';
+                    skeleton.className = 'menu-loading-skeleton';
+                    skeleton.innerHTML = `
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                        <div class="skeleton-item"></div>
+                    `;
+                    menuContainer.insertBefore(skeleton, menuContainer.firstChild);
+                }
+            }
+        }
+
+        // Hide loading state
+        function hideLoadingState() {
+            const menuContainer = document.querySelector('.bolt-menu-container');
+            if (menuContainer) {
+                menuContainer.classList.remove('loading');
+            }
+            
+            const skeleton = document.getElementById('menuLoadingSkeleton');
+            if (skeleton) {
+                skeleton.remove();
+            }
+        }
+
+        // Show error state
+        function showErrorState(message) {
+            const menuContainer = document.querySelector('.bolt-menu-container');
+            if (!menuContainer) return;
+
+            hideLoadingState();
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'menu-error-state';
+            errorDiv.innerHTML = `
+                <div class="error-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>${message}</p>
+                    <button onclick="loadMenuFromAPI()" class="retry-btn">Retry</button>
+                </div>
+            `;
+            
+            // Remove existing error state
+            const existingError = document.querySelector('.menu-error-state');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            menuContainer.insertBefore(errorDiv, menuContainer.firstChild);
+        }
+
+        // Initialize menu
+        function initializeMenu() {
+            const isDebugMenu = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || (window.ENV && window.ENV.APP_ENV === 'development');
+            const menuContainer = document.querySelector('.bolt-menu-container');
+
+            if (menuContainer) {
+                menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section').forEach(function (section) {
+                    section.remove();
+                });
+            }
+
+            const categoryKeys = Object.keys(menuData || {});
+            // Filter out the Extras category from rendering
+            const visibleCategoryKeys = categoryKeys.filter(categoryId => {
+                const category = menuData[categoryId];
+                const slug = normalizeCategorySlug(categoryId);
+                const name = (category.title || '').toLowerCase();
+                return slug !== 'extras' && name !== 'extras';
+            });
+            
+            visibleCategoryKeys.forEach(categoryId => {
+                const category = menuData[categoryId];
+                if (!category || !Array.isArray(category.items)) {
+                    return;
+                }
+
+                const section = document.createElement('section');
+                section.className = 'bolt-menu-section';
+                section.id = categoryId;
+
+                const title = document.createElement('h2');
+                title.className = 'bolt-section-title';
+                title.textContent = category.title || categoryId;
+
+                const list = document.createElement('div');
+                list.className = 'bolt-food-list';
+                list.id = `${categoryId}-items`;
+
+                section.appendChild(title);
+                section.appendChild(list);
+
+                if (menuContainer) {
+                    menuContainer.appendChild(section);
+                }
+
+                category.items.forEach(function (menuEntry, idx) {
+                    const targetContainer = document.getElementById(list.id);
+                    if (!targetContainer) return;
+
+                    const foodItem = createFoodItem(menuEntry, categoryId, idx);
+                    targetContainer.appendChild(foodItem);
+                });
+            });
+        }
+
+        // Create food item — World-Class Food Hero Card Architecture (Phase 2A + 2B)
+        function createFoodItem(item, categoryId, indexInCategory) {
+            const div = document.createElement('div');
+            div.className = 'bolt-food-item';
+            div.dataset.itemRef = encodeURIComponent(item.name);
+
+            const inner = document.createElement('div');
+            inner.className = 'bolt-food-card-inner';
+
+            // 1. HERO VISUAL AT TOP
+            const visual = document.createElement('div');
+            visual.className = 'bolt-food-visual';
+
+            const wrap = document.createElement('div');
+            wrap.className = 'bolt-food-img-wrap';
+
+            const shimmer = document.createElement('span');
+            shimmer.className = 'bolt-food-img-shimmer';
+            shimmer.setAttribute('aria-hidden', 'true');
+
+            const img = document.createElement('img');
+            img.className = 'bolt-food-image';
+            img.alt = item.name;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            img.fetchPriority = 'low';
+            // Normalize image path to be root-relative
+            const normalizeImagePath = function(path) {
+                if (!path) return path;
+                if (path.startsWith('/')) return path; // Already absolute
+                if (path.startsWith('images/')) return '/' + path; // Relative to root
+                return '/images/' + path; // Assume filename, prepend /images/
+            };
+            // Use override image if available, otherwise use API image or fallback to getFoodImage
+            const overrideImage = getOverrideImage(item.name);
+            img.src = overrideImage ? '/images/' + overrideImage : (normalizeImagePath(item.image) || ('/images/' + getFoodImage(item.name)));
+            img.addEventListener('load', function onImgLoad() {
+                wrap.classList.add('is-loaded');
+                img.removeEventListener('load', onImgLoad);
+            });
+            img.addEventListener('error', function onImgErr() {
+                img.src = 'images/logo.png';
+                wrap.classList.add('is-loaded');
+                img.removeEventListener('error', onImgErr);
+            });
+            if (img.complete && img.naturalWidth > 0) {
+                wrap.classList.add('is-loaded');
+            }
+
+            wrap.appendChild(shimmer);
+            wrap.appendChild(img);
+            visual.appendChild(wrap);
+
+            // Badges overlay top-left
+            const badgeIds = inferItemBadges(item, categoryId, indexInCategory);
+            if (badgeIds.length > 0) {
+                const badgesRow = document.createElement('div');
+                badgesRow.className = 'bolt-food-badges';
+                badgeIds.forEach(function (id) {
+                    const def = MENU_BADGE_DEFS[id];
+                    if (!def) return;
+                    const b = document.createElement('span');
+                    b.className = 'bolt-food-badge ' + def.cls;
+                    b.setAttribute('role', 'presentation');
+                    b.textContent = def.icon + ' ' + def.label;
+                    badgesRow.appendChild(b);
+                });
+                visual.appendChild(badgesRow);
+            }
+
+            // Rating overlay top-right
+            const ratingStr = getItemRatingDisplay(item, categoryId, indexInCategory);
+            if (ratingStr) {
+                const rating = document.createElement('div');
+                rating.className = 'bolt-food-rating';
+                const star = document.createElement('span');
+                star.className = 'bolt-food-rating-star';
+                star.setAttribute('aria-hidden', 'true');
+                star.textContent = '\u2605';
+                const num = document.createElement('span');
+                num.className = 'bolt-food-rating-num';
+                num.textContent = ratingStr;
+                rating.appendChild(star);
+                rating.appendChild(num);
+                visual.appendChild(rating);
+            }
+
+            // 2. MAIN CARD BODY AT BOTTOM
+            const main = document.createElement('div');
+            main.className = 'bolt-food-main';
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'bolt-food-name';
+            nameEl.textContent = item.name;
+            main.appendChild(nameEl);
+
+            if (itemHasCustomization(item.name)) {
+                const hint = document.createElement('div');
+                hint.className = 'bolt-food-customize-hint';
+                hint.innerHTML = '<i class="fas fa-sliders-h"></i> Customize available';
+                main.appendChild(hint);
+            }
+
+            const descEl = document.createElement('div');
+            descEl.className = 'bolt-food-description';
+            descEl.textContent = item.description || '';
+            main.appendChild(descEl);
+
+            // Card Footer: Price & Add Button
+            const priceRow = document.createElement('div');
+            priceRow.className = 'bolt-food-price-row';
+            
+            const priceEl = document.createElement('span');
+            priceEl.className = 'bolt-food-price';
+            priceEl.textContent = 'GH¢ ' + Number(item.price).toFixed(2);
+            priceRow.appendChild(priceEl);
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'bolt-food-add-btn';
+            btn.innerHTML = '<i class="fas fa-plus"></i> Add';
+            btn.setAttribute('data-item-name', encodeURIComponent(item.name));
+            btn.setAttribute('data-item-price', String(item.price));
+            btn.setAttribute('data-item-image', item.image || '');
+            btn.setAttribute('aria-label', itemHasCustomization(item.name)
+                ? ('Customize and add ' + item.name)
+                : ('Add ' + item.name + ' to cart'));
+            
+            // Add direct onclick handler
+            btn.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const itemName = item.name;
+                const price = item.price;
+                
+                console.log('[Cart] Direct button click handler:', itemName, price);
+
+                if (typeof foodCustomizations !== 'undefined' && foodCustomizations[itemName]) {
+                    console.log('[Cart] Opening customization modal for:', itemName);
+                    openFoodModal(itemName, price, item.image);
+                    return;
+                }
+                
+                // Add directly to cart
+                var cartItem = {
+                    name: itemName,
+                    price: price,
+                    unitPrice: price,
+                    quantity: 1,
+                    customizations: {},
+                    addons: [],
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Safe reward metadata application
+                if (typeof applyRewardMetadataIfEligible === 'function') {
+                    applyRewardMetadataIfEligible(cartItem);
+                }
+                
+                var cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+                cart.push(cartItem);
+                localStorage.setItem('craveCart', JSON.stringify(cart));
+                
+                cartItems = cart;
+                cartCount = cartItems.length;
+                
+                if (window.CraveSound) window.CraveSound.tap();
+                if (window.CraveHaptic) window.CraveHaptic.softDouble();
+                document.dispatchEvent(new CustomEvent('cartChanged', { detail: cart }));
+                updateCartBadge({ bump: true });
+                updateStickyCartBar();
+                showCartFeedback(itemName);
+                playFoodCardAddedSuccess(btn);
+                
+                console.log('[Cart] Item added to cart successfully:', itemName);
+            };
+
+            priceRow.appendChild(btn);
+            main.appendChild(priceRow);
+
+            inner.appendChild(visual);
+            inner.appendChild(main);
+            div.appendChild(inner);
+
+            const catTitle = (menuData[categoryId] && menuData[categoryId].title) ? menuData[categoryId].title : '';
+            const badgeLabels = badgeIds.map(function (bid) {
+                const d = MENU_BADGE_DEFS[bid];
+                return d ? (d.label + ' ' + d.icon) : '';
+            }).join(' ');
+            const extraKw = categorySearchKeywords(categoryId);
+            div.dataset.categoryId = categoryId;
+            div.dataset.searchHaystack = [
+                item.name,
+                item.description,
+                catTitle,
+                categoryId.replace(/-/g, ' '),
+                badgeLabels,
+                extraKw
+            ].join(' ').toLowerCase();
+
+            return div;
+        }
+
+        function categorySearchKeywords(categoryId) {
+            const map = {
+                'loaded-fries': 'loaded fries cheese beef bacon cheddar bbq chicken popular trending bestseller',
+                'texas-chicken': 'chicken wings burger sandwich fries crispy texas bbq hot spicy',
+                'mexican-food': 'mexican burrito taco tacos beef',
+                'cupcakes': 'dessert cake jar sweet cupcake pastry',
+                'breakfast': 'morning waffle omelette egg brunch',
+                'smoothies': 'smoothie drink juice colada refreshing fruit blend shake'
+            };
+            return map[categoryId] || '';
+        }
+
+        // Get food image based on name
+        function getFoodImage(name) {
+            const imageMap = {
+                'Loaded Fries': 'loaded_fries.jpg',
+                'Cheese Beef Loaded Fries': 'beef_laodedfries.jpg',
+                'Jerk Chicken Shawarma': 'jerk_shawarmah.jpg',
+                'Chocolate Rich Buttercream Frosting Jar Cake': 'choco_jar.jpeg',
+                'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries': 'hot_chicken.jpeg',
+                'Loaded BBQ Chicken Cheddar Cheese Fries': 'bbq_cheddar_fries.jpg',
+                'Biscoff Jar Cake': 'biscoff.jpg',
+                'Lemon Buttercream Jar Cake': 'lemon.jpg',
+                'Honey BBQ Wings (6) and Fries': 'honey_wings.jpg',
+                'Siracha Mayo Hot Wings (6) and Fries': 'sriracha_mayo_wings.jpg',
+                '2 Piece Glazed Crispy Chicken and Fries': 'glazed_chicken_fries.jpg',
+                'Grilled Cheese Sandwich': 'grilled_cheese.jpg',
+                'Tuna Fish Sandwich': 'tuna_sandwich.jpg',
+                'American BLT (Bacon Lettuce Tomato)': 'blt_sandwich.jpg',
+                'Bacon Cheddar Fries': 'bacon_fries (2).jpg',
+                'Ultimate Bacon Cheddar Burger': 'bacon_burger.jpg',
+                'Melted Cheddar Burger': 'melted_burger (2).jpg',
+                'Chicken Burrito': 'chicken_burrito.jpg',
+                '2 Chicken Crispy Tacos': 'chicken_tacos.jpg',
+                '2 Beef Crispy Tacos': 'beef_tacos.jpg',
+                'Vanilla Buttercream Cake Slice': 'vanilla.jpg',
+                'Bailey\'s Irish Cream Jar Cake': 'bailey.jpg',
+                'Salted Caramel Cake': 'salted_caramel.jpg',
+                'Pistachio Dream Jar Cake': 'pistachio.jpg',
+                'Coffee Latte Jar Cake': 'coffe_latte.jpg',
+                'Pink Guava Buttercream Jar Cake': 'guava-cake.jpg',
+                'Chicken and Waffles': 'waffles (2).jpg',
+                'Loaded Omelette': 'omelette.jpg',
+                'Strawberry Colada': 'strawberry_colada.jpg',
+                'Pina Colada': 'pina_colada.jpg',
+                'Watermelon Mint Ice': 'watermelon_mint.jpg',
+                'Green Glow': 'green_glow.jpg',
+                'Green Glow Smoothie': 'green_glow.jpg',
+                'Tropical Fruit Blend': 'tropical.jpg',
+                'Pineapple Strawberry': 'pineapple_stawberry.jpg',
+                'Strawberries and Cream': 'strawberry_cream.jpg',
+                'Lemonade Ice': 'brazilian_lemonade.jpg',
+                'Banana Peanut Butter Chocolate': 'banana_peanut.jpg',
+                'Smoothies': 'tropical.jpg',
+                'Jar Cakes': 'biscoff.jpg',
+                'Fries': 'loaded_fries.jpg'
+            };
+            
+            return imageMap[name] || 'placeholder.jpg';
+        }
+
+        // Add to cart (programmatic — e.g. tests); menu UI uses delegated clicks on .bolt-food-add-btn
+        function addToCart(itemName, price) {
+            if (typeof foodCustomizations !== 'undefined' && foodCustomizations[itemName]) {
+                openFoodModal(itemName, price);
+                return;
+            }
+            const item = {
+                name: itemName,
+                price: price,
+                unitPrice: price,
+                quantity: 1,
+                customizations: {},
+                addons: [],
+                timestamp: new Date().toISOString()
+            };
+            
+            applyRewardMetadataIfEligible(item);
+
+            // Always read from localStorage first to ensure sync
+            let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            cart.push(item);
+            localStorage.setItem('craveCart', JSON.stringify(cart));
+            
+            // Sync global state
+            cartItems = cart;
+            cartCount = cartItems.length;
+            
+            updateCartBadge({ bump: true });
+            updateStickyCartBar();
+            showCartFeedback(itemName);
+        }
+
+        // Show cart feedback
+        function showCartFeedback(itemName) {
+            const feedback = document.createElement('div');
+            feedback.className = 'bolt-cart-feedback';
+            feedback.innerHTML = `
+                <div class="bolt-cart-feedback-content">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${itemName} added to cart!</span>
+                </div>
+            `;
+            
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(feedback)) {
+                        document.body.removeChild(feedback);
+                    }
+                }, 300);
+            }, 2000);
+        }
+
+        // Category navigation
+        function initializeCategoryNav() {
+            const navItems = document.querySelectorAll('.bolt-category-nav-item');
+            const sections = document.querySelectorAll('.bolt-menu-section');
+            
+            // Update active category on scroll
+            function updateActiveCategory() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (window.pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('href') === `#${current}`) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', updateActiveCategory);
+            updateActiveCategory();
+        }
+
+        function menuSearchTokensMatch(haystack, q) {
+            if (!q) return true;
+            var t = q.trim().toLowerCase().replace(/\s+/g, ' ');
+            if (!t) return true;
+            var tokens = t.split(' ').filter(Boolean);
+            if (!tokens.length) return true;
+            for (var i = 0; i < tokens.length; i++) {
+                if (haystack.indexOf(tokens[i]) === -1) return false;
+            }
+            return true;
+        }
+
+        var menuSearchDebounceTimer = null;
+        var isSearchingAPI = false;
+
+        // Search using API with client-side fallback
+        async function applyMenuSearchFilter(rawQuery) {
+            var q = String(rawQuery || '').trim().toLowerCase();
+            
+            // If query is empty, reset all items
+            if (!q) {
+                document.querySelectorAll('.bolt-food-item').forEach(function(c) {
+                    c.classList.remove('bolt-menu-search-miss');
+                });
+                document.querySelectorAll('.bolt-menu-section').forEach(function(sec) {
+                    sec.classList.remove('bolt-menu-section--search-empty');
+                });
+                var emptyEl = document.getElementById('boltMenuSearchEmpty');
+                if (emptyEl) emptyEl.hidden = true;
+                return;
+            }
+
+            // Try API search first if available
+            if (typeof MenuAPI !== 'undefined' && !isSearchingAPI) {
+                isSearchingAPI = true;
+                try {
+                    var results = await MenuAPI.search(q);
+                    if (results && results.length > 0) {
+                        // Filter items based on API results
+                        var resultNames = new Set(results.map(r => r.name.toLowerCase()));
+                        var cards = document.querySelectorAll('.bolt-food-item');
+                        var total = 0;
+                        cards.forEach(function(c) {
+                            var name = c.getAttribute('data-item-ref');
+                            var decodedName = '';
+                            try {
+                                decodedName = decodeURIComponent(name).toLowerCase();
+                            } catch(e) {
+                                decodedName = name.toLowerCase();
+                            }
+                            var ok = resultNames.has(decodedName);
+                            if (ok) total++;
+                            c.classList.toggle('bolt-menu-search-miss', !ok);
+                        });
+                        
+                        document.querySelectorAll('.bolt-menu-section').forEach(function(sec) {
+                            var vis = sec.querySelectorAll('.bolt-food-item:not(.bolt-menu-search-miss)').length;
+                            sec.classList.toggle('bolt-menu-section--search-empty', vis === 0);
+                        });
+                        
+                        var emptyEl = document.getElementById('boltMenuSearchEmpty');
+                        if (emptyEl) {
+                            emptyEl.hidden = total > 0;
+                        }
+                        isSearchingAPI = false;
+                        return;
+                    }
+                } catch(error) {
+                    console.error('API search failed, falling back to client-side:', error);
+                }
+                isSearchingAPI = false;
+            }
+
+            // Fallback to client-side search
+            var cards = document.querySelectorAll('.bolt-food-item');
+            var total = 0;
+            for (var i = 0; i < cards.length; i++) {
+                var c = cards[i];
+                var hay = c.getAttribute('data-search-haystack') || '';
+                var ok = menuSearchTokensMatch(hay, q);
+                if (ok) total++;
+                c.classList.toggle('bolt-menu-search-miss', !!q && !ok);
+            }
+            document.querySelectorAll('.bolt-menu-section').forEach(function (sec) {
+                var vis = sec.querySelectorAll('.bolt-food-item:not(.bolt-menu-search-miss)').length;
+                sec.classList.toggle('bolt-menu-section--search-empty', !!q && vis === 0);
+            });
+            var emptyEl = document.getElementById('boltMenuSearchEmpty');
+            if (emptyEl) {
+                var showEmpty = !!q && total === 0;
+                emptyEl.hidden = !showEmpty;
+                // Also hide if no items exist in menu at all (not a search issue)
+                if (!q && total === 0) {
+                    var hasAnyItems = document.querySelectorAll('.bolt-food-item').length > 0;
+                    emptyEl.hidden = true;
+                }
+            }
+        }
+
+        function queueMenuSearchApply(value) {
+            clearTimeout(menuSearchDebounceTimer);
+            menuSearchDebounceTimer = setTimeout(function () {
+                applyMenuSearchFilter(value);
+            }, 300); // Increased debounce for API calls
+        }
+
+        function initBoltMenuSearch() {
+            var input = document.getElementById('boltMenuSearchInput');
+            var clearBtn = document.getElementById('boltMenuSearchClear');
+            var wrap = document.getElementById('boltMenuSearchWrap');
+            var searchBar = wrap ? wrap.querySelector('.bolt-menu-search') : null;
+            if (!input || !wrap) return;
+
+            // Reset search input to empty on init to prevent browser autofill/restore issues
+            input.value = '';
+
+            // Ensure empty state is hidden on init
+            var emptyEl = document.getElementById('boltMenuSearchEmpty');
+            if (emptyEl) emptyEl.hidden = true;
+
+            // Reset search filter to show all cards
+            applyMenuSearchFilter('');
+
+            function syncClear() {
+                var v = input.value.trim();
+                if (clearBtn) clearBtn.hidden = !v;
+            }
+
+            input.addEventListener('input', function () {
+                syncClear();
+                queueMenuSearchApply(input.value);
+            });
+            input.addEventListener('focus', function () {
+                wrap.classList.add('bolt-menu-search-wrap--focus');
+                if (searchBar) searchBar.classList.add('is-focused');
+            });
+            input.addEventListener('blur', function () {
+                wrap.classList.remove('bolt-menu-search-wrap--focus');
+                if (searchBar) searchBar.classList.remove('is-focused');
+            });
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function () {
+                    input.value = '';
+                    syncClear();
+                    applyMenuSearchFilter('');
+                    input.focus();
+                });
+            }
+            input.addEventListener('keydown', function (ev) {
+                if (ev.key === 'Enter') {
+                    applyMenuSearchFilter(input.value);
+                }
+            });
+            syncClear();
+        }
+
+        // Initialize everything on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Menu page initializing...');
+
+            // Hide search empty state on page load
+            var emptyEl = document.getElementById('boltMenuSearchEmpty');
+            if (emptyEl) emptyEl.hidden = true;
+
+            // Load cart first
+            loadCartFromStorage();
+
+            // Render initial menu from cache or fallback first
+            renderInitialMenu();
+
+            // Then load fresh menu from API to update
+            loadMenuFromAPI();
+
+            try {
+                initBoltMenuSearch();
+            } catch (eSearch) {
+                console.error('Menu search init failed:', eSearch);
+            }
+            
+            // Initialize auth
+            if (typeof AuthManager !== 'undefined') {
+                await AuthManager.initialize();
+                AuthUI.initialize();
+            }
+            
+            // Initialize cart sync
+            if (typeof CartSync !== 'undefined') {
+                CartSync.initialize();
+            }
+
+            // Track menu views for recommendations
+            if (CraveRecommendations) {
+                const recommendations = CraveRecommendations.getPersonalized();
+                console.log('Personalized recommendations loaded:', recommendations);
+            }
+            
+            // Wait for menu to be rendered before setting up event listeners
+            setTimeout(function() {
+                setupAddToCartListeners();
+            }, 2000);
+            
+            // Initialize sticky cart bar
+            updateStickyCartBar();
+            
+            // Copyright year
+            const yearSpan = document.getElementById('copyright-year');
+            if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
+            // Show combo suggestions when items are added to cart
+            const originalAddToCart = window.addToCartWithCustomizations;
+            if (originalAddToCart && CraveRewardsEngine) {
+                window.addToCartWithCustomizations = function() {
+                    const result = originalAddToCart.apply(this, arguments);
+
+                    // Check for combo recommendations
+                    const cart = JSON.parse(localStorage.getItem('craveCart') || '[]');
+                    if (cart.length > 0) {
+                        const combos = CraveRewardsEngine.getComboRecommendations(cart);
+                        if (combos.length > 0) {
+                            setTimeout(() => {
+                                CraveRewardsNotifications.comboAvailable(combos[0]);
+                            }, 1000);
+                        }
+                    }
+
+                    return result;
+                };
+            }
+
+            console.log('Menu page initialization complete');
+        });
+
+        function setupAddToCartListeners() {
+            // Delegated add-to-cart listener on menu container (covers dynamically rendered cards)
+            const menuRoot = document.querySelector('.bolt-menu-container');
+            console.log('[Cart] Setting up event listener on menu container:', !!menuRoot);
+            
+            if (menuRoot) {
+                menuRoot.addEventListener('click', function (e) {
+                    console.log('[Cart] Menu container clicked, target:', e.target);
+                    
+                    // Must have clicked the add button (or an icon inside it like <i class="fas fa-plus">)
+                    const btn = e.target.closest('.bolt-food-add-btn');
+                    console.log('[Cart] Add button found:', !!btn);
+                    
+                    if (!btn) return;
+                    if (btn.disabled || btn.getAttribute('data-claiming') === 'true') return;
+
+                    console.log('[Cart] Processing add to cart for button:', btn);
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const enc = btn.getAttribute('data-item-name');
+                    const priceStr = btn.getAttribute('data-item-price');
+                    const imageStr = btn.getAttribute('data-item-image');
+                    console.log('[Cart] Item data - name:', enc, 'price:', priceStr, 'image:', imageStr);
+
+                    if (!enc || priceStr == null) {
+                        console.error('[Cart] Missing item data on button:', btn);
+                        return;
+                    }
+
+                    var itemName;
+                    try {
+                        itemName = decodeURIComponent(enc);
+                    } catch (err) {
+                        console.error('[Cart] Decode error:', err);
+                        return;
+                    }
+
+                    var price = parseFloat(priceStr);
+                    if (!isFinite(price) || price < 0) {
+                        console.error('[Cart] Invalid price:', priceStr);
+                        return;
+                    }
+
+                    console.log('[Cart] Adding item to cart:', itemName, price);
+
+                    // Items with customizations open the modal
+                    if (typeof foodCustomizations !== 'undefined' && foodCustomizations[itemName]) {
+                        console.log('[Cart] Opening customization modal for:', itemName);
+                        btn.classList.add('bolt-food-add-btn--press');
+                        setTimeout(function () { btn.classList.remove('bolt-food-add-btn--press'); }, 220);
+                        openFoodModal(itemName, price, imageStr);
+                        return;
+                    }
+
+                    // Items WITHOUT customizations go straight to cart
+                    var cartItem = {
+                        name: itemName,
+                        price: price,
+                        unitPrice: price,
+                        quantity: 1,
+                        customizations: {},
+                        addons: [],
+                        timestamp: new Date().toISOString()
+                    };
+
+                    applyRewardMetadataIfEligible(cartItem);
+
+                    var cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+                    cart.push(cartItem);
+                    localStorage.setItem('craveCart', JSON.stringify(cart));
+
+                    cartItems = cart;
+                    cartCount = cartItems.length;
+
+                    if (window.CraveSound) window.CraveSound.tap();
+                    if (window.CraveHaptic) window.CraveHaptic.softDouble();
+                    document.dispatchEvent(new CustomEvent('cartChanged', { detail: cart }));
+                    updateCartBadge({ bump: true });
+                    updateStickyCartBar();
+                    showCartFeedback(itemName);
+                    playFoodCardAddedSuccess(btn);
+                });
+            } else {
+                console.error('[Cart] Menu container not found, cannot setup event listeners');
+            }
+        }
+
+    </script>
+    
+    <style>
+        /* Loading Skeleton Styles */
+        .menu-loading-skeleton {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .skeleton-item {
+            height: 120px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 12px;
+        }
+        
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        /* Error State Styles */
+        .menu-error-state {
+            padding: 40px 20px;
+            text-align: center;
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 12px;
+            margin: 20px;
+        }
+        
+        .menu-error-state .error-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .menu-error-state i {
+            font-size: 48px;
+            color: #ff6b6b;
+        }
+        
+        .menu-error-state p {
+            margin: 0;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .menu-error-state .retry-btn {
+            padding: 12px 24px;
+            background: #d4a373;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .menu-error-state .retry-btn:hover {
+            background: #c49a6c;
+        }
+        
+        /* Loading state for container */
+        .bolt-menu-container.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+    
+    <!-- Centralized PWA Manager -->
+    <script src="js/pwa-manager.js"></script>
+    
+    <!-- Premium Food Customization JavaScript -->
+    <script>
+        // Food Customization Data Structure - Complete Implementation
+        const foodCustomizations = {
+            'Loaded Fries': {
+                description: 'Our signature loaded fries with your choice of protein and toppings',
+                options: [
+                    {
+                        title: 'Choose Style',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Loaded Fries', price: 0 },
+                            { name: 'Spicy Loaded Fries', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Cheese', price: 8 },
+                            { name: 'Add Crispy Chicken', price: 15 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Lemonade Ice', price: 20, image: 'brazilian_lemonade.jpg' },
+                    { name: 'Biscoff Jar Cake', price: 30, image: 'biscoff.jpg' }
+                ]
+            },
+            'Cheese Beef Loaded Fries': {
+                description: 'Loaded fries with seasoned beef and melted cheese',
+                options: [
+                    {
+                        title: 'Choose Spice Level',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Mild', price: 0 },
+                            { name: 'Spicy', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Cheese', price: 8 },
+                            { name: 'Extra Beef', price: 12 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Watermelon Mint Ice', price: 22, image: 'watermelon_mint.jpg' },
+                    { name: 'Chocolate Rich Buttercream Jar Cake', price: 35, image: 'choco_jar.jpeg' }
+                ]
+            },
+            'Loaded BBQ Chicken Cheddar Cheese Fries': {
+                description: 'Smoky BBQ chicken, melted sharp cheddar and crunchy fries — crave-worthy and shareable. Add a smoothie or jar cake for a delightful combo.',
+                options: [
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra BBQ Sauce', price: 0 },
+                            { name: 'Extra Chicken', price: 12 },
+                            { name: 'Double Cheese', price: 8 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Chocolate Rich Buttercream Jar Cake', price: 35, image: 'choco_jar.jpeg' },
+                    { name: 'Biscoff Jar Cake', price: 30, image: 'biscoff.jpg' }
+                ]
+            },
+            'Bacon Cheddar Fries': {
+                description: 'Loaded fries with crispy bacon and cheddar cheese',
+                options: [
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Bacon', price: 10 },
+                            { name: 'Extra Cheese', price: 8 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Pineapple Strawberry', price: 24, image: 'pineapple_stawberry.jpg' }
+                ]
+            },
+            'Jerk Chicken Shawarma': {
+                description: 'Our signature loaded fries with your choice of protein and toppings',
+                options: [
+                    {
+                        title: 'Choose Style',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Loaded Fries', price: 0 },
+                            { name: 'Spicy Loaded Fries', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Cheese', price: 8 },
+                            { name: 'Add Crispy Chicken', price: 15 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Lemonade Ice', price: 20, image: 'brazilian_lemonade.jpg' },
+                    { name: 'Biscoff Jar Cake', price: 30, image: 'biscoff.jpg' }
+                ]
+            },
+            'Cheese Beef Loaded Fries': {
+                description: 'Loaded fries with seasoned beef and melted cheese',
+                options: [
+                    {
+                        title: 'Choose Spice Level',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Mild', price: 0 },
+                            { name: 'Spicy', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Beef', price: 10 },
+                            { name: 'Double Cheese', price: 8 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Watermelon Mint Ice', price: 22, image: 'watermelon_mint.jpg' },
+                    { name: 'Chocolate Rich Buttercream Jar Cake', price: 35, image: 'choco_jar.jpeg' }
+                ]
+            },
+            'Jerk Chicken Shawarma': {
+                description: 'Traditional jerk chicken wrapped in warm pita',
+                options: [
+                    {
+                        title: 'Choose Spice Level',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Mild', price: 0 },
+                            { name: 'Medium', price: 0 },
+                            { name: 'Hot', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Chicken', price: 12 },
+                            { name: 'Add Cheese', price: 5 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Tropical Fruit Blend', price: 25, image: 'tropical.jpg' },
+                    { name: 'Green Glow Smoothie', price: 28, image: 'green_glow.jpg' }
+                ]
+            },
+            'Warning! 2 Piece Extra Insanity Hot Fried Chicken and Fries': {
+                description: 'Extra spicy fried chicken with fries for the brave',
+                options: [
+                    {
+                        title: 'Spice Level (Required)',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Medium', price: 0 },
+                            { name: 'Hot', price: 0 },
+                            { name: 'Extreme', price: 0 },
+                            { name: 'INSANITY 🔥', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Optional Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Fries', price: 10 },
+                            { name: 'Cheese Dip', price: 6 },
+                            { name: 'Add Drink', price: 8 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Pineapple Strawberry', price: 24, image: 'pineapple_stawberry.jpg' }
+                ]
+            },
+            'Loaded BBQ Chicken Cheddar Cheese Fries': {
+                description: 'Smoky BBQ chicken, melted sharp cheddar and crunchy fries — crave-worthy and shareable. Add a smoothie or jar cake for a delightful combo.',
+                options: [
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra BBQ Sauce', price: 0 },
+                            { name: 'Extra Chicken', price: 12 },
+                            { name: 'Double Cheese', price: 8 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Chocolate Rich Buttercream Jar Cake', price: 35, image: 'choco_jar.jpeg' },
+                    { name: 'Biscoff Jar Cake', price: 30, image: 'biscoff.jpg' }
+                ]
+            },
+            'Honey BBQ Wings (6) and Fries': {
+                description: 'Sweet and tangy BBQ wings with crispy fries',
+                options: [
+                    {
+                        title: 'BBQ Level',
+                        required: false,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Mild BBQ', price: 0 },
+                            { name: 'Medium BBQ', price: 0 },
+                            { name: 'Hot BBQ', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Wings (3pcs)', price: 15 },
+                            { name: 'Extra Fries', price: 8 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Pineapple Strawberry', price: 24, image: 'pineapple_stawberry.jpg' },
+                    { name: 'Biscoff Jar Cake', price: 30, image: 'biscoff.jpg' }
+                ]
+            },
+            'Siracha Mayo Hot Wings (6) and Fries': {
+                description: 'Spicy wings with creamy sriracha mayo',
+                options: [
+                    {
+                        title: 'Spice Level',
+                        required: false,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Mild', price: 0 },
+                            { name: 'Hot', price: 0 },
+                            { name: 'Extreme', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Siracha Mayo', price: 0 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Strawberry Colada', price: 25, image: 'strawberry_colada.jpg' },
+                    { name: 'Chocolate Rich Buttercream Jar Cake', price: 35, image: 'choco_jar.jpeg' }
+                ]
+            },
+            '2 Piece Glazed Crispy Chicken and Fries': {
+                description: 'Crispy chicken with your choice of glaze',
+                options: [
+                    {
+                        title: 'Choose Glaze',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Honey Glaze', price: 0 },
+                            { name: 'BBQ Glaze', price: 0 },
+                            { name: 'Spicy Glaze', price: 0 }
+                        ]
+                    }
+                ]
+            },
+            'Ultimate Bacon Cheddar Burger': {
+                description: 'Double bacon with melted cheddar on a premium bun',
+                options: [
+                    {
+                        title: 'Beef Patty Level',
+                        required: false,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Single Patty', price: 0 },
+                            { name: 'Double Patty', price: 20 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Bacon', price: 10 },
+                            { name: 'Extra Cheese', price: 6 }
+                        ]
+                    }
+                ],
+                recommendedAddons: [
+                    { name: 'Smoothies', price: 25, image: 'tropical.jpg' },
+                    { name: 'Jar Cakes', price: 30, image: 'biscoff.jpg' },
+                    { name: 'Fries', price: 15, image: 'loaded_fries.jpg' }
+                ]
+            },
+            'Chicken Burrito': {
+                description: 'Grilled chicken wrapped in a warm tortilla',
+                options: [
+                    {
+                        title: 'Choose Spice Level',
+                        required: false,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Mild', price: 0 },
+                            { name: 'Medium', price: 0 },
+                            { name: 'Hot', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Chicken', price: 0 },
+                            { name: 'Extra Cheese', price: 0 },
+                            { name: 'Guacamole', price: 0 }
+                        ]
+                    }
+                ]
+            },
+            '2 Chicken Crispy Tacos': {
+                description: 'Crispy tacos with seasoned chicken',
+                options: [
+                    {
+                        title: 'Choose Shell',
+                        required: false,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Soft Shell', price: 0 },
+                            { name: 'Crispy Shell', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Sauce', price: 0 }
+                        ]
+                    }
+                ]
+            ,
+                recommendedAddons: [
+                    { name: 'Tropical Fruit Blend', price: 25, image: 'tropical.jpg' },
+                    { name: 'Vanilla Buttercream Cake Slice', price: 28, image: 'vanilla.jpg' }
+                ]
+            },
+            '2 Beef Crispy Tacos': {
+                description: 'Crispy tacos with seasoned beef',
+                options: [
+                    {
+                        title: 'Choose Spice Level',
+                        required: false,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Mild', price: 0 },
+                            { name: 'Hot', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Add Cheese', price: 0 }
+                        ]
+                    }
+                ]
+            ,
+                recommendedAddons: [
+                    { name: 'Green Glow', price: 28, image: 'green_glow.jpg' },
+                    { name: 'Salted Caramel Cake', price: 30, image: 'salted_caramel.jpg' }
+                ]
+            },
+            'Chocolate Rich Buttercream Jar Cake': {
+                description: 'Decadent chocolate cake with buttercream',
+                options: [
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Chocolate', price: 0 },
+                            { name: 'Extra Cream', price: 0 },
+                            { name: 'Oreo Topping', price: 0 }
+                        ]
+                    }
+                ]
+            },
+            'Lemon Buttercream Jar Cake': {
+                description: 'Fresh lemon cake with buttercream',
+                options: [
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Lemon Cream', price: 0 },
+                            { name: 'Vanilla Drizzle', price: 0 }
+                        ]
+                    }
+                ]
+            },
+            'Biscoff Jar Cake': {
+                description: 'Decadent biscoff cake in a jar',
+                options: [
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Biscoff Spread', price: 0 },
+                            { name: 'Cookie Crunch', price: 0 }
+                        ]
+                    }
+                ]
+            },
+            'Pistachio Dream Jar Cake': {
+                description: 'Luxurious pistachio cake with dreamy texture',
+                options: [
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Pistachio Cream', price: 0 },
+                            { name: 'Chocolate Drizzle', price: 0 }
+                        ]
+                    }
+                ]
+            },
+            'Chicken and Waffles': {
+                description: 'Crispy chicken with fluffy waffles',
+                options: [
+                    {
+                        title: 'Choose Syrup',
+                        required: false,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Maple Syrup', price: 0 },
+                            { name: 'Spicy Syrup', price: 0 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Chicken', price: 0 }
+                        ]
+                    }
+                ]
+            },
+            'Loaded Omelette': {
+                description: 'Fluffy omelette with your choice of fillings',
+                options: [
+                    {
+                        title: 'Add Fillings',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Cheese', price: 0 },
+                            { name: 'Bacon', price: 0 },
+                            { name: 'Sausage', price: 0 },
+                            { name: 'Mushrooms', price: 0 }
+                        ]
+                    }
+                ]
+            },
+            // Smoothies - All with size options and protein boost
+            'Strawberry Colada': {
+                description: 'Sweet strawberry and coconut blend',
+                options: [
+                    {
+                        title: 'Choose Size',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Size', price: 0 },
+                            { name: 'Large Size', price: 5 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Ice', price: 0 },
+                            { name: 'Protein Boost', price: 8 }
+                        ]
+                    }
+                ]
+            },
+            'Pina Colada': {
+                description: 'Tropical pineapple and coconut smoothie',
+                options: [
+                    {
+                        title: 'Choose Size',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Size', price: 0 },
+                            { name: 'Large Size', price: 5 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Ice', price: 0 },
+                            { name: 'Protein Boost', price: 8 }
+                        ]
+                    }
+                ]
+            },
+            'Watermelon Mint Ice': {
+                description: 'Refreshing watermelon with cool mint',
+                options: [
+                    {
+                        title: 'Choose Size',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Size', price: 0 },
+                            { name: 'Large Size', price: 5 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Ice', price: 0 },
+                            { name: 'Protein Boost', price: 8 }
+                        ]
+                    }
+                ]
+            },
+            'Green Glow': {
+                description: 'Healthy green smoothie with energy boost',
+                options: [
+                    {
+                        title: 'Choose Size',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Size', price: 0 },
+                            { name: 'Large Size', price: 5 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Ice', price: 0 },
+                            { name: 'Protein Boost', price: 8 }
+                        ]
+                    }
+                ]
+            },
+            'Tropical Fruit Blend': {
+                description: 'Exotic tropical fruit mix',
+                options: [
+                    {
+                        title: 'Choose Size',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Size', price: 0 },
+                            { name: 'Large Size', price: 5 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Ice', price: 0 },
+                            { name: 'Protein Boost', price: 8 }
+                        ]
+                    }
+                ]
+            },
+            'Pineapple Strawberry': {
+                description: 'Sweet pineapple and strawberry combination',
+                options: [
+                    {
+                        title: 'Choose Size',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Size', price: 0 },
+                            { name: 'Large Size', price: 5 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Ice', price: 0 },
+                            { name: 'Protein Boost', price: 8 }
+                        ]
+                    }
+                ]
+            },
+            'Strawberries and Cream': {
+                description: 'Classic strawberry and cream smoothie',
+                options: [
+                    {
+                        title: 'Choose Size',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Size', price: 0 },
+                            { name: 'Large Size', price: 5 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Ice', price: 0 },
+                            { name: 'Protein Boost', price: 8 }
+                        ]
+                    }
+                ]
+            },
+            'Lemonade Ice': {
+                description: 'Refreshing lemonade ice smoothie',
+                options: [
+                    {
+                        title: 'Choose Size',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Size', price: 0 },
+                            { name: 'Large Size', price: 5 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Ice', price: 0 },
+                            { name: 'Protein Boost', price: 8 }
+                        ]
+                    }
+                ]
+            },
+            'Banana Peanut Butter Chocolate': {
+                description: 'Rich banana with peanut butter and chocolate',
+                options: [
+                    {
+                        title: 'Choose Size',
+                        required: true,
+                        type: 'radio',
+                        choices: [
+                            { name: 'Regular Size', price: 0 },
+                            { name: 'Large Size', price: 5 }
+                        ]
+                    },
+                    {
+                        title: 'Add Extras',
+                        required: false,
+                        type: 'checkbox',
+                        choices: [
+                            { name: 'Extra Ice', price: 0 },
+                            { name: 'Protein Boost', price: 8 }
+                        ]
+                    }
+                ]
+            }
+        };
+        
+        // Modal State Management
+        let currentFoodItem = null;
+        let currentQuantity = 1;
+        let selectedOptions = {};
+        let basePrice = 0;
+        
+        // Open Food Customization Modal
+        function openFoodModal(foodName, foodPrice, foodImage) {
+            currentFoodItem = foodName;
+            basePrice = foodPrice;
+            currentQuantity = 1;
+            selectedOptions = {};
+            selectedAddons = [];
+
+            // Normalize image path to be root-relative
+            const normalizeImagePath = function(path) {
+                if (!path) return path;
+                if (path.startsWith('/')) return path; // Already absolute
+                if (path.startsWith('images/')) return '/' + path; // Relative to root
+                return '/images/' + path; // Assume filename, prepend /images/
+            };
+
+            // Update modal content
+            document.getElementById('modalFoodTitle').textContent = foodName;
+            document.getElementById('modalFoodPrice').textContent = `GHS ${Number(foodPrice).toFixed(2)}`;
+            // Use override image if available, otherwise use API image or fallback to getFoodImage
+            const overrideImage = getOverrideImage(foodName);
+            document.getElementById('modalFoodImage').src = overrideImage ? '/images/' + overrideImage : (normalizeImagePath(foodImage) || `/images/${getFoodImage(foodName)}`);
+            document.getElementById('modalFoodDescription').textContent = (foodCustomizations && foodCustomizations[foodName] && foodCustomizations[foodName].description) || '';
+            document.getElementById('quantity').textContent = currentQuantity;
+
+            // Always reset the Add to Cart button so it's never stuck disabled from a previous modal
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            if (addToCartBtn) addToCartBtn.disabled = false;
+            
+            // Generate customization options
+            generateCustomizationOptions(foodName);
+            
+            // Update total price (will set button disabled correctly if required options exist)
+            updateTotalPrice();
+            
+            // Show modal and lock background scroll
+            const modal = document.getElementById('foodCustomizationModal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.touchAction = 'none';
+            document.documentElement.style.touchAction = 'none';
+            if (window.CraveSound) window.CraveSound.modalOpen();
+        }
+        
+        // Close Food Modal
+        function closeFoodModal() {
+            const modal = document.getElementById('foodCustomizationModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+            document.body.style.touchAction = '';
+            document.documentElement.style.touchAction = '';
+
+            const optionsContainer = document.getElementById('customizationOptions');
+            const addonsContainer = document.getElementById('recommendedAddons');
+            const specialRequests = document.getElementById('specialRequests');
+            if (optionsContainer) optionsContainer.innerHTML = '';
+            if (addonsContainer) addonsContainer.innerHTML = '';
+            if (specialRequests) specialRequests.value = '';
+
+            currentFoodItem = null;
+            currentQuantity = 1;
+            selectedOptions = {};
+            selectedAddons = [];
+            basePrice = 0;
+
+            if (window.CraveSound && typeof window.CraveSound.modalClose === 'function') {
+                window.CraveSound.modalClose();
+            }
+        }
+
+        function generateCustomizationOptions(foodName) {
+            const customization = foodCustomizations[foodName];
+            const optionsContainer = document.getElementById('customizationOptions');
+            const addonsContainer = document.getElementById('recommendedAddons');
+            if (!optionsContainer || !addonsContainer) return;
+
+            optionsContainer.innerHTML = '';
+            addonsContainer.innerHTML = '';
+            selectedOptions = {};
+            selectedAddons = [];
+
+            if (!customization) return;
+
+            customization.options.forEach((section, sectionIndex) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'customization-section';
+
+                const sectionHeader = document.createElement('div');
+                sectionHeader.className = 'section-header';
+                sectionHeader.innerHTML = `
+                    <h3 class="section-title">${section.title}</h3>
+                    ${section.required ? '<span class="required-badge">Required</span>' : ''}
+                `;
+                sectionDiv.appendChild(sectionHeader);
+
+                section.choices.forEach((choice, choiceIndex) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-item';
+                    optionDiv.addEventListener('click', function () {
+                        selectOption(sectionIndex, choiceIndex, section.type);
+                    });
+
+                    const optionLeft = document.createElement('div');
+                    optionLeft.className = 'option-left';
+
+                    const indicator = document.createElement('div');
+                    indicator.className = section.type === 'radio' ? 'custom-radio' : 'custom-checkbox';
+                    indicator.id = `option-${sectionIndex}-${choiceIndex}`;
+
+                    const optionName = document.createElement('span');
+                    optionName.className = 'option-name';
+                    optionName.textContent = choice.name;
+
+                    optionLeft.appendChild(indicator);
+                    optionLeft.appendChild(optionName);
+
+                    const optionPrice = document.createElement('span');
+                    optionPrice.className = 'option-price';
+                    optionPrice.textContent = choice.price > 0 ? `+GHS ${choice.price}` : '';
+
+                    optionDiv.appendChild(optionLeft);
+                    optionDiv.appendChild(optionPrice);
+                    sectionDiv.appendChild(optionDiv);
+                });
+
+                optionsContainer.appendChild(sectionDiv);
+            });
+
+            if (customization.recommendedAddons && customization.recommendedAddons.length > 0) {
+                const addonsTitle = document.createElement('h3');
+                addonsTitle.className = 'addons-title';
+                addonsTitle.textContent = 'Recommended Addons';
+
+                const addonsGrid = document.createElement('div');
+                addonsGrid.className = 'addons-grid';
+
+                customization.recommendedAddons.forEach((addon, index) => {
+                    const addonDiv = document.createElement('div');
+                    addonDiv.className = 'addon-item';
+                    addonDiv.addEventListener('click', function () {
+                        toggleRecommendedAddon(addon, index);
+                    });
+
+                    const addonImage = document.createElement('img');
+                    addonImage.className = 'addon-image';
+                    const resolvedAddonImg = (typeof getFoodImage === 'function' && getFoodImage(addon.name) !== 'placeholder.jpg')
+                        ? getFoodImage(addon.name)
+                        : (addon.image || 'placeholder.jpg');
+                    // Normalize to root-relative path
+                    const normalizeImagePath = function(path) {
+                        if (!path) return path;
+                        if (path.startsWith('/')) return path;
+                        if (path.startsWith('images/')) return '/' + path;
+                        return '/images/' + path;
+                    };
+                    addonImage.src = normalizeImagePath(resolvedAddonImg);
+                    addonImage.alt = addon.name;
+                    addonImage.onerror = function () {
+                        addonImage.src = '/images/placeholder.jpg';
+                    };
+
+                    const addonName = document.createElement('div');
+                    addonName.className = 'addon-name';
+                    addonName.textContent = addon.name;
+
+                    const addonPrice = document.createElement('div');
+                    addonPrice.className = 'addon-price';
+                    addonPrice.textContent = `GHS ${addon.price}`;
+
+                    addonDiv.appendChild(addonImage);
+                    addonDiv.appendChild(addonName);
+                    addonDiv.appendChild(addonPrice);
+                    addonsGrid.appendChild(addonDiv);
+                });
+
+                addonsContainer.appendChild(addonsTitle);
+                addonsContainer.appendChild(addonsGrid);
+            }
+        }
+
+        // Recommended Addons State
+        let selectedAddons = [];
+        
+        // Toggle Recommended Addon
+        function toggleRecommendedAddon(addon, index) {
+            const addonIndex = selectedAddons.findIndex(a => a.name === addon.name);
+            
+            if (addonIndex >= 0) {
+                // Remove addon
+                selectedAddons.splice(addonIndex, 1);
+            } else {
+                // Add addon
+                selectedAddons.push(addon);
+            }
+            
+            // Update UI
+            updateAddonsUI();
+            updateTotalPrice();
+        }
+        
+        // Update Addons UI
+        function updateAddonsUI() {
+            const addonItems = document.querySelectorAll('.addon-item');
+            addonItems.forEach((item, index) => {
+                const addonName = item.querySelector('.addon-name').textContent;
+                const isSelected = selectedAddons.some(a => a.name === addonName);
+                
+                if (isSelected) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+        
+        // Select Option
+        function selectOption(sectionIndex, choiceIndex, type) {
+            const section = foodCustomizations[currentFoodItem].options[sectionIndex];
+            const choice = section.choices[choiceIndex];
+            const key = `${sectionIndex}`;
+            
+            if (type === 'radio') {
+                // Clear previous selection in this section
+                selectedOptions[key] = choice;
+                
+                // Update UI
+                section.choices.forEach((_, index) => {
+                    const indicator = document.getElementById(`option-${sectionIndex}-${index}`);
+                    indicator.classList.remove('selected');
+                });
+                
+                document.getElementById(`option-${sectionIndex}-${choiceIndex}`).classList.add('selected');
+            } else {
+                // Checkbox toggle
+                if (!selectedOptions[key]) {
+                    selectedOptions[key] = [];
+                }
+                
+                const existingIndex = selectedOptions[key].findIndex(item => item.name === choice.name);
+                
+                if (existingIndex >= 0) {
+                    // Remove selection
+                    selectedOptions[key].splice(existingIndex, 1);
+                    document.getElementById(`option-${sectionIndex}-${choiceIndex}`).classList.remove('selected');
+                } else {
+                    // Add selection
+                    selectedOptions[key].push(choice);
+                    document.getElementById(`option-${sectionIndex}-${choiceIndex}`).classList.add('selected');
+                }
+            }
+            
+            updateTotalPrice();
+        }
+        
+        // Quantity Controls
+        function increaseQuantity() {
+            currentQuantity++;
+            document.getElementById('quantity').textContent = currentQuantity;
+            updateTotalPrice();
+        }
+        
+        function decreaseQuantity() {
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                document.getElementById('quantity').textContent = currentQuantity;
+                updateTotalPrice();
+            }
+        }
+        
+        function calculateItemPrice({
+            basePriceValue = basePrice,
+            selectedSelections = selectedOptions,
+            selectedAddonsList = selectedAddons,
+            quantityValue = currentQuantity
+        } = {}) {
+            let totalPrice = Number(basePriceValue) || 0;
+
+            Object.values(selectedSelections || {}).forEach(selections => {
+                if (Array.isArray(selections)) {
+                    selections.forEach(choice => {
+                        totalPrice += Number(choice.price) || 0;
+                    });
+                } else if (selections && selections.price) {
+                    totalPrice += Number(selections.price) || 0;
+                }
+            });
+
+            (selectedAddonsList || []).forEach(addon => {
+                totalPrice += Number(addon.price) || 0;
+            });
+
+            return Number(totalPrice) * Number(quantityValue || 1);
+        }
+
+        // Update Total Price
+        function updateTotalPrice() {
+            const totalPrice = calculateItemPrice();
+            const totalPriceEl = document.getElementById('totalPrice');
+            if (totalPriceEl) totalPriceEl.textContent = totalPrice.toFixed(2);
+            
+            // Enable/disable add to cart button based on required options
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            if (!addToCartBtn) return;
+
+            const customization = (currentFoodItem && typeof foodCustomizations !== 'undefined') ? foodCustomizations[currentFoodItem] : null;
+            
+            if (customization && Array.isArray(customization.options)) {
+                const requiredSections = customization.options.filter(section => section.required);
+                const allRequiredSelected = requiredSections.every(section => {
+                    const sectionIndex = customization.options.indexOf(section);
+                    const sel = selectedOptions[sectionIndex];
+                    if (!sel) return false;
+                    if (Array.isArray(sel)) return sel.length > 0;
+                    return true;
+                });
+                
+                addToCartBtn.disabled = !allRequiredSelected;
+            } else {
+                addToCartBtn.disabled = false;
+            }
+        }
+        
+        // Add to Cart with Customizations
+        function addToCartWithCustomizations() {
+            if (!currentFoodItem) {
+                console.warn('No food item currently selected');
+                return;
+            }
+
+            const customization = (typeof foodCustomizations !== 'undefined') ? foodCustomizations[currentFoodItem] : null;
+            
+            // Check required options
+            if (customization && Array.isArray(customization.options)) {
+                const requiredSections = customization.options.filter(section => section.required);
+                const allRequiredSelected = requiredSections.every(section => {
+                    const sectionIndex = customization.options.indexOf(section);
+                    const sel = selectedOptions[sectionIndex];
+                    if (!sel) return false;
+                    if (Array.isArray(sel)) return sel.length > 0;
+                    return true;
+                });
+                
+                if (!allRequiredSelected) {
+                    if (typeof showToast === 'function') {
+                        showToast('Please select all required options before adding to cart', 'warning');
+                    } else {
+                        alert('Please select all required options');
+                    }
+                    return;
+                }
+            }
+            
+            const totalPrice = calculateItemPrice();
+            const unitPrice = Number(totalPrice) / Math.max(Number(currentQuantity) || 1, 1);
+
+            // Get special requests safely
+            const specialReqEl = document.getElementById('specialRequests');
+            const specialRequests = specialReqEl ? specialReqEl.value : '';
+            
+            // Prepare cart item with customizations and calculated price
+            const cartItem = {
+                name: currentFoodItem,
+                price: unitPrice,
+                unitPrice: unitPrice,
+                basePrice: basePrice,
+                quantity: currentQuantity || 1,
+                customizations: selectedOptions || {},
+                addons: selectedAddons || [],
+                specialRequests: specialRequests,
+                timestamp: new Date().toISOString()
+            };
+
+            applyRewardMetadataIfEligible(cartItem);
+            
+            // Add to cart - always read from localStorage first to ensure sync
+            let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            cart.push(cartItem);
+            localStorage.setItem('craveCart', JSON.stringify(cart));
+            
+            // Sync global state
+            cartItems = cart;
+            cartCount = cartItems.length;
+            
+            if (window.CraveSound) window.CraveSound.tap();
+            if (window.CraveHaptic) window.CraveHaptic.softDouble();
+
+            // Notify cart sync listeners & update UI
+            document.dispatchEvent(new CustomEvent('cartChanged', { detail: cart }));
+            updateCartBadge({ bump: true });
+            updateStickyCartBar();
+            showCartFeedback(currentFoodItem);
+
+            closeFoodModal();
+
+            var enc = encodeURIComponent(currentFoodItem);
+            var rowBtn = document.querySelector('.bolt-food-add-btn[data-item-name="' + enc + '"]');
+            if (rowBtn && typeof playFoodCardAddedSuccess === 'function') {
+                requestAnimationFrame(function () {
+                    playFoodCardAddedSuccess(rowBtn);
+                });
+            }
+        }
+
+        window.openFoodModal = openFoodModal;
+        window.closeFoodModal = closeFoodModal;
+        window.updateTotalPrice = updateTotalPrice;
+        window.addToCartWithCustomizations = addToCartWithCustomizations;
+        
+        // Show Cart Feedback
+        function showCartFeedback(itemName) {
+            // Create feedback element
+            const feedback = document.createElement('div');
+            feedback.className = 'cart-feedback';
+            feedback.innerHTML = `
+                <div class="feedback-content">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${itemName} added to cart!</span>
+                </div>
+            `;
+            
+            // Add styles
+            feedback.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #d4a373, #b8935f);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 25px;
+                box-shadow: 0 4px 20px rgba(212, 165, 116, 0.4);
+                z-index: 10000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            
+            document.body.appendChild(feedback);
+            
+            // Animate in
+            setTimeout(() => {
+                feedback.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                feedback.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(feedback);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Update Cart Badge (reads localStorage; optional bump animation)
+        function updateCartBadge(options) {
+            var opts = options || {};
+            var doBump = opts.bump === true;
+            var cart = [];
+            try {
+                cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            } catch (e1) {
+                cart = [];
+            }
+            if (!Array.isArray(cart)) cart = [];
+            var count = cart.length;
+            var badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.textContent = count;
+                badge.style.display = count > 0 ? 'flex' : 'none';
+                if (doBump) {
+                    badge.classList.remove('bolt-cart-badge--bump');
+                    void badge.offsetWidth;
+                    badge.classList.add('bolt-cart-badge--bump');
+                    setTimeout(function () {
+                        badge.classList.remove('bolt-cart-badge--bump');
+                    }, 450);
+                }
+            }
+            if (typeof cartCount !== 'undefined') {
+                cartCount = count;
+            }
+            if (typeof cartItems !== 'undefined') {
+                cartItems = cart;
+            }
+            updateStickyCartBar();
+        }
+        
+                
+        // Animate cart icon on item add
+        function animateCartIcon() {
+            const cartIcon = document.querySelector('.sticky-cart-icon-hit');
+            if (cartIcon) {
+                cartIcon.classList.remove('bounce');
+                void cartIcon.offsetWidth;
+                cartIcon.classList.add('bounce');
+                setTimeout(() => {
+                    cartIcon.classList.remove('bounce');
+                }, 600);
+            }
+        }
+        
+        // Enhanced showCartFeedback with sticky cart animation
+        const originalShowCartFeedback = showCartFeedback;
+        showCartFeedback = function(itemName) {
+            // Call original function
+            if (originalShowCartFeedback) {
+                originalShowCartFeedback(itemName);
+            }
+            
+            // Animate sticky cart icon
+            animateCartIcon();
+        };
+        
+        // Listen for cart changes (for cross-tab sync)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'craveCart') {
+                updateStickyCartBar();
+            }
+        });
+        
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeFoodModal();
+            }
+        });
+    </script>
+    
+    <!-- Premium Food Customization Modal -->
+    <div id="foodCustomizationModal" class="food-customization-modal">
+        <div class="modal-overlay" onclick="closeFoodModal()"></div>
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeFoodModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="modal-food-image">
+                    <img id="modalFoodImage" src="" alt="">
+                </div>
+                <div class="modal-food-info">
+                    <h2 id="modalFoodTitle" class="modal-food-title"></h2>
+                    <div class="modal-food-price-row">
+                        <span id="modalFoodPrice" class="modal-food-price"></span>
+                        <span id="modalFoodDescription" class="modal-food-description"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div id="customizationOptions" class="customization-options">
+                    <!-- Options will be dynamically generated -->
+                </div>
+                
+                <!-- Special Requests -->
+                <div class="special-requests-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Special Requests</h3>
+                    </div>
+                    <textarea 
+                        id="specialRequests" 
+                        class="special-requests-input" 
+                        placeholder="Any special requests? (e.g., no onions, extra spicy)"
+                        rows="3"
+                    ></textarea>
+                </div>
+                
+                <!-- Recommended Addons -->
+                <div id="recommendedAddons" class="recommended-addons-section">
+                    <!-- Addons will be dynamically generated -->
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <div class="quantity-selector">
+                    <button class="quantity-btn" onclick="decreaseQuantity()">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span id="quantity" class="quantity">1</span>
+                    <button class="quantity-btn" onclick="increaseQuantity()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <button id="addToCartBtn" class="add-to-cart-btn" onclick="addToCartWithCustomizations()">
+                    <span class="btn-text">Add to Cart</span>
+                    <span class="btn-price">GHS <span id="totalPrice">0</span></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium sticky floating cart CTA -->
+    <div id="stickyCartBar" class="sticky-cart-bar" aria-hidden="true">
+        <a href="cart.html" class="sticky-cart-hit" id="stickyCartBarLink" aria-label="View cart and continue to checkout">
+            <div class="sticky-cart-shell">
+                <div class="sticky-cart-glow-ring" aria-hidden="true"></div>
+                <div class="sticky-cart-shell-inner">
+                    <span class="sticky-cart-shimmer" aria-hidden="true"></span>
+                    <div class="sticky-cart-content">
+                        <div class="sticky-cart-info">
+                            <div class="sticky-cart-icon-wrap sticky-cart-icon-hit" aria-hidden="true">
+                                <span class="sticky-cart-emoji">🛒</span>
+                                <span class="sticky-cart-update-dot" id="stickyCartUpdateDot" aria-hidden="true"></span>
+                            </div>
+                            <div class="sticky-cart-text">
+                                <span class="sticky-cart-label">View Cart</span>
+                                <span class="sticky-cart-items" id="stickyCartItems" aria-live="polite">0 items</span>
+                            </div>
+                        </div>
+                        <div class="sticky-cart-right">
+                            <div class="sticky-cart-price">
+                                <span class="sticky-cart-price-currency">GHS</span>
+                                <span class="sticky-cart-price-value" id="stickyCartTotal">0.00</span>
+                            </div>
+                            <span class="sticky-cart-chevron" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8M10 8L6 4M10 8H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- CRAVE Rewards System -->
+    <script>
+        // Define reward eligibility functions BEFORE loading rewards scripts
+        const MilestoneEligibilityMap = {
+            'milestone_free_drink_100': {
+                name: 'Free Signature Drink',
+                categories: ['smoothies', 'cupcakes', 'smoothies-cupcakes'],
+                names: ['strawberry colada', 'lemonade ice', 'watermelon mint ice', 'pineapple strawberry', 'biscoff jar cake', 'chocolate rich buttercream jar cake']
+            },
+            'milestone_appetizer_250': {
+                name: 'Free Appetizer',
+                categories: ['loaded-fries', 'loaded-fries-category'],
+                names: ['loaded fries', 'cheese beef loaded fries', 'loaded bbq chicken cheddar cheese fries', 'bacon cheddar fries']
+            },
+            'milestone_main_dish_500': {
+                name: 'Free Main Dish',
+                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'burgers-combos']
+            },
+            'milestone_premium_combo_750': {
+                name: 'Premium Combo Upgrade',
+                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'burgers-combos']
+            },
+            'milestone_vip_reward_1000': {
+                name: 'VIP Craver Reward',
+                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'mexican-food', 'breakfast', 'smoothies', 'cupcakes', 'loaded-fries']
+            }
+        };
+
+        function checkMenuItemEligibility(item, rewardId) {
+            if (!rewardId) return false;
+            const config = MilestoneEligibilityMap[rewardId];
+            if (!config) return false;
+
+            const catSlug = ((item && item.category && item.category.slug) || item?.categoryName || '').toLowerCase();
+            const catName = ((item && item.category && item.category.name) || item?.categoryName || '').toLowerCase();
+            const itemName = (item && item.name ? item.name : '').toLowerCase();
+
+            const catMatches = config.categories && config.categories.some(c => catSlug.includes(c) || catName.includes(c));
+            const nameMatches = config.names && config.names.some(n => n === itemName);
+
+            return !!(catMatches || nameMatches);
+        }
+
+        function applyRewardMetadataIfEligible(item) {
+            if (!item || !window.activeRewardContext) {
+                delete item?.appliedRewardClaimId;
+                delete item?.rewardTitle;
+                delete item?.isRewardItem;
+                return item;
+            }
+
+            const eligible = typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility(item, window.activeRewardContext.rewardId);
+            if (eligible) {
+                item.appliedRewardClaimId = window.activeRewardContext.claimId;
+                item.rewardTitle = window.activeRewardContext.rewardName;
+                item.isRewardItem = true;
+            } else {
+                delete item.appliedRewardClaimId;
+                delete item.rewardTitle;
+                delete item.isRewardItem;
+            }
+
+            return item;
+        }
+
+        // Make functions globally available
+        window.checkMenuItemEligibility = checkMenuItemEligibility;
+        window.applyRewardMetadataIfEligible = applyRewardMetadataIfEligible;
+        window.MilestoneEligibilityMap = MilestoneEligibilityMap;
+        window.activeRewardContext = null;
+    </script>
+    <script src="js/cart-sync.js"></script>
+    <script src="js/rewards-config.js"></script>
+    <script src="js/rewards-data.js"></script>
+    <script src="js/rewards-engine.js"></script>
+    <script src="js/rewards-notifications.js"></script>
+    <script src="js/promo-codes.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/recommendations.js"></script>
+    <script src="js/spin-wheel.js"></script>
+    <script src="js/referral-system.js"></script>
+    <script src="js/flash-deals.js"></script>
+    <script src="js/combo-builder.js"></script>
+    <script src="js/birthday-system.js"></script>
+    
+    <script>
+        const MilestoneEligibilityMap = {
+            'milestone_free_drink_100': {
+                name: 'Free Signature Drink',
+                categories: ['smoothies', 'drinks', 'fresh-juices-smoothies', 'beverages'],
+                names: ['strawberry colada', 'pina colada', 'watermelon mint ice', 'green glow', 'tropical fruit blend', 'pineapple strawberry', 'strawberries and cream', 'lemonade ice', 'banana peanut butter chocolate']
+            },
+            'milestone_free_dessert_250': {
+                name: 'Free Dessert',
+                categories: ['cupcakes', 'desserts-pastries'],
+                names: ['chocolate rich buttercream frosting jar cake', 'biscoff jar cake', 'lemon buttercream jar cake', 'vanilla buttercream cake slice', 'bailey\'s irish cream jar cake', 'salted caramel cake', 'pistachio dream jar cake', 'coffee latte jar cake']
+            },
+            'milestone_free_loaded_fries_500': {
+                name: 'Free Loaded Fries',
+                categories: ['loaded-fries', 'sides-extras'],
+                names: ['loaded fries', 'cheese beef loaded fries', 'loaded bbq chicken cheddar cheese fries', 'bacon cheddar fries']
+            },
+            'milestone_premium_combo_750': {
+                name: 'Premium Combo Upgrade',
+                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'burgers-combos']
+            },
+            'milestone_vip_reward_1000': {
+                name: 'VIP Craver Reward',
+                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'mexican-food', 'breakfast', 'smoothies', 'cupcakes', 'loaded-fries']
+            }
+        };
+
+        function checkMenuItemEligibility(item, rewardId) {
+            if (!rewardId) return false;
+            const config = MilestoneEligibilityMap[rewardId];
+            if (!config) return false;
+
+            const catSlug = ((item && item.category && item.category.slug) || item?.categoryName || '').toLowerCase();
+            const catName = ((item && item.category && item.category.name) || item?.categoryName || '').toLowerCase();
+            const itemName = (item && item.name ? item.name : '').toLowerCase();
+
+            const catMatches = config.categories && config.categories.some(c => catSlug.includes(c) || catName.includes(c));
+            const nameMatches = config.names && config.names.some(n => n === itemName);
+
+            return !!(catMatches || nameMatches);
+        }
+
+        function applyRewardMetadataIfEligible(item) {
+            if (!item || !window.activeRewardContext) {
+                delete item?.appliedRewardClaimId;
+                delete item?.rewardTitle;
+                delete item?.isRewardItem;
+                return item;
+            }
+
+            const eligible = typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility(item, window.activeRewardContext.rewardId);
+            if (eligible) {
+                item.appliedRewardClaimId = window.activeRewardContext.claimId;
+                item.rewardTitle = window.activeRewardContext.rewardName;
+                item.isRewardItem = true;
+            } else {
+                delete item.appliedRewardClaimId;
+                delete item.rewardTitle;
+                delete item.isRewardItem;
+            }
+
+            return item;
+        }
+
+        window.activeRewardContext = null;
+
+        async function initRewardContextOnMenu() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const useReward = urlParams.get('use_reward');
+            const claimId = urlParams.get('claimId');
+
+            if (typeof AuthManager === 'undefined' || !AuthManager.isAuthenticated()) {
+                if (useReward && typeof ToastNotifications !== 'undefined') {
+                    ToastNotifications.info('Please log in to use your claimed milestone reward');
+                }
+                return;
+            }
+
+            try {
+                const claims = await CraveRewardsData.Claims.get({ forceRefresh: true });
+                const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => ((c.status||'').toString().toUpperCase().trim() === 'CLAIMED'));
+
+                if (activeClaims.length === 0) return;
+
+                let targetClaim = null;
+                if (claimId) {
+                    targetClaim = activeClaims.find(c => c.id === claimId);
+                }
+                if (!targetClaim && useReward) {
+                    targetClaim = activeClaims.find(c => c.rewardId === useReward);
+                }
+                if (!targetClaim) {
+                    targetClaim = activeClaims[0];
+                }
+
+                if (targetClaim) {
+                    const config = MilestoneEligibilityMap[targetClaim.rewardId] || { name: 'Milestone Reward' };
+                    window.activeRewardContext = {
+                        claimId: targetClaim.id,
+                        rewardId: targetClaim.rewardId,
+                        rewardName: config.name,
+                        claim: targetClaim
+                    };
+                    showActiveRewardBanner();
+                    setTimeout(highlightEligibleMenuItems, 600);
+                }
+            } catch (err) {
+                console.error('Error initializing reward context on menu:', err);
+            }
+        }
+
+        function showActiveRewardBanner() {
+            if (!window.activeRewardContext) return;
+            let banner = document.getElementById('craveRewardActiveBanner');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'craveRewardActiveBanner';
+                document.body.prepend(banner);
+            }
+
+            banner.innerHTML = `
+                <div style="background: linear-gradient(135deg, rgba(229, 169, 59, 0.98), rgba(184, 131, 35, 0.98)); color: #111; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 15px; position: sticky; top: 0; z-index: 99999; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px);">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 24px;">🎁</span>
+                        <div>
+                            <strong style="font-size: 14px; color: #000; text-transform: uppercase; letter-spacing: 0.5px;">REWARD READY: ${window.activeRewardContext.rewardName}</strong>
+                            <div style="font-size: 13px; color: #111; font-weight: 500;">Select any item marked <strong>🎁 FREE WITH YOUR REWARD</strong> to claim it!</div>
+                        </div>
+                    </div>
+                    <button onclick="clearActiveRewardContext()" style="background: rgba(0, 0, 0, 0.25); color: #fff; border: 1px solid rgba(0, 0, 0, 0.3); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600;">Dismiss Banner</button>
+                </div>
+            `;
+        }
+
+        function clearActiveRewardContext() {
+            window.activeRewardContext = null;
+            const banner = document.getElementById('craveRewardActiveBanner');
+            if (banner) banner.remove();
+            highlightEligibleMenuItems();
+        }
+
+        function highlightEligibleMenuItems() {
+            if (!window.activeRewardContext) {
+                document.querySelectorAll('.reward-eligible-badge').forEach(el => el.remove());
+                return;
+            }
+
+            const rewardId = window.activeRewardContext.rewardId;
+            const cards = document.querySelectorAll('.food-card, .bolt-food-card, .menu-card, [data-item-name]');
+
+            cards.forEach(card => {
+                const itemName = card.getAttribute('data-item-name') || card.querySelector('.food-title, .food-name, .card-title')?.textContent || '';
+                const itemCat = card.getAttribute('data-category') || '';
+
+                const dummyItem = { name: itemName.trim(), categoryName: itemCat, category: { slug: itemCat, name: itemCat } };
+                if (checkMenuItemEligibility(dummyItem, rewardId)) {
+                    card.style.border = '2px solid #e5a93b';
+                    card.style.borderRadius = '16px';
+                    
+                    if (!card.querySelector('.reward-eligible-badge')) {
+                        const badge = document.createElement('div');
+                        badge.className = 'reward-eligible-badge';
+                        badge.style.cssText = 'background: linear-gradient(135deg, #e5a93b, #b88323); color: #000; font-weight: 700; font-size: 11px; padding: 4px 10px; border-radius: 12px; margin: 8px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(229, 169, 59, 0.4);';
+                        badge.innerHTML = '🎁 FREE WITH YOUR REWARD';
+                        card.prepend(badge);
+                    }
+                }
+            });
+        }
+    </script>
+
+	<!-- Shared Navbar & Footer JavaScript -->
+	<script>
+	(function() {
+		'use strict';
+
+		const navbar = document.getElementById('craveNavbar');
+		const navbarToggle = document.getElementById('craveNavbarToggle');
+		const navbarMobile = document.getElementById('craveNavbarMobile');
+
+		// Toggle mobile menu
+		if (navbarToggle && navbarMobile) {
+			navbarToggle.addEventListener('click', function() {
+				const isExpanded = this.getAttribute('aria-expanded') === 'true';
+				this.setAttribute('aria-expanded', !isExpanded);
+				navbarMobile.classList.toggle('crave-navbar__mobile--active');
+				document.body.classList.toggle('crave-navbar__mobile-open');
+				// Force inline styles to override any CSS issues
+				if (!isExpanded) {
+					navbarMobile.style.opacity = '1';
+					navbarMobile.style.visibility = 'visible';
+					navbarMobile.style.height = 'calc(100vh - 80px)';
+					navbarMobile.style.zIndex = '9999';
+				} else {
+					navbarMobile.style.opacity = '0';
+					navbarMobile.style.visibility = 'hidden';
+					navbarMobile.style.height = '0';
+				}
+			});
+
+			// Close mobile menu when clicking a link
+			const mobileLinks = navbarMobile.querySelectorAll('a');
+			mobileLinks.forEach(link => {
+				link.addEventListener('click', () => {
+					navbarToggle.setAttribute('aria-expanded', 'false');
+					navbarMobile.classList.remove('crave-navbar__mobile--active');
+					document.body.classList.remove('crave-navbar__mobile-open');
+					// Force inline styles to close
+					navbarMobile.style.opacity = '0';
+					navbarMobile.style.visibility = 'hidden';
+					navbarMobile.style.height = '0';
+				});
+			});
+
+			// Close mobile menu on escape key
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape' && navbarMobile.classList.contains('crave-navbar__mobile--active')) {
+					navbarToggle.setAttribute('aria-expanded', 'false');
+					navbarMobile.classList.remove('crave-navbar__mobile--active');
+					document.body.classList.remove('crave-navbar__mobile-open');
+					// Force inline styles to close
+					navbarMobile.style.opacity = '0';
+					navbarMobile.style.visibility = 'hidden';
+					navbarMobile.style.height = '0';
+				}
+			});
+		}
+
+		// Highlight active page
+		const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+		const pageName = currentPage.replace('.html', '') || 'home';
+		
+		const navLinks = document.querySelectorAll('[data-page]');
+		navLinks.forEach(link => {
+			const linkPage = link.getAttribute('data-page');
+			if (linkPage === pageName) {
+				link.classList.add('crave-navbar__link--active');
+				link.classList.add('crave-navbar__mobile-link--active');
+			}
+		});
+
+		// Sticky navbar effect
+		if (navbar) {
+			let lastScroll = 0;
+			
+			window.addEventListener('scroll', () => {
+				const currentScroll = window.pageYOffset;
+				
+				if (currentScroll > 50) {
+					navbar.classList.add('crave-navbar--scrolled');
+				} else {
+					navbar.classList.remove('crave-navbar--scrolled');
+				}
+				
+				lastScroll = currentScroll;
+			});
+		}
+
+		// Update copyright year
+		const yearElement = document.getElementById('craveFooterYear');
+		if (yearElement) {
+			yearElement.textContent = new Date().getFullYear();
+		}
+	})();
+	</script>
+
+</body>
+</html>
+
+
+
