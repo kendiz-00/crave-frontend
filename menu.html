@@ -3694,12 +3694,17 @@
         const MilestoneEligibilityMap = {
             'milestone_free_drink_100': {
                 name: 'Free Signature Drink',
-                categories: ['smoothies', 'cupcakes', 'smoothies-cupcakes'],
-                names: ['strawberry colada', 'lemonade ice', 'watermelon mint ice', 'pineapple strawberry', 'biscoff jar cake', 'chocolate rich buttercream jar cake']
+                categories: ['smoothies', 'drinks', 'fresh-juices-smoothies', 'beverages', 'cupcakes', 'smoothies-cupcakes'],
+                names: ['strawberry colada', 'pina colada', 'watermelon mint ice', 'green glow', 'tropical fruit blend', 'pineapple strawberry', 'strawberries and cream', 'lemonade ice', 'banana peanut butter chocolate', 'biscoff jar cake', 'chocolate rich buttercream jar cake']
             },
-            'milestone_appetizer_250': {
-                name: 'Free Appetizer',
-                categories: ['loaded-fries', 'loaded-fries-category'],
+            'milestone_free_dessert_250': {
+                name: 'Free Dessert',
+                categories: ['cupcakes', 'desserts-pastries'],
+                names: ['chocolate rich buttercream frosting jar cake', 'biscoff jar cake', 'lemon buttercream jar cake', 'vanilla buttercream cake slice', 'bailey\'s irish cream jar cake', 'salted caramel cake', 'pistachio dream jar cake', 'coffee latte jar cake']
+            },
+            'milestone_free_loaded_fries_500': {
+                name: 'Free Loaded Fries',
+                categories: ['loaded-fries', 'sides-extras', 'loaded-fries-category'],
                 names: ['loaded fries', 'cheese beef loaded fries', 'loaded bbq chicken cheddar cheese fries', 'bacon cheddar fries']
             },
             'milestone_main_dish_500': {
@@ -3774,70 +3779,6 @@
     <script src="js/birthday-system.js"></script>
     
     <script>
-        const MilestoneEligibilityMap = {
-            'milestone_free_drink_100': {
-                name: 'Free Signature Drink',
-                categories: ['smoothies', 'drinks', 'fresh-juices-smoothies', 'beverages'],
-                names: ['strawberry colada', 'pina colada', 'watermelon mint ice', 'green glow', 'tropical fruit blend', 'pineapple strawberry', 'strawberries and cream', 'lemonade ice', 'banana peanut butter chocolate']
-            },
-            'milestone_free_dessert_250': {
-                name: 'Free Dessert',
-                categories: ['cupcakes', 'desserts-pastries'],
-                names: ['chocolate rich buttercream frosting jar cake', 'biscoff jar cake', 'lemon buttercream jar cake', 'vanilla buttercream cake slice', 'bailey\'s irish cream jar cake', 'salted caramel cake', 'pistachio dream jar cake', 'coffee latte jar cake']
-            },
-            'milestone_free_loaded_fries_500': {
-                name: 'Free Loaded Fries',
-                categories: ['loaded-fries', 'sides-extras'],
-                names: ['loaded fries', 'cheese beef loaded fries', 'loaded bbq chicken cheddar cheese fries', 'bacon cheddar fries']
-            },
-            'milestone_premium_combo_750': {
-                name: 'Premium Combo Upgrade',
-                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'burgers-combos']
-            },
-            'milestone_vip_reward_1000': {
-                name: 'VIP Craver Reward',
-                categories: ['texas-crispy-chicken', 'jamaican-kitchen', 'mexican-food', 'breakfast', 'smoothies', 'cupcakes', 'loaded-fries']
-            }
-        };
-
-        function checkMenuItemEligibility(item, rewardId) {
-            if (!rewardId) return false;
-            const config = MilestoneEligibilityMap[rewardId];
-            if (!config) return false;
-
-            const catSlug = ((item && item.category && item.category.slug) || item?.categoryName || '').toLowerCase();
-            const catName = ((item && item.category && item.category.name) || item?.categoryName || '').toLowerCase();
-            const itemName = (item && item.name ? item.name : '').toLowerCase();
-
-            const catMatches = config.categories && config.categories.some(c => catSlug.includes(c) || catName.includes(c));
-            const nameMatches = config.names && config.names.some(n => n === itemName);
-
-            return !!(catMatches || nameMatches);
-        }
-
-        function applyRewardMetadataIfEligible(item) {
-            if (!item || !window.activeRewardContext) {
-                delete item?.appliedRewardClaimId;
-                delete item?.rewardTitle;
-                delete item?.isRewardItem;
-                return item;
-            }
-
-            const eligible = typeof checkMenuItemEligibility === 'function' && checkMenuItemEligibility(item, window.activeRewardContext.rewardId);
-            if (eligible) {
-                item.appliedRewardClaimId = window.activeRewardContext.claimId;
-                item.rewardTitle = window.activeRewardContext.rewardName;
-                item.isRewardItem = true;
-            } else {
-                delete item.appliedRewardClaimId;
-                delete item.rewardTitle;
-                delete item.isRewardItem;
-            }
-
-            return item;
-        }
-
-        window.activeRewardContext = null;
 
         async function initRewardContextOnMenu() {
             const urlParams = new URLSearchParams(window.location.search);
