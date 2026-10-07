@@ -98,6 +98,136 @@
             pointer-events: none;
             transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.45s;
         }
+
+        /* ══ CRAVE Premium Free-Drink Campaign Banner ═══════════════════════ */
+        .crave-first-order-hero-promo {
+            position: relative;
+            margin: 28px 0 8px;
+            border-radius: 18px;
+            border: 1px solid rgba(212,175,55,0.28);
+            background: linear-gradient(135deg,
+                rgba(20,16,10,0.97) 0%,
+                rgba(30,22,8,0.99) 55%,
+                rgba(18,14,6,0.97) 100%);
+            box-shadow:
+                0 0 0 1px rgba(212,175,55,0.07),
+                0 8px 40px rgba(0,0,0,0.55),
+                0 0 60px rgba(212,175,55,0.07) inset;
+            overflow: hidden;
+            animation: craveFopReveal 0.6s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        .crave-first-order-hero-promo::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(110deg, rgba(212,175,55,0.07) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        @keyframes craveFopReveal {
+            from { opacity:0; transform:translateY(10px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        .crave-fop__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 26px 44px 22px 26px;
+        }
+        .crave-fop__copy { flex: 1 1 0; min-width: 0; }
+        .crave-fop__eyebrow {
+            margin: 0 0 10px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(212,175,55,0.65);
+            font-family: 'Poppins', sans-serif;
+        }
+        .crave-fop__headline {
+            margin: 0 0 10px;
+            font-size: clamp(22px, 5.2vw, 34px);
+            font-weight: 800;
+            line-height: 1.06;
+            color: #f0e8d6;
+            font-family: 'Playfair Display', Georgia, serif;
+            letter-spacing: -0.01em;
+        }
+        .crave-fop__free {
+            font-style: normal;
+            background: linear-gradient(135deg, #f0c040 0%, #c8962a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 18px rgba(212,175,55,0.4));
+        }
+        .crave-first-order-hero-promo__badge { display: none; }
+        .crave-first-order-hero-promo__text {
+            display: block;
+            margin: 0 0 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(240,232,214,0.7);
+            font-family: 'Poppins', sans-serif;
+        }
+        .crave-fop__footnote {
+            margin: 0;
+            font-size: 9.5px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(212,175,55,0.38);
+            font-family: 'Poppins', sans-serif;
+        }
+        .crave-fop__visual {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .crave-fop__img-ring {
+            position: relative;
+            width: 116px;
+            height: 116px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(212,175,55,0.3);
+            box-shadow: 0 0 0 6px rgba(212,175,55,0.06), 0 4px 24px rgba(0,0,0,0.5);
+            overflow: hidden;
+            background: rgba(212,175,55,0.05);
+        }
+        .crave-fop__img {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
+            display: block;
+        }
+        .crave-fop__img-glow {
+            position: absolute; inset: 0; border-radius: 50%;
+            background: radial-gradient(circle at 60% 30%, rgba(212,175,55,0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .crave-fop__close {
+            position: absolute; top: 10px; right: 12px;
+            background: none; border: none;
+            color: rgba(212,175,55,0.45);
+            font-size: 13px; line-height: 1;
+            cursor: pointer; padding: 6px;
+            border-radius: 50%;
+            transition: color 0.2s, background 0.2s;
+        }
+        .crave-fop__close:hover { color: #d4af37; background: rgba(212,175,55,0.1); }
+        @media (max-width: 640px) {
+            .crave-fop__visual { display: none; }
+            .crave-fop__inner { padding: 22px 40px 18px 20px; gap: 0; }
+            .crave-fop__headline { font-size: clamp(24px,7.5vw,32px); }
+        }
+        @media (min-width: 641px) and (max-width: 1023px) {
+            .crave-fop__img-ring { width: 92px; height: 92px; }
+        }
+        @media (min-width: 1024px) {
+            .crave-fop__inner { padding: 30px 52px 26px 30px; }
+            .crave-fop__img-ring { width: 134px; height: 134px; }
+        }
+        /* ══════════════════════════════════════════════════════════════════ */
     </style>
 </head>
 <body class="crave-home">
@@ -190,7 +320,6 @@
 						<a href="contact.html" class="crave-navbar__mobile-link" data-page="contact">Contact</a>
 					</li>
 					<li class="crave-navbar__mobile-item">
-						<a href="tracking.html" class="crave-navbar__mobile-link" data-page="tracking">Tracking</a>
 					</li>
 					<li class="crave-navbar__mobile-item mobile-profile-link">
 						<a href="profile.html" class="crave-navbar__mobile-link" data-page="profile">Profile</a>
@@ -267,9 +396,27 @@
 						Crispy fried chicken, loaded fries, handcrafted smoothies & jar cakes. Prepared fresh daily and delivered fast across Accra.
 					</p>
 
-					<div class="crave-first-order-hero-promo" id="craveFirstOrderHeroPromo">
-						<span class="crave-first-order-hero-promo__badge">NEW TO CRAVE?</span>
-						<span class="crave-first-order-hero-promo__text">Enjoy a FREE drink with your first order.</span>
+					<!-- CRAVE Premium Free Drink Campaign Banner -->
+					<div class="crave-first-order-hero-promo" id="craveFirstOrderHeroPromo" role="region" aria-label="First order free drink offer">
+						<div class="crave-fop__inner">
+							<div class="crave-fop__copy">
+								<p class="crave-fop__eyebrow">A LITTLE SOMETHING ON US</p>
+								<p class="crave-fop__headline">
+									FIRST DRINK IS<br>
+									<em class="crave-fop__free">FREE.</em>
+								</p>
+								<span class="crave-first-order-hero-promo__badge" aria-hidden="true">NEW TO CRAVE?</span>
+								<p class="crave-first-order-hero-promo__text">Enjoy a complimentary drink with your first order.</p>
+								<p class="crave-fop__footnote">FIRST ORDER ONLY</p>
+							</div>
+							<div class="crave-fop__visual" aria-hidden="true">
+								<div class="crave-fop__img-ring">
+									<img src="images/smoothies.jpeg" alt="" class="crave-fop__img" width="200" height="200" decoding="async">
+									<div class="crave-fop__img-glow"></div>
+								</div>
+							</div>
+						</div>
+						<button type="button" class="crave-fop__close" id="craveFirstOrderHeroPromoClose" aria-label="Dismiss free drink offer">&#x2715;</button>
 					</div>
 
 					<div class="hero-cta-group">
@@ -1736,6 +1883,31 @@
 	})();
 	</script>
 
+<script>
+(function() {
+  'use strict';
+  function initPromoDismiss() {
+    var btn = document.getElementById('craveFirstOrderHeroPromoClose');
+    var promo = document.getElementById('craveFirstOrderHeroPromo');
+    if (!btn || !promo) return;
+    btn.addEventListener('click', function() {
+      promo.style.transition = 'opacity 0.3s ease, transform 0.3s ease, max-height 0.4s ease, margin 0.4s ease';
+      promo.style.opacity = '0';
+      promo.style.transform = 'translateY(-6px)';
+      promo.style.maxHeight = '0';
+      promo.style.margin = '0';
+      promo.style.overflow = 'hidden';
+      setTimeout(function() { promo.remove(); }, 420);
+      try { sessionStorage.setItem('crave_first_order_dismissed_hero', '1'); } catch(e) {}
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPromoDismiss);
+  } else {
+    initPromoDismiss();
+  }
+})();
+</script>
 </body>
 </html>
 
