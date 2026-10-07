@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
@@ -710,7 +710,6 @@
                         <a href="contact.html" class="crave-navbar__mobile-link" data-page="contact">Contact</a>
                     </li>
                     <li class="crave-navbar__mobile-item">
-                        <a href="tracking.html" class="crave-navbar__mobile-link" data-page="tracking">Tracking</a>
                     </li>
                     <li class="crave-navbar__mobile-item mobile-profile-link">
                         <a href="profile.html" class="crave-navbar__mobile-link" data-page="profile">Profile</a>
@@ -1248,7 +1247,6 @@
                                 <td>${order.items.length} items</td>
                                 <td>GHS ${(order.total || 0).toFixed(2)}</td>
                                 <td><span class="order-status ${getStatusClass(order.status)}">${order.status || 'Pending'}</span></td>
-                                <td><a href="tracking.html?order_id=${order.id}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Track</a></td>
                             </tr>
                         `).join('')}
                     </tbody>

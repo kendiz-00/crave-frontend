@@ -9,7 +9,6 @@ const STATIC_ASSETS = [
   'cart.html',
   'checkout.html',
   'reservation.html',
-  'tracking.html',
   'offline.html',
   'css/main.css',
   'css/util.css',

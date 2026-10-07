@@ -12,8 +12,7 @@ const ProtectedRoutes = (function() {
 
     // Protected routes configuration
     const protectedRoutes = [
-        'profile.html',
-        'tracking.html'
+        'profile.html'
     ];
 
     // Semi-protected routes (guests can view but with limited features)

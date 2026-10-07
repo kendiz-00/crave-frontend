@@ -67,7 +67,6 @@
         if (path.includes('cart')) return 'cart';
         if (path.includes('reservation')) return 'reservation';
         if (path.includes('about')) return 'about';
-        if (path.includes('tracking')) return 'tracking';
         if (path.includes('order')) return 'order';
         if (path.includes('contact')) return 'contact';
         if (path === '/' || path.includes('index')) return 'home';

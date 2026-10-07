@@ -9,7 +9,7 @@ const PWAManager = (function() {
     const DISMISSAL_KEY = 'crave_pwa_install_dismissed_at';
     const DISMISSAL_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days minimum cooldown
     const VISIT_COUNT_KEY = 'crave_pwa_visit_count';
-    const CRITICAL_PAGES = ['cart.html', 'checkout.html', 'order-confirmation.html', 'tracking.html'];
+    const CRITICAL_PAGES = ['cart.html', 'checkout.html', 'order-confirmation.html'];
 
     let deferredInstallPrompt = null;
     let swRegistration = null;

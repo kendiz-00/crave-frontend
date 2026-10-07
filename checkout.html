@@ -127,7 +127,6 @@
                         <a href="contact.html" class="crave-navbar__mobile-link" data-page="contact">Contact</a>
                     </li>
                     <li class="crave-navbar__mobile-item">
-                        <a href="tracking.html" class="crave-navbar__mobile-link" data-page="tracking">Tracking</a>
                     </li>
                     <li class="crave-navbar__mobile-item mobile-profile-link">
                         <a href="profile.html" class="crave-navbar__mobile-link" data-page="profile">Profile</a>
@@ -2082,10 +2081,6 @@
             // Clear cart and form
             clearCartAndForm();
             
-            // Redirect to tracking page after delay
-            setTimeout(() => {
-                window.location.href = 'tracking.html?payment_ref=' + response.reference;
-            }, 3000);
         }
         
         // Send order confirmation to WhatsApp

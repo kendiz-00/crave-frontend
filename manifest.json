@@ -39,11 +39,6 @@
       "description": "Browse the latest menu"
     },
     {
-      "name": "Track Order",
-      "url": "/tracking.html",
-      "description": "Check current delivery status"
-    },
-    {
       "name": "Reservations",
       "url": "/reservation.html",
       "description": "Book a table"

@@ -470,27 +470,6 @@
     gap: 8px;
 }
 
-/* Skeleton for Order Tracking */
-.tracking-step-skeleton {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 20px;
-}
-
-.tracking-step-skeleton .skeleton-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-}
-
-.tracking-step-skeleton .skeleton-text {
-    width: 100px;
-    height: 16px;
-    border-radius: 4px;
-}
-
 /* Skeleton for Profile */
 .profile-skeleton {
     display: flex;
