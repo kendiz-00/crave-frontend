@@ -2894,33 +2894,28 @@
             const processingOverlay = PaymentUI.showPaymentProcessing();
             
             try {
-                // Initialize payment
                 const user = AuthManager.getUser();
+                const orderResponse = await PaymentService.createOrder(formData);
+                if (!orderResponse.success || !orderResponse.data?.id) {
+                    throw new Error(orderResponse.message || 'Order creation failed');
+                }
+
                 const paymentOptions = {
                     email: user ? user.email : formData.phoneNumber,
                     amount: formData.total,
-                    orderId: PaymentService.generateReference(),
+                    orderId: orderResponse.data.id,
                     customerName: formData.fullName,
                     orderData: formData,
                     onSuccess: function(response, verification) {
                         PaymentUI.hidePaymentProcessing(processingOverlay);
-                        
-                        // Deduct redeemed reward points ONCE upon confirmed order payment success
-                        if (pointsUsed > 0 && typeof CraveRewardsData !== 'undefined' && AuthManager.isAuthenticated()) {
-                            try {
-                                CraveRewardsData.Points.subtract(pointsUsed, `Redeemed ${pointsUsed} points on order ${verification.orderId || response.reference}`);
-                            } catch (err) {
-                                console.error('Error subtracting reward points:', err);
-                            }
-                        }
 
                         if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
                             CraveRewardsData.clearCache();
                         }
 
-                        // Save order details
+                        const orderId = verification.data?.orderId || verification.data?.id || response.reference;
                         localStorage.setItem('lastOrder', JSON.stringify({
-                            orderNumber: verification.orderId || response.reference,
+                            orderNumber: orderId,
                             items: formData.items,
                             total: formData.total,
                             deliveryAddress: formData.deliveryAddress,
@@ -2933,7 +2928,7 @@
                         // Show success and redirect
                         ToastNotifications.success('Payment successful!');
                         setTimeout(() => {
-                            window.location.href = `order-confirmation.html?order_id=${verification.orderId || response.reference}`;
+                            window.location.href = `order-confirmation.html?order_id=${orderId}`;
                         }, 1500);
                     },
                     onError: function(error) {
@@ -2944,9 +2939,9 @@
                         PaymentUI.hidePaymentProcessing(processingOverlay);
                     }
                 };
-                
-                PaymentService.initializePaystack(paymentOptions);
-                
+
+                await PaymentService.initializePaystack(paymentOptions);
+
             } catch (error) {
                 PaymentUI.hidePaymentProcessing(processingOverlay);
                 ToastNotifications.error('Payment initialization failed');

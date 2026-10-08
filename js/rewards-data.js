@@ -723,6 +723,10 @@ const CraveRewardsData = (function() {
         },
 
         markRedeemed: function(rewardId) {
+            if (isAuthenticated()) {
+                throw new Error('Reward redemption must be confirmed by the backend.');
+            }
+
             const vault = this.get();
             const reward = vault.find(r => r.id === rewardId);
             if (reward) {
@@ -1087,8 +1091,7 @@ const CraveRewardsData = (function() {
 
         markUsed: function(rewardIdOrClaimId) {
             if (isAuthenticated()) {
-                clearCache();
-                return { success: true, claim: { rewardId: rewardIdOrClaimId, status: 'USED' } };
+                throw new Error('Reward usage must be confirmed by the backend.');
             }
 
             const claims = getStorage('crave_milestone_claims', []);
@@ -1123,8 +1126,7 @@ const CraveRewardsData = (function() {
 
         markRedeemed: function(rewardIdOrClaimId) {
             if (isAuthenticated()) {
-                clearCache();
-                return { success: true, claim: { rewardId: rewardIdOrClaimId, status: 'REDEEMED' } };
+                throw new Error('Reward redemption must be confirmed by the backend.');
             }
 
             const claims = getStorage('crave_milestone_claims', []);

@@ -1676,23 +1676,31 @@
             `;
         }
 
-        function redeemReward(rewardId) {
+        async function redeemReward(rewardId) {
             const reward = CraveRewardsData.RewardVault.getById(rewardId);
             if (!reward) return;
 
-            CraveRewardsData.RewardVault.markRedeemed(rewardId);
-            
-            if (typeof ToastNotifications !== 'undefined') {
-                ToastNotifications.success(`${reward.prize ? reward.prize.name : 'Reward'} has been redeemed!`);
-            } else if (typeof CraveRewardsNotifications !== 'undefined' && CraveRewardsNotifications.show) {
-                CraveRewardsNotifications.show({
-                    type: 'success',
-                    icon: '✅',
-                    title: 'Reward Redeemed!',
-                    message: `${reward.prize ? reward.prize.name : 'Reward'} has been redeemed`
-                });
+            if (CraveRewardsData.isAuthenticated()) {
+                await CraveRewardsData.clearCache();
+                await loadRewardsData();
+                await loadRewardVault();
+                const authoritativeReward = CraveRewardsData.RewardVault.getById(rewardId);
+                if (authoritativeReward?.redeemed) {
+                    if (typeof ToastNotifications !== 'undefined') {
+                        ToastNotifications.success(`${reward.prize ? reward.prize.name : 'Reward'} has been redeemed!`);
+                    }
+                } else {
+                    if (typeof ToastNotifications !== 'undefined') {
+                        ToastNotifications.error('This reward is already claimed; use the server-backed reward state.');
+                    }
+                }
+                return;
             }
 
+            CraveRewardsData.RewardVault.markRedeemed(rewardId);
+            if (typeof ToastNotifications !== 'undefined') {
+                ToastNotifications.success(`${reward.prize ? reward.prize.name : 'Reward'} has been redeemed!`);
+            }
             loadRewardVault();
             loadRewardsData();
         }

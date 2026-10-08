@@ -11,18 +11,27 @@ const PaymentService = (function() {
     /**
      * Initialize Paystack inline payment
      */
-    function initializePaystack(options) {
+    async function initializePaystack(options) {
         if (!config || !config.paystack) {
             console.error('Payment config not available');
             return null;
         }
 
+        if (!options.orderId || !options.amount) {
+            throw new Error('Order ID and amount are required to initialize payment');
+        }
+
+        const initialization = await initializePayment(options);
+        if (!initialization.success) {
+            throw new Error(initialization.message || 'Payment initialization failed');
+        }
+
         const paystackOptions = {
             key: config.paystack.publicKey,
             email: options.email,
-            amount: options.amount * 100, // Paystack expects amount in kobo/cents
+            amount: Number(initialization.data.amount || options.amount) * 100,
             currency: config.paystack.currency,
-            ref: generateReference(),
+            ref: initialization.data.reference,
             metadata: {
                 custom_fields: [
                     {
@@ -53,6 +62,22 @@ const PaymentService = (function() {
     }
 
     /**
+     * Initialize the payment record for a created order.
+     */
+    async function initializePayment(options) {
+        if (typeof APIClient === 'undefined') {
+            return { success: false, message: 'API client not available' };
+        }
+
+        return APIClient.post('/api/payments/initialize', {
+            orderId: options.orderId,
+            email: options.email,
+            amount: options.amount,
+            method: options.method || 'MOBILE_MONEY'
+        });
+    }
+
+    /**
      * Generate unique payment reference
      */
     function generateReference() {
@@ -70,15 +95,7 @@ const PaymentService = (function() {
             const verification = await verifyPayment(response.reference);
             
             if (verification.success) {
-                // Create order with payment
-                await createOrder({
-                    ...options.orderData,
-                    paymentReference: response.reference,
-                    paymentMethod: 'paystack',
-                    paymentStatus: 'paid'
-                });
-
-                // Show success and redirect
+                // The order was already created and linked to the claim before payment.
                 if (options.onSuccess) {
                     options.onSuccess(response, verification);
                 }
@@ -122,12 +139,25 @@ const PaymentService = (function() {
     }
 
     /**
-     * Create order after successful payment
+     * Create a pending order before initializing payment.
      */
     async function createOrder(orderData) {
         try {
             if (typeof APIClient !== 'undefined') {
-                const response = await APIClient.post('/api/orders', orderData);
+                const orderPayload = {
+                    orderType: orderData.orderType,
+                    items: orderData.items,
+                    customerName: orderData.fullName,
+                    customerPhone: orderData.phoneNumber,
+                    customerEmail: orderData.customerEmail || orderData.phoneNumber,
+                    deliveryAddress: orderData.deliveryAddress,
+                    latitude: orderData.latitude,
+                    longitude: orderData.longitude,
+                    notes: orderData.additionalNotes,
+                    rewardPointsUsed: orderData.rewardPointsUsed || 0,
+                    claimedRewardId: orderData.claimedRewardId || null
+                };
+                const response = await APIClient.post('/api/orders', orderPayload);
                 return response;
             }
             return { success: false, message: 'API client not available' };
