@@ -10,10 +10,14 @@ const PWAManager = (function() {
     const DISMISSAL_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days minimum cooldown
     const VISIT_COUNT_KEY = 'crave_pwa_visit_count';
     const CRITICAL_PAGES = ['cart.html', 'checkout.html', 'order-confirmation.html'];
+    const INSTALL_CARD_ID = 'craveInstallCard';
+    const INSTALL_BUTTON_ID = 'craveInstallBtn';
+    const INSTALL_DISMISS_ID = 'craveInstallDismiss';
 
     let deferredInstallPrompt = null;
     let swRegistration = null;
     let isInitialized = false;
+    let installCardDismissedThisSession = false;
 
     // Check if current page is in a protected zero-interruption zone
     function isCriticalPage() {
@@ -35,21 +39,64 @@ const PWAManager = (function() {
         return isStandaloneMatch || isIOSStandalone;
     }
 
+    // Create the install notification once, then reveal it only after a native prompt exists.
+    function createInstallCard() {
+        if (document.getElementById(INSTALL_CARD_ID)) return;
+
+        const card = document.createElement('aside');
+        card.id = INSTALL_CARD_ID;
+        card.className = 'crave-install-card';
+        card.setAttribute('role', 'status');
+        card.setAttribute('aria-live', 'polite');
+        card.setAttribute('aria-hidden', 'true');
+        card.innerHTML = `
+            <div class="crave-install-card__content">
+                <div class="crave-install-card__brand">
+                    <img class="crave-install-card__logo" src="images/logo.png" alt="CRAVE" width="48" height="48">
+                    <div>
+                        <p class="crave-install-card__eyebrow">Install CRAVE</p>
+                        <h2>Get CRAVE right from your home screen.</h2>
+                    </div>
+                </div>
+                <p class="crave-install-card__copy">Enjoy faster ordering, easy reorders, and your rewards wherever you are.</p>
+                <div class="crave-install-card__actions">
+                    <button id="${INSTALL_BUTTON_ID}" class="crave-install-card__button" type="button">Install CRAVE</button>
+                    <button id="${INSTALL_DISMISS_ID}" class="crave-install-card__dismiss" type="button">Not now</button>
+                </div>
+            </div>`;
+
+        document.body.appendChild(card);
+
+        document.getElementById(INSTALL_BUTTON_ID).addEventListener('click', triggerInstall);
+        document.getElementById(INSTALL_DISMISS_ID).addEventListener('click', dismissInstallPrompt);
+    }
+
+    // Show the card only when the browser has confirmed a native install prompt.
+    function isDismissedWithinCooldown() {
+        try {
+            const dismissedAt = Number(localStorage.getItem(DISMISSAL_KEY) || '0');
+            return Boolean(dismissedAt && (Date.now() - dismissedAt < DISMISSAL_COOLDOWN_MS));
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function showInstallUI() {
+        if (isInstalled() || isCriticalPage() || installCardDismissedThisSession || isDismissedWithinCooldown()) return;
+
+        const card = document.getElementById(INSTALL_CARD_ID);
+        if (!card) return;
+
+        card.setAttribute('aria-hidden', 'false');
+        card.classList.add('is-visible');
+    }
+
     // Check if user is eligible for an install prompt
     function isInstallEligible() {
         if (isInstalled()) return false;
         if (!deferredInstallPrompt) return false;
         if (isCriticalPage()) return false;
-
-        // Check 7-day dismissal cooldown
-        try {
-            const dismissedAt = Number(localStorage.getItem(DISMISSAL_KEY) || '0');
-            if (dismissedAt && (Date.now() - dismissedAt < DISMISSAL_COOLDOWN_MS)) {
-                return false;
-            }
-        } catch (e) {}
-
-        return true;
+        return !isDismissedWithinCooldown();
     }
 
     // Record visit count for engagement tracking
@@ -63,7 +110,7 @@ const PWAManager = (function() {
         }
     }
 
-    // Capture install prompt event silently without showing UI
+    // Capture the native prompt and reveal the notification only after it is available.
     function bindInstallPrompt() {
         window.addEventListener('beforeinstallprompt', (event) => {
             event.preventDefault();
@@ -71,10 +118,13 @@ const PWAManager = (function() {
             if (window.deferredPrompt !== undefined) {
                 window.deferredPrompt = event;
             }
+            createInstallCard();
+            showInstallUI();
         });
 
         window.addEventListener('appinstalled', () => {
             deferredInstallPrompt = null;
+            installCardDismissedThisSession = true;
             hideInstallUI();
             if (typeof gtag === 'function') {
                 gtag('event', 'pwa_installed', { source: 'browser' });
@@ -133,36 +183,38 @@ const PWAManager = (function() {
         }
     }
 
-    // Trigger explicit PWA install prompt when called by user interaction
+    // Trigger the native browser install prompt only from the user's explicit click.
     function triggerInstall() {
         if (!deferredInstallPrompt) return false;
 
-        deferredInstallPrompt.prompt();
-        deferredInstallPrompt.userChoice.then((choiceResult) => {
+        const prompt = deferredInstallPrompt;
+        deferredInstallPrompt = null;
+        prompt.prompt();
+        prompt.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
                 console.log('User accepted CRAVE PWA installation');
             } else {
                 dismissInstallPrompt();
             }
-            deferredInstallPrompt = null;
         });
         return true;
     }
 
-    // Handle user dismissal with 7-day cooldown
+    // Handle dismissal for the current visit and the existing 7-day preference.
     function dismissInstallPrompt() {
+        installCardDismissedThisSession = true;
         try {
             localStorage.setItem(DISMISSAL_KEY, String(Date.now()));
         } catch (e) {}
         hideInstallUI();
     }
 
-    // Hide any visible install UI elements
+    // Hide the install notification without affecting other PWA functionality.
     function hideInstallUI() {
-        const card = document.getElementById('craveInstallCard');
-        if (card) card.classList.remove('is-visible');
-        const postOrderCard = document.getElementById('cravePostOrderInstallCard');
-        if (postOrderCard) postOrderCard.style.display = 'none';
+        const card = document.getElementById(INSTALL_CARD_ID);
+        if (!card) return;
+        card.classList.remove('is-visible');
+        card.setAttribute('aria-hidden', 'true');
     }
 
     // Request Notification permission explicitly on user button click ONLY
@@ -199,6 +251,7 @@ const PWAManager = (function() {
         isInitialized = true;
 
         trackVisit();
+        createInstallCard();
         bindInstallPrompt();
         registerServiceWorker();
 

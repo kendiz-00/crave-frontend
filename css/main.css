@@ -125,14 +125,10 @@ body.crave-offline {
 .crave-install-card,
 .crave-update-toast {
   position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
   z-index: 1200;
-  width: min(92vw, 640px);
   border-radius: 22px;
   border: 1px solid rgba(212, 175, 55, 0.26);
-  background: rgba(8, 8, 8, 0.84);
-  backdrop-filter: blur(20px);
+  background: #11110f;
   box-shadow: 0 20px 64px rgba(0, 0, 0, 0.34);
   opacity: 0;
   pointer-events: none;
@@ -140,71 +136,100 @@ body.crave-offline {
 }
 
 .crave-install-card {
-  bottom: 20px;
-  padding: 16px 16px 18px;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  width: min(420px, calc(100vw - 48px));
+  padding: 18px;
+  transform: translateY(18px);
 }
 
 .crave-install-card.is-visible,
 .crave-update-toast.is-visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
 .crave-install-card__content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+}
+
+.crave-install-card__brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.crave-install-card__logo {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #f8efe1;
 }
 
 .crave-install-card__eyebrow {
-  margin: 0;
-  color: #d4a373;
-  font-size: 0.74rem;
+  margin: 0 0 4px;
+  color: #d4a574;
+  font-size: 0.72rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
 }
 
 .crave-install-card h2 {
   margin: 0;
-  font-size: 1.05rem;
-  color: #f8efe1;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  color: #fff;
 }
 
-.crave-install-card p {
+.crave-install-card__copy {
   margin: 0;
-  color: rgba(248, 239, 225, 0.82);
-  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
 .crave-install-card__actions {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
 }
 
 .crave-install-card__button,
-.crave-install-card__secondary,
+.crave-install-card__dismiss,
 .crave-update-toast button {
   border: 0;
   border-radius: 999px;
-  padding: 10px 14px;
-  font-size: 0.92rem;
+  padding: 11px 16px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
 }
 
-.crave-install-card__button,
-.crave-update-toast button {
-  color: #0f0f0f;
-  background: linear-gradient(135deg, #d4a373, #f2d18d);
+.crave-install-card__button {
+  color: #17140f;
+  background: #d4a574;
 }
 
-.crave-install-card__secondary,
+.crave-install-card__button:hover {
+  background: #e0b68e;
+}
+
 .crave-install-card__dismiss {
-  color: #f8efe1;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(212, 175, 55, 0.18);
+  color: rgba(255, 255, 255, 0.72);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.crave-install-card__dismiss:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .crave-update-toast {
@@ -217,13 +242,51 @@ body.crave-offline {
   color: #f8efe1;
 }
 
+.crave-update-toast button {
+  color: #0f0f0f;
+  background: #d4a574;
+}
+
 @media (max-width: 768px) {
+  .crave-install-card {
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    width: calc(100vw - 32px);
+    padding: 15px;
+  }
+
+  .crave-install-card__actions {
+    justify-content: space-between;
+  }
+
+  .crave-install-card__button {
+    flex: 1;
+  }
+
   body {
     padding-top: calc(64px + env(safe-area-inset-top, 0px));
   }
 }
 
 @media (max-width: 480px) {
+  .crave-install-card__brand {
+    gap: 11px;
+  }
+
+  .crave-install-card__logo {
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .crave-install-card h2 {
+    font-size: 1.1rem;
+  }
+
+  .crave-install-card__copy {
+    font-size: 0.82rem;
+  }
+
   body {
     padding-top: calc(62px + env(safe-area-inset-top, 0px));
   }
