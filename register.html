@@ -709,7 +709,6 @@
                                 <input
                                     type="tel"
                                     id="phone"
-                                    name="phone"
                                     class="form-input"
                                     placeholder="024 XXX XXXX"
                                     required
@@ -758,6 +757,9 @@
 
                         <!-- Step 3: Account Details -->
                         <div id="step3" class="registration-step" style="display: none;">
+                            <!-- Hidden input to store verified phone number -->
+                            <input type="hidden" id="verifiedPhone" name="phone" value="">
+
                             <div class="form-group">
                                 <label class="form-label" for="firstName">First Name</label>
                                 <input
@@ -945,6 +947,11 @@
             verifyOtpBtn.addEventListener('click', async function() {
                 const result = await AuthUI.handleVerifyOtp(verifiedPhoneNumber, otpInput, verifyOtpBtn);
                 if (result.success) {
+                    // Store verified phone number in hidden input for form submission
+                    const verifiedPhoneInput = document.getElementById('verifiedPhone');
+                    if (verifiedPhoneInput) {
+                        verifiedPhoneInput.value = verifiedPhoneNumber;
+                    }
                     currentStep = 3;
                     step2.style.display = 'none';
                     step3.style.display = 'block';
