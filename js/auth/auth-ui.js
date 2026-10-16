@@ -370,39 +370,39 @@ const AuthUI = (function() {
         let phone = form.querySelector('[name="phone"]')?.value || '';
         const submitBtn = form.querySelector('button[type="submit"]');
         const shouldClaimFirstOrder = sessionStorage.getItem('crave_first_order_claim_pending') === '1';
-        
+
         // Normalize Ghana phone numbers (convert 0550030877 to +233550030877)
         if (phone && phone.startsWith('0') && phone.length === 10) {
             phone = '+233' + phone.substring(1);
         }
-        
+
         // Validation
         if (!firstName || !lastName || !phone || !password || !confirmPassword) {
             showError('Please fill in all required fields');
             return;
         }
-        
+
         if (email && !validateEmail(email)) {
             showError('Please enter a valid email address');
             return;
         }
-        
+
         const passwordValidation = validatePassword(password);
         if (!passwordValidation.isValid) {
             showError(passwordValidation.errors[0]);
             return;
         }
-        
+
         if (password !== confirmPassword) {
             showError('Passwords do not match');
             return;
         }
-        
+
         showLoading(submitBtn);
-        
+
         try {
             const result = await window.AuthManager.register({ firstName, lastName, email, phone, password });
-            
+
             if (result.success) {
                 if (shouldClaimFirstOrder && typeof window.AuthAPI !== 'undefined' && window.AuthAPI.claimReward) {
                     try {
@@ -422,12 +422,21 @@ const AuthUI = (function() {
                     window.location.href = 'index.html?firstOrderReward=claimed';
                 }, 500);
             } else {
-                showError(result.error || 'Registration failed');
+                // Show the actual error message from the backend
+                const errorMessage = result.error || 'Registration failed. Please try again.';
+                showError(errorMessage);
                 hideLoading(submitBtn);
             }
         } catch (error) {
             console.error('Registration error:', error);
-            showError('Registration failed. Please try again.');
+            // Try to extract meaningful error from the error object
+            let errorMessage = 'Registration failed. Please try again.';
+            if (error.message) {
+                errorMessage = error.message;
+            } else if (typeof error === 'string') {
+                errorMessage = error;
+            }
+            showError(errorMessage);
             hideLoading(submitBtn);
         }
     }
