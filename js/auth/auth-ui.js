@@ -303,27 +303,31 @@ const AuthUI = (function() {
      * Handle login form submission
      */
     async function handleLoginForm(form, redirectUrl = null) {
-        const email = form.querySelector('[name="email"]').value;
+        let identifier = form.querySelector('[name="email"]').value.trim();
         const password = form.querySelector('[name="password"]').value;
         const rememberMe = form.querySelector('[name="rememberMe"]')?.checked || false;
         const submitBtn = form.querySelector('button[type="submit"]');
-        
+
         // Validation
-        if (!email || !password) {
+        if (!identifier || !password) {
             showError('Please fill in all fields');
             return;
         }
-        
-        if (!validateEmail(email)) {
-            showError('Please enter a valid email address');
-            return;
+
+        // Normalize phone number if it looks like a phone number
+        // Phone numbers starting with 0 (local Ghana format) should be normalized to +233
+        if (identifier.replace(/\D/g, '').length >= 10 && !identifier.includes('@')) {
+            // Looks like a phone number, normalize it
+            if (identifier.startsWith('0') && identifier.length === 10) {
+                identifier = '+233' + identifier.substring(1);
+            }
         }
-        
+
         showLoading(submitBtn);
-        
+
         try {
             const result = await window.AuthManager.login(
-                { identifier: email, password },
+                { identifier, password },
                 rememberMe
             );
             
@@ -364,7 +368,7 @@ const AuthUI = (function() {
     async function handleRegisterForm(form) {
         const firstName = form.querySelector('[name="firstName"]').value;
         const lastName = form.querySelector('[name="lastName"]').value;
-        const email = form.querySelector('[name="email"]').value;
+        const email = form.querySelector('[name="email"]').value.trim();
         const password = form.querySelector('[name="password"]').value;
         const confirmPassword = form.querySelector('[name="confirmPassword"]').value;
         let phone = form.querySelector('[name="phone"]')?.value || '';
@@ -377,12 +381,12 @@ const AuthUI = (function() {
         }
 
         // Validation
-        if (!firstName || !lastName || !phone || !password || !confirmPassword) {
+        if (!firstName || !lastName || !phone || !email || !password || !confirmPassword) {
             showError('Please fill in all required fields');
             return;
         }
 
-        if (email && !validateEmail(email)) {
+        if (!validateEmail(email)) {
             showError('Please enter a valid email address');
             return;
         }
