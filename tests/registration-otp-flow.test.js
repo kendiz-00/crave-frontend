@@ -120,6 +120,7 @@ test('error handling displays backend validation messages', () => {
     assert.equal(errorMessage, 'Phone number must be at least 10 digits');
     assert.ok(errorMessage.includes('Phone number'), 'Error message should be specific');
 });
+<<<<<<< HEAD
 
 test('email is required in registration', () => {
     // Verify that email is now required for registration
