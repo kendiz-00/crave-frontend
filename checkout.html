@@ -2584,11 +2584,15 @@
 
             // Fetch eligible drinks from backend
             let eligibleDrinks = [];
+            let eligibleProductIds = [];
+            let eligibleItems = [];
             try {
                 if (typeof AuthAPI !== 'undefined' && AuthAPI.getEligibleDrinks) {
                     const res = await AuthAPI.getEligibleDrinks();
-                    if (res && res.success && res.data && Array.isArray(res.data.eligibleDrinks)) {
-                        eligibleDrinks = res.data.eligibleDrinks;
+                    if (res && res.success && res.data) {
+                        eligibleDrinks = Array.isArray(res.data.eligibleDrinks) ? res.data.eligibleDrinks : [];
+                        eligibleProductIds = Array.isArray(res.data.eligibleProductIds) ? res.data.eligibleProductIds : [];
+                        eligibleItems = Array.isArray(res.data.items) ? res.data.items : [];
                     }
                 }
             } catch (e) {
@@ -2602,17 +2606,23 @@
 
             // Check if cart already has an eligible drink
             const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-            const existingDrink = cart.find(i => eligibleDrinks.some(ed => ed.toLowerCase() === (i.name || '').trim().toLowerCase()));
+            const existingDrink = cart.find(i => 
+                (i.id && eligibleProductIds.includes(i.id)) ||
+                (i.menuItemId && eligibleProductIds.includes(i.menuItemId)) ||
+                eligibleDrinks.some(ed => ed.toLowerCase() === (i.name || '').trim().toLowerCase())
+            );
             if (!selectedFreeDrinkName && existingDrink) {
                 selectedFreeDrinkName = existingDrink.name;
             }
 
             // Render drink selection list
-            const drinksHtml = eligibleDrinks.map(name => {
+            const drinksHtml = eligibleDrinks.map((name, idx) => {
+                const itemObj = eligibleItems.find(it => it.name === name) || (eligibleItems[idx] || {});
+                const itemId = itemObj.id || '';
                 const isSelected = selectedFreeDrinkName === name;
                 return `
                     <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:${isSelected ? 'rgba(212,165,116,0.18)' : 'rgba(255,255,255,0.03)'};border:1px solid ${isSelected ? '#e5a93b' : 'rgba(255,255,255,0.1)'};border-radius:6px;cursor:pointer;margin-bottom:6px;">
-                        <input type="radio" name="freeDrinkChoice" value="${name.replace(/"/g, '&quot;')}" ${isSelected ? 'checked' : ''} onchange="updateFreeDrinkSelection('${name.replace(/'/g, "\\'")}')">
+                        <input type="radio" name="freeDrinkChoice" value="${name.replace(/"/g, '&quot;')}" ${isSelected ? 'checked' : ''} onchange="updateFreeDrinkSelection('${name.replace(/'/g, "\\'")}', '${itemId}')">
                         <span style="color:#fff;font-size:13px;">${name}</span>
                         <span style="margin-left:auto;color:#4caf50;font-weight:700;font-size:13px;">GH₵0</span>
                     </label>
@@ -2629,14 +2639,17 @@
             `;
         }
 
-        async function updateFreeDrinkSelection(drinkName) {
+        async function updateFreeDrinkSelection(drinkName, drinkId) {
             selectedFreeDrinkName = drinkName;
 
             // Ensure the selected drink is in the customer's cart so the backend
             // order service records it as an item for kitchen fulfillment.
             try {
                 let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-                const existingIndex = cart.findIndex(i => (i.name || '').trim().toLowerCase() === drinkName.trim().toLowerCase());
+                const existingIndex = cart.findIndex(i => 
+                    (drinkId && (i.id === drinkId || i.menuItemId === drinkId)) ||
+                    (i.name || '').trim().toLowerCase() === drinkName.trim().toLowerCase()
+                );
 
                 // Remove any previous temporary reward item
                 cart = cart.filter(i => !i.isRewardItem);
@@ -2649,7 +2662,10 @@
                         const categories = (menuRes && menuRes.data) ? menuRes.data : [];
                         for (const cat of categories) {
                             if (cat.items && Array.isArray(cat.items)) {
-                                const found = cat.items.find(it => (it.name || '').trim().toLowerCase() === drinkName.trim().toLowerCase());
+                                const found = cat.items.find(it => 
+                                    (drinkId && it.id === drinkId) ||
+                                    (it.name || '').trim().toLowerCase() === drinkName.trim().toLowerCase()
+                                );
                                 if (found) { menuItem = found; break; }
                             }
                         }
