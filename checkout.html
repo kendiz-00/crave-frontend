@@ -3178,11 +3178,11 @@
                     onClose: function() {
                         PaymentUI.hidePaymentProcessing(processingOverlay);
 
-                        // Refresh rewards: customer abandoned checkout, backend releases claim
-                        if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
-                            CraveRewardsData.clearCache();
-                        }
-                        loadClaimedMilestoneRewards();
+                        // Requirement 9: Closing the Paystack modal must NOT release the reservation,
+                        // because asynchronous payment methods (e.g. Mobile Money prompt or USSD)
+                        // may still be completed by the customer on their phone.
+                        // The reservation remains safely bound to the pending order on the backend.
+                        ToastNotifications.info('Payment window closed. If you authorized payment on your phone, your order will confirm automatically.');
                     }
                 };
 
