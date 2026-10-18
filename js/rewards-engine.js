@@ -6,8 +6,14 @@
 const CraveRewardsEngine = (function() {
     'use strict';
 
-    const config = typeof CraveRewardsConfig !== 'undefined' ? CraveRewardsConfig : null;
-    const data = typeof CraveRewardsData !== 'undefined' ? CraveRewardsData : null;
+    function getConfig() {
+        return typeof CraveRewardsConfig !== 'undefined' ? CraveRewardsConfig : (typeof window !== 'undefined' && window.CraveRewardsConfig ? window.CraveRewardsConfig : null);
+    }
+    function getData() {
+        return typeof CraveRewardsData !== 'undefined' ? CraveRewardsData : (typeof window !== 'undefined' && window.CraveRewardsData ? window.CraveRewardsData : null);
+    }
+    const config = getConfig();
+    const data = getData();
     
     // Event system for rewards events
     const eventListeners = {};
@@ -64,16 +70,18 @@ const CraveRewardsEngine = (function() {
 
     // Get next reward milestone
     async function getNextMilestone() {
-        if (!config || !data) return null;
+        const cfg = getConfig() || config;
+        const dt = getData() || data;
+        if (!cfg || !dt) return null;
         
-        const pointsBalance = await data.Points.get();
-        const lifetimeEarned = await data.Points.getLifetimeEarned();
+        const pointsBalance = await dt.Points.get();
+        const lifetimeEarned = await dt.Points.getLifetimeEarned();
         const currentPoints = Math.max(pointsBalance, lifetimeEarned);
-        const milestones = config.milestones;
+        const milestones = cfg.milestones;
         
         let claims = [];
         try {
-            claims = await data.Claims.get();
+            claims = await dt.Claims.get();
         } catch (e) {
             console.error('Error fetching claims in getNextMilestone:', e);
         }
@@ -95,7 +103,8 @@ const CraveRewardsEngine = (function() {
             const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
             const claim = claimMap[rewardId];
             const status = (claim && claim.status) ? claim.status.toString().toUpperCase().trim() : '';
-            const isCompleted = claim && (status === 'CLAIMED' || status === 'REDEEMED');
+            // AVAILABLE = auto-unlocked, CLAIMED = legacy, RESERVED = in-flight, REDEEMED = used
+            const isCompleted = claim && (status === 'AVAILABLE' || status === 'CLAIMED' || status === 'RESERVED' || status === 'REDEEMED');
 
             if (!isCompleted && currentPoints < milestone.points) {
                 return {
@@ -145,7 +154,9 @@ const CraveRewardsEngine = (function() {
             const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
             const claim = claimMap[rewardId];
             const status = (claim && claim.status) ? claim.status.toString().toUpperCase().trim() : '';
-            const isCompleted = claim && (status === 'CLAIMED' || status === 'REDEEMED');
+            // A milestone is "completed" once the server has created any claim record for it
+            // (AVAILABLE = auto-unlocked, CLAIMED = legacy, RESERVED = in-flight, REDEEMED = used)
+            const isCompleted = claim && (status === 'AVAILABLE' || status === 'CLAIMED' || status === 'RESERVED' || status === 'REDEEMED');
 
             if (!isCompleted && currentPoints < milestone.points) {
                 nextMilestone = milestone;
@@ -159,7 +170,7 @@ const CraveRewardsEngine = (function() {
                 const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
                 const claim = claimMap[rewardId];
                 const status = (claim && claim.status) ? claim.status.toString().toUpperCase().trim() : '';
-                const isCompleted = claim && (status === 'CLAIMED' || status === 'REDEEMED');
+                const isCompleted = claim && (status === 'AVAILABLE' || status === 'CLAIMED' || status === 'RESERVED' || status === 'REDEEMED');
                 if (!isCompleted) {
                     nextMilestone = milestone;
                     break;
@@ -194,10 +205,17 @@ const CraveRewardsEngine = (function() {
      * Determine display state for a reward milestone based on point balance and server claims.
      * Single source of truth across all reward cards.
      *
+     * State priority (highest wins):
+     *   REDEEMED  → already used, cannot reuse
+     *   RESERVED  → bound to an in-flight order
+     *   AVAILABLE → server auto-unlocked, ready to select at checkout (no manual claim needed)
+     *   CLAIMED   → legacy manual-claim state, treated as available
+     *   LOCKED    → not yet earned
+     *
      * @param {Object} reward - Milestone definition
-     * @param {number} userPoints - User's current points balance
-     * @param {Array} claims - Active claims array from backend
-     * @returns {Object} { state: 'LOCKED'|'AVAILABLE'|'CLAIMED'|'REDEEMED'|'UNAVAILABLE', label: string, action: string|null, claim: Object|null, rewardId: string, requiredPoints: number, remainingPoints: number, badge: string, subtext: string }
+     * @param {number} userPoints - User's lifetime points earned (used only for LOCKED display)
+     * @param {Array}  claims    - Active claims array from backend
+     * @returns {Object} { state, label, action, claim, rewardId, requiredPoints, remainingPoints, badge, subtext }
      */
     function getRewardDisplayState(reward, userPoints, claims) {
         const points = typeof userPoints === 'number' && !isNaN(userPoints) ? userPoints : 0;
@@ -233,15 +251,19 @@ const CraveRewardsEngine = (function() {
 
         let claim = null;
         if (matchingClaims.length > 0) {
+            // Prefer REDEEMED > RESERVED > AVAILABLE > CLAIMED
             const redeemed = matchingClaims.find(c => {
                 const st = String(c.status || '').toUpperCase().trim();
                 return st === 'REDEEMED' || st === 'USED';
             });
-            claim = redeemed || matchingClaims[0];
+            const reserved = matchingClaims.find(c => String(c.status || '').toUpperCase().trim() === 'RESERVED');
+            const available = matchingClaims.find(c => String(c.status || '').toUpperCase().trim() === 'AVAILABLE');
+            claim = redeemed || reserved || available || matchingClaims[0];
         }
 
         const claimStatus = claim ? String(claim.status || '').toUpperCase().trim() : '';
 
+        // ── REDEEMED ─────────────────────────────────────────────────────────
         if (claim && (claimStatus === 'REDEEMED' || claimStatus === 'USED')) {
             return {
                 state: 'REDEEMED',
@@ -256,34 +278,53 @@ const CraveRewardsEngine = (function() {
             };
         }
 
-        if (claim && claimStatus === 'CLAIMED') {
+        // ── RESERVED (checkout in progress) ───────────────────────────────────
+        if (claim && claimStatus === 'RESERVED') {
             return {
-                state: 'CLAIMED',
-                label: 'READY TO USE',
-                action: 'USE',
+                state: 'RESERVED',
+                label: 'RESERVED',
+                action: null,
                 claim,
                 rewardId,
                 requiredPoints,
                 remainingPoints: 0,
-                badge: 'CLAIMED ✓',
-                subtext: 'Ready to use on menu'
+                badge: 'RESERVED',
+                subtext: 'Applied to a pending order'
             };
         }
 
-        if (points >= requiredPoints) {
+        // ── AVAILABLE (server auto-unlocked at 100 pts) ────────────────────────
+        // No manual claim step is required — customer goes straight to checkout.
+        if (claim && claimStatus === 'AVAILABLE') {
             return {
                 state: 'AVAILABLE',
-                label: 'CLAIM REWARD',
-                action: 'CLAIM',
-                claim: null,
+                label: 'USE FREE DRINK',
+                action: 'USE_CHECKOUT',
+                claim,
                 rewardId,
                 requiredPoints,
                 remainingPoints: 0,
-                badge: 'AVAILABLE',
-                subtext: 'Available to claim'
+                badge: 'UNLOCKED 🎉',
+                subtext: 'Select a drink at checkout for GH₵0'
             };
         }
 
+        // ── CLAIMED (legacy manual-claim path, treat as available) ────────────
+        if (claim && claimStatus === 'CLAIMED') {
+            return {
+                state: 'CLAIMED',
+                label: 'USE FREE DRINK',
+                action: 'USE_CHECKOUT',
+                claim,
+                rewardId,
+                requiredPoints,
+                remainingPoints: 0,
+                badge: 'UNLOCKED ✓',
+                subtext: 'Select a drink at checkout for GH₵0'
+            };
+        }
+
+        // ── LOCKED ────────────────────────────────────────────────────────────
         const remaining = Math.max(0, requiredPoints - points);
         return {
             state: 'LOCKED',
@@ -299,21 +340,15 @@ const CraveRewardsEngine = (function() {
     }
 
     // Redeem reward milestone
+    // IMPORTANT: Free drink milestone redemptions MUST NOT deduct points.
+    // The backend enforces zero-point-deduction for AVAILABLE → RESERVED → REDEEMED transitions.
+    // This function is intentionally disabled to prevent client-side point manipulation.
     async function redeemMilestone(pointsRequired, rewardType = 'points') {
-        if (!data) return { success: false, message: 'Data system not available' };
-        
-        const currentPoints = await data.Points.get();
-        
-        if (currentPoints < pointsRequired) {
-            return { success: false, message: 'Not enough points' };
-        }
-        
-        // Use specific referenceId to avoid collisions between different milestone types
-        await data.Points.subtract(pointsRequired, { referenceId: `milestone_${rewardType}_${pointsRequired}`, reason: `Redeemed milestone reward (${pointsRequired} points)` });
-        
-        emit('reward_redeemed', { points: pointsRequired });
-        
-        return { success: true, message: 'Reward redeemed successfully' };
+        console.warn(
+            '[CraveRewardsEngine] redeemMilestone() called client-side — this operation is ' +
+            'handled exclusively by the backend. No points will be deducted here.'
+        );
+        return { success: false, message: 'Milestone redemption is handled by the server during checkout.' };
     }
 
     // Process order and award points

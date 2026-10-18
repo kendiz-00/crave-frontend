@@ -1431,11 +1431,14 @@
                     };
 
                 let actionMarkup = '';
-                if (displayState.action === 'CLAIM') {
-                    actionMarkup = `<button class="milestone-action-btn milestone-action-btn--claim" onclick="handleClaimReward('${rewardId}', this)">CLAIM REWARD</button>`;
-                } else if (displayState.action === 'USE') {
+                if (displayState.action === 'USE_CHECKOUT') {
+                    // AVAILABLE or CLAIMED: server has already unlocked the reward.
+                    // No manual claim step needed — send customer straight to checkout.
                     const claimId = displayState.claim ? displayState.claim.id : '';
-                    actionMarkup = `<button class="milestone-action-btn milestone-action-btn--use" onclick="handleUseReward('${rewardId}', '${claimId}')"><span>READY TO USE</span><i class="fas fa-arrow-right" style="font-size: 11px;"></i></button>`;
+                    const claimParam = claimId ? `&claimId=${encodeURIComponent(claimId)}` : '';
+                    actionMarkup = `<a href="checkout.html?rewardId=${encodeURIComponent(rewardId)}${claimParam}" class="milestone-action-btn milestone-action-btn--use" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;"><span>USE FREE DRINK</span><i class="fas fa-arrow-right" style="font-size:11px;"></i></a>`;
+                } else if (displayState.state === 'RESERVED') {
+                    actionMarkup = `<div class="milestone-action-status milestone-action-status--reserved" style="color:#e5a93b;font-size:12px;">⏳ Applied to pending order</div>`;
                 } else if (displayState.state === 'REDEEMED') {
                     actionMarkup = `<div class="milestone-action-status milestone-action-status--redeemed">REDEEMED ✓</div>`;
                 } else if (displayState.state === 'LOCKED') {
@@ -1457,62 +1460,51 @@
             }).join('');
         }
 
+        /**
+         * handleClaimReward — legacy entry point kept for backward compatibility.
+         * With the new B3 backend, milestones are auto-unlocked (AVAILABLE) and no
+         * explicit POST /api/rewards/claims is required. If the server has already created
+         * an AVAILABLE claim, redirect to checkout. If not (edge case / older session),
+         * attempt the server claim and then redirect.
+         */
         async function handleClaimReward(rewardId, btnElement) {
             if (typeof AuthManager !== 'undefined' && !AuthManager.isAuthenticated()) {
                 if (typeof ToastNotifications !== 'undefined') {
-                    ToastNotifications.error('Please log in to claim milestone rewards');
+                    ToastNotifications.error('Please log in to use your reward');
                 } else {
-                    alert('Please log in to claim milestone rewards');
+                    alert('Please log in to use your reward');
                 }
                 return;
             }
 
-            // Prevent double-click & display loading state immediately
-            if (btnElement) {
-                if (btnElement.disabled) return;
-                btnElement.disabled = true;
-                btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Claiming...';
+            // Check if we already have an AVAILABLE or CLAIMED server record
+            try {
+                const claims = await CraveRewardsData.Claims.get({ forceRefresh: true });
+                const existing = Array.isArray(claims) ? claims.find(c =>
+                    c.rewardId === rewardId &&
+                    ['AVAILABLE', 'CLAIMED'].includes(String(c.status || '').toUpperCase().trim())
+                ) : null;
+
+                if (existing) {
+                    const claimParam = existing.id ? `&claimId=${encodeURIComponent(existing.id)}` : '';
+                    window.location.href = `checkout.html?rewardId=${encodeURIComponent(rewardId)}${claimParam}`;
+                    return;
+                }
+            } catch (e) {
+                console.error('Error checking existing claim before redirect:', e);
             }
 
-            try {
-                const result = await CraveRewardsData.Claims.claim(rewardId);
-                if (result && result.success) {
-                    if (typeof ToastNotifications !== 'undefined') {
-                        ToastNotifications.success('Privilege claimed successfully! Ready to use on menu.');
-                    } else if (window.CraveSound) {
-                        window.CraveSound.success();
-                    }
-                    if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
-                        CraveRewardsData.clearCache();
-                    }
-                    await loadRewardsData();
-                } else {
-                    const msg = (result && result.message) ? result.message : 'Failed to claim reward';
-                    if (typeof ToastNotifications !== 'undefined') {
-                        ToastNotifications.error(msg);
-                    } else {
-                        alert(msg);
-                    }
-                    if (btnElement) {
-                        btnElement.disabled = false;
-                        btnElement.textContent = 'CLAIM REWARD';
-                    }
-                }
-            } catch (err) {
-                console.error('Error claiming reward:', err);
-                if (typeof ToastNotifications !== 'undefined') {
-                    ToastNotifications.error('Error claiming reward: ' + (err.message || 'Server error'));
-                }
-                if (btnElement) {
-                    btnElement.disabled = false;
-                    btnElement.textContent = 'CLAIM REWARD';
-                }
+            // Fallback: no AVAILABLE claim found — this should not occur for milestone_free_drink_100
+            // after B3 deployment, but kept for safety.
+            if (typeof ToastNotifications !== 'undefined') {
+                ToastNotifications.info('Your reward is not yet unlocked. Earn more points to unlock it!');
             }
         }
 
         function handleUseReward(rewardId, claimId) {
+            // Direct to checkout with pre-selected claim (not menu — the free drink selection happens at checkout)
             const claimParam = claimId ? `&claimId=${encodeURIComponent(claimId)}` : '';
-            window.location.href = `menu.html?use_reward=${encodeURIComponent(rewardId)}${claimParam}`;
+            window.location.href = `checkout.html?rewardId=${encodeURIComponent(rewardId)}${claimParam}`;
         }
 
         function loadAchievements() {

@@ -2308,7 +2308,8 @@
             if (!claim) return null;
 
             const normalizedStatus = (claim.status || '').toString().toUpperCase().trim();
-            if (normalizedStatus !== 'CLAIMED' && normalizedStatus !== 'USED' && normalizedStatus !== 'REDEEMED') {
+            // Accept AVAILABLE (server auto-unlocked) and CLAIMED (legacy)
+            if (normalizedStatus !== 'AVAILABLE' && normalizedStatus !== 'CLAIMED' && normalizedStatus !== 'USED') {
                 return null;
             }
 
@@ -2321,6 +2322,21 @@
             };
 
             const title = rewardTitles[claim.rewardId] || 'Milestone Reward';
+
+            // For the free drink reward: the discount is shown as GH₵0 drink price.
+            // The backend validates eligibility and the actual drink price at checkout time.
+            // selectedFreeDrinkName tracks which drink was chosen in the selector panel.
+            if (claim.rewardId === 'milestone_free_drink_100') {
+                return {
+                    claim,
+                    title: selectedFreeDrinkName ? `Free Drink: ${selectedFreeDrinkName}` : title,
+                    discount: 0,          // Price breakdown shows original price struck-through, final GH₵0
+                    freeDrinkName: selectedFreeDrinkName || null,
+                    isFreedrinkReward: true
+                };
+            }
+
+            // For other milestone rewards: attempt cart matching as before
             const cart = (typeof cartItems !== 'undefined' && cartItems.length > 0) ? cartItems : (JSON.parse(localStorage.getItem('craveCart')) || []);
 
             if (!cart || cart.length === 0) {
@@ -2328,14 +2344,12 @@
             }
 
             let eligibleItem = null;
-
             if (typeof checkMenuItemEligibility === 'function') {
                 eligibleItem = cart.find(item => {
                     const hasClaimMatch = item && item.appliedRewardClaimId === claim.id;
                     const isEligible = checkMenuItemEligibility(item, claim.rewardId);
                     return hasClaimMatch && isEligible;
                 });
-
                 if (!eligibleItem) {
                     eligibleItem = cart.find(item => checkMenuItemEligibility(item, claim.rewardId));
                 }
@@ -2403,8 +2417,20 @@
             }
 
             try {
-                const claims = await CraveRewardsData.Claims.get();
-                const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => ((c.status||'').toString().toUpperCase().trim() === 'CLAIMED'));
+                // Fetch backend reward state — always force-refresh on checkout load
+                if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                    CraveRewardsData.clearCache();
+                }
+
+                const claims = await CraveRewardsData.Claims.get({ forceRefresh: true });
+
+                // Accept AVAILABLE (auto-unlocked by server) and CLAIMED (legacy manual-claim) records.
+                // RESERVED and REDEEMED are excluded — RESERVED means another checkout already holds it,
+                // REDEEMED means it has been permanently used.
+                const activeClaims = (Array.isArray(claims) ? claims : []).filter(c => {
+                    const st = (c.status || '').toString().toUpperCase().trim();
+                    return st === 'AVAILABLE' || st === 'CLAIMED';
+                });
                 userClaimedMilestones = activeClaims;
 
                 if (activeClaims.length === 0) {
@@ -2414,8 +2440,7 @@
 
                 section.style.display = 'block';
 
-                const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-                const cartRewardItem = cart.find(i => i.appliedRewardClaimId);
+                // Pre-select claim from URL params (arriving from rewards.html "Use Free Drink" link)
                 const urlParams = new URLSearchParams(window.location.search);
                 const paramClaimId = urlParams.get('claimId');
                 const paramRewardId = urlParams.get('rewardId');
@@ -2425,23 +2450,29 @@
 
                 selectedClaimedRewardId = null;
 
-                if (cartRewardItem && activeClaims.some(c => c.id === cartRewardItem.appliedRewardClaimId)) {
-                    selectedClaimedRewardId = cartRewardItem.appliedRewardClaimId;
+                if (paramClaimId && activeClaims.some(c => c.id === paramClaimId)) {
+                    selectedClaimedRewardId = paramClaimId;
                 } else if (activeContextClaimId && activeClaims.some(c => c.id === activeContextClaimId)) {
                     selectedClaimedRewardId = activeContextClaimId;
-                } else if (paramClaimId && activeClaims.some(c => c.id === paramClaimId)) {
-                    selectedClaimedRewardId = paramClaimId;
                 } else if (paramRewardId && activeClaims.some(c => c.rewardId === paramRewardId)) {
                     const matching = activeClaims.find(c => c.rewardId === paramRewardId);
                     selectedClaimedRewardId = matching ? matching.id : null;
-                } else if (activeClaims.length === 1 && cart.length > 0) {
+                } else if (activeClaims.length === 1) {
+                    // Auto-select when there is exactly one available reward
                     selectedClaimedRewardId = activeClaims[0].id;
                 }
 
                 renderClaimedMilestoneList();
+                // If the free-drink reward is selected, show the drink selector immediately
+                if (selectedClaimedRewardId) {
+                    const selectedClaim = activeClaims.find(c => c.id === selectedClaimedRewardId);
+                    if (selectedClaim && selectedClaim.rewardId === 'milestone_free_drink_100') {
+                        await renderFreeDrinkSelector(selectedClaim);
+                    }
+                }
                 recalculateTotal();
             } catch (err) {
-                console.error('Error loading claimed milestone rewards:', err);
+                console.error('Error loading available milestone rewards:', err);
                 section.style.display = 'none';
             }
         }
@@ -2456,19 +2487,19 @@
             }
 
             const rewardTitles = {
-                'milestone_free_drink_100': 'Free Signature Drink',
-                'milestone_free_dessert_250': 'Free Sweet Treat / Dessert',
-                'milestone_free_loaded_fries_500': 'Free Loaded Fries',
-                'milestone_premium_combo_750': 'Free Premium Combo Upgrade',
-                'milestone_vip_reward_1000': 'VIP Craver Meal'
+                'milestone_free_drink_100': '🥤 Free Signature Drink (GH₵0)',
+                'milestone_free_dessert_250': '🍰 Free Sweet Treat / Dessert',
+                'milestone_free_loaded_fries_500': '🍟 Free Loaded Fries',
+                'milestone_premium_combo_750': '🍱 Free Premium Combo Upgrade',
+                'milestone_vip_reward_1000': '👑 VIP Craver Meal'
             };
 
             let html = `
                 <div class="milestone-claim-option ${!selectedClaimedRewardId ? 'selected' : ''}" onclick="selectClaimedReward(null)" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: ${!selectedClaimedRewardId ? 'rgba(212, 165, 116, 0.12)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${!selectedClaimedRewardId ? '#e5a93b' : 'rgba(255, 255, 255, 0.1)'}; border-radius: 8px; cursor: pointer;">
                     <input type="radio" name="claimedRewardSelect" value="" ${!selectedClaimedRewardId ? 'checked' : ''}>
                     <div class="option-details">
-                        <div style="font-weight: 600; color: #fff;">Do Not Use Milestone Reward</div>
-                        <div style="font-size: 12px; color: #a0a0a0;">Save your claimed reward for a future order</div>
+                        <div style="font-weight: 600; color: #fff;">Don't use my free reward now</div>
+                        <div style="font-size: 12px; color: #a0a0a0;">Save your reward for a future order</div>
                     </div>
                 </div>
             `;
@@ -2476,12 +2507,15 @@
             userClaimedMilestones.forEach(claim => {
                 const isSelected = selectedClaimedRewardId === claim.id;
                 const title = rewardTitles[claim.rewardId] || claim.rewardId;
+                const statusBadge = (claim.status || '').toUpperCase() === 'AVAILABLE'
+                    ? '<span style="font-size:10px;background:#1a3a1a;color:#4caf50;padding:2px 6px;border-radius:4px;margin-left:6px;">UNLOCKED 🎉</span>'
+                    : '<span style="font-size:10px;background:#1a2a3a;color:#e5a93b;padding:2px 6px;border-radius:4px;margin-left:6px;">READY ✓</span>';
                 html += `
                     <div class="milestone-claim-option ${isSelected ? 'selected' : ''}" onclick="selectClaimedReward('${claim.id}')" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: ${isSelected ? 'rgba(212, 165, 116, 0.15)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${isSelected ? '#e5a93b' : 'rgba(255, 255, 255, 0.1)'}; border-radius: 8px; cursor: pointer;">
                         <input type="radio" name="claimedRewardSelect" value="${claim.id}" ${isSelected ? 'checked' : ''}>
                         <div class="option-details" style="flex: 1;">
-                            <div style="font-weight: 600; color: #fff;">${title}</div>
-                            <div style="font-size: 12px; color: #e5a93b;">✓ UNLOCKED & READY (Server-verified discount at checkout)</div>
+                            <div style="font-weight: 600; color: #fff;">${title}${statusBadge}</div>
+                            <div style="font-size: 12px; color: #e5a93b;">Server-verified — drink added at GH₵0 to your order</div>
                         </div>
                     </div>
                 `;
@@ -2490,11 +2524,169 @@
             listEl.innerHTML = html;
         }
 
-        function selectClaimedReward(claimId) {
+        // Tracks the selected free drink name for the 100-point reward
+        let selectedFreeDrinkName = null;
+
+        async function selectClaimedReward(claimId) {
             selectedClaimedRewardId = claimId;
+            selectedFreeDrinkName = null;
+
+            // If reward is unselected, remove any auto-added reward drink from cart
+            if (!claimId) {
+                try {
+                    let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+                    const filteredCart = cart.filter(i => !i.isRewardItem);
+                    if (filteredCart.length !== cart.length) {
+                        localStorage.setItem('craveCart', JSON.stringify(filteredCart));
+                        if (typeof CartSync !== 'undefined' && CartSync.syncToBackend) {
+                            CartSync.syncToBackend();
+                        }
+                        loadCartItems();
+                    }
+                } catch (e) {
+                    console.warn('Error clearing reward item from cart:', e);
+                }
+            }
+
             renderClaimedMilestoneList();
+
+            // Show/hide the free drink selector panel
+            const selectedClaim = claimId
+                ? userClaimedMilestones.find(c => c.id === claimId)
+                : null;
+            if (selectedClaim && selectedClaim.rewardId === 'milestone_free_drink_100') {
+                await renderFreeDrinkSelector(selectedClaim);
+            } else {
+                const selectorPanel = document.getElementById('freeDrinkSelectorPanel');
+                if (selectorPanel) selectorPanel.style.display = 'none';
+            }
+
             recalculateTotal();
         }
+
+        /**
+         * Fetch the backend-controlled eligible drink list and render a selection panel.
+         * The customer must pick one drink; the name is sent with the checkout request
+         * so the backend can validate eligibility.
+         */
+        async function renderFreeDrinkSelector(claim) {
+            // Ensure the panel container exists inside claimedMilestoneSection
+            let panel = document.getElementById('freeDrinkSelectorPanel');
+            if (!panel) {
+                const section = document.getElementById('claimedMilestoneSection');
+                panel = document.createElement('div');
+                panel.id = 'freeDrinkSelectorPanel';
+                panel.style.cssText = 'margin-top:16px;padding:16px;background:rgba(212,165,116,0.06);border:1px solid rgba(229,169,59,0.3);border-radius:8px;';
+                if (section) section.appendChild(panel);
+            }
+            panel.style.display = 'block';
+            panel.innerHTML = '<div style="color:#e5a93b;font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Loading eligible drinks…</div>';
+
+            // Fetch eligible drinks from backend
+            let eligibleDrinks = [];
+            try {
+                if (typeof AuthAPI !== 'undefined' && AuthAPI.getEligibleDrinks) {
+                    const res = await AuthAPI.getEligibleDrinks();
+                    if (res && res.success && res.data && Array.isArray(res.data.eligibleDrinks)) {
+                        eligibleDrinks = res.data.eligibleDrinks;
+                    }
+                }
+            } catch (e) {
+                console.error('Error fetching eligible drinks:', e);
+            }
+
+            if (eligibleDrinks.length === 0) {
+                panel.innerHTML = '<div style="color:#e57373;font-size:13px;">⚠️ Could not load eligible drinks. Please refresh or contact support.</div>';
+                return;
+            }
+
+            // Check if cart already has an eligible drink
+            const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            const existingDrink = cart.find(i => eligibleDrinks.some(ed => ed.toLowerCase() === (i.name || '').trim().toLowerCase()));
+            if (!selectedFreeDrinkName && existingDrink) {
+                selectedFreeDrinkName = existingDrink.name;
+            }
+
+            // Render drink selection list
+            const drinksHtml = eligibleDrinks.map(name => {
+                const isSelected = selectedFreeDrinkName === name;
+                return `
+                    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:${isSelected ? 'rgba(212,165,116,0.18)' : 'rgba(255,255,255,0.03)'};border:1px solid ${isSelected ? '#e5a93b' : 'rgba(255,255,255,0.1)'};border-radius:6px;cursor:pointer;margin-bottom:6px;">
+                        <input type="radio" name="freeDrinkChoice" value="${name.replace(/"/g, '&quot;')}" ${isSelected ? 'checked' : ''} onchange="updateFreeDrinkSelection('${name.replace(/'/g, "\\'")}')">
+                        <span style="color:#fff;font-size:13px;">${name}</span>
+                        <span style="margin-left:auto;color:#4caf50;font-weight:700;font-size:13px;">GH₵0</span>
+                    </label>
+                `;
+            }).join('');
+
+            panel.innerHTML = `
+                <div style="margin-bottom:10px;">
+                    <div style="color:#e5a93b;font-weight:600;font-size:13px;margin-bottom:4px;">🥤 Choose Your Free Drink</div>
+                    <div style="color:#a0a0a0;font-size:11px;">Select one eligible drink — it will be added at GH₵0. Validated by the server at checkout.</div>
+                </div>
+                <div id="freeDrinkChoiceList">${drinksHtml}</div>
+                ${!selectedFreeDrinkName ? '<div style="color:#e57373;font-size:11px;margin-top:8px;">⚠️ Please select a drink to apply your reward.</div>' : ''}
+            `;
+        }
+
+        async function updateFreeDrinkSelection(drinkName) {
+            selectedFreeDrinkName = drinkName;
+
+            // Ensure the selected drink is in the customer's cart so the backend
+            // order service records it as an item for kitchen fulfillment.
+            try {
+                let cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+                const existingIndex = cart.findIndex(i => (i.name || '').trim().toLowerCase() === drinkName.trim().toLowerCase());
+
+                // Remove any previous temporary reward item
+                cart = cart.filter(i => !i.isRewardItem);
+
+                if (existingIndex < 0) {
+                    // Fetch menu to find the product ID and price
+                    let menuItem = null;
+                    if (typeof APIClient !== 'undefined') {
+                        const menuRes = await APIClient.get('/api/menu');
+                        const categories = (menuRes && menuRes.data) ? menuRes.data : [];
+                        for (const cat of categories) {
+                            if (cat.items && Array.isArray(cat.items)) {
+                                const found = cat.items.find(it => (it.name || '').trim().toLowerCase() === drinkName.trim().toLowerCase());
+                                if (found) { menuItem = found; break; }
+                            }
+                        }
+                    }
+
+                    if (menuItem) {
+                        const newRewardItem = {
+                            id: menuItem.id,
+                            menuItemId: menuItem.id,
+                            name: menuItem.name,
+                            price: Number(menuItem.price),
+                            unitPrice: Number(menuItem.price),
+                            quantity: 1,
+                            isRewardItem: true,
+                            appliedRewardClaimId: selectedClaimedRewardId
+                        };
+                        cart.push(newRewardItem);
+                    }
+                }
+
+                localStorage.setItem('craveCart', JSON.stringify(cart));
+                if (typeof CartSync !== 'undefined' && CartSync.syncToBackend) {
+                    CartSync.syncToBackend();
+                }
+            } catch (err) {
+                console.warn('Could not auto-add free drink to cart:', err);
+            }
+
+            // Re-render cart and totals
+            loadCartItems();
+            const selectedClaim = selectedClaimedRewardId
+                ? userClaimedMilestones.find(c => c.id === selectedClaimedRewardId)
+                : null;
+            if (selectedClaim) renderFreeDrinkSelector(selectedClaim);
+            recalculateTotal();
+        }
+
 
         function setupOrderTypeListeners() {
             const deliveryRadio = document.getElementById('delivery');
@@ -2701,10 +2893,22 @@
                     addonsHtml += '</div>';
                 }
 
+                const isFreeDrinkItem = selectedClaimedRewardId && (
+                    item.isRewardItem ||
+                    (selectedFreeDrinkName && (item.name || '').trim().toLowerCase() === selectedFreeDrinkName.trim().toLowerCase())
+                );
+
+                const itemPriceMarkup = isFreeDrinkItem
+                    ? `<div class="checkout-item-price" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                         <div><del style="color:#888;font-size:12px;margin-right:6px;">GH¢ ${itemTotal.toFixed(2)}</del><span style="color:#4caf50;font-weight:700;">GH¢ 0.00</span></div>
+                         <span style="font-size:10px;background:#1a3a1a;color:#4caf50;padding:2px 6px;border-radius:4px;">FREE REWARD</span>
+                       </div>`
+                    : `<div class="checkout-item-price">GH¢ ${itemTotal.toFixed(2)}</div>`;
+
                 return `
-                    <div class="checkout-cart-item">
+                    <div class="checkout-cart-item ${isFreeDrinkItem ? 'reward-drink-item' : ''}" style="${isFreeDrinkItem ? 'background:rgba(76,175,80,0.06);border:1px solid rgba(76,175,80,0.25);border-radius:8px;padding:8px 12px;margin-bottom:8px;' : ''}">
                         <div class="checkout-item-info">
-                            <div class="checkout-item-name">${item.name}</div>
+                            <div class="checkout-item-name" style="${isFreeDrinkItem ? 'color:#4caf50;font-weight:600;' : ''}">${item.name}${isFreeDrinkItem ? ' 🥤' : ''}</div>
                             <div class="checkout-item-details">
                                 ${customizationsHtml}
                                 ${addonsHtml}
@@ -2713,9 +2917,7 @@
                         <div class="checkout-item-quantity">
                             x${item.quantity || 1}
                         </div>
-                        <div class="checkout-item-price">
-                            GH¢ ${itemTotal.toFixed(2)}
-                        </div>
+                        ${itemPriceMarkup}
                     </div>
                 `;
             }).join('');
@@ -2822,7 +3024,7 @@
         }
 
         function recalculateTotal() {
-            const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
+            const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '').replace('GH₵ ', '');
             const subtotal = parseFloat(subtotalText) || 0;
 
             const rewardInfo = typeof getSelectedMilestoneRewardInfo === 'function' ? getSelectedMilestoneRewardInfo() : null;
@@ -2830,30 +3032,50 @@
                 ? userClaimedMilestones.find(c => c.id === selectedClaimedRewardId)
                 : null;
             const selectedClaimStatus = (selectedClaim && selectedClaim.status ? String(selectedClaim.status).toUpperCase().trim() : '');
-            const hasSelectedReward = !!selectedClaim && ['CLAIMED', 'USED', 'REDEEMED'].includes(selectedClaimStatus);
-            const rewardTitle = (rewardInfo && rewardInfo.title) || (
-                selectedClaim
-                    ? {
-                        'milestone_free_drink_100': 'Free Signature Drink',
-                        'milestone_free_dessert_250': 'Free Sweet Treat / Dessert',
-                        'milestone_free_loaded_fries_500': 'Free Loaded Fries',
-                        'milestone_premium_combo_750': 'Free Premium Combo Upgrade',
-                        'milestone_vip_reward_1000': 'VIP Craver Meal'
-                    }[selectedClaim.rewardId] || 'Milestone Reward'
-                    : 'Milestone Reward'
-            );
-            const milestoneDiscount = (rewardInfo && rewardInfo.discount) ? rewardInfo.discount : 0;
+            // Accept AVAILABLE (auto-unlocked) and CLAIMED (legacy)
+            const hasSelectedReward = !!selectedClaim && ['AVAILABLE', 'CLAIMED', 'USED'].includes(selectedClaimStatus);
 
             const infoRow = document.getElementById('milestoneRewardInfoRow');
             const discountRow = document.getElementById('milestoneRewardDiscountRow');
             const nameVal = document.getElementById('milestoneRewardNameValue');
             const summaryVal = document.getElementById('milestoneRewardDiscountSummaryValue');
 
-            if (hasSelectedReward && infoRow && discountRow) {
-                infoRow.style.display = 'flex';
-                discountRow.style.display = 'flex';
-                if (nameVal) nameVal.textContent = `🎁 ${rewardTitle}`;
-                if (summaryVal) summaryVal.textContent = `-GH¢ ${milestoneDiscount.toFixed(2)}`;
+            let milestoneDiscount = 0;
+            if (hasSelectedReward && rewardInfo) {
+                if (rewardInfo.isFreedrinkReward) {
+                    const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+                    const drinkItem = cart.find(i => (i.name || '').trim().toLowerCase() === (selectedFreeDrinkName || '').trim().toLowerCase())
+                        || cart.find(i => i.isRewardItem);
+                    if (drinkItem) {
+                        milestoneDiscount = Number(drinkItem.unitPrice || drinkItem.price || 0);
+                    }
+                } else {
+                    milestoneDiscount = rewardInfo.discount || 0;
+                }
+            }
+
+            if (hasSelectedReward && rewardInfo && infoRow && discountRow) {
+                const isFreedrink = rewardInfo.isFreedrinkReward;
+
+                if (isFreedrink && !selectedFreeDrinkName) {
+                    // Drink not yet chosen — hide the summary rows and don't apply discount
+                    infoRow.style.display = 'none';
+                    discountRow.style.display = 'none';
+                } else {
+                    infoRow.style.display = 'flex';
+                    discountRow.style.display = 'flex';
+                    if (nameVal) {
+                        if (isFreedrink) {
+                            nameVal.innerHTML = `🥤 ${rewardInfo.title} <span style="font-size:11px;color:#4caf50;margin-left:6px;">GH₵0.00</span>`;
+                        } else {
+                            nameVal.textContent = `🎁 ${rewardInfo.title}`;
+                        }
+                    }
+                    if (summaryVal) {
+                        summaryVal.textContent = `-GH¢ ${milestoneDiscount.toFixed(2)}`;
+                        summaryVal.style.color = '#4caf50';
+                    }
+                }
             } else if (infoRow && discountRow) {
                 infoRow.style.display = 'none';
                 discountRow.style.display = 'none';
@@ -2874,6 +3096,17 @@
                 ToastNotifications.error('Your cart is empty');
                 return;
             }
+
+            // Verify eligible drink selection if free drink reward is active
+            if (selectedClaimedRewardId) {
+                const selectedClaim = userClaimedMilestones.find(c => c.id === selectedClaimedRewardId);
+                if (selectedClaim && selectedClaim.rewardId === 'milestone_free_drink_100' && !selectedFreeDrinkName) {
+                    ToastNotifications.error('Please choose your free drink before confirming your order');
+                    const panel = document.getElementById('freeDrinkSelectorPanel');
+                    if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+            }
             
             // Get form data
             const formData = {
@@ -2883,9 +3116,9 @@
                 orderType: document.querySelector('input[name="orderType"]:checked').value,
                 additionalNotes: document.getElementById('additionalNotes').value,
                 items: cart,
-                subtotal: parseFloat(document.getElementById('subtotalAmount').textContent.replace('GHS ', '').replace('GH¢ ', '')),
+                subtotal: parseFloat(document.getElementById('subtotalAmount').textContent.replace('GHS ', '').replace('GH¢ ', '').replace('GH₵ ', '')),
                 deliveryFee: 0,
-                total: parseFloat(document.getElementById('totalAmount').textContent.replace('GHS ', '').replace('GH¢ ', '')),
+                total: parseFloat(document.getElementById('totalAmount').textContent.replace('GHS ', '').replace('GH¢ ', '').replace('GH₵ ', '')),
                 rewardPointsUsed: pointsUsed || 0,
                 claimedRewardId: selectedClaimedRewardId || null
             };
@@ -2909,6 +3142,7 @@
                     onSuccess: function(response, verification) {
                         PaymentUI.hidePaymentProcessing(processingOverlay);
 
+                        // Clear cached rewards so refreshed state reflects REDEEMED
                         if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
                             CraveRewardsData.clearCache();
                         }
@@ -2934,9 +3168,21 @@
                     onError: function(error) {
                         PaymentUI.hidePaymentProcessing(processingOverlay);
                         ToastNotifications.error(error);
+
+                        // Refresh rewards: server releases RESERVED back to AVAILABLE on failure
+                        if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                            CraveRewardsData.clearCache();
+                        }
+                        loadClaimedMilestoneRewards();
                     },
                     onClose: function() {
                         PaymentUI.hidePaymentProcessing(processingOverlay);
+
+                        // Refresh rewards: customer abandoned checkout, backend releases claim
+                        if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                            CraveRewardsData.clearCache();
+                        }
+                        loadClaimedMilestoneRewards();
                     }
                 };
 
@@ -2944,8 +3190,14 @@
 
             } catch (error) {
                 PaymentUI.hidePaymentProcessing(processingOverlay);
-                ToastNotifications.error('Payment initialization failed');
+                ToastNotifications.error(error.message || 'Payment initialization failed');
                 console.error('Payment error:', error);
+
+                // Reload rewards to ensure UI state reflects any release
+                if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                    CraveRewardsData.clearCache();
+                }
+                loadClaimedMilestoneRewards();
             }
         }
 

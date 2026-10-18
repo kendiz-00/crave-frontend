@@ -121,6 +121,25 @@ const AuthAPI = (function() {
         });
     }
 
+    /**
+     * Get the backend-controlled list of eligible free drinks for the 100-point reward.
+     * GET /api/rewards/eligible-drinks
+     *
+     * Falls back to an empty array if the endpoint is not yet available so that
+     * the frontend degrades gracefully in older environments.
+     */
+    async function getEligibleDrinks() {
+        if (!window.APIClient) throw new Error('API client not available');
+        try {
+            return await window.APIClient.get('/api/rewards/eligible-drinks', {
+                useCache: true
+            });
+        } catch (e) {
+            console.warn('[AuthAPI] getEligibleDrinks not available, using empty fallback:', e);
+            return { success: false, data: [] };
+        }
+    }
+
     // Public API
     return {
         login,
@@ -132,7 +151,8 @@ const AuthAPI = (function() {
         verifyOtp,
         getRewards,
         createRewardTransaction,
-        claimReward
+        claimReward,
+        getEligibleDrinks
     };
 })();
 
