@@ -14,7 +14,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
-    <meta name="description" content="Login to your Crave account">
+    <meta name="description" content="Sign in to your Crave account">
     <title>Login - Crave Restaurant</title>
     <link rel="stylesheet" href="css/util.css">
     <link rel="stylesheet" href="components/shared-navbar.css">
@@ -30,28 +30,12 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            background: #0a0a0a;
             min-height: 100vh;
             font-family: 'Poppins', sans-serif;
             color: #fff;
             margin: 0;
             padding: 0;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(212, 165, 116, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(233, 30, 99, 0.02) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
         }
 
         .auth-container {
@@ -60,196 +44,83 @@
             align-items: center;
             justify-content: center;
             padding: 24px;
-            position: relative;
-            z-index: 1;
         }
 
         .auth-split {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
-            max-width: 1400px;
+            max-width: 1200px;
             width: 100%;
-            min-height: 700px;
-            background: linear-gradient(145deg, rgba(26, 26, 26, 0.95) 0%, rgba(15, 15, 15, 0.98) 100%);
-            border-radius: 32px;
+            min-height: 650px;
+            background: #1a1a1a;
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 
-                0 30px 60px -12px rgba(0, 0, 0, 0.7),
-                0 0 0 1px rgba(212, 165, 116, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
         }
 
         .auth-visual {
-            background: linear-gradient(165deg, #1a1a1a 0%, #2a2520 50%, #1a1a1a 100%);
-            padding: 80px 60px;
+            background: #1a1a1a;
+            padding: 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             position: relative;
-            overflow: hidden;
-        }
-
-        .auth-visual::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: 
-                radial-gradient(circle at 30% 40%, rgba(212, 165, 116, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 70% 60%, rgba(233, 30, 99, 0.08) 0%, transparent 40%);
-            animation: shimmer 8s ease-in-out infinite;
-            pointer-events: none;
-        }
-
-        @keyframes shimmer {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(-5%, -5%) rotate(2deg); }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        .auth-visual::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 200px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
-            pointer-events: none;
         }
 
         .auth-visual-content {
             position: relative;
-            z-index: 2;
-        }
-
-        .auth-visual .logo-container {
-            margin-bottom: 40px;
-            position: relative;
-        }
-
-        .auth-visual .logo-container::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(212, 165, 116, 0.2) 0%, transparent 70%);
-            filter: blur(40px);
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+            z-index: 1;
         }
 
         .auth-visual img {
-            width: 180px;
+            width: 160px;
             height: auto;
-            margin-bottom: 0;
-            opacity: 1;
-            position: relative;
-            z-index: 1;
-            filter: drop-shadow(0 4px 20px rgba(212, 165, 116, 0.3));
+            margin-bottom: 32px;
+            opacity: 0.9;
         }
 
         .auth-visual h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
+            font-size: 2.8rem;
             font-weight: 700;
-            color: #d4a574;
-            margin-bottom: 20px;
-            line-height: 1.1;
-            letter-spacing: -1px;
-            text-shadow: 0 2px 20px rgba(212, 165, 116, 0.3);
+            color: #d4a373;
+            margin-bottom: 16px;
+            line-height: 1.2;
         }
 
         .auth-visual p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
             margin: 0;
-            line-height: 1.7;
-            max-width: 320px;
-            font-weight: 300;
+            line-height: 1.6;
+            max-width: 280px;
         }
 
-        .auth-visual .tagline {
+        .auth-visual .food-image {
             margin-top: 32px;
-            padding: 12px 24px;
-            background: rgba(212, 165, 116, 0.1);
-            border: 1px solid rgba(212, 165, 116, 0.3);
-            border-radius: 50px;
-            font-size: 0.85rem;
-            color: #d4a574;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 600;
+            max-width: 300px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-visual .food-image img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         .auth-form-side {
-            padding: 80px 72px;
+            padding: 72px 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            position: relative;
-        }
-
-        .auth-form-side::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                linear-gradient(135deg, rgba(212, 165, 116, 0.02) 0%, transparent 50%),
-                linear-gradient(225deg, rgba(233, 30, 99, 0.01) 0%, transparent 50%);
-            pointer-events: none;
         }
 
         .auth-header {
-            margin-bottom: 40px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .auth-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-            line-height: 1.2;
-            background: linear-gradient(135deg, #fff 0%, #d4a574 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .auth-header p {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1.05rem;
-            margin: 0;
-            line-height: 1.6;
-            font-weight: 300;
+            margin-bottom: 32px;
         }
 
         .auth-header h1 {
@@ -273,50 +144,42 @@
             border: none;
             border-radius: 0;
             padding: 0;
-            backdrop-filter: none;
-            position: relative;
-            z-index: 1;
         }
 
         .form-group {
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .form-label {
             display: block;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.7);
             font-weight: 500;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 0.9rem;
             letter-spacing: 0.5px;
         }
 
         .form-input {
             width: 100%;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 18px 24px;
+            border-radius: 12px;
+            padding: 16px 20px;
             color: #fff;
             font-size: 1rem;
             font-family: 'Poppins', sans-serif;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             box-sizing: border-box;
-            backdrop-filter: blur(10px);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #d4a574;
+            border-color: #d4a373;
             background: rgba(255, 255, 255, 0.08);
-            box-shadow: 
-                0 0 0 4px rgba(212, 165, 116, 0.15),
-                0 4px 20px rgba(212, 165, 116, 0.1);
-            transform: translateY(-1px);
         }
 
         .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.35);
+            color: rgba(255, 255, 255, 0.3);
         }
 
         .password-wrapper {
@@ -325,107 +188,80 @@
 
         .password-toggle {
             position: absolute;
-            right: 20px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
             color: rgba(255, 255, 255, 0.4);
             cursor: pointer;
-            padding: 10px;
+            padding: 8px;
             font-size: 1rem;
-            transition: all 0.3s ease;
-            border-radius: 8px;
+            transition: color 0.3s ease;
         }
 
         .password-toggle:hover {
-            color: #d4a574;
-            background: rgba(212, 165, 116, 0.1);
+            color: #d4a373;
         }
 
         .form-options {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
 
         .remember-me {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.9rem;
             cursor: pointer;
         }
 
         .remember-me input {
-            accent-color: #d4a574;
-            width: 20px;
-            height: 20px;
+            accent-color: #d4a373;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
         }
 
         .forgot-password {
-            color: #d4a574;
+            color: #d4a373;
             text-decoration: none;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
-            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .forgot-password:hover {
-            color: #e9b87a;
+            color: #fff;
         }
 
         .btn-auth {
             width: 100%;
-            background: linear-gradient(135deg, #d4a574 0%, #c4956a 100%);
+            background: #d4a373;
             color: #0a0a0a;
             border: none;
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 18px;
             font-size: 1rem;
             font-weight: 600;
             font-family: 'Poppins', sans-serif;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
-        }
-
-        .btn-auth::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn-auth:hover::before {
-            left: 100%;
         }
 
         .btn-auth:hover {
-            background: linear-gradient(135deg, #e9b87a 0%, #d4a574 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(212, 165, 116, 0.4);
-        }
-
-        .btn-auth:active {
-            transform: translateY(0);
+            background: #c4956a;
+            transform: translateY(-1px);
         }
 
         .btn-auth:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            background: rgba(212, 165, 116, 0.3);
         }
 
         .btn-auth.loading {
@@ -436,13 +272,13 @@
         .btn-auth.loading::after {
             content: '';
             position: absolute;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             top: 50%;
             left: 50%;
-            margin-left: -12px;
-            margin-top: -12px;
-            border: 3px solid rgba(0, 0, 0, 0.3);
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
             border-top-color: #0a0a0a;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
@@ -455,7 +291,7 @@
         .auth-divider {
             display: flex;
             align-items: center;
-            margin: 36px 0;
+            margin: 32px 0;
             color: rgba(255, 255, 255, 0.3);
             font-size: 0.85rem;
         }
@@ -465,12 +301,11 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .auth-divider span {
-            padding: 0 20px;
-            letter-spacing: 2px;
+            padding: 0 16px;
         }
 
         .auth-footer {
@@ -481,30 +316,14 @@
         }
 
         .auth-footer a {
-            color: #d4a574;
+            color: #d4a373;
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .auth-footer a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: #d4a574;
-            transition: width 0.3s ease;
+            transition: color 0.3s ease;
         }
 
         .auth-footer a:hover {
-            color: #e9b87a;
-        }
-
-        .auth-footer a:hover::after {
-            width: 100%;
+            color: #fff;
         }
 
         .back-home {
@@ -523,7 +342,7 @@
         }
 
         .back-home a:hover {
-            color: #d4a574;
+            color: #d4a373;
         }
 
         /* Notification styles */
@@ -538,17 +357,14 @@
             z-index: 10000;
             animation: slideIn 0.3s ease;
             max-width: 350px;
-            backdrop-filter: blur(10px);
         }
 
         .auth-notification-success {
             border-color: #4ade80;
-            box-shadow: 0 4px 15px rgba(74, 222, 128, 0.2);
         }
 
         .auth-notification-error {
             border-color: #ef4444;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
         }
 
         .auth-notification-content {
@@ -590,9 +406,8 @@
         @media (max-width: 1024px) {
             .auth-split {
                 grid-template-columns: 1fr;
-                max-width: 520px;
+                max-width: 500px;
                 min-height: auto;
-                border-radius: 24px;
             }
 
             .auth-visual {
@@ -600,126 +415,29 @@
             }
 
             .auth-form-side {
-                padding: 48px 36px;
+                padding: 40px 32px;
             }
 
             .auth-header h1 {
                 font-size: 2rem;
             }
         }
-
-        @media (max-width: 480px) {
-            .auth-container {
-                padding: 16px;
-            }
-
-            .auth-form-side {
-                padding: 32px 24px;
-            }
-
-            .auth-header h1 {
-                font-size: 1.8rem;
-            }
-
-            .auth-header p {
-                font-size: 0.95rem;
-            }
-        }
     </style>
 </head>
 <body>
     <!-- Shared Navbar -->
-    <header id="craveNavbar" class="crave-navbar" style="display: block !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 1000 !important;">
-        <nav class="crave-navbar__inner">
-            <div class="crave-navbar__container">
-                <!-- Logo -->
-                <div class="crave-navbar__logo">
-                    <a href="index.html" class="crave-navbar__logo-link" aria-label="CRAVE Home">
-                        <img src="images/logo.png" alt="CRAVE" class="crave-navbar__logo-img" width="160" height="44">
-                    </a>
-                </div>
-
-                <!-- Primary Navigation - Always Visible -->
-                <div class="crave-navbar__menu" id="craveNavbarMenu">
-                    <ul class="crave-navbar__list">
-                        <li class="crave-navbar__item">
-                            <a href="index.html" class="crave-navbar__link" data-page="home">Home</a>
-                        </li>
-                        <li class="crave-navbar__item">
-                            <a href="menu.html" class="crave-navbar__link" data-page="menu">Menu</a>
-                        </li>
-                        <li class="crave-navbar__item">
-                            <a href="rewards.html" class="crave-navbar__link" data-page="rewards">Rewards</a>
-                        </li>
-                        
-                    </ul>
-                </div>
-
-                <!-- Auth Section -->
-                <div class="crave-navbar__auth" id="craveNavbarAuth">
-                    <!-- Will be populated by AuthUI -->
-                    <div class="crave-navbar__auth-guest">
-                        <a href="login.html" class="crave-navbar__auth-link">Login</a>
-                        <a href="register.html" class="crave-navbar__auth-btn">Join CRAVE</a>
-                    </div>
-                </div>
-
-                <!-- Mobile Menu Toggle -->
-                <button class="crave-navbar__toggle" id="craveNavbarToggle" aria-label="Toggle menu" aria-expanded="false">
-                    <span class="crave-navbar__toggle-icon">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </span>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Mobile Menu - Secondary Navigation Only -->
-        <div class="crave-navbar__mobile" id="craveNavbarMobile">
-            <div class="crave-navbar__mobile-inner">
-                <ul class="crave-navbar__mobile-list">
-                    <li class="crave-navbar__mobile-item">
-                        <a href="about.html" class="crave-navbar__mobile-link" data-page="about">About</a>
-                    </li>
-                    <li class="crave-navbar__mobile-item">
-                        <a href="reservation.html" class="crave-navbar__mobile-link" data-page="reservation">Reservation</a>
-                    </li>
-                    <li class="crave-navbar__mobile-item">
-                        <a href="vip.html" class="crave-navbar__mobile-link" data-page="vip">VIP</a>
-                    </li>
-                    <li class="crave-navbar__mobile-item">
-                        <a href="contact.html" class="crave-navbar__mobile-link" data-page="contact">Contact</a>
-                    </li>
-                    <li class="crave-navbar__mobile-item">
-                    </li>
-                    <li class="crave-navbar__mobile-item mobile-profile-link">
-                        <a href="profile.html" class="crave-navbar__mobile-link" data-page="profile">Profile</a>
-                    </li>
-                    <li class="crave-navbar__mobile-item mobile-auth-links">
-                        <a href="login.html" class="crave-navbar__mobile-link" data-page="login">Login</a>
-                    </li>
-                    <li class="crave-navbar__mobile-item mobile-auth-links">
-                        <a href="register.html" class="crave-navbar__mobile-link" data-page="register">Register</a>
-                    </li>
-                </ul>
-                <div class="crave-navbar__mobile-auth" id="craveNavbarMobileAuth">
-                    <!-- Will be populated by AuthUI -->
-                </div>
-            </div>
-        </div>
-    </header>
+    <div id="navbar-container"></div>
 
     <div class="auth-container">
         <div class="auth-split">
             <div class="auth-visual">
                 <div class="auth-visual-content">
-                    <div class="logo-container">
-                        <img src="images/logo.png" alt="Crave">
-                    </div>
+                    <img src="images/logo.png" alt="Crave">
                     <h2>CRAVE</h2>
                     <p>Welcome back to great food.</p>
-                    <div class="tagline">Premium Food Experience</div>
+                    <div class="food-image">
+                        <img src="images/ultimate_chicken_cheddar_burger.jpg" alt="Ultimate Chicken Cheddar Burger">
+                    </div>
                 </div>
             </div>
 
@@ -738,7 +456,7 @@
                                 id="email"
                                 name="email"
                                 class="form-input"
-                                placeholder="Enter your email or phone number"
+                                placeholder="Enter your email or phone"
                                 required
                                 autocomplete="username"
                             >
@@ -747,17 +465,17 @@
                         <div class="form-group">
                             <label class="form-label" for="password">Password</label>
                             <div class="password-wrapper">
-                                <input 
-                                    type="password" 
-                                    id="password" 
-                                    name="password" 
-                                    class="form-input" 
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    class="form-input"
                                     placeholder="Enter your password"
                                     required
                                     autocomplete="current-password"
                                 >
-                                <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                                    <i class="fa-solid fa-eye"></i>
+                                <button type="button" class="password-toggle" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
@@ -773,19 +491,15 @@
                             Sign In
                         </button>
                     </form>
+                </div>
 
-                    <div class="auth-divider">
-                        <span>or</span>
-                    </div>
-
-                    <div class="auth-footer">
-                        Don't have an account? <a href="register.html">Create one</a>
-                    </div>
+                <div class="auth-footer">
+                    New to CRAVE? <a href="register.html">Create an account</a>
                 </div>
 
                 <div class="back-home">
                     <a href="index.html">
-                        <i class="fa-solid fa-arrow-left"></i>
+                        <i class="fas fa-arrow-left"></i>
                         Back to Home
                     </a>
                 </div>
@@ -793,126 +507,17 @@
         </div>
     </div>
 
+    <!-- Shared Footer -->
+    <div id="footer-container"></div>
+
     <!-- Scripts -->
     <script src="js/env.js"></script>
-    <script src="js/vendor-setup.js"></script>
     <script src="js/api/config.js"></script>
     <script src="js/api/api.js"></script>
-    <script src="js/auth/auth-api.js"></script>
     <script src="js/auth/auth-manager.js"></script>
     <script src="js/auth/auth-ui.js"></script>
-    <script src="js/analytics.js" defer></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize auth manager
-            AuthManager.initialize();
-            AuthUI.initialize();
-
-            // Check if already logged in
-            if (AuthManager.isAuthenticated()) {
-                const redirect = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
-                sessionStorage.removeItem('redirectAfterLogin');
-                window.location.href = redirect;
-                return;
-            }
-
-            const loginForm = document.getElementById('loginForm');
-            const passwordInput = document.getElementById('password');
-            const passwordToggle = document.querySelector('.password-toggle');
-
-            // Password toggle
-            passwordToggle.addEventListener('click', function() {
-                AuthUI.togglePasswordVisibility(passwordInput, this);
-            });
-
-            // Form submission
-            loginForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                await AuthUI.handleLoginForm(loginForm);
-            });
-        });
-    </script>
-
-	<!-- Shared Navbar & Footer JavaScript -->
-	<script>
-	(function() {
-		'use strict';
-
-		const navbar = document.getElementById('craveNavbar');
-		const navbarToggle = document.getElementById('craveNavbarToggle');
-		const navbarMobile = document.getElementById('craveNavbarMobile');
-
-		// Toggle mobile menu
-		if (navbarToggle && navbarMobile) {
-			navbarToggle.addEventListener('click', function() {
-				const isExpanded = this.getAttribute('aria-expanded') === 'true';
-				this.setAttribute('aria-expanded', !isExpanded);
-				navbarMobile.classList.toggle('crave-navbar__mobile--active');
-				document.body.classList.toggle('crave-navbar__mobile-open');
-			});
-
-			// Close mobile menu when clicking a link
-			const mobileLinks = navbarMobile.querySelectorAll('a');
-			mobileLinks.forEach(link => {
-				link.addEventListener('click', () => {
-					navbarToggle.setAttribute('aria-expanded', 'false');
-					navbarMobile.classList.remove('crave-navbar__mobile--active');
-					document.body.classList.remove('crave-navbar__mobile-open');
-				});
-			});
-
-			// Close mobile menu on escape key
-			document.addEventListener('keydown', (e) => {
-				if (e.key === 'Escape' && navbarMobile.classList.contains('crave-navbar__mobile--active')) {
-					navbarToggle.setAttribute('aria-expanded', 'false');
-					navbarMobile.classList.remove('crave-navbar__mobile--active');
-					document.body.classList.remove('crave-navbar__mobile-open');
-				}
-			});
-		}
-
-		// Highlight active page
-		const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-		const pageName = currentPage.replace('.html', '') || 'home';
-		
-		const navLinks = document.querySelectorAll('[data-page]');
-		navLinks.forEach(link => {
-			const linkPage = link.getAttribute('data-page');
-			if (linkPage === pageName) {
-				link.classList.add('crave-navbar__link--active');
-				link.classList.add('crave-navbar__mobile-link--active');
-			}
-		});
-
-		// Sticky navbar effect
-		if (navbar) {
-			let lastScroll = 0;
-			
-			window.addEventListener('scroll', () => {
-				const currentScroll = window.pageYOffset;
-				
-				if (currentScroll > 50) {
-					navbar.classList.add('crave-navbar--scrolled');
-				} else {
-					navbar.classList.remove('crave-navbar--scrolled');
-				}
-				
-				lastScroll = currentScroll;
-			});
-		}
-
-		// Update copyright year
-		const yearElement = document.getElementById('craveFooterYear');
-		if (yearElement) {
-			yearElement.textContent = new Date().getFullYear();
-		}
-	})();
-	</script>
-
+    <script src="js/cart-sync.js"></script>
+    <script src="components/shared-navbar.js"></script>
+    <script src="components/shared-footer.js"></script>
 </body>
 </html>
-
-
-
-
