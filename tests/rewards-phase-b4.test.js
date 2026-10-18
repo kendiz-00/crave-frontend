@@ -105,7 +105,7 @@ test('Rule 3 & 4: redeemMilestone does NOT deduct points client-side (backend en
     assert.ok(result.message.includes('server'));
 });
 
-test('Rule 2 & 9: Auto-unlocked AVAILABLE claim advances milestone progress to the next goal (250 PTS)', async () => {
+test('Rule 2 & 9: Auto-unlocked AVAILABLE claim completes confirmed 100 PTS milestone without unapproved forward promises', async () => {
     // Mock data layer to return user state with 100 points and the AVAILABLE claim
     global.CraveRewardsData = {
         Points: {
@@ -124,9 +124,8 @@ test('Rule 2 & 9: Auto-unlocked AVAILABLE claim advances milestone progress to t
     };
 
     const nextMilestone = await CraveRewardsEngine.getNextMilestone();
-    assert.ok(nextMilestone);
-    // The 100-point reward is unlocked (completed), so next milestone is 250 PTS
-    assert.equal(nextMilestone.points, 250);
+    // With only the single confirmed 100 PTS milestone active, completing it means no unapproved next milestone
+    assert.equal(nextMilestone, null);
 });
 
 test('Rule 8: Backend drink whitelist validation (provisional 10 smoothies)', () => {

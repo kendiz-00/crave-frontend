@@ -20,37 +20,13 @@ const CraveRewardsConfig = {
         }
     },
 
-    // Reward Milestones
+    // Reward Milestones (Only confirmed milestone: 100 PTS Free Drink)
     milestones: [
         {
             points: 100,
             reward: 'Free Drink',
             icon: '🥤',
-            description: 'Complimentary beverage of your choice'
-        },
-        {
-            points: 250,
-            reward: 'Free Dessert',
-            icon: '🍰',
-            description: 'Indulge in any dessert on the menu'
-        },
-        {
-            points: 500,
-            reward: 'Free Loaded Fries',
-            icon: '🍟',
-            description: 'Our signature loaded fries with toppings'
-        },
-        {
-            points: 750,
-            reward: 'Premium Combo',
-            icon: '🍔',
-            description: 'Complete meal with main, side, and drink'
-        },
-        {
-            points: 1000,
-            reward: 'VIP Reward',
-            icon: '👑',
-            description: 'Exclusive VIP experience with special treatment'
+            description: 'Complimentary beverage of your choice (automatically unlocked at 100 lifetime points)'
         }
     ],
 
