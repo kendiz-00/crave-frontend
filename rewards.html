@@ -1405,6 +1405,20 @@
                 1000: 'milestone_vip_reward_1000'
             };
 
+            // Check server-side redemption feature flag
+            let isRedemptionEnabled = false;
+            try {
+                if (typeof AuthAPI !== 'undefined' && AuthAPI.getEligibleDrinks) {
+                    const statusRes = await AuthAPI.getEligibleDrinks();
+                    if (statusRes && statusRes.success && statusRes.data) {
+                        isRedemptionEnabled = Boolean(statusRes.data.redemptionEnabled && statusRes.data.status === 'ACTIVE');
+                    }
+                }
+            } catch (e) {
+                isRedemptionEnabled = false;
+            }
+            window.REWARDS_FREE_DRINK_REDEMPTION_ENABLED = isRedemptionEnabled;
+
             grid.innerHTML = milestones.map(milestone => {
                 const rewardId = rewardIdMap[milestone.points] || `milestone_${milestone.points}`;
                 const displayState = (typeof CraveRewardsEngine !== 'undefined' && CraveRewardsEngine.getRewardDisplayState)
@@ -1416,7 +1430,8 @@
                             id: rewardId
                         },
                         points,
-                        claims
+                        claims,
+                        { redemptionEnabled: isRedemptionEnabled }
                     )
                     : {
                         state: points >= milestone.points ? 'AVAILABLE' : 'LOCKED',
@@ -1437,6 +1452,8 @@
                     const claimId = displayState.claim ? displayState.claim.id : '';
                     const claimParam = claimId ? `&claimId=${encodeURIComponent(claimId)}` : '';
                     actionMarkup = `<a href="checkout.html?rewardId=${encodeURIComponent(rewardId)}${claimParam}" class="milestone-action-btn milestone-action-btn--use" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;"><span>USE FREE DRINK</span><i class="fas fa-arrow-right" style="font-size:11px;"></i></a>`;
+                } else if (displayState.disabled && (displayState.state === 'AVAILABLE' || displayState.state === 'CLAIMED')) {
+                    actionMarkup = `<div class="milestone-action-status milestone-action-status--unlocked" style="color:#4caf50;font-size:11px;font-weight:600;padding:6px 10px;background:rgba(76,175,80,0.1);border-radius:4px;border:1px solid rgba(76,175,80,0.3);text-align:center;">UNLOCKED · REDEMPTION COMING SOON</div>`;
                 } else if (displayState.state === 'RESERVED') {
                     actionMarkup = `<div class="milestone-action-status milestone-action-status--reserved" style="color:#e5a93b;font-size:12px;">⏳ Applied to pending order</div>`;
                 } else if (displayState.state === 'REDEEMED') {

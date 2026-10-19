@@ -217,7 +217,7 @@ const CraveRewardsEngine = (function() {
      * @param {Array}  claims    - Active claims array from backend
      * @returns {Object} { state, label, action, claim, rewardId, requiredPoints, remainingPoints, badge, subtext }
      */
-    function getRewardDisplayState(reward, userPoints, claims) {
+    function getRewardDisplayState(reward, userPoints, claims, options = {}) {
         const points = typeof userPoints === 'number' && !isNaN(userPoints) ? userPoints : 0;
         const requiredPoints = typeof reward.requiredPoints === 'number'
             ? reward.requiredPoints
@@ -293,33 +293,36 @@ const CraveRewardsEngine = (function() {
             };
         }
 
-        // ── AVAILABLE (server auto-unlocked at 100 pts) ────────────────────────
-        // No manual claim step is required — customer goes straight to checkout.
-        if (claim && claimStatus === 'AVAILABLE') {
-            return {
-                state: 'AVAILABLE',
-                label: 'USE FREE DRINK',
-                action: 'USE_CHECKOUT',
-                claim,
-                rewardId,
-                requiredPoints,
-                remainingPoints: 0,
-                badge: 'UNLOCKED 🎉',
-                subtext: 'Select a drink at checkout for GH₵0'
-            };
-        }
+        // ── AVAILABLE (server auto-unlocked at 100 pts) / CLAIMED ───────────────
+        if (claim && (claimStatus === 'AVAILABLE' || claimStatus === 'CLAIMED')) {
+            const isRedemptionDisabled = (options && options.redemptionEnabled === false) ||
+                (typeof window !== 'undefined' && window.REWARDS_FREE_DRINK_REDEMPTION_ENABLED === false);
 
-        // ── CLAIMED (legacy manual-claim path, treat as available) ────────────
-        if (claim && claimStatus === 'CLAIMED') {
+            if (isRedemptionDisabled) {
+                return {
+                    state: claimStatus,
+                    label: 'COMING SOON',
+                    action: null,
+                    disabled: true,
+                    claim,
+                    rewardId,
+                    requiredPoints,
+                    remainingPoints: 0,
+                    badge: 'UNLOCKED 🎉',
+                    subtext: 'Your free drink is unlocked! Redemption will be available soon.'
+                };
+            }
+
             return {
-                state: 'CLAIMED',
+                state: claimStatus,
                 label: 'USE FREE DRINK',
                 action: 'USE_CHECKOUT',
+                disabled: false,
                 claim,
                 rewardId,
                 requiredPoints,
                 remainingPoints: 0,
-                badge: 'UNLOCKED ✓',
+                badge: claimStatus === 'AVAILABLE' ? 'UNLOCKED 🎉' : 'UNLOCKED ✓',
                 subtext: 'Select a drink at checkout for GH₵0'
             };
         }
