@@ -1087,7 +1087,7 @@
                                         <div style="margin-bottom: 15px;">
                                             <strong>Please choose:</strong><br>
                                             <button onclick="location.reload()" style="margin-right: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry Verification</button>
-                                            <button onclick="window.open('https://wa.me/233550020788')" style="padding: 8px 16px; background: #25D366; color: white; border: none; border-radius: 4px; cursor: pointer;">Contact Crave to Confirm</button>
+                                            <button onclick="window.open('https://wa.me/233550020788')" style="padding: 8px 16px; background: #25D366; color: white; border: none; border-radius: 4px; cursor: pointer;">Contact Crave to Confirm Prices & Availability</button>
                                         </div>
                                         <div style="font-size: 0.9em; color: #666;">
                                             Your cart has been preserved for review.
@@ -1118,30 +1118,13 @@
                                 </div>
                                 <div style="margin-bottom: 15px;">
                                     <button onclick="location.reload()" style="margin-right: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry Verification</button>
-                                    <button onclick="window.open('https://wa.me/233550020788')" style="padding: 8px 16px; background: #25D366; color: white; border: none; border-radius: 4px; cursor: pointer;">Contact Crave to Confirm</button>
+                                    <button onclick="window.open('https://wa.me/233550020788')" style="padding: 8px 16px; background: #25D366; color: white; border: none; border-radius: 4px; cursor: pointer;">Contact Crave to Confirm Prices & Availability</button>
                                 </div>
                                 <div style="font-size: 0.9em; color: #666;">
-                                    Your cart has been preserved. You can also proceed with your current prices at your own risk.
-                                </div>
-                                <div style="margin-top: 10px;">
-                                    <button id="proceedAnywayBtn" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Proceed with Current Prices</button>
+                                    Your cart has been preserved. Please verify current prices and availability before proceeding.
                                 </div>
                             `;
                             errorDiv.classList.add('show');
-
-                            // Add handler for "proceed anyway" button
-                            setTimeout(() => {
-                                const proceedBtn = document.getElementById('proceedAnywayBtn');
-                                if (proceedBtn) {
-                                    proceedBtn.addEventListener('click', () => {
-                                        errorDiv.classList.remove('show');
-                                        // Clear the button handler to prevent duplicate calls
-                                        proceedBtn.remove();
-                                        // Continue with WhatsApp redirect
-                                        continueWithWhatsApp(orderData, form, button);
-                                    });
-                                }
-                            }, 100);
                         }
 
                         // Cart is preserved for review
@@ -1149,65 +1132,46 @@
                     }
                 }
 
-                // Continue with WhatsApp redirect
-                continueWithWhatsApp(orderData, form, button);
-            } catch (error) {
-                console.error('Order processing error:', error);
+                // Continue with WhatsApp redirect (verification passed)
+                // Generate WhatsApp message
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
+                const message = generateWhatsAppMessage(orderData);
 
-                // Re-enable button and show error
-                if (button) {
-                    button.disabled = false;
-                    button.innerHTML = '<i class="fas fa-lock"></i> Confirm & Pay';
+                // Calculate order total
+                let total = 0;
+                cartItems.forEach((item) => {
+                    const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
+                    total += itemTotal;
+                });
+
+                // Store order data for success screen
+                const orderCompletionData = {
+                    total: total,
+                    orderType: orderData ? orderData.orderType : 'Delivery',
+                    items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
+                    timestamp: Date.now()
+                };
+                sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
+
+                // Use official WhatsApp API endpoint for maximum compatibility
+                const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
+
+                if (window.CraveSound) window.CraveSound.success();
+
+                // Set flag to detect return from WhatsApp
+                sessionStorage.setItem('craveWhatsAppOpened', 'true');
+
+                // Clear cart, reset form & clear rewards cache before redirect
+                if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                    CraveRewardsData.clearCache();
                 }
+                if (form) form.reset();
+                cartItems = [];
+                if (typeof saveCartToStorage === 'function') saveCartToStorage();
+                localStorage.removeItem('craveCart');
 
-                // Show error message with retry option
-                showError('Unable to process order. Please try again or contact us directly at +233550020788. Your cart has been preserved.', true);
-
-                // Cart is preserved (not cleared on error)
-            }
-        }
-
-        // Helper function to continue with WhatsApp redirect
-        function continueWithWhatsApp(orderData, form, button) {
-            // Generate WhatsApp message
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
-            const message = generateWhatsAppMessage(orderData);
-
-            // Calculate order total
-            let total = 0;
-            cartItems.forEach((item) => {
-                const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
-                total += itemTotal;
-            });
-
-            // Store order data for success screen
-            const orderCompletionData = {
-                total: total,
-                orderType: orderData ? orderData.orderType : 'Delivery',
-                items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
-                timestamp: Date.now()
-            };
-            sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
-
-            // Use official WhatsApp API endpoint for maximum compatibility
-            const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
-
-            if (window.CraveSound) window.CraveSound.success();
-
-            // Set flag to detect return from WhatsApp
-            sessionStorage.setItem('craveWhatsAppOpened', 'true');
-
-            // Clear cart, reset form & clear rewards cache before redirect
-            if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
-                CraveRewardsData.clearCache();
-            }
-            if (form) form.reset();
-            cartItems = [];
-            if (typeof saveCartToStorage === 'function') saveCartToStorage();
-            localStorage.removeItem('craveCart');
-
-            // Redirect to WhatsApp (synchronous to prevent mobile popup blocking)
-            window.location.href = whatsappUrl;
+                // Redirect to WhatsApp (synchronous to prevent mobile popup blocking)
+                window.location.href = whatsappUrl;
             } catch (error) {
                 console.error('Order processing error:', error);
 
