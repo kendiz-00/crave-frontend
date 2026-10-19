@@ -953,15 +953,18 @@
             processOrder(orderData);
         }
 
-        // Show error message
-        function showError(message) {
+        // Show error message (extended for checkout failures)
+        function showError(message, isPermanent = false) {
             const errorElement = document.getElementById('checkoutError');
             errorElement.textContent = message;
             errorElement.classList.add('show');
 
-            setTimeout(() => {
-                errorElement.classList.remove('show');
-            }, 5000);
+            // For permanent errors (e.g., WhatsApp opening failure), don't auto-hide
+            if (!isPermanent) {
+                setTimeout(() => {
+                    errorElement.classList.remove('show');
+                }, 5000);
+            }
         }
 
         // Validate form readiness and update button state
@@ -1009,7 +1012,7 @@
             return true;
         }
 
-        // Update processOrder with UX polish
+        // Update processOrder with UX polish and error handling
         function processOrder(orderData) {
             const form = document.getElementById('checkoutForm');
             const button = document.getElementById('placeOrderBtn');
@@ -1021,41 +1024,60 @@
                 button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
             }
 
-            // Generate WhatsApp message immediately
-            const message = generateWhatsAppMessage(orderData);
+            try {
+                // Generate WhatsApp message immediately
+                const message = generateWhatsAppMessage(orderData);
 
-            // Calculate order total
-            let total = 0;
-            cartItems.forEach((item) => {
-                const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
-                total += itemTotal;
-            });
+                // Calculate order total
+                let total = 0;
+                cartItems.forEach((item) => {
+                    const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
+                    total += itemTotal;
+                });
 
-            // Store order data for success screen
-            const orderCompletionData = {
-                total: total,
-                orderType: orderData ? orderData.orderType : 'Delivery',
-                items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
-                timestamp: Date.now()
-            };
-            sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
+                // Store order data for success screen
+                const orderCompletionData = {
+                    total: total,
+                    orderType: orderData ? orderData.orderType : 'Delivery',
+                    items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
+                    timestamp: Date.now()
+                };
+                sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
 
-            // Use official WhatsApp API endpoint for maximum compatibility
-            const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
+                // Use official WhatsApp API endpoint for maximum compatibility
+                const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
 
-            if (window.CraveSound) window.CraveSound.success();
+                if (window.CraveSound) window.CraveSound.success();
 
-            // Set flag to detect return from WhatsApp
-            sessionStorage.setItem('craveWhatsAppOpened', 'true');
+                // Set flag to detect return from WhatsApp
+                sessionStorage.setItem('craveWhatsAppOpened', 'true');
 
-            // Clear cart, reset form & clear rewards cache before redirect
-            if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
-                CraveRewardsData.clearCache();
+                // Clear cart, reset form & clear rewards cache before redirect
+                if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                    CraveRewardsData.clearCache();
+                }
+                if (form) form.reset();
+                cartItems = [];
+                if (typeof saveCartToStorage === 'function') saveCartToStorage();
+                localStorage.removeItem('craveCart');
+
+                // Redirect to WhatsApp
+                window.location.href = whatsappUrl;
+            } catch (error) {
+                console.error('Order processing error:', error);
+
+                // Re-enable button and show error
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-lock"></i> Confirm & Pay';
+                }
+
+                // Show error message with retry option
+                showError('Unable to open WhatsApp. Please try again or contact us directly at +233550020788. Your cart has been preserved.', true);
+
+                // Cart is preserved (not cleared on error)
             }
-            if (form) form.reset();
-            cartItems = [];
-            if (typeof saveCartToStorage === 'function') saveCartToStorage();
-            localStorage.removeItem('craveCart');
+        }
 
             // Synchronous redirect to WhatsApp to prevent mobile browser pop-up blocking
             try {
