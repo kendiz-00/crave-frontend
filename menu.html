@@ -797,6 +797,39 @@
                 height: 280px;
             }
         }
+        
+        /* Loading State */
+        .menu-loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(212, 165, 116, 0.2);
+            border-top-color: #d4a373;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .menu-loading-state p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+
     </style>
 </head>
 <body>
@@ -1295,15 +1328,58 @@
 
         // Instant initial menu render from local cache or fallback
         function renderInitialMenu() {
-            // Clear any stale cache to ensure fresh API data is always displayed
-            localStorage.removeItem('crave_cached_menu_data');
-            localStorage.removeItem('crave_cached_categories');
-            console.log('[MENU] Cleared stale cache, loading fresh API data...');
+            console.log('[MENU] Checking for cached menu data...');
+            
+            // Cache expiry: 5 minutes (300000ms)
+            const CACHE_EXPIRY_MS = 5 * 60 * 1000;
+            
+            // Try to load from cache first for instant render
+            const cachedMenu = localStorage.getItem('crave_cached_menu_data');
+            const cachedCategories = localStorage.getItem('crave_cached_categories');
+            const cacheTimestamp = localStorage.getItem('crave_menu_cache_timestamp');
+            
+            if (cachedMenu && cachedCategories && cacheTimestamp) {
+                const now = Date.now();
+                const cacheAge = now - parseInt(cacheTimestamp);
+                
+                if (cacheAge < CACHE_EXPIRY_MS) {
+                    try {
+                        console.log('[MENU] Found fresh cached menu (' + Math.round(cacheAge/1000) + 's old), rendering instantly...');
+                        menuData = JSON.parse(cachedMenu);
+                        const categories = JSON.parse(cachedCategories);
+                        renderCategoryNavigation(categories);
+                        initializeMenu();
+                        
+                        console.log('[MENU] Cached menu rendered successfully');
+                        return; // Exit early, API will update in background
+                    } catch (e) {
+                        console.warn('[MENU] Failed to parse cached menu:', e);
+                        // Fall through to fallback
+                    }
+                } else {
+                    console.log('[MENU] Cache expired (' + Math.round(cacheAge/1000) + 's old), using fallback...');
+                }
+            } else {
+                console.log('[MENU] No cached menu found, using fallback...');
+            }
+            
+            // No cache or expired: render fallback data instantly for first-time visitors
+            console.log('[MENU] Rendering fallback menu data instantly...');
+            menuData = fallbackMenuData;
+            const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
+                id: slug,
+                slug: slug,
+                name: fallbackMenuData[slug].title
+            }));
+            renderCategoryNavigation(fallbackCategories);
+            initializeMenu();
+            console.log('[MENU] Fallback menu rendered successfully (API will update in background)');
         }
 
         // Load categories and menu from API in parallel
         async function loadMenuFromAPI() {
-            console.log('[MENU] Loading fresh menu from API...');
+            console.log('[MENU] Loading fresh menu from API in background...');
+            
             try {
                 const [categoryResponse, menuResponse] = await Promise.all([
                     MenuAPI.getCategories(),
@@ -1317,19 +1393,25 @@
 
                 if (menuItems.length > 0) {
                     const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
+                    
+                    // Preserve current category selection if user has selected one
+                    const currentCategory = document.querySelector('.category-chip.active')?.getAttribute('data-category');
+                    
                     menuData = freshMenuData;
 
                     try {
                         localStorage.setItem('crave_cached_menu_data', JSON.stringify(freshMenuData));
                         localStorage.setItem('crave_cached_categories', JSON.stringify(categories));
-                        console.log('[MENU] Updated localStorage cache with fresh API data');
+                        localStorage.setItem('crave_menu_cache_timestamp', Date.now().toString());
+                        console.log('[MENU] Updated localStorage cache with fresh API data and timestamp');
                     } catch (e) {
                         console.warn('[MENU] Could not cache API menu data:', e);
                     }
 
-                    // Clear and re-render to ensure fresh data replaces any stale render
+                    // Re-render to show fresh data (preserves user state where possible)
                     const menuContainer = document.querySelector('.bolt-menu-container');
                     if (menuContainer) {
+                        // Remove old sections
                         menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section').forEach(function (section) {
                             section.remove();
                         });
@@ -1337,33 +1419,25 @@
 
                     renderCategoryNavigation(categories);
                     initializeMenu();
+                    
+                    // Restore category selection if user had one
+                    if (currentCategory) {
+                        setTimeout(() => {
+                            const categoryChip = document.querySelector(`.category-chip[data-category="${currentCategory}"]`);
+                            if (categoryChip) {
+                                categoryChip.click();
+                            }
+                        }, 100);
+                    }
 
                     console.log('[MENU] API menu rendered successfully');
-                } else if (!menuData || Object.keys(menuData).length === 0) {
-                    console.warn('[MENU] API returned 0 items, using fallback data');
-                    menuData = fallbackMenuData;
-                    const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
-                        id: slug,
-                        slug: slug,
-                        name: fallbackMenuData[slug].title
-                    }));
-                    renderCategoryNavigation(fallbackCategories);
-                    initializeMenu();
+                } else {
+                    console.warn('[MENU] API returned 0 items, keeping current/fallback data');
                 }
 
             } catch (error) {
-                console.error('[MENU] Error loading menu from API:', error);
-                if (!menuData || Object.keys(menuData).length === 0) {
-                    console.warn('[MENU] Using fallback menu data due to API error');
-                    menuData = fallbackMenuData;
-                    const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
-                        id: slug,
-                        slug: slug,
-                        name: fallbackMenuData[slug].title
-                    }));
-                    renderCategoryNavigation(fallbackCategories);
-                    initializeMenu();
-                }
+                console.error('[MENU] API fetch failed:', error);
+                console.log('[MENU] Keeping current menu data (fallback or cached)');
             }
         }
 
@@ -2092,10 +2166,10 @@
             // Load cart first
             loadCartFromStorage();
 
-            // Render initial menu from cache or fallback first
+            // Render initial menu from cache or fallback first (instant for first-time visitors)
             renderInitialMenu();
 
-            // Then load fresh menu from API to update
+            // Then load fresh menu from API to update in background
             loadMenuFromAPI();
 
             try {
