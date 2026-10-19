@@ -257,10 +257,15 @@
                     <!-- Payment Method Card -->
                     <div class="checkout-card payment-card">
                         <label class="checkout-label">
-                            Payment Method <span class="required">*</span>
+                            Payment Method
                         </label>
-                        <div id="paymentMethodSelector"></div>
-                        <div id="paymentMethodForm"></div>
+                        <div id="paymentMethodSelector" style="opacity: 0.5; pointer-events: none;">
+                            <div class="payment-unavailable-message">
+                                <i class="fas fa-info-circle"></i>
+                                Payment currently unavailable
+                            </div>
+                        </div>
+                        <div id="paymentMethodForm" style="display: none;"></div>
                     </div>
 
                     <!-- Claimed Milestone Rewards Card -->
@@ -2041,6 +2046,20 @@
             box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
         }
 
+        .payment-unavailable-message {
+            padding: 16px;
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            color: #ffc107;
+            text-align: center;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
         .spin-popup-close {
             background: transparent;
             border: none;
@@ -2502,21 +2521,9 @@
             
             // Load cart items
             loadCartItems();
-            
-            // Initialize payment flow
-            let selectedPaymentMethod = 'card';
-            
-            PaymentUI.renderPaymentMethodSelector('paymentMethodSelector', {
-                selectedMethod: selectedPaymentMethod,
-                onSelect: function(method) {
-                    selectedPaymentMethod = method;
-                    renderPaymentForm(method);
-                }
-            });
-            
-            renderPaymentForm(selectedPaymentMethod);
-            
-            // Form submission listener handled in initializeCheckout
+
+            // Payment currently unavailable - skip payment UI initialization
+            // Payment selector shows disabled message instead
 
             // Setup listeners
             setupOrderTypeListeners();
