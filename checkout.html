@@ -1012,8 +1012,8 @@
             return true;
         }
 
-        // Update processOrder with UX polish and error handling
-        function processOrder(orderData) {
+        // Update processOrder with UX polish, error handling, and price verification
+        async function processOrder(orderData) {
             const form = document.getElementById('checkoutForm');
             const button = document.getElementById('placeOrderBtn');
             const successModal = document.getElementById('checkoutSuccess');
@@ -1021,11 +1021,67 @@
             // Show loading state
             if (button) {
                 button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying prices...';
             }
 
             try {
-                // Generate WhatsApp message immediately
+                // Verify prices and availability with current API data
+                if (typeof MenuAPI !== 'undefined' && MenuAPI.getAll) {
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking current prices...';
+
+                    try {
+                        const menuResponse = await MenuAPI.getAll();
+                        const menuItems = Array.isArray(menuResponse) ? menuResponse : (menuResponse.data || []);
+
+                        if (menuItems.length > 0) {
+                            // Check for price changes or unavailable items
+                            const issues = [];
+                            cartItems.forEach(cartItem => {
+                                const currentItem = menuItems.find(mi =>
+                                    mi.name === cartItem.name ||
+                                    mi.id === cartItem.menuItemId
+                                );
+
+                                if (!currentItem) {
+                                    issues.push(`${cartItem.name} - Item not found in current menu`);
+                                } else if (!currentItem.isAvailable) {
+                                    issues.push(`${cartItem.name} - Currently unavailable`);
+                                } else {
+                                    const cartPrice = Number(cartItem.unitPrice || cartItem.price || 0);
+                                    const currentPrice = Number(currentItem.price || 0);
+                                    if (cartPrice !== currentPrice) {
+                                        issues.push(`${cartItem.name} - Price changed from GH¢${cartPrice} to GH¢${currentPrice}`);
+                                    }
+                                }
+                            });
+
+                            if (issues.length > 0) {
+                                // Re-enable button and show verification error
+                                if (button) {
+                                    button.disabled = false;
+                                    button.innerHTML = '<i class="fas fa-lock"></i> Confirm & Pay';
+                                }
+
+                                showError(
+                                    'Price or availability changes detected. Please review your cart before checkout. ' +
+                                    'You can retry or contact us at +233550020788 to confirm current prices. ' +
+                                    'Issues: ' + issues.join('; '),
+                                    true
+                                );
+
+                                // Cart is preserved for review
+                                return;
+                            }
+                        }
+                    } catch (apiError) {
+                        console.warn('Price verification failed, proceeding with cart prices:', apiError);
+                        // Continue with cart prices if API verification fails
+                        // User may need to confirm with restaurant
+                    }
+                }
+
+                // Generate WhatsApp message
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
                 const message = generateWhatsAppMessage(orderData);
 
                 // Calculate order total
@@ -1073,7 +1129,7 @@
                 }
 
                 // Show error message with retry option
-                showError('Unable to open WhatsApp. Please try again or contact us directly at +233550020788. Your cart has been preserved.', true);
+                showError('Unable to process order. Please try again or contact us directly at +233550020788. Your cart has been preserved.', true);
 
                 // Cart is preserved (not cleared on error)
             }

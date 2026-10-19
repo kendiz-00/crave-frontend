@@ -1,5 +1,5 @@
 const menuSnapshot = {
-  "timestamp": "2026-10-19T16:58:22.363Z",
+  "timestamp": "2026-10-19T18:12:21.752Z",
   "categories": [
     {
       "id": "efa63ccf-80b8-4e35-bbed-1e2277700202",

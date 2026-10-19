@@ -1466,11 +1466,18 @@
         // Load categories and menu from API in parallel
         async function loadMenuFromAPI() {
             console.log('[MENU] Loading fresh menu from API in background...');
-            
+
+            // Check if MenuAPI is available (deferred scripts may not have loaded yet)
+            if (typeof MenuAPI === 'undefined') {
+                console.warn('[MENU] MenuAPI not available yet, will retry in 1s...');
+                setTimeout(loadMenuFromAPI, 1000);
+                return;
+            }
+
             // Check if modal is open - preserve state
             const isModalOpen = document.querySelector('.food-customization-modal.active');
             const currentCategory = document.querySelector('.category-chip.active')?.getAttribute('data-category');
-            
+
             try {
                 const [categoryResponse, menuResponse] = await Promise.all([
                     MenuAPI.getCategories(),
