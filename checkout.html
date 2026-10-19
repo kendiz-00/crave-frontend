@@ -1061,7 +1061,7 @@
                 if (typeof saveCartToStorage === 'function') saveCartToStorage();
                 localStorage.removeItem('craveCart');
 
-                // Redirect to WhatsApp
+                // Redirect to WhatsApp (synchronous to prevent mobile popup blocking)
                 window.location.href = whatsappUrl;
             } catch (error) {
                 console.error('Order processing error:', error);
@@ -1076,14 +1076,6 @@
                 showError('Unable to open WhatsApp. Please try again or contact us directly at +233550020788. Your cart has been preserved.', true);
 
                 // Cart is preserved (not cleared on error)
-            }
-        }
-
-            // Synchronous redirect to WhatsApp to prevent mobile browser pop-up blocking
-            try {
-                window.location.href = whatsappUrl;
-            } catch (error) {
-                showWhatsAppFallback(whatsappUrl);
             }
         }
 
