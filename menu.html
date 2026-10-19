@@ -829,6 +829,128 @@
             margin: 0;
         }
         
+        /* Menu Error State */
+        .menu-error-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .menu-error-state .error-content {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+        }
+        
+        .menu-error-state i {
+            font-size: 3rem;
+            color: #ef4444;
+            margin-bottom: 20px;
+        }
+        
+        .menu-error-state p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin: 0 0 20px 0;
+            line-height: 1.5;
+        }
+        
+        .menu-error-state .retry-btn {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .menu-error-state .retry-btn:hover {
+            background: #dc2626;
+        }
+        
+        /* Price Change Notification */
+        .price-change-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            z-index: 10001;
+            max-width: 400px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .price-change-notification .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: #fff;
+        }
+        
+        .price-change-notification i {
+            color: #ffc107;
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+        
+        .price-change-notification strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #ffc107;
+        }
+        
+        .price-change-notification p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+        
+        .price-change-notification button {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            margin-left: auto;
+        }
+        
+        .price-change-notification button:hover {
+            color: #fff;
+        }
+        
+        .price-change-notification.fade-out {
+            animation: fadeOut 0.3s ease forwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
 
     </style>
 </head>
@@ -1059,8 +1181,9 @@
     <script src="js/analytics.js" defer></script>
     
     <!-- Bolt Menu JavaScript -->
+    <script src="menu-snapshot.js"></script>
     <script>
-        // Menu Data Structure (will be populated from API)
+        // Menu Data Structure (will be populated from API or snapshot)
         let menuData = {};
 
         // Image Override Mapping - Maps product names to specific image files
@@ -1326,7 +1449,7 @@
             return [];
         }
 
-        // Instant initial menu render from local cache or fallback
+        // Instant initial menu render from local cache or snapshot
         function renderInitialMenu() {
             console.log('[MENU] Checking for cached menu data...');
             
@@ -1354,31 +1477,68 @@
                         return; // Exit early, API will update in background
                     } catch (e) {
                         console.warn('[MENU] Failed to parse cached menu:', e);
-                        // Fall through to fallback
+                        // Fall through to snapshot
                     }
                 } else {
-                    console.log('[MENU] Cache expired (' + Math.round(cacheAge/1000) + 's old), using fallback...');
+                    console.log('[MENU] Cache expired (' + Math.round(cacheAge/1000) + 's old), using snapshot...');
                 }
             } else {
-                console.log('[MENU] No cached menu found, using fallback...');
+                console.log('[MENU] No cached menu found, using snapshot...');
             }
             
-            // No cache or expired: render fallback data instantly for first-time visitors
-            console.log('[MENU] Rendering fallback menu data instantly...');
-            menuData = fallbackMenuData;
-            const fallbackCategories = Object.keys(fallbackMenuData).map(slug => ({
-                id: slug,
-                slug: slug,
-                name: fallbackMenuData[slug].title
-            }));
-            renderCategoryNavigation(fallbackCategories);
-            initializeMenu();
-            console.log('[MENU] Fallback menu rendered successfully (API will update in background)');
+            // No cache or expired: render snapshot data instantly for first-time visitors
+            console.log('[MENU] Rendering snapshot menu data instantly...');
+            
+            if (typeof menuSnapshot !== 'undefined' && menuSnapshot.menuItems && menuSnapshot.categories) {
+                try {
+                    const snapshotMenuData = transformAPIDataToMenuData(menuSnapshot.categories, menuSnapshot.menuItems);
+                    menuData = snapshotMenuData;
+                    renderCategoryNavigation(menuSnapshot.categories);
+                    initializeMenu();
+                    console.log('[MENU] Snapshot menu rendered successfully (API will update in background)');
+                } catch (e) {
+                    console.error('[MENU] Failed to render snapshot:', e);
+                    // Last resort: show error state
+                    showMenuError('Unable to load menu. Please refresh the page.');
+                }
+            } else {
+                console.error('[MENU] Snapshot not available');
+                showMenuError('Unable to load menu. Please refresh the page.');
+            }
+        }
+
+        // Show menu error state
+        function showMenuError(message) {
+            const menuContainer = document.querySelector('.bolt-menu-container');
+            if (!menuContainer) return;
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'menu-error-state';
+            errorDiv.innerHTML = `
+                <div class="error-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>${message}</p>
+                    <button onclick="location.reload()" class="retry-btn">Refresh Page</button>
+                </div>
+            `;
+
+            // Remove existing error state
+            const existingError = document.querySelector('.menu-error-state');
+            if (existingError) {
+                existingError.remove();
+            }
+
+            menuContainer.innerHTML = '';
+            menuContainer.appendChild(errorDiv);
         }
 
         // Load categories and menu from API in parallel
         async function loadMenuFromAPI() {
             console.log('[MENU] Loading fresh menu from API in background...');
+            
+            // Check if modal is open - preserve state
+            const isModalOpen = document.querySelector('.food-customization-modal.active');
+            const currentCategory = document.querySelector('.category-chip.active')?.getAttribute('data-category');
             
             try {
                 const [categoryResponse, menuResponse] = await Promise.all([
@@ -1394,8 +1554,13 @@
                 if (menuItems.length > 0) {
                     const freshMenuData = transformAPIDataToMenuData(categories, menuItems);
                     
-                    // Preserve current category selection if user has selected one
-                    const currentCategory = document.querySelector('.category-chip.active')?.getAttribute('data-category');
+                    // Check for price changes
+                    const priceChanges = detectPriceChanges(menuData, freshMenuData);
+                    if (priceChanges.length > 0) {
+                        console.warn('[MENU] Price changes detected:', priceChanges);
+                        // Show notification to user
+                        showPriceChangeNotification(priceChanges);
+                    }
                     
                     menuData = freshMenuData;
 
@@ -1408,37 +1573,93 @@
                         console.warn('[MENU] Could not cache API menu data:', e);
                     }
 
-                    // Re-render to show fresh data (preserves user state where possible)
-                    const menuContainer = document.querySelector('.bolt-menu-container');
-                    if (menuContainer) {
-                        // Remove old sections
-                        menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section').forEach(function (section) {
-                            section.remove();
-                        });
+                    // Only re-render if modal is NOT open
+                    if (!isModalOpen) {
+                        const menuContainer = document.querySelector('.bolt-menu-container');
+                        if (menuContainer) {
+                            menuContainer.querySelectorAll('.bolt-menu-section, .bolt-category-section').forEach(function (section) {
+                                section.remove();
+                            });
+                        }
+
+                        renderCategoryNavigation(categories);
+                        initializeMenu();
+                        
+                        // Restore category selection if user had one
+                        if (currentCategory) {
+                            setTimeout(() => {
+                                const categoryChip = document.querySelector(`.category-chip[data-category="${currentCategory}"]`);
+                                if (categoryChip) {
+                                    categoryChip.click();
+                                }
+                            }, 100);
+                        }
+                    } else {
+                        console.log('[MENU] Modal is open, skipping re-render to preserve state');
                     }
 
-                    renderCategoryNavigation(categories);
-                    initializeMenu();
-                    
-                    // Restore category selection if user had one
-                    if (currentCategory) {
-                        setTimeout(() => {
-                            const categoryChip = document.querySelector(`.category-chip[data-category="${currentCategory}"]`);
-                            if (categoryChip) {
-                                categoryChip.click();
-                            }
-                        }, 100);
-                    }
-
-                    console.log('[MENU] API menu rendered successfully');
+                    console.log('[MENU] API menu refreshed successfully');
                 } else {
-                    console.warn('[MENU] API returned 0 items, keeping current/fallback data');
+                    console.warn('[MENU] API returned 0 items, keeping current/snapshot data');
                 }
 
             } catch (error) {
                 console.error('[MENU] API fetch failed:', error);
-                console.log('[MENU] Keeping current menu data (fallback or cached)');
+                console.log('[MENU] Keeping current menu data (snapshot or cached)');
+                // Don't show error to user - they already see menu from snapshot/cache
             }
+        }
+        
+        // Detect price changes between old and new menu data
+        function detectPriceChanges(oldMenu, newMenu) {
+            const changes = [];
+            
+            for (const categorySlug in newMenu) {
+                const oldCategory = oldMenu[categorySlug];
+                const newCategory = newMenu[categorySlug];
+                
+                if (!oldCategory || !newCategory) continue;
+                
+                const oldItems = oldCategory.items || [];
+                const newItems = newCategory.items || [];
+                
+                const oldItemMap = new Map(oldItems.map(item => [item.name, item]));
+                
+                for (const newItem of newItems) {
+                    const oldItem = oldItemMap.get(newItem.name);
+                    if (oldItem && oldItem.price !== newItem.price) {
+                        changes.push({
+                            name: newItem.name,
+                            oldPrice: oldItem.price,
+                            newPrice: newItem.price
+                        });
+                    }
+                }
+            }
+            
+            return changes;
+        }
+        
+        // Show price change notification
+        function showPriceChangeNotification(changes) {
+            const notification = document.createElement('div');
+            notification.className = 'price-change-notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>Price Update</strong>
+                        <p>${changes.length} item(s) have updated prices. Please review your cart before checkout.</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 10000);
         }
 
         // Transform API data to menuData format
