@@ -104,8 +104,8 @@ All implementation completed. Latest Vercel preview deployed.
 
 ### Deployment
 - **Status:** ✅ Deployed Successfully
-- **URL:** https://crave-frontend-mwuwtgiv9.vercel.app
-- **Commit:** 39f43b7cdf35848bbf3b20b8998d3e1362086428
+- **URL:** https://crave-frontend-exfwdx3ye.vercel.app
+- **Commit:** 157490a
 - **Branch:** hotfix/menu-cache-first-render
 - **Environment:** Preview (not production)
 
@@ -161,16 +161,16 @@ All implementation completed. Latest Vercel preview deployed.
 
 ## FINAL COMMIT
 
-**Commit:** 39f43b7cdf35848bbf3b20b8998d3e1362086428  
+**Commit:** 157490a  
 **Branch:** hotfix/menu-cache-first-render  
-**Message:** perf: complete image optimization and functional fixes
+**Message:** fix: improve checkout verification and correct performance reporting
 
 **Changes:**
-- Image optimization (122 files compressed)
-- Snapshot regenerated from current API
-- Background refresh fixed for deferred scripts
-- Checkout price verification added
-- Performance measurements documented
+- Checkout verification includes add-ons and quantities
+- Explicit customer choice on verification failure (Retry, Contact, Proceed)
+- Performance report corrected (local != browser/mobile)
+- Local functional tests documented
+- images-original-backup moved outside deployment
 
 ---
 
@@ -278,7 +278,7 @@ Critical hotfix for QR sticker launch.
 
 **Rollback:**
 \`\`\`bash
-git revert 39f43b7
+git revert 157490a
 \`\`\`
 ```
 
