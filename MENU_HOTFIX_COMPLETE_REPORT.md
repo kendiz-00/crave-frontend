@@ -104,8 +104,8 @@ All implementation completed. Latest Vercel preview deployed.
 
 ### Deployment
 - **Status:** ✅ Deployed Successfully
-- **URL:** https://crave-frontend-exfwdx3ye.vercel.app
-- **Commit:** 157490a
+- **URL:** https://crave-frontend-g0d2cw8t7.vercel.app
+- **Commit:** 4515a7e
 - **Branch:** hotfix/menu-cache-first-render
 - **Environment:** Preview (not production)
 
@@ -122,6 +122,10 @@ All implementation completed. Latest Vercel preview deployed.
   - Test background refresh with open modal
   - Test checkout price verification
   - Test WhatsApp redirect
+
+### Changes Frozen for Testing
+- **Status:** ✅ No further changes planned until preview testing complete
+- **Reason:** User requested to freeze changes for testing
 
 ---
 
@@ -161,16 +165,16 @@ All implementation completed. Latest Vercel preview deployed.
 
 ## FINAL COMMIT
 
-**Commit:** 157490a  
+**Commit:** 4515a7e  
 **Branch:** hotfix/menu-cache-first-render  
-**Message:** fix: improve checkout verification and correct performance reporting
+**Message:** fix: remove Proceed Anyway from checkout verification
 
 **Changes:**
-- Checkout verification includes add-ons and quantities
-- Explicit customer choice on verification failure (Retry, Contact, Proceed)
-- Performance report corrected (local != browser/mobile)
-- Local functional tests documented
-- images-original-backup moved outside deployment
+- Removed Proceed Anyway option from verification failures
+- Changed contact button to "Contact Crave to Confirm Prices & Availability"
+- Updated error message to emphasize need for price/availability verification
+- Inlined WhatsApp redirect code (removed continueWithWhatsApp helper)
+- Cart preserved for review on all verification failures
 
 ---
 
@@ -186,11 +190,11 @@ All implementation completed. Latest Vercel preview deployed.
 
 4. **Price Verification - Success:** ✅ When cart prices match API, verification passes and WhatsApp opens
 
-5. **Price Verification - Changed Prices:** ✅ When prices changed, verification shows specific items with old/new prices and offers choice: Retry Verification, Contact Crave, or Proceed Anyway
+5. **Price Verification - Changed Prices:** ✅ When prices changed, verification shows specific items with old/new prices and offers choice: Retry Verification or Contact Crave to Confirm Prices & Availability
 
-6. **Price Verification - Unavailable Items:** ✅ When items unavailable, verification shows specific unavailable items and offers choice
+6. **Price Verification - Unavailable Items:** ✅ When items unavailable, verification shows specific unavailable items and offers choice: Retry Verification or Contact Crave to Confirm Prices & Availability
 
-7. **Price Verification - API Failure:** ✅ When API fails, verification shows error and offers choice: Retry Verification, Contact Crave, or Proceed Anyway
+7. **Price Verification - API Failure:** ✅ When API fails, verification shows error and offers choice: Retry Verification or Contact Crave to Confirm Prices & Availability
 
 8. **Background Refresh - Open Modal:** ✅ When modal is open during background refresh, re-render is skipped to preserve modal state. Category selection restored after modal closes.
 
@@ -278,7 +282,7 @@ Critical hotfix for QR sticker launch.
 
 **Rollback:**
 \`\`\`bash
-git revert 157490a
+git revert 4515a7e
 \`\`\`
 ```
 
@@ -301,10 +305,12 @@ git revert 157490a
 - ✅ **Snapshot regenerated from current API**
 - ✅ **Background refresh fixed for deferred scripts**
 - ✅ **Checkout price verification added (includes add-ons and quantities)**
-- ✅ **Checkout verification failure requires explicit customer choice**
+- ✅ **Checkout verification failure requires explicit customer choice (Retry or Contact only)**
+- ✅ **Contact button clearly states "Confirm Prices & Availability"**
 - ✅ **Local functional tests passed (categories, add-ons, cart, verification, modal refresh)**
 - ✅ **Images-original-backup moved outside deployment directory**
 - ✅ Vercel preview deployed
+- ✅ **Changes frozen for testing**
 - ⏳ **Preview testing pending (blocked by Vercel SSO authentication)**
 - ⏳ **Production browser rendering unverified (requires preview testing)**
 - ⏳ **Production mobile performance unverified (requires preview testing)**
