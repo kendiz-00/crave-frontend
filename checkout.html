@@ -1034,7 +1034,7 @@
                         const menuItems = Array.isArray(menuResponse) ? menuResponse : (menuResponse.data || []);
 
                         if (menuItems.length > 0) {
-                            // Check for price changes or unavailable items
+                            // Check for price changes or unavailable items (including add-ons and quantities)
                             const issues = [];
                             cartItems.forEach(cartItem => {
                                 const currentItem = menuItems.find(mi =>
@@ -1043,82 +1043,171 @@
                                 );
 
                                 if (!currentItem) {
-                                    issues.push(`${cartItem.name} - Item not found in current menu`);
+                                    issues.push(`${cartItem.name} (qty: ${cartItem.quantity || 1}) - Item not found in current menu`);
                                 } else if (!currentItem.isAvailable) {
-                                    issues.push(`${cartItem.name} - Currently unavailable`);
+                                    issues.push(`${cartItem.name} (qty: ${cartItem.quantity || 1}) - Currently unavailable`);
                                 } else {
+                                    // Check base price
                                     const cartPrice = Number(cartItem.unitPrice || cartItem.price || 0);
                                     const currentPrice = Number(currentItem.price || 0);
                                     if (cartPrice !== currentPrice) {
-                                        issues.push(`${cartItem.name} - Price changed from GH¢${cartPrice} to GH¢${currentPrice}`);
+                                        issues.push(`${cartItem.name} (qty: ${cartItem.quantity || 1}) - Base price changed from GH¢${cartPrice} to GH¢${currentPrice}`);
+                                    }
+
+                                    // Check add-ons if present
+                                    if (cartItem.customizations && currentItem.addOns) {
+                                        cartItem.customizations.forEach(customization => {
+                                            const currentAddon = currentItem.addOns.find(
+                                                addon => addon.name === customization.name
+                                            );
+                                            if (!currentAddon) {
+                                                issues.push(`${cartItem.name} - Add-on "${customization.name}" not available`);
+                                            } else if (customization.price && customization.price !== Number(currentAddon.price)) {
+                                                issues.push(`${cartItem.name} - Add-on "${customization.name}" price changed from GH¢${customization.price} to GH¢${currentAddon.price}`);
+                                            }
+                                        });
                                     }
                                 }
                             });
 
                             if (issues.length > 0) {
-                                // Re-enable button and show verification error
+                                // Re-enable button and show verification error with explicit choice
                                 if (button) {
                                     button.disabled = false;
                                     button.innerHTML = '<i class="fas fa-lock"></i> Confirm & Pay';
                                 }
 
-                                showError(
-                                    'Price or availability changes detected. Please review your cart before checkout. ' +
-                                    'You can retry or contact us at +233550020788 to confirm current prices. ' +
-                                    'Issues: ' + issues.join('; '),
-                                    true
-                                );
+                                const errorDiv = document.getElementById('checkoutError');
+                                if (errorDiv) {
+                                    errorDiv.innerHTML = `
+                                        <div style="margin-bottom: 15px;">
+                                            <strong>Price or availability changes detected:</strong><br>
+                                            ${issues.map(issue => `• ${issue}`).join('<br>')}
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                            <strong>Please choose:</strong><br>
+                                            <button onclick="location.reload()" style="margin-right: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry Verification</button>
+                                            <button onclick="window.open('https://wa.me/233550020788')" style="padding: 8px 16px; background: #25D366; color: white; border: none; border-radius: 4px; cursor: pointer;">Contact Crave to Confirm</button>
+                                        </div>
+                                        <div style="font-size: 0.9em; color: #666;">
+                                            Your cart has been preserved for review.
+                                        </div>
+                                    `;
+                                    errorDiv.classList.add('show');
+                                }
 
                                 // Cart is preserved for review
                                 return;
                             }
                         }
                     } catch (apiError) {
-                        console.warn('Price verification failed, proceeding with cart prices:', apiError);
-                        // Continue with cart prices if API verification fails
-                        // User may need to confirm with restaurant
+                        console.error('Price verification failed:', apiError);
+
+                        // Re-enable button and show verification failure with explicit choice
+                        if (button) {
+                            button.disabled = false;
+                            button.innerHTML = '<i class="fas fa-lock"></i> Confirm & Pay';
+                        }
+
+                        const errorDiv = document.getElementById('checkoutError');
+                        if (errorDiv) {
+                            errorDiv.innerHTML = `
+                                <div style="margin-bottom: 15px;">
+                                    <strong>Unable to verify current prices and availability.</strong><br>
+                                    Please choose:
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <button onclick="location.reload()" style="margin-right: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry Verification</button>
+                                    <button onclick="window.open('https://wa.me/233550020788')" style="padding: 8px 16px; background: #25D366; color: white; border: none; border-radius: 4px; cursor: pointer;">Contact Crave to Confirm</button>
+                                </div>
+                                <div style="font-size: 0.9em; color: #666;">
+                                    Your cart has been preserved. You can also proceed with your current prices at your own risk.
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <button id="proceedAnywayBtn" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Proceed with Current Prices</button>
+                                </div>
+                            `;
+                            errorDiv.classList.add('show');
+
+                            // Add handler for "proceed anyway" button
+                            setTimeout(() => {
+                                const proceedBtn = document.getElementById('proceedAnywayBtn');
+                                if (proceedBtn) {
+                                    proceedBtn.addEventListener('click', () => {
+                                        errorDiv.classList.remove('show');
+                                        // Clear the button handler to prevent duplicate calls
+                                        proceedBtn.remove();
+                                        // Continue with WhatsApp redirect
+                                        continueWithWhatsApp(orderData, form, button);
+                                    });
+                                }
+                            }, 100);
+                        }
+
+                        // Cart is preserved for review
+                        return;
                     }
                 }
 
-                // Generate WhatsApp message
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
-                const message = generateWhatsAppMessage(orderData);
+                // Continue with WhatsApp redirect
+                continueWithWhatsApp(orderData, form, button);
+            } catch (error) {
+                console.error('Order processing error:', error);
 
-                // Calculate order total
-                let total = 0;
-                cartItems.forEach((item) => {
-                    const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
-                    total += itemTotal;
-                });
-
-                // Store order data for success screen
-                const orderCompletionData = {
-                    total: total,
-                    orderType: orderData ? orderData.orderType : 'Delivery',
-                    items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
-                    timestamp: Date.now()
-                };
-                sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
-
-                // Use official WhatsApp API endpoint for maximum compatibility
-                const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
-
-                if (window.CraveSound) window.CraveSound.success();
-
-                // Set flag to detect return from WhatsApp
-                sessionStorage.setItem('craveWhatsAppOpened', 'true');
-
-                // Clear cart, reset form & clear rewards cache before redirect
-                if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
-                    CraveRewardsData.clearCache();
+                // Re-enable button and show error
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-lock"></i> Confirm & Pay';
                 }
-                if (form) form.reset();
-                cartItems = [];
-                if (typeof saveCartToStorage === 'function') saveCartToStorage();
-                localStorage.removeItem('craveCart');
 
-                // Redirect to WhatsApp (synchronous to prevent mobile popup blocking)
-                window.location.href = whatsappUrl;
+                // Show error message with retry option
+                showError('Unable to process order. Please try again or contact us directly at +233550020788. Your cart has been preserved.', true);
+
+                // Cart is preserved (not cleared on error)
+            }
+        }
+
+        // Helper function to continue with WhatsApp redirect
+        function continueWithWhatsApp(orderData, form, button) {
+            // Generate WhatsApp message
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
+            const message = generateWhatsAppMessage(orderData);
+
+            // Calculate order total
+            let total = 0;
+            cartItems.forEach((item) => {
+                const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
+                total += itemTotal;
+            });
+
+            // Store order data for success screen
+            const orderCompletionData = {
+                total: total,
+                orderType: orderData ? orderData.orderType : 'Delivery',
+                items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
+                timestamp: Date.now()
+            };
+            sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
+
+            // Use official WhatsApp API endpoint for maximum compatibility
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
+
+            if (window.CraveSound) window.CraveSound.success();
+
+            // Set flag to detect return from WhatsApp
+            sessionStorage.setItem('craveWhatsAppOpened', 'true');
+
+            // Clear cart, reset form & clear rewards cache before redirect
+            if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                CraveRewardsData.clearCache();
+            }
+            if (form) form.reset();
+            cartItems = [];
+            if (typeof saveCartToStorage === 'function') saveCartToStorage();
+            localStorage.removeItem('craveCart');
+
+            // Redirect to WhatsApp (synchronous to prevent mobile popup blocking)
+            window.location.href = whatsappUrl;
             } catch (error) {
                 console.error('Order processing error:', error);
 
