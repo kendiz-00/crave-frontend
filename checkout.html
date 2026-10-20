@@ -259,13 +259,33 @@
                         <label class="checkout-label">
                             Payment Method
                         </label>
-                        <div id="paymentMethodSelector" style="opacity: 0.5; pointer-events: none;">
-                            <div class="payment-unavailable-message">
-                                <i class="fas fa-info-circle"></i>
-                                Payment currently unavailable
+                        <div class="payment-unavailable-message">
+                            <i class="fas fa-info-circle"></i>
+                            Payment currently unavailable
+                        </div>
+                        <div id="paymentMethodSelector" class="payment-disabled">
+                            <div class="payment-methods-blur">
+                                <div class="payment-method">
+                                    <div class="payment-method-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="payment-method-name">Card</div>
+                                </div>
+                                <div class="payment-method">
+                                    <div class="payment-method-icon">
+                                        <i class="fas fa-mobile-alt"></i>
+                                    </div>
+                                    <div class="payment-method-name">Mobile Money</div>
+                                </div>
+                                <div class="payment-method">
+                                    <div class="payment-method-icon">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                    <div class="payment-method-name">Bank Transfer</div>
+                                </div>
                             </div>
                         </div>
-                        <div id="paymentMethodForm" style="display: none;"></div>
+                        <div id="paymentMethodForm" class="payment-disabled" style="display: none;"></div>
                     </div>
 
                     <!-- Claimed Milestone Rewards Card -->
@@ -2058,6 +2078,39 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .payment-disabled {
+            opacity: 0.3;
+            filter: blur(2px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .payment-methods-blur {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .payment-methods-blur .payment-method {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .payment-methods-blur .payment-method-icon {
+            font-size: 32px;
+            color: #d4a574;
+            margin-bottom: 10px;
+        }
+
+        .payment-methods-blur .payment-method-name {
+            font-weight: 600;
+            color: #ffffff;
         }
 
         .spin-popup-close {
