@@ -221,8 +221,8 @@
                         </div>
                         
                         <!-- Hidden coordinates input -->
-                        <input type="hidden" id="deliveryCoordinates" name="deliveryCoordinates" required>
-                        <input type="hidden" id="deliveryAddress" name="deliveryAddress" required>
+                        <input type="hidden" id="deliveryCoordinates" name="deliveryCoordinates">
+                        <input type="hidden" id="deliveryAddress" name="deliveryAddress">
                     </div>
 
                     <!-- Order Method (Delivery / Pickup) Card -->
@@ -1249,6 +1249,10 @@
             // Iterate over ALL cart items individually (no grouping - preserve customizations per item)
             let subtotal = 0;
             let message = `Hello Crave 👋\n\nI'd like to place an order:\n\n`;
+
+            // Get discount values from window scope if available
+            const promoDiscountUsed = typeof window.promoDiscountUsed !== 'undefined' ? window.promoDiscountUsed : 0;
+            const pointsUsed = typeof window.pointsUsed !== 'undefined' ? window.pointsUsed : 0;
             
             cartItems.forEach((item, index) => {
                 // Use unitPrice which includes customizations and add-ons
@@ -1296,8 +1300,10 @@
             
             // Add total with separator
             message += `━━━━━━━━━━━━━━━━━━\n`;
-            
+
             const rewardInfo = typeof getSelectedMilestoneRewardInfo === 'function' ? getSelectedMilestoneRewardInfo() : null;
+            const userClaimedMilestones = typeof window.userClaimedMilestones !== 'undefined' ? window.userClaimedMilestones : [];
+            const selectedClaimedRewardId = typeof window.selectedClaimedRewardId !== 'undefined' ? window.selectedClaimedRewardId : null;
             const selectedClaim = (selectedClaimedRewardId && Array.isArray(userClaimedMilestones))
                 ? userClaimedMilestones.find(c => c.id === selectedClaimedRewardId)
                 : null;
@@ -3340,10 +3346,14 @@
             const subtotal = parseFloat(subtotalText) || 0;
 
             const rewardInfo = typeof getSelectedMilestoneRewardInfo === 'function' ? getSelectedMilestoneRewardInfo() : null;
+            const userClaimedMilestones = typeof window.userClaimedMilestones !== 'undefined' ? window.userClaimedMilestones : [];
+            const selectedClaimedRewardId = typeof window.selectedClaimedRewardId !== 'undefined' ? window.selectedClaimedRewardId : null;
             const selectedClaim = (selectedClaimedRewardId && Array.isArray(userClaimedMilestones))
                 ? userClaimedMilestones.find(c => c.id === selectedClaimedRewardId)
                 : null;
             const selectedClaimStatus = (selectedClaim && selectedClaim.status ? String(selectedClaim.status).toUpperCase().trim() : '');
+            const promoDiscountUsed = typeof window.promoDiscountUsed !== 'undefined' ? window.promoDiscountUsed : 0;
+            const pointsUsed = typeof window.pointsUsed !== 'undefined' ? window.pointsUsed : 0;
             // Accept AVAILABLE (auto-unlocked) and CLAIMED (legacy)
             const hasSelectedReward = !!selectedClaim && ['AVAILABLE', 'CLAIMED', 'USED'].includes(selectedClaimStatus);
 
