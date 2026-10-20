@@ -519,5 +519,70 @@
     <script src="js/cart-sync.js"></script>
     <script src="components/shared-navbar.js"></script>
     <script src="components/shared-footer.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize auth
+            await AuthManager.initialize();
+            AuthUI.initialize();
+
+            // Check if already logged in
+            if (AuthManager.isAuthenticated()) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect') || 'index.html';
+                window.location.href = redirectUrl;
+                return;
+            }
+
+            // Handle login form submission
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value;
+                    const rememberMe = document.querySelector('input[name="rememberMe"]').checked;
+                    const loginBtn = document.getElementById('loginBtn');
+
+                    // Disable button
+                    loginBtn.disabled = true;
+                    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+
+                    try {
+                        const result = await AuthManager.login({ email, password }, rememberMe);
+
+                        if (result.success) {
+                            // Check for redirect parameter
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const redirectUrl = urlParams.get('redirect') || 'index.html';
+                            window.location.href = redirectUrl;
+                        } else {
+                            // Show error
+                            alert(result.error || 'Login failed. Please try again.');
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = 'Sign In';
+                        }
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        alert('An error occurred. Please try again.');
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = 'Sign In';
+                    }
+                });
+            }
+
+            // Password toggle
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    togglePassword.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+                });
+            }
+        });
+    </script>
 </body>
 </html>

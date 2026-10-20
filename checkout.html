@@ -314,14 +314,27 @@
                                     <p class="reward-card-sub">Redeem your points for instant order savings</p>
                                 </div>
                             </div>
-                            <div class="reward-balance-chip">
+                            <div class="reward-balance-chip" id="rewardBalanceChip" style="display: none;">
                                 <span class="chip-label">Available Points</span>
                                 <div class="chip-value"><span id="availablePoints">0</span> <small>PTS</small></div>
                             </div>
                         </div>
 
-                        <!-- Rewards Stepper & Live Preview Controls -->
-                        <div class="reward-controls" id="rewardControls">
+                        <!-- Guest Message -->
+                        <div class="reward-guest-message" id="rewardGuestMessage">
+                            <i class="fas fa-user-circle guest-icon"></i>
+                            <div class="guest-text">
+                                <span>Sign in or create an account to use your points and rewards</span>
+                                <div class="guest-links">
+                                    <a href="login.html?redirect=checkout.html" class="guest-link">Sign In</a>
+                                    <span class="guest-divider">or</span>
+                                    <a href="register.html?redirect=checkout.html" class="guest-link">Register</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rewards Stepper & Live Preview Controls (Hidden for guests) -->
+                        <div class="reward-controls" id="rewardControls" style="display: none;">
                             <div class="points-stepper-container">
                                 <label class="stepper-title">Points you can use on this order:</label>
                                 <div class="points-stepper-box">
@@ -329,12 +342,12 @@
                                         <i class="fas fa-minus"></i>
                                     </button>
                                     <div class="stepper-input-wrapper">
-                                        <input 
-                                            type="number" 
-                                            id="pointsToRedeem" 
-                                            class="stepper-input" 
-                                            placeholder="0" 
-                                            min="0" 
+                                        <input
+                                            type="number"
+                                            id="pointsToRedeem"
+                                            class="stepper-input"
+                                            placeholder="0"
+                                            min="0"
                                             step="1"
                                             value="0"
                                         >
@@ -362,14 +375,6 @@
                                     <span class="savings-sparkle">✨</span>
                                     <span>You'll save <strong id="savingsAmountText">GH₵ 0.00</strong> • Points remaining: <strong id="remainingPoints">0</strong> PTS</span>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Guest / Zero Points Banner -->
-                        <div class="reward-guest-banner" id="rewardGuestBanner" style="display: none;">
-                            <i class="fas fa-gem guest-icon"></i>
-                            <div class="guest-text">
-                                <span id="rewardGuestText">Log in or join CRAVE Rewards to turn your points into instant discounts!</span>
                             </div>
                         </div>
                     </div>
@@ -2113,6 +2118,55 @@
             color: #ffffff;
         }
 
+        .reward-guest-message {
+            padding: 20px;
+            background: rgba(212, 165, 116, 0.1);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .reward-guest-message .guest-icon {
+            font-size: 32px;
+            color: #d4a574;
+        }
+
+        .reward-guest-message .guest-text {
+            flex: 1;
+        }
+
+        .reward-guest-message .guest-text span {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .reward-guest-message .guest-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reward-guest-message .guest-link {
+            color: #d4a574;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .reward-guest-message .guest-link:hover {
+            color: #e6c08a;
+        }
+
+        .reward-guest-message .guest-divider {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+        }
+
         .spin-popup-close {
             background: transparent;
             border: none;
@@ -3177,40 +3231,63 @@
 
         async function loadRewardPoints() {
             const rewardControls = document.getElementById('rewardControls');
-            const guestBanner = document.getElementById('rewardGuestBanner');
+            const guestMessage = document.getElementById('rewardGuestMessage');
+            const rewardBalanceChip = document.getElementById('rewardBalanceChip');
             const availablePointsEl = document.getElementById('availablePoints');
 
-            if (typeof CraveRewardsData !== 'undefined' && typeof AuthManager !== 'undefined' && AuthManager.isAuthenticated()) {
-                try {
-                    const points = await CraveRewardsData.Points.get();
-                    if (availablePointsEl) availablePointsEl.textContent = points;
-                    window.availableRewardPoints = points;
+            // Hide reward controls by default (no flash while auth loads)
+            if (rewardControls) rewardControls.style.display = 'none';
+            if (rewardBalanceChip) rewardBalanceChip.style.display = 'none';
 
-                    if (points > 0) {
-                        if (rewardControls) rewardControls.style.display = 'block';
-                        if (guestBanner) guestBanner.style.display = 'none';
-                    } else {
-                        if (rewardControls) rewardControls.style.display = 'none';
-                        if (guestBanner) {
-                            guestBanner.style.display = 'flex';
-                            document.getElementById('rewardGuestText').textContent = "You currently have 0 reward points. Complete this order to earn points!";
+            // Wait for auth to be initialized before checking state
+            if (typeof AuthManager !== 'undefined') {
+                await AuthManager.initialize();
+            }
+
+            // Check authentication status
+            if (typeof AuthManager !== 'undefined' && AuthManager.isAuthenticated()) {
+                // Authenticated user
+                if (guestMessage) guestMessage.style.display = 'none';
+
+                if (typeof CraveRewardsData !== 'undefined') {
+                    try {
+                        const points = await CraveRewardsData.Points.get();
+                        if (availablePointsEl) availablePointsEl.textContent = points;
+                        window.availableRewardPoints = points;
+
+                        if (points > 0) {
+                            // Show reward controls for authenticated users with points
+                            if (rewardControls) rewardControls.style.display = 'block';
+                            if (rewardBalanceChip) rewardBalanceChip.style.display = 'flex';
+                        } else {
+                            // Authenticated but no points - show zero points message
+                            if (guestMessage) {
+                                guestMessage.style.display = 'flex';
+                                guestMessage.querySelector('.guest-text span').textContent = "You currently have 0 reward points. Complete this order to earn points!";
+                                guestMessage.querySelector('.guest-links').style.display = 'none';
+                            }
+                        }
+                        updateRewardDetails();
+                    } catch (error) {
+                        console.error('Error loading reward points:', error);
+                        if (availablePointsEl) availablePointsEl.textContent = '0';
+                        window.availableRewardPoints = 0;
+                        if (guestMessage) {
+                            guestMessage.style.display = 'flex';
+                            guestMessage.querySelector('.guest-text span').textContent = "Unable to load reward points. Please try again.";
+                            guestMessage.querySelector('.guest-links').style.display = 'none';
                         }
                     }
-                    updateRewardDetails();
-                } catch (error) {
-                    console.error('Error loading reward points:', error);
-                    if (availablePointsEl) availablePointsEl.textContent = '0';
-                    window.availableRewardPoints = 0;
-                    if (rewardControls) rewardControls.style.display = 'none';
-                    if (guestBanner) guestBanner.style.display = 'flex';
                 }
             } else {
-                if (availablePointsEl) availablePointsEl.textContent = '0';
-                if (rewardControls) rewardControls.style.display = 'none';
-                if (guestBanner) {
-                    guestBanner.style.display = 'flex';
-                    document.getElementById('rewardGuestText').innerHTML = '<a href="login.html" class="gold-link">Log in</a> or <a href="register.html" class="gold-link">Join CRAVE Rewards</a> to redeem points for instant discounts!';
+                // Guest user - show sign in/register message
+                if (guestMessage) {
+                    guestMessage.style.display = 'flex';
+                    guestMessage.querySelector('.guest-text span').textContent = "Sign in or create an account to use your points and rewards";
+                    guestMessage.querySelector('.guest-links').style.display = 'flex';
                 }
+                if (availablePointsEl) availablePointsEl.textContent = '0';
+                window.availableRewardPoints = 0;
             }
         }
 

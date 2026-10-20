@@ -421,9 +421,13 @@ const AuthUI = (function() {
 
                 showSuccess('Registration successful!');
                 updateNavbar();
-                sessionStorage.setItem('redirectAfterLogin', 'index.html?firstOrderReward=claimed');
+
+                // Check for redirect parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect') || 'index.html?firstOrderReward=claimed';
+
                 setTimeout(() => {
-                    window.location.href = 'index.html?firstOrderReward=claimed';
+                    window.location.href = redirectUrl;
                 }, 500);
             } else {
                 // Show the actual error message from the backend
