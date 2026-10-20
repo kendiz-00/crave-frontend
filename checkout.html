@@ -468,8 +468,8 @@
 
                         <!-- Place Order Button -->
                         <button type="submit" class="checkout-place-order-btn" id="placeOrderBtn">
-                            <i class="fas fa-lock"></i>
-                            Confirm & Pay
+                            <i class="fab fa-whatsapp"></i>
+                            Confirm Order on WhatsApp
                         </button>
                     </div>
                 </form>
@@ -1104,7 +1104,7 @@
                                 // Re-enable button and show verification error with explicit choice
                                 if (button) {
                                     button.disabled = false;
-                                    button.innerHTML = '<i class="fas fa-lock"></i> Confirm & Pay';
+                                    button.innerHTML = '<i class="fab fa-whatsapp"></i> Confirm Order on WhatsApp';
                                 }
 
                                 const errorDiv = document.getElementById('checkoutError');
@@ -1136,7 +1136,7 @@
                         // Re-enable button and show verification failure with explicit choice
                         if (button) {
                             button.disabled = false;
-                            button.innerHTML = '<i class="fas fa-lock"></i> Confirm & Pay';
+                            button.innerHTML = '<i class="fab fa-whatsapp"></i> Confirm Order on WhatsApp';
                         }
 
                         const errorDiv = document.getElementById('checkoutError');
@@ -1208,7 +1208,7 @@
                 // Re-enable button and show error
                 if (button) {
                     button.disabled = false;
-                    button.innerHTML = '<i class="fas fa-lock"></i> Confirm & Pay';
+                    button.innerHTML = '<i class="fab fa-whatsapp"></i> Confirm Order on WhatsApp';
                 }
 
                 // Show error message with retry option
@@ -2206,13 +2206,13 @@
             }
         }
     </style>
-    
-    <!-- Paystack Payment Integration -->
-    <script src="https://js.paystack.co/v1/inline.js"></script>
+
+    <!-- Paystack Payment Integration (Disabled - payment section hidden) -->
+    <!-- <script src="https://js.paystack.co/v1/inline.js"></script>
     <script>
-        // Paystack Payment Handler
+        // Paystack Payment Handler (Disabled)
         let paystackHandler = null;
-        
+
         // Initialize Paystack when page loads
         document.addEventListener('DOMContentLoaded', function() {
             // Add event listener for Pay Now button
@@ -2420,49 +2420,49 @@
                 errorElement.style.display = 'none';
             }, 5000);
         }
-        
-        // Validate checkout form
+
+        // Validate checkout form (Disabled - payment section hidden)
         function validateCheckoutForm() {
             const form = document.getElementById('checkoutForm');
             const fullName = form.fullName.value.trim();
             const email = form.email.value.trim();
             const phoneNumber = form.phoneNumber.value.trim();
-            
+
             if (!fullName || !email || !phoneNumber) {
                 showPaymentMessage('Please fill in all required fields.', 'error');
                 return false;
             }
-            
+
             if (!validateEmail(email)) {
                 showPaymentMessage('Please enter a valid email address.', 'error');
                 return false;
             }
-            
+
             if (!validatePhone(phoneNumber)) {
                 showPaymentMessage('Please enter a valid Ghana phone number.', 'error');
                 return false;
             }
-            
+
             if (cartItems.length === 0) {
                 showPaymentMessage('Your cart is empty. Please add items to your cart.', 'error');
                 return false;
             }
-            
+
             return true;
         }
-        
+
         // Email validation
         function validateEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
         }
-        
+
         // Phone validation (Ghana numbers)
         function validatePhone(phone) {
             const re = /^(?:\+233|0)?[2-9]\d{8}$/;
             return re.test(phone.replace(/\s/g, ''));
         }
-    </script>
+    </script> -->
     
     <!-- Centralized PWA Manager -->
     <script src="js/pwa-manager.js"></script>
@@ -2478,13 +2478,13 @@
     <script src="js/auth/auth-manager.js"></script>
     <script src="js/auth/auth-ui.js"></script>
     <script src="js/cart-sync.js"></script>
-    
-    <!-- Payment System -->
-    <script src="js/payment-config.js"></script>
+
+    <!-- Payment System (Disabled - payment section hidden) -->
+    <!-- <script src="js/payment-config.js"></script>
     <script src="js/payment-service.js"></script>
     <script src="js/payment-ui.js"></script>
-    <script src="js/toast-notifications.js"></script>
-    
+    <script src="js/toast-notifications.js"></script> -->
+
     <!-- CRAVE Rewards System -->
     <script src="js/rewards-config.js"></script>
     <script src="js/rewards-data.js"></script>

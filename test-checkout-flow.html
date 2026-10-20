@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Flow Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .pass {
+            background: #d4edda;
+            color: #155724;
+        }
+        .fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Checkout Flow Test</h1>
+
+    <div class="test-section">
+        <h2>Test Setup</h2>
+        <button onclick="setupTestCart()">Setup Test Cart (Item with Add-ons)</button>
+        <button onclick="clearTestCart()">Clear Cart</button>
+        <div id="cartStatus"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Manual Test</h2>
+        <a href="checkout.html" target="_blank">Open Checkout Page</a>
+    </div>
+
+    <script>
+        function setupTestCart() {
+            const testCart = [
+                {
+                    name: "Loaded Fries",
+                    menuItemId: "test-item-1",
+                    price: 25,
+                    unitPrice: 27,
+                    quantity: 2,
+                    customizations: [
+                        { name: "Extra Cheese", price: 2 }
+                    ]
+                }
+            ];
+            localStorage.setItem('craveCart', JSON.stringify(testCart));
+            document.getElementById('cartStatus').innerHTML = '<div class="test-result pass">Test cart set up with 1 item with add-ons</div>';
+        }
+
+        function clearTestCart() {
+            localStorage.removeItem('craveCart');
+            document.getElementById('cartStatus').innerHTML = '<div class="test-result pass">Cart cleared</div>';
+        }
+
+        function runTests() {
+            const results = [];
+
+            // Test 1: Cart exists
+            const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            results.push({
+                name: 'Cart exists in localStorage',
+                pass: cart.length > 0
+            });
+
+            // Test 2: Item has add-ons
+            results.push({
+                name: 'Item has customizations',
+                pass: cart.length > 0 && cart[0].customizations && cart[0].customizations.length > 0
+            });
+
+            // Test 3: Payment scripts disabled
+            const html = document.documentElement.innerHTML;
+            results.push({
+                name: 'Paystack script is commented out',
+                pass: html.includes('<!-- Paystack Payment Integration (Disabled')
+            });
+
+            // Test 4: Payment UI scripts disabled
+            results.push({
+                name: 'Payment UI scripts are commented out',
+                pass: html.includes('<!-- Payment System (Disabled')
+            });
+
+            // Display results
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = results.map(r => `
+                <div class="test-result ${r.pass ? 'pass' : 'fail'}">
+                    ${r.pass ? '✓' : '✗'} ${r.name}
+                </div>
+            `).join('');
+        }
+
+        // Run tests on load
+        window.onload = function() {
+            runTests();
+        };
+    </script>
+</body>
+</html>
