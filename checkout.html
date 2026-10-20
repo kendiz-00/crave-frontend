@@ -1060,7 +1060,11 @@
                     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking current prices...';
 
                     try {
-                        const menuResponse = await MenuAPI.getAll();
+                        // Add timeout to prevent hanging indefinitely
+                        const menuResponse = await Promise.race([
+                            MenuAPI.getAll(),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('Price verification timeout')), 10000))
+                        ]);
                         const menuItems = Array.isArray(menuResponse) ? menuResponse : (menuResponse.data || []);
 
                         if (menuItems.length > 0) {
@@ -2802,9 +2806,8 @@
                 ? userClaimedMilestones.find(c => c.id === claimId)
                 : null;
             if (selectedClaim && (selectedClaim.rewardId === 'milestone_free_drink_100' || selectedClaim.rewardId === 'first_order_free_drink') && !window.REWARDS_FREE_DRINK_REDEMPTION_ENABLED) {
-                if (typeof ToastNotifications !== 'undefined') {
-                    ToastNotifications.info('Your free drink is unlocked! Redemption will be available soon.');
-                }
+                // ToastNotifications not available (payment scripts disabled)
+                console.log('Your free drink is unlocked! Redemption will be available soon.');
                 selectedClaimedRewardId = null;
                 renderClaimedMilestoneList();
                 recalculateTotal();
@@ -3122,11 +3125,8 @@
                     pointsInput.value = actualMax;
                     updateRewardDetails();
 
-                    if (actualMax > 0 && typeof ToastNotifications !== 'undefined') {
-                        ToastNotifications.success(`Applied maximum of ${actualMax} points`);
-                    } else if (availablePoints === 0 && typeof ToastNotifications !== 'undefined') {
-                        ToastNotifications.info('No reward points available');
-                    }
+                    // ToastNotifications not available (payment scripts disabled)
+                    console.log(`Applied maximum of ${actualMax} points`);
                 });
             }
 
@@ -3138,19 +3138,9 @@
         }
 
         function renderPaymentForm(method) {
+            // Payment UI not available (payment scripts disabled)
             const formContainer = document.getElementById('paymentMethodForm');
-            
-            switch(method) {
-                case 'card':
-                    PaymentUI.renderCardForm('paymentMethodForm');
-                    break;
-                case 'mobileMoney':
-                    PaymentUI.renderMobileMoneyForm('paymentMethodForm');
-                    break;
-                case 'bankTransfer':
-                    PaymentUI.renderBankTransferForm('paymentMethodForm');
-                    break;
-            }
+            if (formContainer) formContainer.style.display = 'none';
         }
 
         function loadCartItems() {
@@ -3412,7 +3402,8 @@
             if (totalAmountEl) totalAmountEl.textContent = `GH¢ ${total.toFixed(2)}`;
         }
 
-        async function handleCheckout(e) {
+        // Payment checkout handler (Disabled - payment section hidden)
+        /* async function handleCheckout(e) {
             e.preventDefault();
             
             const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
@@ -3523,7 +3514,7 @@
                 }
                 loadClaimedMilestoneRewards();
             }
-        }
+        } */
 
         function initializePaymentFlow() {
             // Payment flow is initialized in DOMContentLoaded
