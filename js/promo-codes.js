@@ -1,112 +1,66 @@
 /**
  * CRAVE Promo Code System
- * Complete coupon engine with validation and application
+ * Private promo code validation through backend API
  */
 
 const CravePromoCodes = (function() {
     'use strict';
 
-    const config = typeof CraveRewardsConfig !== 'undefined' ? CraveRewardsConfig : null;
-    const engine = typeof CraveRewardsEngine !== 'undefined' ? CraveRewardsEngine : null;
-    const notifications = typeof CraveRewardsNotifications !== 'undefined' ? CraveRewardsNotifications : null;
+    const API_BASE = typeof CRAVE_API_BASE !== 'undefined' ? CRAVE_API_BASE : '/api';
 
-    // Apply promo code to order
+    // Apply promo code to order (calls backend for validation)
     async function applyPromoCode(code, orderTotal, cartItems = []) {
-        if (!engine) {
-            return { valid: false, message: 'Rewards system not available' };
-        }
+        try {
+            const response = await fetch(`${API_BASE}/promo-codes/validate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    code: code,
+                    subtotal: orderTotal,
+                }),
+            });
 
-        const result = await engine.applyPromoCode(code, orderTotal, cartItems);
-        
-        if (result.valid) {
-            if (notifications) {
-                notifications.promoCodeApplied(code, result.discount);
+            const data = await response.json();
+
+            if (!response.ok) {
+                return {
+                    valid: false,
+                    message: data.error || data.message || 'Invalid promo code',
+                };
             }
-        } else {
-            if (notifications) {
-                notifications.promoCodeInvalid(result.message);
-            }
+
+            return {
+                valid: true,
+                code: data.code,
+                name: data.name,
+                discount: data.discountAmount,
+                discountType: data.discountType,
+                discountValue: data.discountValue,
+                expiresAt: data.expiresAt,
+            };
+        } catch (error) {
+            console.error('Promo code validation error:', error);
+            return {
+                valid: false,
+                message: 'Unable to validate promo code. Please try again.',
+            };
         }
-        
-        return result;
     }
 
     // Validate promo code without applying
     async function validatePromoCode(code, orderTotal) {
-        if (!engine) {
-            return { valid: false, message: 'Rewards system not available' };
-        }
-        
-        return await engine.applyPromoCode(code, orderTotal, []);
-    }
-
-    // Get available promo codes for current user
-    async function getAvailablePromoCodes() {
-        if (!config) return [];
-        
-        const available = [];
-        
-        for (const [code, promoConfig] of Object.entries(config.promoCodes)) {
-            let isAvailable = true;
-            let reason = '';
-            
-            // Check new customer restriction
-            if (promoConfig.newCustomerOnly) {
-                const orders = typeof CraveRewardsData !== 'undefined' ? CraveRewardsData.Orders.getCount() : 0;
-                if (orders > 0) {
-                    isAvailable = false;
-                    reason = 'New customers only';
-                }
-            }
-            
-            // Check tier restriction
-            if (promoConfig.tierRestriction) {
-                const tier = typeof CraveRewardsData !== 'undefined' ? await CraveRewardsData.Tier.get() : 'bronze';
-                if (!promoConfig.tierRestriction.includes(tier)) {
-                    isAvailable = false;
-                    reason = `Requires ${promoConfig.tierRestriction.join(' or ')} tier`;
-                }
-            }
-            
-            // Check minimum orders
-            if (promoConfig.minOrders) {
-                const orders = typeof CraveRewardsData !== 'undefined' ? CraveRewardsData.Orders.getCount() : 0;
-                if (orders < promoConfig.minOrders) {
-                    isAvailable = false;
-                    reason = `Requires ${promoConfig.minOrders} orders`;
-                }
-            }
-            
-            available.push({
-                code,
-                ...promoConfig,
-                available: isAvailable,
-                reason
-            });
-        }
-        
-        return available;
-    }
-
-    // Get promo code details
-    function getPromoCodeDetails(code) {
-        if (!config) return null;
-        
-        const promoCode = code.toUpperCase();
-        return config.promoCodes[promoCode] || null;
+        return await applyPromoCode(code, orderTotal, []);
     }
 
     // Format discount for display
     function formatDiscount(discount, type) {
         switch (type) {
-            case 'percentage':
+            case 'PERCENTAGE':
                 return `${discount}%`;
-            case 'fixed':
-                return `GHS ${discount.toFixed(2)}`;
-            case 'free_delivery':
-                return 'Free Delivery';
-            case 'free_item':
-                return 'Free Item';
+            case 'FIXED':
+                return `GH₵${discount.toFixed(2)}`;
             default:
                 return 'Discount';
         }
@@ -116,80 +70,23 @@ const CravePromoCodes = (function() {
     function calculateFinalPrice(orderTotal, promoResult, deliveryFee = 0) {
         let finalTotal = orderTotal;
         let discount = promoResult.discount || 0;
-        
-        if (promoResult.discountType === 'free_delivery') {
-            discount = deliveryFee;
-        }
-        
+
         finalTotal = orderTotal - discount;
-        
+
         return {
             originalTotal: orderTotal,
             discount: discount,
             finalTotal: Math.max(0, finalTotal),
-            discountType: promoResult.discountType
+            discountType: promoResult.discountType,
         };
-    }
-
-    // Check if promo code is currently valid (time/day restrictions)
-    function isPromoCodeCurrentlyValid(code) {
-        if (!config) return false;
-        
-        const promoConfig = config.promoCodes[code.toUpperCase()];
-        if (!promoConfig) return false;
-        
-        const now = new Date();
-        const currentHour = now.getHours();
-        const currentDay = now.getDay();
-        
-        // Check time restriction
-        if (promoConfig.timeRestriction) {
-            const startHour = parseInt(promoConfig.timeRestriction.start.split(':')[0]);
-            const endHour = parseInt(promoConfig.timeRestriction.end.split(':')[0]);
-            
-            if (currentHour < startHour || currentHour >= endHour) {
-                return false;
-            }
-        }
-        
-        // Check day restriction
-        if (promoConfig.dayRestriction) {
-            if (!promoConfig.dayRestriction.includes(currentDay)) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-
-    // Get active promo codes based on time/day
-    function getActivePromoCodes() {
-        if (!config) return [];
-        
-        const active = [];
-        
-        for (const [code, promoConfig] of Object.entries(config.promoCodes)) {
-            if (isPromoCodeCurrentlyValid(code)) {
-                active.push({
-                    code,
-                    ...promoConfig
-                });
-            }
-        }
-        
-        return active;
     }
 
     // Public API
     return {
         apply: applyPromoCode,
         validate: validatePromoCode,
-        getAvailable: getAvailablePromoCodes,
-        getDetails: getPromoCodeDetails,
         formatDiscount: formatDiscount,
         calculateFinalPrice: calculateFinalPrice,
-        isCurrentlyValid: isPromoCodeCurrentlyValid,
-        getActive: getActivePromoCodes
     };
 })();
 
