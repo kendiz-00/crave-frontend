@@ -157,7 +157,7 @@
                 <div class="checkout-error" id="checkoutError"></div>
 
                 <!-- Checkout Form -->
-                <form id="checkoutForm" method="post">
+                <form id="checkoutForm" method="GET" action="javascript:void(0);">
                     <!-- Full Name -->
                     <div class="checkout-form-group">
                         <label for="fullName" class="checkout-label">
@@ -467,7 +467,7 @@
                         </div>
 
                         <!-- Place Order Button -->
-                        <button type="submit" class="checkout-place-order-btn" id="placeOrderBtn">
+                        <button type="submit" class="checkout-place-order-btn" id="placeOrderBtn" form="checkoutForm">
                             <i class="fab fa-whatsapp"></i>
                             Confirm Order on WhatsApp
                         </button>
@@ -571,20 +571,9 @@
 
             // Global form submission & input event bindings
             const form = document.getElementById('checkoutForm');
-            const button = document.getElementById('placeOrderBtn');
-
             if (form && !form.dataset.bound) {
                 form.dataset.bound = 'true';
                 form.addEventListener('submit', window.handleFormSubmit);
-            }
-
-            // Also attach click listener to button as fallback
-            if (button && !button.dataset.clickBound) {
-                button.dataset.clickBound = 'true';
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    window.handleFormSubmit(e);
-                });
             }
 
             const fullNameInput = document.getElementById('fullName');
