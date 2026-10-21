@@ -157,7 +157,7 @@
                 <div class="checkout-error" id="checkoutError"></div>
 
                 <!-- Checkout Form -->
-                <form id="checkoutForm">
+                <form id="checkoutForm" method="post">
                     <!-- Full Name -->
                     <div class="checkout-form-group">
                         <label for="fullName" class="checkout-label">
@@ -540,14 +540,14 @@
         let marker;
         let selectedCoordinates = { lat: 5.6037, lng: -0.1870 }; // Accra, Ghana
         let hasUserSelectedLocation = false;
-        let cartItems = [];
+        window.cartItems = [];
         let deliveryFee = 0.00;
         
         // Initialize map on page load
         document.addEventListener('DOMContentLoaded', function() {
             // Wait a bit for the DOM to be fully ready
             setTimeout(function() {
-                initializeCheckout();
+                window.initializeCheckout();
                 if (typeof L !== 'undefined') {
                     initializeMap();
                     setupMapEventListeners();
@@ -563,7 +563,7 @@
         });
 
         // Initialize checkout page
-        function initializeCheckout() {
+        window.initializeCheckout = function() {
             loadCartFromStorage();
             renderOrderSummary();
             updateCopyrightYear();
@@ -571,9 +571,20 @@
 
             // Global form submission & input event bindings
             const form = document.getElementById('checkoutForm');
+            const button = document.getElementById('placeOrderBtn');
+
             if (form && !form.dataset.bound) {
                 form.dataset.bound = 'true';
-                form.addEventListener('submit', handleFormSubmit);
+                form.addEventListener('submit', window.handleFormSubmit);
+            }
+
+            // Also attach click listener to button as fallback
+            if (button && !button.dataset.clickBound) {
+                button.dataset.clickBound = 'true';
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.handleFormSubmit(e);
+                });
             }
 
             const fullNameInput = document.getElementById('fullName');
@@ -707,7 +718,7 @@
             cartContainer.innerHTML = '';
             let subtotal = 0;
 
-            cartItems.forEach((item, index) => {
+            window.cartItems.forEach((item, index) => {
                 // Use unitPrice which includes customizations and add-ons
                 const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
                 subtotal += itemTotal;
@@ -957,7 +968,7 @@
         }
 
         // Handle form submission
-        function handleFormSubmit(e) {
+        window.handleFormSubmit = function(e) {
             e.preventDefault();
             
             if (cartItems.length === 0) {
@@ -984,7 +995,7 @@
         }
 
         // Show error message (extended for checkout failures)
-        function showError(message, isPermanent = false) {
+        window.showError = function(message, isPermanent = false) {
             const errorElement = document.getElementById('checkoutError');
             errorElement.textContent = message;
             errorElement.classList.add('show');
@@ -998,7 +1009,7 @@
         }
 
         // Validate form readiness and update button state
-        function validateFormReady() {
+        window.validateFormReady = function() {
             const form = document.getElementById('checkoutForm');
             const button = document.getElementById('placeOrderBtn');
             if (!form || !button) return;
@@ -1019,7 +1030,7 @@
         }
 
         // Update form validation to include map
-        function validateForm(data) {
+        window.validateForm = function(data) {
             const errors = [];
 
             if (!data.fullName) {
@@ -1043,7 +1054,7 @@
         }
 
         // Update processOrder with UX polish, error handling, and price verification
-        async function processOrder(orderData) {
+        window.processOrder = async function(orderData) {
             const form = document.getElementById('checkoutForm');
             const button = document.getElementById('placeOrderBtn');
             const successModal = document.getElementById('checkoutSuccess');
@@ -1254,7 +1265,7 @@
             const promoDiscountUsed = typeof window.promoDiscountUsed !== 'undefined' ? window.promoDiscountUsed : 0;
             const pointsUsed = typeof window.pointsUsed !== 'undefined' ? window.pointsUsed : 0;
             
-            cartItems.forEach((item, index) => {
+            window.cartItems.forEach((item, index) => {
                 // Use unitPrice which includes customizations and add-ons
                 const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
                 subtotal += itemTotal;
