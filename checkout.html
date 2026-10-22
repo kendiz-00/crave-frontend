@@ -1317,7 +1317,7 @@
             const selectedMilestoneTitle = rewardInfo && rewardInfo.title ? rewardInfo.title : (selectedClaim && selectedClaim.rewardId ? rewardTitleMap[selectedClaim.rewardId] || 'Milestone Reward' : null);
             const milestoneDiscount = (rewardInfo && rewardInfo.discount) ? rewardInfo.discount : 0;
             const hasMilestoneReward = !!(selectedClaim || rewardInfo || selectedMilestoneTitle);
-            const hasPromoDiscount = typeof promoDiscountUsed !== 'undefined' && promoDiscountUsed > 0;
+            const hasPromoDiscount = typeof promoDiscountUsed !== 'undefined' && promoDiscountUsed > 0 && typeof appliedPromoCode !== 'undefined' && appliedPromoCode !== null;
             const hasPointsDiscount = typeof pointsUsed !== 'undefined' && pointsUsed > 0;
 
             if (hasMilestoneReward || hasPromoDiscount || hasPointsDiscount) {
