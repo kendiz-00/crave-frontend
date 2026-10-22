@@ -1,22 +1,12 @@
 /**
  * CRAVE Promo Code System
- * Simple promo code validation through backend API with local fallback
+ * Simple promo code validation through backend API
  */
 
 const CravePromoCodes = (function() {
     'use strict';
 
-    const API_BASE = 'https://crave-backend.onrender.com/api';
-
-    // Temporary local fallback for CORPERATE (remove once backend is confirmed deployed)
-    const LOCAL_PROMO_CODES = {
-        CORPERATE: {
-            code: 'CORPERATE',
-            discountType: 'PERCENTAGE',
-            discountValue: 10,
-            active: true,
-        },
-    };
+    const API_BASE = 'https://crave-backend-oie3.onrender.com/api';
 
     // Apply promo code to order (calls backend for validation)
     async function applyPromoCode(code, orderTotal, cartItems = []) {
@@ -34,9 +24,10 @@ const CravePromoCodes = (function() {
             const data = await response.json();
 
             if (!response.ok) {
-                // Fallback to local validation if backend unavailable
-                console.log('Backend validation failed, using local fallback');
-                return validateLocal(code, orderTotal);
+                return {
+                    valid: false,
+                    message: data.error || data.message || 'Invalid promo code',
+                };
             }
 
             // Calculate discount amount from percentage
@@ -58,46 +49,11 @@ const CravePromoCodes = (function() {
             };
         } catch (error) {
             console.error('Promo code validation error:', error);
-            // Fallback to local validation on network error
-            console.log('Network error, using local fallback');
-            return validateLocal(code, orderTotal);
-        }
-    }
-
-    // Local validation fallback (temporary)
-    function validateLocal(code, orderTotal) {
-        const promoCode = LOCAL_PROMO_CODES[code.toUpperCase()];
-
-        if (!promoCode) {
             return {
                 valid: false,
-                message: 'Invalid promo code',
+                message: 'Unable to validate promo code. Please try again.',
             };
         }
-
-        if (!promoCode.active) {
-            return {
-                valid: false,
-                message: 'Promo code is not active',
-            };
-        }
-
-        let discountAmount = 0;
-        if (promoCode.discountType === 'PERCENTAGE') {
-            discountAmount = orderTotal * (promoCode.discountValue / 100);
-        } else {
-            discountAmount = promoCode.discountValue;
-        }
-
-        return {
-            valid: true,
-            code: promoCode.code,
-            name: promoCode.code,
-            discount: discountAmount,
-            discountType: promoCode.discountType,
-            discountValue: promoCode.discountValue,
-            expiresAt: null,
-        };
     }
 
     // Validate promo code without applying
