@@ -18,7 +18,7 @@ const CravePromoCodes = (function() {
                 },
                 body: JSON.stringify({
                     code: code,
-                    subtotal: orderTotal,
+                    cartItems: cartItems,
                 }),
             });
 

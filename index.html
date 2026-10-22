@@ -1545,16 +1545,7 @@
 				if (points > 0) {
 					message += `. I have ${points} Crave Points (${tier} tier)`;
 				}
-				
-				// Add available promo codes
-				if (typeof CravePromoCodes !== 'undefined') {
-					const promoCodes = CravePromoCodes.getAvailable();
-					const activeCodes = promoCodes.filter(pc => pc.available).slice(0, 2);
-					if (activeCodes.length > 0) {
-						message += '. Available codes: ' + activeCodes.map(pc => pc.code).join(', ');
-					}
-				}
-				
+
 				whatsappBtn.href = 'https://wa.me/233550020788?text=' + encodeURIComponent(message);
 			}
 		});

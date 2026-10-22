@@ -3044,12 +3044,18 @@
                         return;
                     }
 
-                    const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '');
-                    const subtotal = parseFloat(subtotalText) || 0;
-
                     if (typeof CravePromoCodes !== 'undefined') {
                         const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-                        const result = await CravePromoCodes.apply(code, subtotal, cart);
+                        const cartItems = cart.map(item => ({
+                            menuItemId: item.menuItemId,
+                            quantity: item.quantity,
+                            addOns: item.addOns?.map(addOn => ({
+                                addOnId: addOn.addOnId,
+                                name: addOn.name,
+                                price: addOn.price,
+                            })) || [],
+                        }));
+                        const result = await CravePromoCodes.apply(code, 0, cartItems);
 
                         if (result && result.valid) {
                             promoDiscountUsed = result.discount || 0;
