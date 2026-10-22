@@ -6,7 +6,7 @@
 const CravePromoCodes = (function() {
     'use strict';
 
-    const API_BASE = typeof CRAVE_API_BASE !== 'undefined' ? CRAVE_API_BASE : '/api';
+    const API_BASE = 'https://crave-backend.vercel.app/api';
 
     // Apply promo code to order (calls backend for validation)
     async function applyPromoCode(code, orderTotal, cartItems = []) {
