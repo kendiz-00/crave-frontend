@@ -551,104 +551,6 @@ const CraveRewardsEngine = (function() {
         return activeDeals;
     }
 
-    // Calculate discount from promo code
-    async function applyPromoCode(code, orderTotal, cartItems = []) {
-        if (!config || !data) return { valid: false, message: 'System not available' };
-        
-        const promoCode = code.toUpperCase();
-        const promoConfig = config.promoCodes[promoCode];
-        
-        if (!promoConfig) {
-            return { valid: false, message: 'Invalid promo code' };
-        }
-        
-        // Check if already used
-        if (data.PromoCodes.hasUsed(promoCode)) {
-            const usageCount = data.PromoCodes.getUsageCount(promoCode);
-            if (usageCount >= promoConfig.usageLimit) {
-                return { valid: false, message: 'Promo code usage limit reached' };
-            }
-        }
-        
-        // Check minimum order
-        if (orderTotal < promoConfig.minOrder) {
-            return { valid: false, message: `Minimum order GHS ${promoConfig.minOrder} required` };
-        }
-        
-        // Check new customer restriction
-        if (promoConfig.newCustomerOnly && data.Orders.getCount() > 0) {
-            return { valid: false, message: 'Promo code for new customers only' };
-        }
-        
-        // Check tier restriction
-        if (promoConfig.tierRestriction) {
-            const currentTier = await data.Tier.get();
-            if (!promoConfig.tierRestriction.includes(currentTier)) {
-                return { valid: false, message: 'Promo code not available for your tier' };
-            }
-        }
-        
-        // Check minimum orders
-        if (promoConfig.minOrders && data.Orders.getCount() < promoConfig.minOrders) {
-            return { valid: false, message: `Minimum ${promoConfig.minOrders} orders required` };
-        }
-        
-        // Check time restriction
-        if (promoConfig.timeRestriction) {
-            const now = new Date();
-            const currentHour = now.getHours();
-            const startHour = parseInt(promoConfig.timeRestriction.start.split(':')[0]);
-            const endHour = parseInt(promoConfig.timeRestriction.end.split(':')[0]);
-            
-            if (currentHour < startHour || currentHour >= endHour) {
-                return { valid: false, message: 'Promo code not valid at this time' };
-            }
-        }
-        
-        // Check day restriction
-        if (promoConfig.dayRestriction) {
-            const currentDay = new Date().getDay();
-            if (!promoCode.dayRestriction.includes(currentDay)) {
-                return { valid: false, message: 'Promo code not valid today' };
-            }
-        }
-        
-        // Calculate discount
-        let discount = 0;
-        let discountType = promoConfig.type;
-        
-        switch (promoConfig.type) {
-            case 'percentage':
-                discount = orderTotal * (promoConfig.value / 100);
-                if (promoConfig.maxDiscount) {
-                    discount = Math.min(discount, promoConfig.maxDiscount);
-                }
-                break;
-            case 'fixed':
-                discount = promoConfig.value;
-                break;
-            case 'free_delivery':
-                discount = 0; // Handled separately
-                break;
-            default:
-                discount = 0;
-        }
-        
-        return {
-            valid: true,
-            discount,
-            discountType,
-            description: promoConfig.description,
-            finalTotal: orderTotal - discount
-        };
-    }
-
-    // Mark promo code as used
-    function usePromoCode(code) {
-        if (!data) return false;
-        return data.PromoCodes.markUsed(code.toUpperCase());
-    }
-
     // Claim daily reward
     async function claimDailyReward() {
         if (!config || !data) return { success: false, message: 'System not available' };
@@ -943,10 +845,6 @@ const CraveRewardsEngine = (function() {
         
         // Customer
         getCustomerSummary,
-        
-        // Promo Codes
-        applyPromoCode,
-        usePromoCode,
         
         // Daily Rewards
         claimDailyReward,

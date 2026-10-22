@@ -402,36 +402,6 @@ const CraveRewardsData = (function() {
         }
     };
 
-    // Promo Codes Management
-    const PromoCodes = {
-        getUsed: function() {
-            return getStorage(keys.promoCodesUsed, []);
-        },
-
-        setUsed: function(codes) {
-            return setStorage(keys.promoCodesUsed, codes);
-        },
-
-        markUsed: function(code) {
-            const used = this.getUsed();
-            if (!used.includes(code)) {
-                used.push(code);
-                this.setUsed(used);
-                return true;
-            }
-            return false;
-        },
-
-        hasUsed: function(code) {
-            return this.getUsed().includes(code);
-        },
-
-        getUsageCount: function(code) {
-            const used = this.getUsed();
-            return used.filter(c => c === code).length;
-        }
-    };
-
     // Spin Wheel Management
     const SpinWheel = {
         getSpins: function() {
@@ -1197,7 +1167,6 @@ const CraveRewardsData = (function() {
         Tier,
         Claims,
         Achievements,
-        PromoCodes,
         SpinWheel,
         DailyRewards,
         Referrals,
@@ -1210,7 +1179,7 @@ const CraveRewardsData = (function() {
         FlashDeals,
         RewardVault,
         SpinStats,
-        
+
         // Utility functions
         clearCache,
         clearAll: function() {
