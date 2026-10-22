@@ -1167,125 +1167,45 @@
                 }
 
                 // Continue with WhatsApp redirect (verification passed)
-                // Create order via backend for server-side validation and promo usage tracking
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating order...';
+                // Generate WhatsApp message
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
+                const message = generateWhatsAppMessage(orderData);
 
-                try {
-                    // Prepare cart items for backend
-                    const cartItemsPayload = cartItems.map(item => ({
-                        menuItemId: item.menuItemId || item.id,
-                        quantity: item.quantity || 1,
-                        addOns: (item.customizations || []).map(addon => ({
-                            addOnId: addon.id,
-                            name: addon.name,
-                            price: addon.price
-                        }))
-                    }));
+                // Calculate order total
+                let total = 0;
+                cartItems.forEach((item) => {
+                    const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
+                    total += itemTotal;
+                });
 
-                    // Generate idempotency key for duplicate submission protection
-                    const idempotencyKey = crypto.randomUUID ? crypto.randomUUID() : 
-                        'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-                            const r = Math.random() * 16 | 0;
-                            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-                        });
+                // Store order data for success screen
+                const orderCompletionData = {
+                    total: total,
+                    orderType: orderData ? orderData.orderType : 'Delivery',
+                    items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
+                    timestamp: Date.now()
+                };
+                sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
 
-                    // Get promo code if applied
-                    const promoCodeUsed = window.appliedPromoCode ? window.appliedPromoCode.code : null;
+                // Use official WhatsApp API endpoint for maximum compatibility
+                const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
 
-                    // Prepare order data for backend
-                    const orderPayload = {
-                        orderType: orderData.orderType || 'DELIVERY',
-                        items: cartItemsPayload,
-                        customerName: orderData.customerName,
-                        customerPhone: orderData.customerPhone,
-                        customerEmail: orderData.customerEmail || null,
-                        deliveryAddress: orderData.deliveryAddress || null,
-                        latitude: orderData.latitude || null,
-                        longitude: orderData.longitude || null,
-                        notes: orderData.notes || null,
-                        promoCodeUsed: promoCodeUsed,
-                        idempotencyKey: idempotencyKey
-                    };
+                if (window.CraveSound) window.CraveSound.success();
 
-                    // Call backend to create order
-                    const backendUrl = 'https://crave-backend.vercel.app/api/guest-orders';
-                    const orderResponse = await fetch(backendUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(orderPayload)
-                    });
+                // Set flag to detect return from WhatsApp
+                sessionStorage.setItem('craveWhatsAppOpened', 'true');
 
-                    if (!orderResponse.ok) {
-                        const errorData = await orderResponse.json();
-                        throw new Error(errorData.error || 'Failed to create order');
-                    }
-
-                    const orderResult = await orderResponse.json();
-
-                    // Use backend-calculated totals
-                    const order = orderResult.order;
-                    const backendTotal = order.grandTotal;
-                    const backendPromoDiscount = order.discount || 0;
-
-                    // Update message with backend totals
-                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
-                    const message = generateWhatsAppMessage({
-                        ...orderData,
-                        total: backendTotal,
-                        promoDiscount: backendPromoDiscount
-                    });
-
-                    // Store order data for success screen
-                    const orderCompletionData = {
-                        total: backendTotal,
-                        orderType: order.orderType,
-                        items: cartItems.map(item => ({ name: item.name, price: item.unitPrice || item.price, quantity: item.quantity })),
-                        timestamp: Date.now(),
-                        orderId: order.id,
-                        orderNumber: order.orderNumber
-                    };
-                    sessionStorage.setItem('craveOrderCompletion', JSON.stringify(orderCompletionData));
-
-                    // Use official WhatsApp API endpoint for maximum compatibility
-                    const whatsappUrl = `https://api.whatsapp.com/send?phone=233550020788&text=${encodeURIComponent(message)}`;
-
-                    if (window.CraveSound) window.CraveSound.success();
-
-                    // Set flag to detect return from WhatsApp
-                    sessionStorage.setItem('craveWhatsAppOpened', 'true');
-
-                    // Clear cart, reset form & clear rewards cache before redirect
-                    if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
-                        CraveRewardsData.clearCache();
-                    }
-                    if (form) form.reset();
-                    cartItems = [];
-                    if (typeof saveCartToStorage === 'function') saveCartToStorage();
-                    localStorage.removeItem('craveCart');
-
-                    // Redirect to WhatsApp (synchronous to prevent mobile popup blocking)
-                    window.location.href = whatsappUrl;
-
-                } catch (backendError) {
-                    console.error('Backend order creation failed:', backendError);
-
-                    // Re-enable button and show error
-                    if (button) {
-                        button.disabled = false;
-                        button.innerHTML = '<i class="fab fa-whatsapp"></i> Confirm Order on WhatsApp';
-                    }
-
-                    // Check if it's a promo code error
-                    if (backendError.message && backendError.message.includes('promo')) {
-                        showError(`Promo code error: ${backendError.message}. Please remove the promo code and try again, or continue without it. Your cart has been preserved.`, true);
-                    } else {
-                        showError(`Unable to create order: ${backendError.message}. Please try again or contact us directly at +233550020788. Your cart has been preserved.`, true);
-                    }
-
-                    // Cart is preserved (not cleared on error)
+                // Clear cart, reset form & clear rewards cache before redirect
+                if (typeof CraveRewardsData !== 'undefined' && CraveRewardsData.clearCache) {
+                    CraveRewardsData.clearCache();
                 }
+                if (form) form.reset();
+                cartItems = [];
+                if (typeof saveCartToStorage === 'function') saveCartToStorage();
+                localStorage.removeItem('craveCart');
+
+                // Redirect to WhatsApp (synchronous to prevent mobile popup blocking)
+                window.location.href = whatsappUrl;
             } catch (error) {
                 console.error('Order processing error:', error);
 

@@ -1,6 +1,6 @@
 /**
  * CRAVE Promo Code System
- * Private promo code validation through backend API
+ * Simple promo code validation through backend API
  */
 
 const CravePromoCodes = (function() {
@@ -11,14 +11,13 @@ const CravePromoCodes = (function() {
     // Apply promo code to order (calls backend for validation)
     async function applyPromoCode(code, orderTotal, cartItems = []) {
         try {
-            const response = await fetch(`${API_BASE}/promo-codes/validate`, {
+            const response = await fetch(`${API_BASE}/simple-promo/validate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     code: code,
-                    cartItems: cartItems,
                 }),
             });
 
@@ -31,11 +30,19 @@ const CravePromoCodes = (function() {
                 };
             }
 
+            // Calculate discount amount from percentage
+            let discountAmount = 0;
+            if (data.discountType === 'PERCENTAGE') {
+                discountAmount = orderTotal * (data.discountValue / 100);
+            } else {
+                discountAmount = data.discountValue;
+            }
+
             return {
                 valid: true,
                 code: data.code,
-                name: data.name,
-                discount: data.discountAmount,
+                name: data.code, // Use code as name for simple implementation
+                discount: discountAmount,
                 discountType: data.discountType,
                 discountValue: data.discountValue,
                 expiresAt: data.expiresAt,
