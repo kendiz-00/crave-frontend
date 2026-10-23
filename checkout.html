@@ -3034,9 +3034,12 @@
             const applyPromoBtn = document.getElementById('applyPromoBtn');
             if (applyPromoBtn) {
                 applyPromoBtn.addEventListener('click', async function() {
+                    console.log('[Checkout] Apply button clicked');
                     const inputEl = document.getElementById('promoCode');
                     const msgEl = document.getElementById('promoCodeMessage');
                     const code = (inputEl ? inputEl.value : '').trim().toUpperCase();
+
+                    console.log('[Checkout] Promo code entered:', code);
 
                     if (!code) {
                         if (msgEl) {
@@ -3048,6 +3051,7 @@
 
                     if (typeof CravePromoCodes !== 'undefined') {
                         const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+                        console.log('[Checkout] Cart items:', cart.length);
                         const cartItems = cart.map(item => ({
                             menuItemId: item.menuItemId,
                             quantity: item.quantity,
@@ -3071,11 +3075,15 @@
                             }
                         });
 
+                        console.log('[Checkout] Order total calculated:', orderTotal);
+
                         const result = await CravePromoCodes.apply(code, orderTotal, cartItems);
+                        console.log('[Checkout] Promo validation result:', result);
 
                         if (result && result.valid) {
                             promoDiscountUsed = result.discount || 0;
                             appliedPromoCode = code;
+                            console.log('[Checkout] Discount applied:', promoDiscountUsed);
                             if (msgEl) {
                                 msgEl.className = 'promo-code-message success';
                                 msgEl.innerHTML = `<i class="fas fa-check-circle"></i> Code <strong>${code}</strong> applied! Saved GH¢ ${promoDiscountUsed.toFixed(2)}`;
@@ -3091,6 +3099,7 @@
                         } else {
                             promoDiscountUsed = 0;
                             appliedPromoCode = null;
+                            console.log('[Checkout] Promo validation failed:', result ? result.message : 'Unknown error');
                             if (msgEl) {
                                 msgEl.className = 'promo-code-message error';
                                 msgEl.textContent = (result && result.message) ? result.message : 'Invalid or expired promo code';
