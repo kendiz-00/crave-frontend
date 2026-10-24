@@ -2503,6 +2503,7 @@
     <script src="js/rewards-engine.js"></script>
     <script src="js/rewards-notifications.js"></script>
     <script src="js/promo-codes.js"></script>
+    <script src="js/checkout-promo.js"></script>
     <script src="js/achievements.js"></script>
     <script src="js/recommendations.js"></script>
     <script src="js/spin-wheel.js"></script>
@@ -2656,7 +2657,7 @@
 
             // Setup listeners
             setupOrderTypeListeners();
-            setupPromoListeners();
+            // setupPromoListeners moved to js/checkout-promo.js
             setupRewardListeners();
             
             // Load reward points if authenticated
@@ -3032,105 +3033,7 @@
             if (pickupRadio) pickupRadio.addEventListener('change', syncOrderType);
         }
 
-        function setupPromoListeners() {
-            console.log('[Checkout] setupPromoListeners called');
-            const togglePromoBtn = document.getElementById('togglePromoBtn');
-            const promoBody = document.getElementById('promoBody');
-            if (togglePromoBtn && promoBody) {
-                togglePromoBtn.addEventListener('click', function() {
-                    togglePromoBtn.classList.toggle('open');
-                    promoBody.style.display = (promoBody.style.display === 'none') ? 'block' : 'none';
-                });
-            }
-
-            const applyPromoBtn = document.getElementById('applyPromoBtn');
-            console.log('[Checkout] applyPromoBtn found:', !!applyPromoBtn);
-            if (applyPromoBtn) {
-                applyPromoBtn.addEventListener('click', async function() {
-                    console.log('[Checkout] Apply button clicked');
-                    const inputEl = document.getElementById('promoCode');
-                    const msgEl = document.getElementById('promoCodeMessage');
-                    const code = (inputEl ? inputEl.value : '').trim().toUpperCase();
-
-                    console.log('[Checkout] Promo code entered:', code);
-
-                    if (!code) {
-                        if (msgEl) {
-                            msgEl.className = 'promo-code-message error';
-                            msgEl.textContent = 'Please enter a promo code';
-                        }
-                        return;
-                    }
-
-                    if (typeof CravePromoCodes !== 'undefined') {
-                        const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
-                        console.log('[Checkout] Cart items:', cart.length);
-                        const cartItems = cart.map(item => ({
-                            menuItemId: item.menuItemId,
-                            quantity: item.quantity,
-                            addOns: item.addOns?.map(addOn => ({
-                                addOnId: addOn.addOnId,
-                                name: addOn.name,
-                                price: addOn.price,
-                            })) || [],
-                        }));
-
-                        // Calculate actual order total for discount calculation
-                        let orderTotal = 0;
-                        cart.forEach(item => {
-                            const itemTotal = (item.unitPrice || item.price || 0) * (item.quantity || 1);
-                            orderTotal += itemTotal;
-                            // Add add-on prices
-                            if (item.addOns && item.addOns.length > 0) {
-                                item.addOns.forEach(addOn => {
-                                    orderTotal += addOn.price * (item.quantity || 1);
-                                });
-                            }
-                        });
-
-                        console.log('[Checkout] Order total calculated:', orderTotal);
-
-                        const result = await CravePromoCodes.apply(code, orderTotal, cartItems);
-                        console.log('[Checkout] Promo validation result:', result);
-
-                        if (result && result.valid) {
-                            promoDiscountUsed = result.discount || 0;
-                            appliedPromoCode = code;
-                            console.log('[Checkout] Discount applied:', promoDiscountUsed);
-                            if (msgEl) {
-                                msgEl.className = 'promo-code-message success';
-                                msgEl.innerHTML = `<i class="fas fa-check-circle"></i> Code <strong>${code}</strong> applied! Saved GH¢ ${promoDiscountUsed.toFixed(2)}`;
-                            }
-
-                            const promoRow = document.getElementById('promoDiscountRow');
-                            const promoVal = document.getElementById('promoDiscountSummaryValue');
-                            if (promoRow && promoVal) {
-                                promoRow.style.display = 'flex';
-                                promoVal.textContent = `-GH¢ ${promoDiscountUsed.toFixed(2)}`;
-                            }
-                            recalculateTotal();
-                        } else {
-                            promoDiscountUsed = 0;
-                            appliedPromoCode = null;
-                            console.log('[Checkout] Promo validation failed:', result ? result.message : 'Unknown error');
-                            if (msgEl) {
-                                msgEl.className = 'promo-code-message error';
-                                msgEl.textContent = (result && result.message) ? result.message : 'Invalid or expired promo code';
-                            }
-
-                            const promoRow = document.getElementById('promoDiscountRow');
-                            if (promoRow) promoRow.style.display = 'none';
-                            recalculateTotal();
-                        }
-                    } else {
-                        if (msgEl) {
-                            msgEl.className = 'promo-code-message error';
-                            msgEl.textContent = 'Promo code system unavailable';
-                        }
-                    }
-                });
-            }
-        }
+        // setupPromoListeners moved to js/checkout-promo.js
 
         function setupRewardListeners() {
             const minusBtn = document.getElementById('pointsMinusBtn');
