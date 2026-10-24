@@ -2630,11 +2630,20 @@
         }
 
         // Initialize checkout page
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('[Checkout] DOMContentLoaded fired');
-            // Initialize auth first (must complete before loading rewards)
-            await AuthManager.initialize();
-            AuthUI.initialize();
+        (async function() {
+            console.log('[Checkout] Initializing checkout page');
+            // Wait for DOM to be ready if not already
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+            async function init() {
+                console.log('[Checkout] DOM ready, starting initialization');
+                // Initialize auth first (must complete before loading rewards)
+                await AuthManager.initialize();
+                AuthUI.initialize();
             
             // Initialize cart sync
             CartSync.initialize();
@@ -2655,7 +2664,8 @@
 
             // Load claimed milestone rewards if authenticated
             await loadClaimedMilestoneRewards();
-        });
+            }
+        })();
 
         async function loadClaimedMilestoneRewards() {
             const section = document.getElementById('claimedMilestoneSection');
