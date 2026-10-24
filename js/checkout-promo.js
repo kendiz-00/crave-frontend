@@ -15,7 +15,12 @@
         if (togglePromoBtn && promoBody) {
             togglePromoBtn.addEventListener('click', function() {
                 togglePromoBtn.classList.toggle('open');
-                promoBody.style.display = (promoBody.style.display === 'none') ? 'block' : 'none';
+                // Force display style based on toggle state
+                if (togglePromoBtn.classList.contains('open')) {
+                    promoBody.style.display = 'block';
+                } else {
+                    promoBody.style.display = 'none';
+                }
             });
         }
 
