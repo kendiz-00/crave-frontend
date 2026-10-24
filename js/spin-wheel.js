@@ -26,7 +26,7 @@ const CraveSpinWheel = (function() {
         { name: '5 Points', shortLabel: '5 PTS', icon: '⭐', probability: 0.40, type: 'points', value: 5 },
         { name: '10 Points', shortLabel: '10 PTS', icon: '🌟', probability: 0.25, type: 'points', value: 10 },
         { name: '20 Points', shortLabel: '20 PTS', icon: '💫', probability: 0.15, type: 'points', value: 20 },
-        { name: 'Free Drink', shortLabel: 'FREE DRINK', icon: '🥤', probability: 0.08, type: 'reward', value: 'drink' },
+        { name: 'Free Iced Tea', shortLabel: 'FREE ICED TEA', icon: '�', probability: 0.08, type: 'reward', value: 'drink' },
         { name: 'Free Fries', shortLabel: 'FREE FRIES', icon: '🍟', probability: 0.05, type: 'reward', value: 'fries' },
         { name: 'Free Dessert', shortLabel: 'FREE DESSERT', icon: '🍰', probability: 0.03, type: 'reward', value: 'dessert' },
         { name: 'GH₵20 Coupon', shortLabel: 'GH₵20 OFF', icon: '🎟️', probability: 0.02, type: 'coupon', value: 20 },

@@ -1067,9 +1067,9 @@
                         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                     </div>
                     <div class="next-reward" id="nextReward">
-                        <div class="next-reward__icon">🥤</div>
+                        <div class="next-reward__icon">�</div>
                         <div class="next-reward__info">
-                            <div class="next-reward__name">Free Drink</div>
+                            <div class="next-reward__name">Free Iced Tea</div>
                             <div class="next-reward__points">100 points needed</div>
                         </div>
                     </div>
@@ -1438,7 +1438,7 @@
                     // No manual claim step needed — send customer straight to checkout.
                     const claimId = displayState.claim ? displayState.claim.id : '';
                     const claimParam = claimId ? `&claimId=${encodeURIComponent(claimId)}` : '';
-                    actionMarkup = `<a href="checkout.html?rewardId=${encodeURIComponent(rewardId)}${claimParam}" class="milestone-action-btn milestone-action-btn--use" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;"><span>USE FREE DRINK</span><i class="fas fa-arrow-right" style="font-size:11px;"></i></a>`;
+                    actionMarkup = `<a href="checkout.html?rewardId=${encodeURIComponent(rewardId)}${claimParam}" class="milestone-action-btn milestone-action-btn--use" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;"><span>USE FREE ICED TEA</span><i class="fas fa-arrow-right" style="font-size:11px;"></i></a>`;
                 } else if (displayState.disabled && (displayState.state === 'AVAILABLE' || displayState.state === 'CLAIMED')) {
                     actionMarkup = `<div class="milestone-action-status milestone-action-status--unlocked" style="color:#4caf50;font-size:11px;font-weight:600;padding:6px 10px;background:rgba(76,175,80,0.1);border-radius:4px;border:1px solid rgba(76,175,80,0.3);text-align:center;">UNLOCKED · REDEMPTION COMING SOON</div>`;
                 } else if (displayState.state === 'RESERVED') {
@@ -1506,7 +1506,7 @@
         }
 
         function handleUseReward(rewardId, claimId) {
-            // Direct to checkout with pre-selected claim (not menu — the free drink selection happens at checkout)
+            // Direct to checkout with pre-selected claim (not menu — the free iced tea selection happens at checkout)
             const claimParam = claimId ? `&claimId=${encodeURIComponent(claimId)}` : '';
             window.location.href = `checkout.html?rewardId=${encodeURIComponent(rewardId)}${claimParam}`;
         }

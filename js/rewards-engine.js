@@ -309,13 +309,13 @@ const CraveRewardsEngine = (function() {
                     requiredPoints,
                     remainingPoints: 0,
                     badge: 'UNLOCKED 🎉',
-                    subtext: 'Your free drink is unlocked! Redemption will be available soon.'
+                    subtext: 'Your free iced tea is unlocked! Redemption will be available soon.'
                 };
             }
 
             return {
                 state: claimStatus,
-                label: 'USE FREE DRINK',
+                label: 'USE FREE ICED TEA',
                 action: 'USE_CHECKOUT',
                 disabled: false,
                 claim,
@@ -343,7 +343,7 @@ const CraveRewardsEngine = (function() {
     }
 
     // Redeem reward milestone
-    // IMPORTANT: Free drink milestone redemptions MUST NOT deduct points.
+    // IMPORTANT: Free iced tea milestone redemptions MUST NOT deduct points.
     // The backend enforces zero-point-deduction for AVAILABLE → RESERVED → REDEEMED transitions.
     // This function is intentionally disabled to prevent client-side point manipulation.
     async function redeemMilestone(pointsRequired, rewardType = 'points') {

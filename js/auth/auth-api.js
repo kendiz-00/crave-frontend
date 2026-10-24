@@ -122,7 +122,7 @@ const AuthAPI = (function() {
     }
 
     /**
-     * Get the backend-controlled list of eligible free drinks for the 100-point reward.
+     * Get the backend-controlled list of eligible free iced teas for the 100-point reward.
      * GET /api/rewards/eligible-drinks
      *
      * Falls back to an empty array if the endpoint is not yet available so that

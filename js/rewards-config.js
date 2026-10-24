@@ -20,13 +20,13 @@ const CraveRewardsConfig = {
         }
     },
 
-    // Reward Milestones (Only confirmed milestone: 100 PTS Free Drink)
+    // Reward Milestones (Only confirmed milestone: 100 PTS Free Iced Tea)
     milestones: [
         {
             points: 100,
-            reward: 'Free Drink',
-            icon: '🥤',
-            description: 'Complimentary beverage of your choice (automatically unlocked at 100 lifetime points)'
+            reward: 'Free Iced Tea',
+            icon: '�',
+            description: 'Complimentary iced tea (automatically unlocked at 100 lifetime points)'
         }
     ],
 
@@ -95,7 +95,7 @@ const CraveRewardsConfig = {
             referralMilestone: 3
         },
         prizes: [
-            { name: 'Free Drink', icon: '🥤', weight: 15, type: 'free_item' },
+            { name: 'Free Iced Tea', icon: '�', weight: 15, type: 'free_item' },
             { name: 'Free Fries', icon: '🍟', weight: 12, type: 'free_item' },
             { name: 'Free Dessert', icon: '🍰', weight: 10, type: 'free_item' },
             { name: '5% Off', icon: '🏷️', weight: 20, type: 'percentage', value: 5 },

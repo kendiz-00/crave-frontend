@@ -655,7 +655,7 @@ async function getFirstOrderPromoState() {
   }
 
   if (!isAuthenticated || !user) {
-    return { state: 'guest', headline: 'Your first order is on us 🥤', cta: 'Claim My Free Drink' };
+    return { state: 'guest', headline: 'Your first order is on us �', cta: 'Claim My Free Iced Tea' };
   }
 
   try {
@@ -669,14 +669,14 @@ async function getFirstOrderPromoState() {
       }
 
       if (firstOrderClaim && String(firstOrderClaim.status).toUpperCase() === 'CLAIMED') {
-        return { state: 'claimed', headline: 'Your first CRAVE drink is waiting. 🥤', cta: 'Choose Your Drink', claim: firstOrderClaim };
+        return { state: 'claimed', headline: 'Your first CRAVE iced tea is waiting. �', cta: 'Choose Your Iced Tea', claim: firstOrderClaim };
       }
     }
   } catch (error) {
     console.warn('Unable to fetch first-order reward state from backend:', error);
   }
 
-  return { state: 'unclaimed', headline: 'Your first order is on us 🥤', cta: 'Claim My Free Drink' };
+  return { state: 'unclaimed', headline: 'Your first order is on us �', cta: 'Claim My Free Drink' };
 }
 
 async function handleExplicitFirstOrderClaim(btnEl, sourceSurface) {
@@ -718,7 +718,7 @@ async function handleExplicitFirstOrderClaim(btnEl, sourceSurface) {
 
           const heroPromoText = document.querySelector('#craveFirstOrderHeroPromo .crave-first-order-hero-promo__text');
           if (heroPromoText) {
-            heroPromoText.textContent = 'Your first CRAVE drink is waiting. 🥤';
+            heroPromoText.textContent = 'Your first CRAVE drink is waiting. �';
           }
           const heroPromoBadge = document.querySelector('#craveFirstOrderHeroPromo .crave-first-order-hero-promo__badge');
           if (heroPromoBadge) {
@@ -727,7 +727,7 @@ async function handleExplicitFirstOrderClaim(btnEl, sourceSurface) {
 
           const barCopy = document.querySelector('#craveFirstOrderBar .crave-first-order-bar__copy');
           if (barCopy) {
-            barCopy.textContent = 'Your first CRAVE drink is waiting. 🥤';
+            barCopy.textContent = 'Your first CRAVE drink is waiting. �';
           }
           const barCta = document.querySelector('#craveFirstOrderBar .crave-first-order-bar__cta');
           if (barCta) {
@@ -736,7 +736,7 @@ async function handleExplicitFirstOrderClaim(btnEl, sourceSurface) {
           }
 
           if (typeof showToast === 'function') {
-            showToast('🎉 Your FREE drink reward is claimed! Choose your drink from the menu.', 'success');
+            showToast('🎉 Your FREE iced tea reward is claimed! Choose your iced tea from the menu.', 'success');
           }
           trackFirstOrderPromoEvent('first_order_claim_success', sourceSurface || 'explicit_click');
           return;
@@ -749,9 +749,9 @@ async function handleExplicitFirstOrderClaim(btnEl, sourceSurface) {
       btnEl.disabled = false;
       btnEl.innerHTML = originalText;
       if (typeof showToast === 'function') {
-        showToast('We couldn\'t claim your drink just yet. Please try again.', 'warning');
+        showToast('We couldn\'t claim your iced tea just yet. Please try again.', 'warning');
       } else {
-        alert('We couldn\'t claim your drink just yet. Please try again.');
+        alert('We couldn\'t claim your iced tea just yet. Please try again.');
       }
     }
   }
@@ -788,8 +788,8 @@ async function renderFirstOrderPromoBar() {
   bar.id = 'craveFirstOrderBar';
   bar.className = 'crave-first-order-bar';
   const copy = status.state === 'claimed'
-    ? 'Your first CRAVE drink is waiting. 🥤'
-    : 'First order? Get a FREE drink 🥤';
+    ? 'Your first CRAVE iced tea is waiting. �'
+    : 'First order? Get a FREE iced tea �';
   bar.innerHTML = `
     <div class="crave-first-order-bar__inner">
       <span class="crave-first-order-bar__copy">${copy}</span>
@@ -829,10 +829,10 @@ async function renderHomeHeroOffer() {
   const promo = document.createElement('div');
   promo.id = 'craveFirstOrderHeroPromo';
   promo.className = 'crave-first-order-hero-promo';
-  const badge = status.state === 'claimed' ? 'YOUR DRINK' : 'NEW TO CRAVE?';
+  const badge = status.state === 'claimed' ? 'YOUR ICED TEA' : 'NEW TO CRAVE?';
   const text = status.state === 'claimed'
-    ? 'Your first CRAVE drink is waiting. 🥤'
-    : 'Enjoy a FREE drink with your first order.';
+    ? 'Your first CRAVE iced tea is waiting. �'
+    : 'Enjoy a FREE iced tea with your first order.';
   promo.innerHTML = `
     <span class="crave-first-order-hero-promo__badge">${badge}</span>
     <span class="crave-first-order-hero-promo__text">${text}</span>
@@ -873,11 +873,11 @@ async function renderMenuOrderReminder() {
   reminder.id = 'craveFirstOrderReminder';
   reminder.className = 'crave-first-order-reminder';
   const message = status.state === 'guest'
-    ? 'You’re eligible for a FREE drink with your first order.'
-    : '🎉 Your FREE drink is waiting! Choose your complimentary drink before checking out.';
+    ? 'You’re eligible for a FREE iced tea with your first order.'
+    : '🎉 Your FREE iced tea is waiting! Choose your complimentary drink before checking out.';
   reminder.innerHTML = `
     <div class="crave-first-order-reminder__content">
-      <span class="crave-first-order-reminder__icon">🥤</span>
+      <span class="crave-first-order-reminder__icon">�</span>
       <span>${message}</span>
       <button type="button" class="crave-first-order-reminder__close" aria-label="Dismiss reminder">×</button>
     </div>

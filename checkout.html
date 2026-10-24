@@ -2585,13 +2585,13 @@
 
             const title = rewardTitles[claim.rewardId] || 'Milestone Reward';
 
-            // For the free drink reward: the discount is shown as GH₵0 drink price.
+            // For the free iced tea reward: the discount is shown as GH₵0 drink price.
             // The backend validates eligibility and the actual drink price at checkout time.
             // selectedFreeDrinkName tracks which drink was chosen in the selector panel.
             if (claim.rewardId === 'milestone_free_drink_100') {
                 return {
                     claim,
-                    title: selectedFreeDrinkName ? `Free Drink: ${selectedFreeDrinkName}` : title,
+                    title: selectedFreeDrinkName ? `Free Iced Tea: ${selectedFreeDrinkName}` : title,
                     discount: 0,          // Price breakdown shows original price struck-through, final GH₵0
                     freeDrinkName: selectedFreeDrinkName || null,
                     isFreedrinkReward: true
@@ -2715,7 +2715,7 @@
                 }
                 window.REWARDS_FREE_DRINK_REDEMPTION_ENABLED = isRedemptionActive;
 
-                // Pre-select claim from URL params (arriving from rewards.html "Use Free Drink" link)
+                // Pre-select claim from URL params (arriving from rewards.html "Use Free Iced Tea" link)
                 const urlParams = new URLSearchParams(window.location.search);
                 const paramClaimId = urlParams.get('claimId');
                 const paramRewardId = urlParams.get('rewardId');
@@ -2794,7 +2794,7 @@
                             <input type="radio" name="claimedRewardSelect" value="${claim.id}" disabled>
                             <div class="option-details" style="flex: 1;">
                                 <div style="font-weight: 600; color: #aaa;">${title}<span style="font-size:10px;background:rgba(229,169,59,0.15);color:#e5a93b;padding:2px 6px;border-radius:4px;margin-left:6px;">UNLOCKED · COMING SOON</span></div>
-                                <div style="font-size: 12px; color: #888;">Your free drink is unlocked! Redemption will be available soon.</div>
+                                <div style="font-size: 12px; color: #888;">Your free iced tea is unlocked! Redemption will be available soon.</div>
                             </div>
                         </div>
                     `;
@@ -2818,7 +2818,7 @@
             listEl.innerHTML = html;
         }
 
-        // Tracks the selected free drink name for the 100-point reward
+        // Tracks the selected free iced tea name for the 100-point reward
         let selectedFreeDrinkName = null;
 
         async function selectClaimedReward(claimId) {
@@ -2827,7 +2827,7 @@
                 : null;
             if (selectedClaim && (selectedClaim.rewardId === 'milestone_free_drink_100' || selectedClaim.rewardId === 'first_order_free_drink') && !window.REWARDS_FREE_DRINK_REDEMPTION_ENABLED) {
                 // ToastNotifications not available (payment scripts disabled)
-                console.log('Your free drink is unlocked! Redemption will be available soon.');
+                console.log('Your free iced tea is unlocked! Redemption will be available soon.');
                 selectedClaimedRewardId = null;
                 renderClaimedMilestoneList();
                 recalculateTotal();
@@ -2856,7 +2856,7 @@
 
             renderClaimedMilestoneList();
 
-            // Show/hide the free drink selector panel
+            // Show/hide the free iced tea selector panel
             const selectedClaim = claimId
                 ? userClaimedMilestones.find(c => c.id === claimId)
                 : null;
@@ -2937,8 +2937,8 @@
 
             panel.innerHTML = `
                 <div style="margin-bottom:10px;">
-                    <div style="color:#e5a93b;font-weight:600;font-size:13px;margin-bottom:4px;">🥤 Choose Your Free Drink</div>
-                    <div style="color:#a0a0a0;font-size:11px;">Select one eligible drink — it will be added at GH₵0. Validated by the server at checkout.</div>
+                    <div style="color:#e5a93b;font-weight:600;font-size:13px;margin-bottom:4px;">🧊 Choose Your Free Iced Tea</div>
+                    <div style="color:#a0a0a0;font-size:11px;">Select one eligible iced tea — it will be added at GH₵0. Validated by the server at checkout.</div>
                 </div>
                 <div id="freeDrinkChoiceList">${drinksHtml}</div>
                 ${!selectedFreeDrinkName ? '<div style="color:#e57373;font-size:11px;margin-top:8px;">⚠️ Please select a drink to apply your reward.</div>' : ''}
@@ -2997,7 +2997,7 @@
                     CartSync.syncToBackend();
                 }
             } catch (err) {
-                console.warn('Could not auto-add free drink to cart:', err);
+                console.warn('Could not auto-add free iced tea to cart:', err);
             }
 
             // Re-render cart and totals
@@ -3369,11 +3369,11 @@
                 return;
             }
 
-            // Verify eligible drink selection if free drink reward is active
+            // Verify eligible iced tea selection if free iced tea reward is active
             if (selectedClaimedRewardId) {
                 const selectedClaim = userClaimedMilestones.find(c => c.id === selectedClaimedRewardId);
                 if (selectedClaim && selectedClaim.rewardId === 'milestone_free_drink_100' && !selectedFreeDrinkName) {
-                    ToastNotifications.error('Please choose your free drink before confirming your order');
+                    ToastNotifications.error('Please choose your free iced tea before confirming your order');
                     const panel = document.getElementById('freeDrinkSelectorPanel');
                     if (panel) panel.scrollIntoView({ behavior: 'smooth' });
                     return;
