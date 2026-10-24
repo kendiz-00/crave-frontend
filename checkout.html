@@ -3022,6 +3022,7 @@
         }
 
         function setupPromoListeners() {
+            console.log('[Checkout] setupPromoListeners called');
             const togglePromoBtn = document.getElementById('togglePromoBtn');
             const promoBody = document.getElementById('promoBody');
             if (togglePromoBtn && promoBody) {
@@ -3032,6 +3033,7 @@
             }
 
             const applyPromoBtn = document.getElementById('applyPromoBtn');
+            console.log('[Checkout] applyPromoBtn found:', !!applyPromoBtn);
             if (applyPromoBtn) {
                 applyPromoBtn.addEventListener('click', async function() {
                     console.log('[Checkout] Apply button clicked');
