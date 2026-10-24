@@ -89,8 +89,22 @@
                             promoRow.style.display = 'flex';
                             promoVal.textContent = `-GH¢ ${window.promoDiscountUsed.toFixed(2)}`;
                         }
+                        // Recalculate total directly
                         if (typeof recalculateTotal === 'function') {
                             recalculateTotal();
+                        } else {
+                            // Fallback: manually update total
+                            const subtotalEl = document.getElementById('subtotalAmount');
+                            const totalEl = document.getElementById('totalAmount');
+                            const deliveryFeeEl = document.getElementById('deliveryFeeAmount');
+                            if (subtotalEl && totalEl) {
+                                const subtotalText = subtotalEl.textContent.replace('GH¢', '').trim();
+                                const subtotal = parseFloat(subtotalText) || 0;
+                                const deliveryFeeText = deliveryFeeEl ? deliveryFeeEl.textContent.replace('GH¢', '').trim() : '0';
+                                const deliveryFee = parseFloat(deliveryFeeText) || 0;
+                                const finalTotal = subtotal + deliveryFee - window.promoDiscountUsed;
+                                totalEl.textContent = `GH¢ ${finalTotal.toFixed(2)}`;
+                            }
                         }
                     } else {
                         window.promoDiscountUsed = 0;
@@ -103,8 +117,22 @@
 
                         const promoRow = document.getElementById('promoDiscountRow');
                         if (promoRow) promoRow.style.display = 'none';
+                        // Recalculate total directly
                         if (typeof recalculateTotal === 'function') {
                             recalculateTotal();
+                        } else {
+                            // Fallback: manually update total without discount
+                            const subtotalEl = document.getElementById('subtotalAmount');
+                            const totalEl = document.getElementById('totalAmount');
+                            const deliveryFeeEl = document.getElementById('deliveryFeeAmount');
+                            if (subtotalEl && totalEl) {
+                                const subtotalText = subtotalEl.textContent.replace('GH¢', '').trim();
+                                const subtotal = parseFloat(subtotalText) || 0;
+                                const deliveryFeeText = deliveryFeeEl ? deliveryFeeEl.textContent.replace('GH¢', '').trim() : '0';
+                                const deliveryFee = parseFloat(deliveryFeeText) || 0;
+                                const finalTotal = subtotal + deliveryFee;
+                                totalEl.textContent = `GH¢ ${finalTotal.toFixed(2)}`;
+                            }
                         }
                     }
                 } else {
