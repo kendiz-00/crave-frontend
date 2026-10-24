@@ -10,6 +10,8 @@
         console.log('[Checkout Promo] setupPromoListeners called');
         const togglePromoBtn = document.getElementById('togglePromoBtn');
         const promoBody = document.getElementById('promoBody');
+        
+        // Setup toggle listener
         if (togglePromoBtn && promoBody) {
             togglePromoBtn.addEventListener('click', function() {
                 togglePromoBtn.classList.toggle('open');
