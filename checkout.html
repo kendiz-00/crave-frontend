@@ -2631,6 +2631,7 @@
 
         // Initialize checkout page
         document.addEventListener('DOMContentLoaded', async function() {
+            console.log('[Checkout] DOMContentLoaded fired');
             // Initialize auth first (must complete before loading rewards)
             await AuthManager.initialize();
             AuthUI.initialize();
