@@ -82,13 +82,13 @@
         }
         
         .hero-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 16px;
         }
         
         .hero-content {
-            max-width: 800px;
+            max-width: 100%;
         }
         
         .hero-title {
@@ -96,9 +96,16 @@
             font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 700;
             line-height: 1.15;
-            color: #f0e8d6;
             margin: 0 0 24px;
             letter-spacing: -0.02em;
+        }
+        
+        .hero-title-ivory {
+            color: #f0e8d6;
+        }
+        
+        .hero-title-gold {
+            color: #d4a373;
         }
         
         .hero-description {
@@ -108,7 +115,7 @@
             line-height: 1.7;
             color: rgba(240, 232, 214, 0.85);
             margin: 0 0 32px;
-            max-width: 600px;
+            max-width: 800px;
         }
         
         .hero-cta-primary {
@@ -219,8 +226,8 @@
         }
         
         .promo-cup-image {
-            width: 120px;
-            height: 120px;
+            width: 160px;
+            height: 160px;
             object-fit: contain;
             display: block;
         }
@@ -229,6 +236,10 @@
         @media (max-width: 1024px) {
             .hero-content-wrapper {
                 padding: 60px 0 40px;
+            }
+            
+            .hero-container {
+                padding: 0 16px;
             }
             
             .hero-content {
@@ -247,6 +258,7 @@
             .hero-cta-primary {
                 width: 100%;
                 justify-content: center;
+                padding: 16px 24px;
             }
             
             .hero-trust-badges {
@@ -268,20 +280,30 @@
                 width: 100%;
             }
             
+            .promo-cta {
+                display: inline-flex;
+                justify-content: center;
+                width: 100%;
+            }
+            
             .promo-cup-image {
-                width: 100px;
-                height: 100px;
+                width: 140px;
+                height: 140px;
                 margin: 0 auto;
             }
         }
         
         @media (max-width: 640px) {
             .hero-content-wrapper {
-                padding: 40px 20px;
+                padding: 40px 16px;
             }
             
             .hero-section {
                 min-height: auto;
+            }
+            
+            .hero-container {
+                padding: 0 16px;
             }
             
             .hero-title {
@@ -295,7 +317,7 @@
             }
             
             .hero-cta-primary {
-                padding: 14px 24px;
+                padding: 14px 20px;
                 font-size: 15px;
             }
             
@@ -319,6 +341,11 @@
             
             .promo-cta {
                 font-size: 14px;
+            }
+            
+            .promo-cup-image {
+                width: 120px;
+                height: 120px;
             }
         }
     </style>
@@ -636,7 +663,7 @@
 				<div class="hero-content">
 					<!-- Main Headline -->
 					<h1 class="hero-title">
-						FOOD WORTH CRAVING.
+						<span class="hero-title-ivory">FOOD WORTH</span> <span class="hero-title-gold">CRAVING.</span>
 					</h1>
 					
 					<!-- Food Description -->
