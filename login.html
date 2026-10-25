@@ -487,6 +487,8 @@
                             </label>
                         </div>
 
+                        <div id="loginError" class="form-error" style="display: none;"></div>
+
                         <button type="submit" class="btn-auth" id="loginBtn">
                             Sign In
                         </button>
@@ -514,6 +516,7 @@
     <script src="js/env.js"></script>
     <script src="js/api/config.js"></script>
     <script src="js/api/api.js"></script>
+    <script src="js/auth/auth-api.js"></script>
     <script src="js/auth/auth-manager.js"></script>
     <script src="js/auth/auth-ui.js"></script>
     <script src="js/cart-sync.js"></script>
@@ -558,14 +561,22 @@
                             const redirectUrl = urlParams.get('redirect') || 'index.html';
                             window.location.href = redirectUrl;
                         } else {
-                            // Show error
-                            alert(result.error || 'Login failed. Please try again.');
+                            // Show inline error
+                            const errorDiv = document.getElementById('loginError');
+                            if (errorDiv) {
+                                errorDiv.textContent = result.error || 'Login failed. Please try again.';
+                                errorDiv.style.display = 'block';
+                            }
                             loginBtn.disabled = false;
                             loginBtn.innerHTML = 'Sign In';
                         }
                     } catch (error) {
                         console.error('Login error:', error);
-                        alert('An error occurred. Please try again.');
+                        const errorDiv = document.getElementById('loginError');
+                        if (errorDiv) {
+                            errorDiv.textContent = 'An error occurred. Please try again.';
+                            errorDiv.style.display = 'block';
+                        }
                         loginBtn.disabled = false;
                         loginBtn.innerHTML = 'Sign In';
                     }

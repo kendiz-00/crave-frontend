@@ -197,6 +197,9 @@ const AuthManager = (function() {
      */
     async function login(credentials, rememberMe = false) {
         try {
+            if (!_AuthAPI) {
+                throw new Error('Authentication system not loaded. Please refresh the page and try again.');
+            }
             const response = await _AuthAPI.login(credentials);
             
             if (response.success && response.data) {
@@ -287,6 +290,9 @@ const AuthManager = (function() {
      */
     async function register(userData) {
         try {
+            if (!_AuthAPI) {
+                throw new Error('Authentication system not loaded. Please refresh the page and try again.');
+            }
             const response = await _AuthAPI.register(userData);
             
             if (response.success && response.data) {
@@ -325,7 +331,9 @@ const AuthManager = (function() {
      */
     async function logout() {
         try {
-            await _AuthAPI.logout();
+            if (_AuthAPI) {
+                await _AuthAPI.logout();
+            }
         } catch (error) {
             console.error('Logout API error:', error);
         } finally {
@@ -361,6 +369,10 @@ const AuthManager = (function() {
         }
 
         try {
+            if (!_AuthAPI) {
+                console.warn('AuthAPI not available for token refresh');
+                return null;
+            }
             const response = await _AuthAPI.refreshToken(token);
             
             if (response.success && response.data) {
@@ -396,6 +408,10 @@ const AuthManager = (function() {
      */
     async function fetchCurrentUser() {
         try {
+            if (!_AuthAPI) {
+                console.warn('AuthAPI not available for fetching current user');
+                return null;
+            }
             const response = await _AuthAPI.getCurrentUser();
             
             if (response.success && response.data) {
