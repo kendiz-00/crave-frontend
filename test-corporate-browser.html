@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORPERATE Promo Code Browser Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        #result { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 4px; }
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>CORPERATE Promo Code Browser Test</h1>
+    <p>This test loads the live promo-codes.js from craveghana.com and validates the CORPERATE code.</p>
+    
+    <button onclick="runTests()">Run Tests</button>
+    
+    <div id="result"></div>
+
+    <script src="https://www.craveghana.com/js/promo-codes.js"></script>
+    <script>
+        async function runTests() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Running tests...</p>';
+
+            let testsPassed = 0;
+            let testsFailed = 0;
+            let output = '';
+
+            // Test 1: CORPERATE with GHS 100 order
+            try {
+                const result1 = await CravePromoCodes.apply('CORPERATE', 100, []);
+                if (result1.valid && result1.discount === 10) {
+                    output += '<p class="pass">✅ Test 1 PASS: CORPERATE with GHS 100 order - Discount: GHS 10</p>';
+                    testsPassed++;
+                } else {
+                    output += `<p class="fail">❌ Test 1 FAIL: Expected discount 10, got ${result1.discount}</p>`;
+                    testsFailed++;
+                }
+            } catch (error) {
+                output += `<p class="fail">❌ Test 1 ERROR: ${error.message}</p>`;
+                testsFailed++;
+            }
+
+            // Test 2: CORPERATE with GHS 50 order
+            try {
+                const result2 = await CravePromoCodes.apply('CORPERATE', 50, []);
+                if (result2.valid && result2.discount === 5) {
+                    output += '<p class="pass">✅ Test 2 PASS: CORPERATE with GHS 50 order - Discount: GHS 5</p>';
+                    testsPassed++;
+                } else {
+                    output += `<p class="fail">❌ Test 2 FAIL: Expected discount 5, got ${result2.discount}</p>`;
+                    testsFailed++;
+                }
+            } catch (error) {
+                output += `<p class="fail">❌ Test 2 ERROR: ${error.message}</p>`;
+                testsFailed++;
+            }
+
+            // Test 3: Invalid code
+            try {
+                const result3 = await CravePromoCodes.apply('INVALID', 100, []);
+                if (!result3.valid) {
+                    output += '<p class="pass">✅ Test 3 PASS: Invalid code rejected</p>';
+                    testsPassed++;
+                } else {
+                    output += '<p class="fail">❌ Test 3 FAIL: Invalid code was accepted</p>';
+                    testsFailed++;
+                }
+            } catch (error) {
+                output += `<p class="fail">❌ Test 3 ERROR: ${error.message}</p>`;
+                testsFailed++;
+            }
+
+            // Summary
+            output += `<hr>`;
+            output += `<p><strong>Results:</strong> ${testsPassed} passed, ${testsFailed} failed</p>`;
+            
+            if (testsFailed === 0) {
+                output += '<p class="pass">✅ ALL TESTS PASSED</p>';
+            } else {
+                output += '<p class="fail">❌ SOME TESTS FAILED</p>';
+            }
+
+            resultDiv.innerHTML = output;
+        }
+    </script>
+</body>
+</html>

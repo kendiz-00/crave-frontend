@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORPERATE Promo Code Test</title>
+</head>
+<body>
+    <h1>CORPERATE Promo Code Test</h1>
+    <button onclick="testPromoCode()">Test CORPERATE Code</button>
+    <div id="result"></div>
+
+    <script src="https://www.craveghana.com/js/promo-codes.js"></script>
+    <script>
+        async function testPromoCode() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+
+            try {
+                const result = await CravePromoCodes.apply('CORPERATE', 100, []);
+                resultDiv.innerHTML = `
+                    <h2>Result:</h2>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                    <p>Valid: ${result.valid}</p>
+                    <p>Discount: ${result.discount}</p>
+                    <p>Expected: 10 (10% of 100)</p>
+                    <p>${result.valid && result.discount === 10 ? '✅ PASS' : '❌ FAIL'}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

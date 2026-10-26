@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Checkout Flow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #console-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #007bff;
+            padding-left: 10px;
+        }
+        .log-error {
+            border-left-color: #dc3545;
+            color: #ff6b6b;
+        }
+        .log-success {
+            border-left-color: #28a745;
+            color: #69db7c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Checkout Flow Locally</h1>
+
+    <div class="test-section">
+        <h2>Step 1: Setup Test Cart</h2>
+        <button onclick="setupTestCart()">Setup Cart with Item + Add-ons</button>
+        <button onclick="clearCart()">Clear Cart</button>
+        <div id="cartStatus"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 2: Test Checkout</h2>
+        <button onclick="openCheckout()">Open Checkout Page</button>
+        <button onclick="testButtonState()">Check Button State</button>
+        <div id="buttonStatus"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 3: Simulate Form Submission</h2>
+        <button onclick="simulateFormSubmit()">Simulate Click</button>
+        <div id="submissionResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <div id="console-output"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const consoleDiv = document.getElementById('console-output');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type === 'error' ? 'log-error' : type === 'success' ? 'log-success' : ''}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleDiv.appendChild(entry);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        function setupTestCart() {
+            const testCart = [
+                {
+                    name: "Loaded Fries",
+                    menuItemId: "loaded-fries-001",
+                    price: 25,
+                    unitPrice: 27,
+                    quantity: 2,
+                    customizations: [
+                        { name: "Extra Cheese", price: 2 }
+                    ]
+                }
+            ];
+            localStorage.setItem('craveCart', JSON.stringify(testCart));
+            document.getElementById('cartStatus').innerHTML = '<div style="color: green;">✓ Test cart set up: 1 item "Loaded Fries" x2 with "Extra Cheese" add-on</div>';
+            log('Test cart set up successfully', 'success');
+        }
+
+        function clearCart() {
+            localStorage.removeItem('craveCart');
+            document.getElementById('cartStatus').innerHTML = '<div style="color: red;">✗ Cart cleared</div>';
+            log('Cart cleared', 'info');
+        }
+
+        function openCheckout() {
+            window.open('checkout.html', '_blank');
+            log('Opened checkout.html in new tab', 'info');
+        }
+
+        function testButtonState() {
+            // Check if cart exists
+            const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            const cartStatus = cart.length > 0 ? 'Cart has items' : 'Cart is empty';
+            
+            document.getElementById('buttonStatus').innerHTML = `
+                <div>Cart Status: ${cartStatus}</div>
+                <div>Cart Items: ${JSON.stringify(cart, null, 2)}</div>
+            `;
+            log(`Button state check: ${cartStatus}`, cart.length > 0 ? 'success' : 'error');
+        }
+
+        function simulateFormSubmit() {
+            log('Simulating form submission...', 'info');
+            
+            // Check if cart exists
+            const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            if (cart.length === 0) {
+                log('ERROR: Cart is empty', 'error');
+                document.getElementById('submissionResult').innerHTML = '<div style="color: red;">ERROR: Cart is empty</div>';
+                return;
+            }
+
+            // Simulate form data
+            const orderData = {
+                fullName: "Test Customer",
+                phoneNumber: "0500000000",
+                deliveryCoordinates: "5.6037,-0.1870",
+                orderType: "Delivery",
+                additionalNotes: "Test order"
+            };
+
+            log(`Order data: ${JSON.stringify(orderData)}`, 'info');
+            log(`Cart: ${JSON.stringify(cart)}`, 'info');
+
+            // Test if required functions exist
+            if (typeof generateWhatsAppMessage === 'function') {
+                try {
+                    const message = generateWhatsAppMessage(orderData);
+                    log('WhatsApp message generated successfully', 'success');
+                    log(`Message length: ${message.length} characters`, 'info');
+                    
+                    // Check if message contains expected items
+                    if (message.includes('Loaded Fries') && message.includes('Extra Cheese')) {
+                        log('✓ Message contains item and add-on', 'success');
+                    } else {
+                        log('✗ Message missing item or add-on', 'error');
+                    }
+
+                    document.getElementById('submissionResult').innerHTML = `
+                        <div style="color: green;">✓ WhatsApp message generated successfully</div>
+                        <div style="margin-top: 10px; font-size: 12px;">Message length: ${message.length} chars</div>
+                    `;
+                } catch (error) {
+                    log(`ERROR generating message: ${error.message}`, 'error');
+                    document.getElementById('submissionResult').innerHTML = `<div style="color: red;">ERROR: ${error.message}</div>`;
+                }
+            } else {
+                log('ERROR: generateWhatsAppMessage function not found', 'error');
+                document.getElementById('submissionResult').innerHTML = '<div style="color: red;">ERROR: generateWhatsAppMessage function not found</div>';
+            }
+        }
+
+        // Initial check
+        window.onload = function() {
+            const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            log(`Initial cart check: ${cart.length} items`, cart.length > 0 ? 'success' : 'info');
+        };
+    </script>
+</body>
+</html>

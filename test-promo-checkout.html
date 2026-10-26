@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORPERATE Promo Code Checkout Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; margin: 10px 5px; }
+        button:hover { background: #0056b3; }
+        #log { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 400px; overflow-y: auto; }
+        .log-entry { margin: 5px 0; padding: 5px; border-left: 3px solid #ccc; }
+        .log-promo { border-left-color: #007bff; }
+        .log-checkout { border-left-color: #28a745; }
+        .log-error { border-left-color: #dc3545; }
+        #test-result { margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 4px; }
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>CORPERATE Promo Code Checkout Test</h1>
+    <p>This test simulates the checkout promo code flow using the live frontend code.</p>
+    
+    <button onclick="testPromoCode()">Test CORPERATE Code</button>
+    <button onclick="testInvalidCode()">Test Invalid Code</button>
+    <button onclick="clearLog()">Clear Log</button>
+    
+    <div id="test-result"></div>
+    <div id="log"></div>
+
+    <script src="https://www.craveghana.com/js/promo-codes.js"></script>
+    <script>
+        // Override console.log to capture in our log div
+        const originalLog = console.log;
+        const originalError = console.error;
+        const logDiv = document.getElementById('log');
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry log-promo';
+            entry.textContent = '[LOG] ' + args.join(' ');
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry log-error';
+            entry.textContent = '[ERROR] ' + args.join(' ');
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        };
+
+        function clearLog() {
+            logDiv.innerHTML = '';
+            document.getElementById('test-result').innerHTML = '';
+        }
+
+        async function testPromoCode() {
+            clearLog();
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<p>Testing CORPERATE with GHS 100 order...</p>';
+
+            try {
+                const result = await CravePromoCodes.apply('CORPERATE', 100, []);
+                
+                let output = '<h2>Test Result:</h2>';
+                output += '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                
+                if (result.valid && result.discount === 10) {
+                    output += '<p class="pass">✅ PASS: CORPERATE validated, discount = GHS 10 (10% of 100)</p>';
+                } else {
+                    output += `<p class="fail">❌ FAIL: Expected discount 10, got ${result.discount}</p>`;
+                }
+                
+                resultDiv.innerHTML = output;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="fail">❌ ERROR: ${error.message}</p>`;
+            }
+        }
+
+        async function testInvalidCode() {
+            clearLog();
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<p>Testing INVALID code...</p>';
+
+            try {
+                const result = await CravePromoCodes.apply('INVALID', 100, []);
+                
+                let output = '<h2>Test Result:</h2>';
+                output += '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                
+                if (!result.valid) {
+                    output += '<p class="pass">✅ PASS: Invalid code rejected</p>';
+                } else {
+                    output += '<p class="fail">❌ FAIL: Invalid code was accepted</p>';
+                }
+                
+                resultDiv.innerHTML = output;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="fail">❌ ERROR: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
