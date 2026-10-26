@@ -57,241 +57,506 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
     
     <style>
-        /* Clean Editorial Hero Section */
-        .hero-section {
+        /* ══════════════════════════════════════════════════════════════════
+           CRAVE HOMEPAGE HERO & REDESIGNED ICED TEA PROMOTION
+           ══════════════════════════════════════════════════════════════════ */
+        
+        /* Ensure no inherited pseudo-elements conflict with the hero */
+        body.crave-home .clean-hero::before,
+        body.crave-home .clean-hero::after {
+            content: none !important;
+            display: none !important;
+        }
+
+        body.crave-home .clean-hero {
             position: relative;
-            min-height: 90vh;
-            background: #1a1a1a;
+            min-height: 85vh;
+            padding: 120px 0 70px;
             display: flex;
             align-items: center;
             overflow: hidden;
+            background: #0a0a0c;
+            isolation: isolate;
+            width: 100%;
+            margin: 0;
+            box-sizing: border-box;
         }
-        
-        .hero-background {
+
+        body.crave-home .hero-cinematic-bg {
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
             z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
         }
-        
-        .hero-content-wrapper {
+
+        body.crave-home .hero-bg-glow {
+            position: absolute;
+            top: 20%;
+            right: 15%;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(212, 163, 115, 0.12) 0%, transparent 65%);
+            filter: blur(60px);
+            pointer-events: none;
+        }
+
+        body.crave-home .hero-bg-vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 35%, rgba(6, 6, 8, 0.88) 100%);
+            pointer-events: none;
+        }
+
+        body.crave-home .hero-container {
             position: relative;
-            z-index: 1;
+            z-index: 2;
             width: 100%;
-            padding: 80px 0;
-        }
-        
-        .hero-container {
-            max-width: 1200px;
+            max-width: 1240px;
             margin: 0 auto;
             padding: 0 24px;
+            box-sizing: border-box;
         }
-        
-        .hero-grid {
+
+        body.crave-home .hero-split-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 52px;
             align-items: center;
+            width: 100%;
         }
-        
-        .hero-text-col {
+
+        /* Left Column: Copy & Actions */
+        body.crave-home .hero-copy-col {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            align-items: flex-start;
+            text-align: left;
+            width: 100%;
         }
-        
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            background: linear-gradient(135deg, #d4a373 0%, #c8962a 100%);
-            color: #1a1a1a;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            font-family: 'Poppins', sans-serif;
-            width: fit-content;
-        }
-        
-        .hero-title {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
-            font-weight: 700;
-            line-height: 1.2;
-            color: #f0e8d6;
-            margin: 0;
-            letter-spacing: -0.02em;
-        }
-        
-        .hero-description {
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(1rem, 1.2vw, 1.125rem);
-            font-weight: 400;
-            line-height: 1.7;
-            color: rgba(240, 232, 214, 0.85);
-            margin: 0;
-            max-width: 520px;
-        }
-        
-        .hero-cta-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 8px;
-        }
-        
-        .hero-cta-primary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            background: linear-gradient(135deg, #d4a373 0%, #c8962a 100%);
-            color: #1a1a1a;
-            padding: 16px 32px;
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            width: fit-content;
-        }
-        
-        .hero-cta-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(212, 163, 115, 0.4);
-        }
-        
-        .hero-cta-secondary {
+
+        body.crave-home .hero-eyebrow {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: #f0e8d6;
-            font-family: 'Poppins', sans-serif;
-            font-size: 15px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: color 0.3s ease;
-            width: fit-content;
+            padding: 6px 16px;
+            background: rgba(212, 163, 115, 0.1);
+            border: 1px solid rgba(212, 163, 115, 0.25);
+            border-radius: 30px;
+            margin-bottom: 22px;
         }
-        
-        .hero-cta-secondary:hover {
+
+        body.crave-home .eyebrow-icon {
+            color: #ffd700;
+            font-size: 11px;
+        }
+
+        body.crave-home .eyebrow-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
             color: #d4a373;
         }
-        
-        .hero-trust-badges {
+
+        /* Headline: FOOD WORTH in ivory, CRAVING. in gold */
+        body.crave-home .hero-headline {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.5rem, 5.2vw, 4.2rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin: 0 0 22px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+            animation: heroFadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes heroFadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(22px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body.crave-home .hero-headline {
+                animation: none !important;
+            }
+        }
+
+        body.crave-home .headline-ivory {
+            color: #f0e8d6;
+        }
+
+        body.crave-home .headline-gold {
+            background: linear-gradient(135deg, #ffd700 0%, #d4a373 60%, #c49a6c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #d4a373;
+            display: inline-block;
+        }
+
+        body.crave-home .hero-subheading {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(1rem, 1.4vw, 1.15rem);
+            font-weight: 400;
+            color: rgba(240, 232, 214, 0.82);
+            line-height: 1.68;
+            max-width: 540px;
+            margin: 0 0 32px;
+        }
+
+        /* CTA Group */
+        body.crave-home .hero-cta-group {
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-top: 16px;
+            margin-bottom: 34px;
             flex-wrap: wrap;
+            width: 100%;
         }
-        
-        .trust-badge {
+
+        body.crave-home .hero-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-height: 54px;
+            padding: 0 32px;
+            background: linear-gradient(135deg, #d4a373 0%, #c49a6c 100%);
+            color: #111111;
+            border-radius: 30px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(212, 163, 115, 0.3);
+            transition: transform 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
+            cursor: pointer;
+        }
+
+        body.crave-home .hero-btn-primary:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #ffd700 0%, #d4a373 100%);
+            box-shadow: 0 12px 32px rgba(255, 215, 0, 0.4);
+            color: #111111;
+        }
+
+        body.crave-home .hero-btn-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 54px;
+            padding: 0 26px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: #f0e8d6;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(240, 232, 214, 0.2);
+            border-radius: 30px;
+            transition: all 0.25s ease;
+        }
+
+        body.crave-home .hero-btn-link:hover {
+            color: #ffd700;
+            background: rgba(212, 163, 115, 0.12);
+            border-color: rgba(212, 163, 115, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Trust Badges */
+        body.crave-home .hero-trust-row {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: rgba(240, 232, 214, 0.7);
+            gap: 12px;
             font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            font-weight: 400;
+            font-size: 13px;
+            color: rgba(240, 232, 214, 0.72);
+            flex-wrap: wrap;
         }
-        
-        .trust-sep {
-            color: rgba(240, 232, 214, 0.3);
+
+        body.crave-home .trust-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        
-        .hero-image-col {
+
+        body.crave-home .trust-item i {
+            color: #d4a373;
+            font-size: 12px;
+        }
+
+        body.crave-home .trust-sep {
+            color: rgba(212, 163, 115, 0.35);
+        }
+
+        /* Right Column: Redesigned Free Iced Tea Promotion Panel */
+        body.crave-home .hero-promo-col {
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        
-        .hero-image-wrapper {
-            position: relative;
-            max-width: 500px;
             width: 100%;
         }
-        
-        .hero-iced-tea-image {
+
+        body.crave-home .crave-promo-panel {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            background: linear-gradient(155deg, #1a1a1e 0%, #111113 100%);
+            border: 1px solid rgba(212, 175, 55, 0.24);
+            border-radius: 18px;
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.crave-home .crave-promo-panel:hover {
+            transform: translateY(-3px);
+            border-color: rgba(212, 175, 55, 0.42);
+            box-shadow: 0 24px 54px rgba(0, 0, 0, 0.6), 0 0 30px rgba(212, 163, 115, 0.12);
+        }
+
+        body.crave-home .crave-promo-panel__visual {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #0f0f11;
+            padding: 12px 8px;
+            box-sizing: border-box;
+        }
+
+        body.crave-home .crave-promo-panel__img {
             width: 100%;
             height: auto;
+            max-height: 270px;
             object-fit: contain;
             display: block;
+            border-radius: 8px;
+            filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.5));
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        
-        /* Mobile Responsive */
-        @media (max-width: 1024px) {
-            .hero-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                text-align: center;
-            }
-            
-            .hero-text-col {
-                align-items: center;
-            }
-            
-            .hero-badge {
-                margin: 0 auto;
-            }
-            
-            .hero-description {
-                max-width: 100%;
-            }
-            
-            .hero-cta-wrapper {
-                align-items: center;
-            }
-            
-            .hero-trust-badges {
-                justify-content: center;
-            }
-            
-            .hero-image-col {
-                order: -1;
-            }
-            
-            .hero-image-wrapper {
-                max-width: 350px;
-            }
+
+        body.crave-home .crave-promo-panel:hover .crave-promo-panel__img {
+            transform: scale(1.025);
         }
+
+        body.crave-home .crave-promo-panel__content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+        }
+
+        body.crave-home .crave-promo-panel__label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #d4a373;
+        }
+
+        body.crave-home .crave-promo-panel__heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(1.3rem, 2vw, 1.6rem);
+            font-weight: 700;
+            line-height: 1.25;
+            color: #f0e8d6;
+            margin: 0;
+            letter-spacing: -0.01em;
+        }
+
+        body.crave-home .crave-promo-panel__copy {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.55;
+            color: rgba(240, 232, 214, 0.8);
+            margin: 0;
+        }
+
+        body.crave-home .crave-promo-panel__note {
+            font-family: 'Poppins', sans-serif;
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(212, 175, 55, 0.7);
+            margin-top: 4px;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           RESPONSIVE MOBILE & TABLET LAYOUTS
+           ══════════════════════════════════════════════════════════════════ */
         
-        @media (max-width: 640px) {
-            .hero-content-wrapper {
-                padding: 60px 0;
-            }
-            
-            .hero-grid {
-                gap: 32px;
-            }
-            
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-description {
-                font-size: 1rem;
-            }
-            
-            .hero-cta-primary {
+        @media (max-width: 991px) {
+            body.crave-home .clean-hero {
+                min-height: auto;
+                padding: 90px 0 60px;
                 width: 100%;
-                padding: 14px 24px;
             }
-            
-            .hero-trust-badges {
+
+            body.crave-home .hero-container {
+                padding: 0 18px;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            body.crave-home .hero-split-layout {
+                display: flex;
                 flex-direction: column;
+                gap: 16px;
+                width: 100%;
+                margin: 0;
+            }
+
+            body.crave-home .hero-copy-col {
+                display: contents;
+            }
+
+            body.crave-home .hero-eyebrow {
+                order: 1;
+                align-self: flex-start;
+                margin-bottom: 0;
+            }
+
+            body.crave-home .hero-headline {
+                order: 2;
+                font-size: clamp(2rem, 7vw, 2.75rem);
+                line-height: 1.12;
+                margin-bottom: 0;
+                width: 100%;
+                text-align: left;
+            }
+
+            body.crave-home .hero-subheading {
+                order: 3;
+                font-size: clamp(0.92rem, 3.2vw, 1.05rem);
+                line-height: 1.58;
+                margin-bottom: 0;
+                max-width: 100%;
+                width: 100%;
+                text-align: left;
+            }
+
+            body.crave-home .hero-cta-group {
+                order: 4;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 4px;
+                margin-bottom: 8px;
+            }
+
+            body.crave-home .hero-promo-col {
+                order: 5;
+                width: 100%;
+                margin: 6px 0 0;
+            }
+
+            body.crave-home .crave-promo-panel {
+                max-width: 100%;
+                width: 100%;
+                padding: 18px 20px;
+                box-sizing: border-box;
+                gap: 12px;
+            }
+
+            body.crave-home .crave-promo-panel__visual {
+                padding: 8px 6px;
+            }
+
+            body.crave-home .crave-promo-panel__img {
+                max-height: 180px;
+            }
+
+            body.crave-home .crave-promo-panel__heading {
+                font-size: clamp(1.2rem, 3.8vw, 1.45rem);
+                line-height: 1.25;
+            }
+
+            body.crave-home .crave-promo-panel__copy {
+                font-size: 13.5px;
+                line-height: 1.5;
+            }
+
+            body.crave-home .hero-btn-primary,
+            body.crave-home .hero-btn-link {
+                width: 100%;
+                min-height: 50px;
+                justify-content: center;
+                box-sizing: border-box;
+                font-size: 14.5px;
+            }
+
+            body.crave-home .hero-trust-row {
+                order: 6;
+                width: 100%;
+                justify-content: flex-start;
+                gap: 8px 12px;
+                margin-top: 4px;
+                font-size: 12px;
+            }
+        }
+
+        /* 360px - 430px Mobile Screens */
+        @media (max-width: 480px) {
+            body.crave-home .clean-hero {
+                padding: 86px 0 55px;
+            }
+
+            body.crave-home .hero-container {
+                padding: 0 16px;
+            }
+
+            body.crave-home .hero-headline {
+                font-size: clamp(1.9rem, 7.8vw, 2.35rem);
+                letter-spacing: -0.015em;
+            }
+
+            body.crave-home .crave-promo-panel {
+                padding: 14px 16px;
+                border-radius: 14px;
                 gap: 8px;
             }
-            
-            .trust-sep {
-                display: none;
+
+            body.crave-home .crave-promo-panel__visual {
+                padding: 6px 4px;
             }
-            
-            .hero-image-wrapper {
-                max-width: 280px;
+
+            body.crave-home .crave-promo-panel__img {
+                max-height: 145px;
+            }
+
+            body.crave-home .crave-promo-panel__heading {
+                font-size: 1.15rem;
+            }
+
+            body.crave-home .crave-promo-panel__copy {
+                font-size: 13px;
+                line-height: 1.45;
+            }
+
+            body.crave-home .hero-trust-row {
+                font-size: 11.5px;
             }
         }
     </style>
@@ -340,136 +605,8 @@
             transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.45s;
         }
 
-        /* ══ CRAVE Premium Free-Drink Campaign Banner ═══════════════════════ */
-        .crave-first-order-hero-promo {
-            position: relative;
-            margin: 28px 0 8px;
-            border-radius: 18px;
-            border: 1px solid rgba(212,175,55,0.28);
-            background: linear-gradient(135deg,
-                rgba(20,16,10,0.97) 0%,
-                rgba(30,22,8,0.99) 55%,
-                rgba(18,14,6,0.97) 100%);
-            box-shadow:
-                0 0 0 1px rgba(212,175,55,0.07),
-                0 8px 40px rgba(0,0,0,0.55),
-                0 0 60px rgba(212,175,55,0.07) inset;
-            overflow: hidden;
-            animation: craveFopReveal 0.6s cubic-bezier(0.22,1,0.36,1) both;
-        }
-        .crave-first-order-hero-promo::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(110deg, rgba(212,175,55,0.07) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        @keyframes craveFopReveal {
-            from { opacity:0; transform:translateY(10px); }
-            to   { opacity:1; transform:translateY(0); }
-        }
-        .crave-fop__inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 26px 44px 22px 26px;
-        }
-        .crave-fop__copy { flex: 1 1 0; min-width: 0; }
-        .crave-fop__eyebrow {
-            margin: 0 0 10px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: rgba(212,175,55,0.65);
-            font-family: 'Poppins', sans-serif;
-        }
-        .crave-fop__headline {
-            margin: 0 0 10px;
-            font-size: clamp(22px, 5.2vw, 34px);
-            font-weight: 800;
-            line-height: 1.06;
-            color: #f0e8d6;
-            font-family: 'Playfair Display', Georgia, serif;
-            letter-spacing: -0.01em;
-        }
-        .crave-fop__free {
-            font-style: normal;
-            background: linear-gradient(135deg, #f0c040 0%, #c8962a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 0 18px rgba(212,175,55,0.4));
-        }
-        .crave-first-order-hero-promo__badge { display: none; }
-        .crave-first-order-hero-promo__text {
-            display: block;
-            margin: 0 0 8px;
-            font-size: 13px;
-            line-height: 1.5;
-            color: rgba(240,232,214,0.7);
-            font-family: 'Poppins', sans-serif;
-        }
-        .crave-fop__footnote {
-            margin: 0;
-            font-size: 9.5px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: rgba(212,175,55,0.38);
-            font-family: 'Poppins', sans-serif;
-        }
-        .crave-fop__visual {
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .crave-fop__img-ring {
-            position: relative;
-            width: 116px;
-            height: 116px;
-            border-radius: 50%;
-            border: 1.5px solid rgba(212,175,55,0.3);
-            box-shadow: 0 0 0 6px rgba(212,175,55,0.06), 0 4px 24px rgba(0,0,0,0.5);
-            overflow: hidden;
-            background: rgba(212,175,55,0.05);
-        }
-        .crave-fop__img {
-            width: 100%; height: 100%;
-            object-fit: cover; object-position: center;
-            display: block;
-        }
-        .crave-fop__img-glow {
-            position: absolute; inset: 0; border-radius: 50%;
-            background: radial-gradient(circle at 60% 30%, rgba(212,175,55,0.18) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        .crave-fop__close {
-            position: absolute; top: 10px; right: 12px;
-            background: none; border: none;
-            color: rgba(212,175,55,0.45);
-            font-size: 13px; line-height: 1;
-            cursor: pointer; padding: 6px;
-            border-radius: 50%;
-            transition: color 0.2s, background 0.2s;
-        }
-        .crave-fop__close:hover { color: #d4af37; background: rgba(212,175,55,0.1); }
-        @media (max-width: 640px) {
-            .crave-fop__visual { display: none; }
-            .crave-fop__inner { padding: 22px 40px 18px 20px; gap: 0; }
-            .crave-fop__headline { font-size: clamp(24px,7.5vw,32px); }
-        }
-        @media (min-width: 641px) and (max-width: 1023px) {
-            .crave-fop__img-ring { width: 92px; height: 92px; }
-        }
-        @media (min-width: 1024px) {
-            .crave-fop__inner { padding: 30px 52px 26px 30px; }
-            .crave-fop__img-ring { width: 134px; height: 134px; }
-        }
-        /* ══════════════════════════════════════════════════════════════════ */
-    </style>
+            </style>
+
 </head>
 <body class="crave-home">
     <div id="craveUpdateToast" class="crave-update-toast" role="status" aria-live="polite">
@@ -600,79 +737,64 @@
 		</div>
 	</aside>
 
-	<!-- Premium Hero Section with Iced Tea Promotion -->
-	<section class="hero-section">
-		<div class="hero-background"></div>
-		
-		<div class="hero-content-wrapper">
-			<div class="hero-container">
-				<div class="hero-grid">
-					<!-- Left Column: Copy and CTAs -->
-					<div class="hero-text-col">
-						<div class="hero-badge">
-							FIRST ORDER EXCLUSIVE
-						</div>
-						
-						<h1 class="hero-title">
-							Your first order comes with a free iced tea.
-						</h1>
-						
-						<p class="hero-description">
-							Experience CRAVE's premium comfort food — crispy fried chicken, loaded fries, and handcrafted drinks. Prepared fresh daily and delivered fast across Accra.
-						</p>
-						
-						<div class="hero-cta-wrapper">
-							<a href="menu.html" class="hero-cta-primary">
-								Claim Your Free Iced Tea
-								<i class="fas fa-arrow-right" aria-hidden="true"></i>
-							</a>
-							<a href="menu.html" class="hero-cta-secondary">
-								Explore Menu
-							</a>
-						</div>
-						
-						<div class="hero-trust-badges">
-							<span class="trust-badge"><i class="fas fa-bolt" aria-hidden="true"></i> Fast Delivery</span>
-							<span class="trust-sep">•</span>
-							<span class="trust-badge"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Serving All Accra</span>
-							<span class="trust-sep">•</span>
-							<span class="trust-badge"><i class="fas fa-fire" aria-hidden="true"></i> Fresh Daily</span>
-						</div>
+	<!-- Clean Editorial Hero Section -->
+	<section class="clean-hero crave-reveal crave-reveal--static" id="craveHeroSection">
+		<div class="hero-cinematic-bg">
+			<div class="hero-bg-glow" aria-hidden="true"></div>
+			<div class="hero-bg-vignette" aria-hidden="true"></div>
+		</div>
+
+		<div class="hero-container">
+			<div class="hero-split-layout">
+				<!-- Left Column: Copy & Actions -->
+				<div class="hero-copy-col">
+					<div class="hero-eyebrow">
+						<span class="eyebrow-icon">✦</span>
+						<span class="eyebrow-text">ACCRA'S PREMIUM COMFORT FOOD</span>
 					</div>
-					
-					<!-- Right Column: Iced Tea Visual -->
-					<div class="hero-image-col">
-						<div class="hero-image-wrapper">
+
+					<h1 class="hero-headline">
+						<span class="headline-ivory">FOOD WORTH</span> <span class="headline-gold">CRAVING.</span>
+					</h1>
+
+					<p class="hero-subheading">
+						Crispy fried chicken, loaded fries, handcrafted smoothies & jar cakes. Prepared fresh daily and delivered fast across Accra.
+					</p>
+
+					<div class="hero-cta-group">
+						<a href="register.html?firstOrder=true" class="hero-btn-primary" id="heroClaimBtn">
+							<span>Claim Your Free Iced Tea</span>
+							<i class="fas fa-arrow-right" aria-hidden="true"></i>
+						</a>
+						<a href="menu.html" class="hero-btn-link" id="heroExploreBtn">
+							<span>Explore Menu</span>
+							<i class="fas fa-chevron-right" aria-hidden="true"></i>
+						</a>
+					</div>
+
+					<div class="hero-trust-row">
+						<span class="trust-item"><i class="fas fa-bolt" aria-hidden="true"></i> Fast Delivery</span>
+						<span class="trust-sep">•</span>
+						<span class="trust-item"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Serving All Accra</span>
+						<span class="trust-sep">•</span>
+						<span class="trust-item"><i class="fas fa-fire" aria-hidden="true"></i> Fresh Daily</span>
+					</div>
+				</div>
+
+				<!-- Right Column: Redesigned Free Iced Tea Promotion Panel -->
+				<div class="hero-promo-col">
+					<div class="crave-promo-panel" id="craveFirstOrderHeroPromo" role="region" aria-label="First order free iced tea offer">
+						<div class="crave-promo-panel__visual">
 							<picture>
 								<source srcset="images/iced_tea.webp" type="image/webp">
-								<img src="images/iced_tea.png" alt="Crave iced tea" class="hero-iced-tea-image" width="600" height="600" decoding="async" loading="eager">
+								<img src="images/iced_tea.png" alt="CRAVE Branded Iced Tea" class="crave-promo-panel__img" width="500" height="500" decoding="async" loading="eager">
 							</picture>
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-				</div>
-
-				<!-- Right Column: Mouthwatering Food Hero Centerpiece -->
-				<div class="hero-food-col">
-					<div class="hero-food-card">
-						<div class="hero-food-glow" aria-hidden="true"></div>
-						<div class="hero-food-img-wrap">
-							<img src="images/loaded_fries.jpg" alt="CRAVE Loaded Fries" class="hero-food-img" fetchpriority="high" decoding="async">
-						</div>
-
-						<!-- Integrated Featured Tag -->
-						<div class="hero-food-tag">
-							<div class="tag-badge">🔥 MOST CRAVED</div>
-							<div class="tag-meta">
-								<span class="tag-name">Loaded Fries</span>
-								<span class="tag-price">GH¢ 100.00</span>
-							</div>
-							<a href="menu.html" class="tag-action-btn" aria-label="Order Loaded Fries">
-								<i class="fas fa-plus" aria-hidden="true"></i>
-							</a>
+						<div class="crave-promo-panel__content">
+							<span class="crave-promo-panel__label">A LITTLE SOMETHING ON US</span>
+							<h2 class="crave-promo-panel__heading">Free iced tea with your first order.</h2>
+							<p class="crave-promo-panel__copy">Enjoy a complimentary iced tea with your first order.</p>
+							<span class="crave-promo-panel__note">First order only.</span>
 						</div>
 					</div>
 				</div>
@@ -1595,7 +1717,7 @@
 				}
 
 				// Optimized hero static presentation
-				var heroBg = document.querySelector('.hero-section .hero-background');
+				var heroBg = document.querySelector('.clean-hero .hero-cinematic-bg, .hero-section .hero-background');
 				if (heroBg) {
 					heroBg.style.transform = 'none';
 				}
@@ -2093,25 +2215,41 @@
 <script>
 (function() {
   'use strict';
-  function initPromoDismiss() {
-    // Old promo banner removed in redesign
-    if (!btn || !promo) return;
-    btn.addEventListener('click', function() {
-      promo.style.transition = 'opacity 0.3s ease, transform 0.3s ease, max-height 0.4s ease, margin 0.4s ease';
-      promo.style.opacity = '0';
-      promo.style.transform = 'translateY(-6px)';
-      promo.style.maxHeight = '0';
-      promo.style.margin = '0';
-      promo.style.overflow = 'hidden';
-      setTimeout(function() { promo.remove(); }, 420);
-      try { sessionStorage.setItem('crave_first_order_dismissed_hero', '1'); } catch(e) {}
+  document.addEventListener('DOMContentLoaded', async function() {
+    var claimBtn = document.getElementById('heroClaimBtn');
+    if (!claimBtn) return;
+    
+    // Check promo state if getFirstOrderPromoState is defined
+    if (typeof getFirstOrderPromoState === 'function') {
+      try {
+        var promoState = await getFirstOrderPromoState();
+        if (promoState && promoState.state === 'claimed') {
+          claimBtn.innerHTML = '<span>Choose Your Iced Tea</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>';
+          claimBtn.href = 'menu.html#smoothies';
+        } else if (promoState && promoState.state === 'ineligible') {
+          claimBtn.innerHTML = '<span>Explore Menu</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>';
+          claimBtn.href = 'menu.html';
+        }
+      } catch (err) {
+        console.debug('Promo state check:', err);
+      }
+    }
+    
+    claimBtn.addEventListener('click', function(e) {
+      if (typeof handleExplicitFirstOrderClaim === 'function') {
+        e.preventDefault();
+        handleExplicitFirstOrderClaim(claimBtn, 'hero');
+      }
     });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPromoDismiss);
-  } else {
-    initPromoDismiss();
-  }
+
+    var promoPanel = document.getElementById('craveFirstOrderHeroPromo');
+    if (promoPanel) {
+      promoPanel.style.cursor = 'pointer';
+      promoPanel.addEventListener('click', function() {
+        claimBtn.click();
+      });
+    }
+  });
 })();
 </script>
 </body>
