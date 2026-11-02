@@ -674,6 +674,8 @@
 
         // Render order summary
         function renderOrderSummary() {
+            loadCartFromStorage();
+            window.cartItems = cartItems;
             const cartContainer = document.getElementById('checkoutCartItems');
             const emptyState = document.getElementById('emptyCartState');
             const orderTotals = document.getElementById('orderTotals');
@@ -757,12 +759,16 @@
             });
 
             // Update totals
-            const total = subtotal;
-
             document.getElementById('subtotalAmount').textContent = `GH¢ ${subtotal.toFixed(2)}`;
             const deliveryFeeEl = document.getElementById('deliveryFee');
             if (deliveryFeeEl) deliveryFeeEl.textContent = `GH¢ 0.00`;
-            document.getElementById('totalAmount').textContent = `GH¢ ${total.toFixed(2)}`;
+            if (typeof recalculateTotal === 'function') {
+                recalculateTotal();
+            } else if (typeof window.recalculateTotal === 'function') {
+                window.recalculateTotal();
+            } else {
+                document.getElementById('totalAmount').textContent = `GH¢ ${subtotal.toFixed(2)}`;
+            }
         }
 
         // Update copyright year
@@ -971,7 +977,9 @@
                 phoneNumber: formData.get('phoneNumber').trim(),
                 deliveryCoordinates: formData.get('deliveryCoordinates').trim(),
                 orderType: formData.get('orderType'),
-                additionalNotes: formData.get('additionalNotes').trim()
+                additionalNotes: formData.get('additionalNotes').trim(),
+                promoCode: (typeof window.appliedPromoCode !== 'undefined' ? window.appliedPromoCode : null),
+                promoDiscount: (typeof window.promoDiscountUsed !== 'undefined' ? window.promoDiscountUsed : 0)
             };
 
             // Validate required fields
@@ -1319,7 +1327,17 @@
             const selectedMilestoneTitle = rewardInfo && rewardInfo.title ? rewardInfo.title : (selectedClaim && selectedClaim.rewardId ? rewardTitleMap[selectedClaim.rewardId] || 'Milestone Reward' : null);
             const milestoneDiscount = (rewardInfo && rewardInfo.discount) ? rewardInfo.discount : 0;
             const hasMilestoneReward = !!(selectedClaim || rewardInfo || selectedMilestoneTitle);
-            const hasPromoDiscount = typeof promoDiscountUsed !== 'undefined' && promoDiscountUsed > 0 && typeof appliedPromoCode !== 'undefined' && appliedPromoCode !== null;
+            const currentPromoCode = (orderData && orderData.promoCode)
+                || (typeof window.appliedPromoCode !== 'undefined' ? window.appliedPromoCode : null)
+                || (typeof appliedPromoCode !== 'undefined' ? appliedPromoCode : null);
+
+            let effectivePromoDiscount = promoDiscountUsed;
+            if (currentPromoCode && typeof window.appliedPromoType !== 'undefined' && window.appliedPromoType === 'PERCENTAGE' && window.appliedPromoValue) {
+                effectivePromoDiscount = subtotal * (window.appliedPromoValue / 100);
+            }
+
+            const hasPromoDiscount = (effectivePromoDiscount > 0 || (typeof promoDiscountUsed !== 'undefined' && promoDiscountUsed > 0)) && !!currentPromoCode;
+            const finalPromoDiscount = effectivePromoDiscount > 0 ? effectivePromoDiscount : (promoDiscountUsed || 0);
             const hasPointsDiscount = typeof pointsUsed !== 'undefined' && pointsUsed > 0;
 
             if (hasMilestoneReward || hasPromoDiscount || hasPointsDiscount) {
@@ -1331,12 +1349,13 @@
                     message += `Reward Discount: -GH¢${milestoneDiscount.toFixed(2)}\n`;
                 }
                 if (hasPromoDiscount) {
-                    message += `Promo Discount: -GH¢${promoDiscountUsed.toFixed(2)}\n`;
+                    message += `Promo Code: ${currentPromoCode}\n`;
+                    message += `Promo Discount: -GH¢${finalPromoDiscount.toFixed(2)}\n`;
                 }
                 if (hasPointsDiscount) {
                     message += `Points Discount: -GH¢${pointsUsed.toFixed(2)}\n`;
                 }
-                const amountPayable = Math.max(0, subtotal - milestoneDiscount - (promoDiscountUsed || 0) - (pointsUsed || 0));
+                const amountPayable = Math.max(0, subtotal - milestoneDiscount - finalPromoDiscount - (pointsUsed || 0));
                 message += `Amount Payable: GH¢${amountPayable.toFixed(2)}\n\n\n`;
             } else {
                 message += `TOTAL: GH¢${subtotal.toFixed(2)}\n\n\n`;
@@ -2857,9 +2876,6 @@
             renderClaimedMilestoneList();
 
             // Show/hide the free iced tea selector panel
-            const selectedClaim = claimId
-                ? userClaimedMilestones.find(c => c.id === claimId)
-                : null;
             if (selectedClaim && selectedClaim.rewardId === 'milestone_free_drink_100') {
                 await renderFreeDrinkSelector(selectedClaim);
             } else {
@@ -3098,6 +3114,7 @@
 
         function loadCartItems() {
             const cart = JSON.parse(localStorage.getItem('craveCart')) || [];
+            window.cartItems = cart;
             const cartItemsContainer = document.getElementById('checkoutCartItems');
             const emptyCartState = document.getElementById('emptyCartState');
             
@@ -3289,8 +3306,8 @@
         }
 
         function recalculateTotal() {
-            const subtotalText = (document.getElementById('subtotalAmount')?.textContent || '').replace('GHS ', '').replace('GH¢ ', '').replace('GH₵ ', '');
-            const subtotal = parseFloat(subtotalText) || 0;
+            const subtotalText = document.getElementById('subtotalAmount')?.textContent || '';
+            const subtotal = parseFloat(subtotalText.replace(/[^\d.]/g, '')) || 0;
 
             const rewardInfo = typeof getSelectedMilestoneRewardInfo === 'function' ? getSelectedMilestoneRewardInfo() : null;
             const userClaimedMilestones = typeof window.userClaimedMilestones !== 'undefined' ? window.userClaimedMilestones : [];
@@ -3299,6 +3316,26 @@
                 ? userClaimedMilestones.find(c => c.id === selectedClaimedRewardId)
                 : null;
             const selectedClaimStatus = (selectedClaim && selectedClaim.status ? String(selectedClaim.status).toUpperCase().trim() : '');
+
+            // Dynamically recalculate promo discount if percentage promo is active
+            if (typeof window.appliedPromoType !== 'undefined' && window.appliedPromoType === 'PERCENTAGE' && window.appliedPromoValue) {
+                window.promoDiscountUsed = subtotal * (window.appliedPromoValue / 100);
+                const promoRow = document.getElementById('promoDiscountRow');
+                const promoVal = document.getElementById('promoDiscountSummaryValue');
+                if (promoRow && promoVal) {
+                    promoRow.style.display = 'flex';
+                    promoVal.textContent = `-GH¢ ${window.promoDiscountUsed.toFixed(2)}`;
+                }
+                const msgEl = document.getElementById('promoCodeMessage');
+                if (msgEl && window.appliedPromoCode) {
+                    msgEl.className = 'promo-code-message success';
+                    msgEl.innerHTML = `<i class="fas fa-check-circle"></i> Code <strong>${window.appliedPromoCode}</strong> applied! Saved GH¢ ${window.promoDiscountUsed.toFixed(2)}`;
+                }
+            } else if (!window.appliedPromoCode) {
+                const promoRow = document.getElementById('promoDiscountRow');
+                if (promoRow) promoRow.style.display = 'none';
+            }
+
             const promoDiscountUsed = typeof window.promoDiscountUsed !== 'undefined' ? window.promoDiscountUsed : 0;
             const pointsUsed = typeof window.pointsUsed !== 'undefined' ? window.pointsUsed : 0;
             // Accept AVAILABLE (auto-unlocked) and CLAIMED (legacy)
@@ -3476,6 +3513,10 @@
         function initializePaymentFlow() {
             // Payment flow is initialized in DOMContentLoaded
         }
+
+        window.recalculateTotal = recalculateTotal;
+        window.loadCartItems = loadCartItems;
+        window.renderOrderSummary = renderOrderSummary;
     </script>
 
 	<!-- Shared Navbar & Footer JavaScript -->

@@ -39,6 +39,9 @@
                     // Clear discount if code is empty
                     window.promoDiscountUsed = 0;
                     window.appliedPromoCode = null;
+                    window.appliedPromoType = null;
+                    window.appliedPromoValue = 0;
+                    window.appliedPromoPercent = 0;
                     if (msgEl) {
                         msgEl.className = 'promo-code-message';
                         msgEl.textContent = '';
@@ -46,16 +49,20 @@
                     const promoRow = document.getElementById('promoDiscountRow');
                     if (promoRow) promoRow.style.display = 'none';
                     // Recalculate total without discount
-                    const subtotalEl = document.getElementById('subtotalAmount');
-                    const totalEl = document.getElementById('totalAmount');
-                    const deliveryFeeEl = document.getElementById('deliveryFeeAmount');
-                    if (subtotalEl && totalEl) {
-                        const subtotalText = subtotalEl.textContent.replace('GH¢', '').trim();
-                        const subtotal = parseFloat(subtotalText) || 0;
-                        const deliveryFeeText = deliveryFeeEl ? deliveryFeeEl.textContent.replace('GH¢', '').trim() : '0';
-                        const deliveryFee = parseFloat(deliveryFeeText) || 0;
-                        const finalTotal = subtotal + deliveryFee;
-                        totalEl.textContent = `GH¢ ${finalTotal.toFixed(2)}`;
+                    if (typeof recalculateTotal === 'function') {
+                        recalculateTotal();
+                    } else {
+                        const subtotalEl = document.getElementById('subtotalAmount');
+                        const totalEl = document.getElementById('totalAmount');
+                        const deliveryFeeEl = document.getElementById('deliveryFeeAmount');
+                        if (subtotalEl && totalEl) {
+                            const subtotalText = subtotalEl.textContent.replace('GH¢', '').trim();
+                            const subtotal = parseFloat(subtotalText) || 0;
+                            const deliveryFeeText = deliveryFeeEl ? deliveryFeeEl.textContent.replace('GH¢', '').trim() : '0';
+                            const deliveryFee = parseFloat(deliveryFeeText) || 0;
+                            const finalTotal = subtotal + deliveryFee;
+                            totalEl.textContent = `GH¢ ${finalTotal.toFixed(2)}`;
+                        }
                     }
                     return;
                 }
@@ -92,8 +99,16 @@
                     console.log('[Checkout Promo] Promo validation result:', result);
 
                     if (result && result.valid) {
-                        window.promoDiscountUsed = result.discount || 0;
                         window.appliedPromoCode = code;
+                        window.appliedPromoType = result.discountType;
+                        window.appliedPromoValue = result.discountValue;
+                        if (result.discountType === 'PERCENTAGE') {
+                            window.appliedPromoPercent = result.discountValue;
+                            window.promoDiscountUsed = orderTotal * (result.discountValue / 100);
+                        } else {
+                            window.appliedPromoPercent = 0;
+                            window.promoDiscountUsed = result.discount || 0;
+                        }
                         console.log('[Checkout Promo] Discount applied:', window.promoDiscountUsed);
                         if (msgEl) {
                             msgEl.className = 'promo-code-message success';
@@ -126,6 +141,9 @@
                     } else {
                         window.promoDiscountUsed = 0;
                         window.appliedPromoCode = null;
+                        window.appliedPromoType = null;
+                        window.appliedPromoValue = 0;
+                        window.appliedPromoPercent = 0;
                         console.log('[Checkout Promo] Promo validation failed:', result ? result.message : 'Unknown error');
                         if (msgEl) {
                             msgEl.className = 'promo-code-message error';
